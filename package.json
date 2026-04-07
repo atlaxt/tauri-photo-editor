@@ -1,0 +1,32 @@
+{
+  "name": "app",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^4.6.1",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "tailwindcss": "^4.2.2",
+    "vue": "^3.5.13",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^8.0.0",
+    "@tauri-apps/cli": "^2",
+    "@types/node": "^25.5.2",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "eslint": "^10.1.0",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.3",
+    "vue-tsc": "^2.1.10"
+  }
+}
