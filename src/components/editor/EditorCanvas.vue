@@ -230,7 +230,7 @@ const cursorStyle = computed(() => {
 <template>
   <div
     ref="containerRef"
-    class="flex-1 overflow-hidden relative select-none bg-accented"
+    class="flex-1 overflow-hidden relative select-none dark:bg-neutral-950 bg-accented"
     :style="{ cursor: cursorStyle }"
     @wheel.prevent="onWheel"
     @mousedown="onMouseDown"

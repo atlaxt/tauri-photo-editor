@@ -34,6 +34,7 @@ export interface Layer {
 
 export const useEditorStore = defineStore('editor', () => {
   const filePath = ref<string | null>(null)
+  const objectUrl = ref<string | null>(null)
   const fileName = computed(() =>
     filePath.value ? filePath.value.split(/[\\/]/).pop() ?? null : null,
   )
@@ -49,7 +50,20 @@ export const useEditorStore = defineStore('editor', () => {
   // Katmanlar — Faz 1: tek temel katman
   const layers = ref<Layer[]>([])
 
+  function revokeObjectUrl() {
+    if (objectUrl.value) {
+      URL.revokeObjectURL(objectUrl.value)
+      objectUrl.value = null
+    }
+  }
+
   function openFile(path: string, baseName?: string) {
+    if (path !== objectUrl.value)
+      revokeObjectUrl()
+
+    if (path.startsWith('blob:'))
+      objectUrl.value = path
+
     filePath.value = path
     operations.value = []
     history.value = [{ operations: [], label: 'opened' }]
@@ -100,6 +114,7 @@ export const useEditorStore = defineStore('editor', () => {
   }
 
   function reset() {
+    revokeObjectUrl()
     filePath.value = null
     operations.value = []
     history.value = []

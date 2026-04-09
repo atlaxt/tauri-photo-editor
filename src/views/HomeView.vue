@@ -7,6 +7,7 @@ import { useEditorStore } from '../stores/editor'
 const { t } = useI18n()
 const router = useRouter()
 const editorStore = useEditorStore()
+const isTauriRuntime = '__TAURI_INTERNALS__' in window
 
 // Taslak projeler — store'dan gelecek, şimdilik boş
 const drafts: { id: string, name: string, path: string, updatedAt: string }[] = []
@@ -69,6 +70,21 @@ function onDrop(e: DragEvent) {
   e.preventDefault()
   dragCounter = 0
   isDragging.value = false
+
+  if (isTauriRuntime)
+    return
+
+  const files = e.dataTransfer?.files
+  if (!files || files.length === 0)
+    return
+
+  const imageFile = Array.from(files).find(file => file.type.startsWith('image/'))
+  if (!imageFile)
+    return
+
+  const blobUrl = URL.createObjectURL(imageFile)
+  editorStore.openFile(blobUrl, imageFile.name)
+  router.push('/editor')
 }
 
 async function openFile() {
@@ -84,7 +100,19 @@ async function openFile() {
     }
   }
   catch {
-    // Tarayıcıda dialog açılmaz, sessizce geç
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = () => {
+      const file = input.files?.[0]
+      if (!file)
+        return
+
+      const blobUrl = URL.createObjectURL(file)
+      editorStore.openFile(blobUrl, file.name)
+      router.push('/editor')
+    }
+    input.click()
   }
 }
 
