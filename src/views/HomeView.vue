@@ -94,8 +94,8 @@ function usePreset() {
         <div class="flex flex-col items-center gap-4 rounded-2xl px-20 py-14">
           <UIcon name="i-ph-image" class="size-9 text-primary/70" />
           <div class="text-center">
-            <p class="text-sm font-medium">Buraya sürükleyin</p>
-            <p class="text-xs text-muted mt-0.5">Resim editörde açılacak</p>
+            <p class="text-sm font-medium">{{ $t('home.dropZone.title') }}</p>
+            <p class="text-xs text-muted mt-0.5">{{ $t('home.dropZone.subtitle') }}</p>
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@ function usePreset() {
       class="flex items-center justify-between px-6 py-4 transition-[filter] duration-200"
       :class="{ 'blur-sm': isDragging }"
     >
-      <span class="text-sm font-medium text-muted">useSpace Studio</span>
+      <span class="text-sm font-medium text-muted">{{ $t('appName') }}</span>
       <UColorModeButton variant="ghost" color="neutral" size="sm" />
     </header>
 
@@ -117,8 +117,8 @@ function usePreset() {
     >
       <!-- Karşılama -->
       <div class="text-center space-y-1">
-        <h1 class="text-2xl font-semibold tracking-tight">Merhaba.</h1>
-        <p class="text-sm text-muted">Ne yapmak istersin?</p>
+        <h1 class="text-2xl font-semibold tracking-tight">{{ $t('home.welcome') }}</h1>
+        <p class="text-sm text-muted">{{ $t('home.subtitle') }}</p>
       </div>
 
       <!-- Eylem kartları -->
@@ -129,8 +129,8 @@ function usePreset() {
         >
           <UIcon name="i-ph-plus-circle" class="size-7 text-muted group-hover:text-primary transition-colors" />
           <div>
-            <p class="text-sm font-medium">Yeni Oluştur</p>
-            <p class="text-xs text-muted mt-0.5">Boş tuval aç</p>
+            <p class="text-sm font-medium">{{ $t('home.actions.newFile') }}</p>
+            <p class="text-xs text-muted mt-0.5">{{ $t('home.actions.newFileDesc') }}</p>
           </div>
         </button>
 
@@ -140,8 +140,8 @@ function usePreset() {
         >
           <UIcon name="i-ph-image" class="size-7 text-muted group-hover:text-primary transition-colors" />
           <div>
-            <p class="text-sm font-medium">Resmi Aç</p>
-            <p class="text-xs text-muted mt-0.5">Dosyadan yükle</p>
+            <p class="text-sm font-medium">{{ $t('home.actions.openFile') }}</p>
+            <p class="text-xs text-muted mt-0.5">{{ $t('home.actions.openFileDesc') }}</p>
           </div>
         </button>
 
@@ -151,19 +151,19 @@ function usePreset() {
         >
           <UIcon name="i-ph-stack" class="size-7 text-muted group-hover:text-primary transition-colors" />
           <div>
-            <p class="text-sm font-medium">Şablon Kullan</p>
-            <p class="text-xs text-muted mt-0.5">Hazır iş akışı</p>
+            <p class="text-sm font-medium">{{ $t('home.actions.usePreset') }}</p>
+            <p class="text-xs text-muted mt-0.5">{{ $t('home.actions.usePresetDesc') }}</p>
           </div>
         </button>
       </div>
 
       <!-- Taslak projeler -->
       <section class="w-full max-w-xl">
-        <p class="text-xs font-medium text-muted uppercase tracking-wider mb-3">Taslak Projeler</p>
+        <p class="text-xs font-medium text-muted uppercase tracking-wider mb-3">{{ $t('home.drafts.title') }}</p>
 
         <div v-if="drafts.length === 0" class="flex flex-col items-center gap-2 py-10 text-muted">
           <UIcon name="i-ph-tray" class="size-8 opacity-40" />
-          <p class="text-sm opacity-60">Henüz taslak yok</p>
+          <p class="text-sm opacity-60">{{ $t('home.drafts.empty') }}</p>
         </div>
 
         <ul v-else class="space-y-1">

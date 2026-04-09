@@ -1,0 +1,23 @@
+{
+  "appName": "useSpace Studio",
+  "home": {
+    "welcome": "Hello.",
+    "subtitle": "What would you like to do?",
+    "actions": {
+      "newFile": "New",
+      "newFileDesc": "Open blank canvas",
+      "openFile": "Open Image",
+      "openFileDesc": "Load from file",
+      "usePreset": "Use Template",
+      "usePresetDesc": "Ready workflow"
+    },
+    "drafts": {
+      "title": "Draft Projects",
+      "empty": "No drafts yet"
+    },
+    "dropZone": {
+      "title": "Drop here",
+      "subtitle": "Image will open in editor"
+    }
+  }
+}

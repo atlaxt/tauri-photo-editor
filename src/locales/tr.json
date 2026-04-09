@@ -1,0 +1,23 @@
+{
+  "appName": "useSpace Studio",
+  "home": {
+    "welcome": "Merhaba.",
+    "subtitle": "Ne yapmak istersin?",
+    "actions": {
+      "newFile": "Yeni Oluştur",
+      "newFileDesc": "Boş tuval aç",
+      "openFile": "Resmi Aç",
+      "openFileDesc": "Dosyadan yükle",
+      "usePreset": "Şablon Kullan",
+      "usePresetDesc": "Hazır iş akışı"
+    },
+    "drafts": {
+      "title": "Taslak Projeler",
+      "empty": "Henüz taslak yok"
+    },
+    "dropZone": {
+      "title": "Buraya sürükleyin",
+      "subtitle": "Resim editörde açılacak"
+    }
+  }
+}
