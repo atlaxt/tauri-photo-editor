@@ -1,5 +1,48 @@
 {
   "appName": "useSpace Studio",
+  "editor": {
+    "tools": {
+      "adjust": "Ayarlar",
+      "sharpen": "Keskinlik",
+      "rotate": "Döndür",
+      "flip": "Çevir",
+      "grayscale": "Siyah-Beyaz",
+      "resize": "Boyutlandır"
+    },
+    "params": {
+      "brightness": "Parlaklık",
+      "contrast": "Kontrast",
+      "saturation": "Doygunluk",
+      "amount": "Miktar",
+      "angle": "Açı",
+      "width": "Genişlik",
+      "height": "Yükseklik",
+      "keepAspect": "Oranı koru",
+      "flipH": "Yatay çevir",
+      "flipV": "Dikey çevir"
+    },
+    "actions": {
+      "apply": "Uygula",
+      "save": "Kaydet",
+      "saveAs": "Farklı Kaydet",
+      "undo": "Geri Al",
+      "redo": "İleri Al",
+      "back": "Ana Sayfa"
+    },
+    "layers": {
+      "title": "Katmanlar",
+      "base": "Temel Katman"
+    },
+    "history": {
+      "title": "Geçmiş",
+      "opened": "Dosya açıldı"
+    },
+    "canvas": {
+      "noFile": "Dosya açılmadı",
+      "noFileHint": "Ana ekrandan bir resim açın"
+    },
+    "unsavedWarning": "Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?"
+  },
   "home": {
     "welcome": "Merhaba.",
     "subtitle": "Ne yapmak istersin?",

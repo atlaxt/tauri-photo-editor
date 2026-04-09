@@ -1,5 +1,48 @@
 {
   "appName": "useSpace Studio",
+  "editor": {
+    "tools": {
+      "adjust": "Adjustments",
+      "sharpen": "Sharpen",
+      "rotate": "Rotate",
+      "flip": "Flip",
+      "grayscale": "Black & White",
+      "resize": "Resize"
+    },
+    "params": {
+      "brightness": "Brightness",
+      "contrast": "Contrast",
+      "saturation": "Saturation",
+      "amount": "Amount",
+      "angle": "Angle",
+      "width": "Width",
+      "height": "Height",
+      "keepAspect": "Keep aspect ratio",
+      "flipH": "Flip horizontal",
+      "flipV": "Flip vertical"
+    },
+    "actions": {
+      "apply": "Apply",
+      "save": "Save",
+      "saveAs": "Save As",
+      "undo": "Undo",
+      "redo": "Redo",
+      "back": "Home"
+    },
+    "layers": {
+      "title": "Layers",
+      "base": "Base Layer"
+    },
+    "history": {
+      "title": "History",
+      "opened": "File opened"
+    },
+    "canvas": {
+      "noFile": "No file open",
+      "noFileHint": "Open an image from the home screen"
+    },
+    "unsavedWarning": "You have unsaved changes. Are you sure you want to leave?"
+  },
   "home": {
     "welcome": "Hello.",
     "subtitle": "What would you like to do?",

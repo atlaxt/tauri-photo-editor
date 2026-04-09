@@ -78,6 +78,12 @@ export const useEditorStore = defineStore('editor', () => {
     historyIndex.value = -1
   }
 
+  function jumpTo(index: number) {
+    if (index < 0 || index >= history.value.length) return
+    historyIndex.value = index
+    operations.value = [...history.value[index].operations]
+  }
+
   return {
     filePath,
     fileName,
@@ -90,6 +96,7 @@ export const useEditorStore = defineStore('editor', () => {
     addOperation,
     undo,
     redo,
+    jumpTo,
     reset,
   }
 })
