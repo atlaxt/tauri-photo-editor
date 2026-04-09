@@ -31,7 +31,12 @@
     },
     "layers": {
       "title": "Layers",
-      "base": "Base Layer"
+      "base": "Base Layer",
+      "settings": "Layer Settings",
+      "name": "Name",
+      "opacity": "Opacity",
+      "rotation": "Rotation",
+      "visible": "Visible"
     },
     "history": {
       "title": "History",

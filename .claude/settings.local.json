@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx skills:*)",
       "Bash(echo \"exit: $?\")",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

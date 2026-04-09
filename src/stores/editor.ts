@@ -24,34 +24,55 @@ export interface HistoryEntry {
   label: string
 }
 
+export interface Layer {
+  id: string
+  name: string
+  opacity: number // 0–100
+  visible: boolean
+  rotation: number // derece
+}
+
 export const useEditorStore = defineStore('editor', () => {
-  // Açık dosya
   const filePath = ref<string | null>(null)
   const fileName = computed(() =>
     filePath.value ? filePath.value.split(/[\\/]/).pop() ?? null : null,
   )
 
-  // Uygulanan işlemler (mevcut durum)
   const operations = ref<Operation[]>([])
 
-  // Geri al / ileri al geçmişi
   const history = ref<HistoryEntry[]>([])
   const historyIndex = ref(-1)
 
   const canUndo = computed(() => historyIndex.value > 0)
   const canRedo = computed(() => historyIndex.value < history.value.length - 1)
 
-  function openFile(path: string) {
+  // Katmanlar — Faz 1: tek temel katman
+  const layers = ref<Layer[]>([])
+
+  function openFile(path: string, baseName?: string) {
     filePath.value = path
     operations.value = []
-    history.value = [{ operations: [], label: 'Açıldı' }]
+    history.value = [{ operations: [], label: 'opened' }]
     historyIndex.value = 0
+    const rawName = baseName ?? (path.split(/[\\/]/).pop() ?? 'Katman 1')
+    const nameWithoutExt = rawName.replace(/\.[^.]+$/, '')
+    layers.value = [{
+      id: 'base',
+      name: nameWithoutExt,
+      opacity: 100,
+      visible: true,
+      rotation: 0,
+    }]
+  }
+
+  function updateLayer(id: string, patch: Partial<Omit<Layer, 'id'>>) {
+    const layer = layers.value.find(l => l.id === id)
+    if (layer)
+      Object.assign(layer, patch)
   }
 
   function addOperation(op: Operation, label: string) {
-    // İleri geçmişi sil (yeni işlem yapılınca redo geçersiz olur)
     history.value = history.value.slice(0, historyIndex.value + 1)
-
     operations.value = [...operations.value, op]
     history.value.push({ operations: [...operations.value], label })
     historyIndex.value++
@@ -71,17 +92,19 @@ export const useEditorStore = defineStore('editor', () => {
     operations.value = [...history.value[historyIndex.value].operations]
   }
 
+  function jumpTo(index: number) {
+    if (index < 0 || index >= history.value.length)
+      return
+    historyIndex.value = index
+    operations.value = [...history.value[index].operations]
+  }
+
   function reset() {
     filePath.value = null
     operations.value = []
     history.value = []
     historyIndex.value = -1
-  }
-
-  function jumpTo(index: number) {
-    if (index < 0 || index >= history.value.length) return
-    historyIndex.value = index
-    operations.value = [...history.value[index].operations]
+    layers.value = []
   }
 
   return {
@@ -92,7 +115,9 @@ export const useEditorStore = defineStore('editor', () => {
     historyIndex,
     canUndo,
     canRedo,
+    layers,
     openFile,
+    updateLayer,
     addOperation,
     undo,
     redo,

@@ -31,7 +31,12 @@
     },
     "layers": {
       "title": "Katmanlar",
-      "base": "Temel Katman"
+      "base": "Temel Katman",
+      "settings": "Katman Ayarları",
+      "name": "İsim",
+      "opacity": "Opaklık",
+      "rotation": "Döndürme",
+      "visible": "Görünür"
     },
     "history": {
       "title": "Geçmiş",

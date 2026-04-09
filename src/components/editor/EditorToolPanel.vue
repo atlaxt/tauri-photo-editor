@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import type { Operation, OperationType } from '../../stores/editor'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Operation, OperationType } from '../../stores/editor'
-
-const { t } = useI18n()
 
 const emit = defineEmits<{
   apply: [op: Operation]
 }>()
+
+const { t } = useI18n()
 
 type ToolId = 'adjust' | 'sharpen' | 'rotate' | 'flip' | 'grayscale' | 'resize'
 
@@ -125,7 +125,6 @@ function applyResize() {
 
     <!-- Parametre alanı -->
     <div v-if="activeTool" class="p-3 space-y-4 flex-1">
-
       <!-- Ayarlar -->
       <template v-if="activeTool === 'adjust'">
         <div class="space-y-3">
@@ -196,7 +195,9 @@ function applyResize() {
 
       <!-- Siyah-Beyaz -->
       <template v-else-if="activeTool === 'grayscale'">
-        <p class="text-xs text-muted">{{ t('editor.tools.grayscale') }}</p>
+        <p class="text-xs text-muted">
+          {{ t('editor.tools.grayscale') }}
+        </p>
         <UButton :label="t('editor.actions.apply')" size="xs" block @click="applyGrayscale" />
       </template>
 
@@ -204,11 +205,15 @@ function applyResize() {
       <template v-else-if="activeTool === 'resize'">
         <div class="space-y-2">
           <div>
-            <p class="text-xs text-muted mb-1">{{ t('editor.params.width') }}</p>
+            <p class="text-xs text-muted mb-1">
+              {{ t('editor.params.width') }}
+            </p>
             <UInput v-model.number="resize.width" type="number" size="xs" />
           </div>
           <div>
-            <p class="text-xs text-muted mb-1">{{ t('editor.params.height') }}</p>
+            <p class="text-xs text-muted mb-1">
+              {{ t('editor.params.height') }}
+            </p>
             <UInput v-model.number="resize.height" type="number" size="xs" />
           </div>
           <label class="flex items-center gap-2 cursor-pointer">

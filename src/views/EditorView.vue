@@ -4,31 +4,22 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import EditorCanvas from '../components/editor/EditorCanvas.vue'
 import EditorRightPanel from '../components/editor/EditorRightPanel.vue'
-import EditorToolPanel from '../components/editor/EditorToolPanel.vue'
+import EditorToolIconBar from '../components/editor/EditorToolIconBar.vue'
+import EditorToolParams from '../components/editor/EditorToolParams.vue'
 import EditorToolbar from '../components/editor/EditorToolbar.vue'
 import type { Operation } from '../stores/editor'
 import { useEditorStore } from '../stores/editor'
+import type { ToolId } from '../components/editor/EditorToolIconBar.vue'
 
 const { t } = useI18n()
 const router = useRouter()
 const editor = useEditorStore()
 
-// Pending op — araç panelinden geliyor, canvas'ta canlı önizleme için
+const activeTool = ref<ToolId | null>(null)
 const pendingOp = ref<Operation | null>(null)
 
 function handleApply(op: Operation) {
-  const labels: Record<string, string> = {
-    brightness: 'brightness',
-    contrast: 'contrast',
-    saturation: 'saturation',
-    sharpen: 'sharpen',
-    rotate: 'rotate',
-    flip_horizontal: 'flip_horizontal',
-    flip_vertical: 'flip_vertical',
-    grayscale: 'grayscale',
-    resize: 'resize',
-  }
-  editor.addOperation(op, labels[op.op] ?? op.op)
+  editor.addOperation(op, op.op)
   pendingOp.value = null
 }
 
@@ -59,10 +50,23 @@ async function handleSaveAs() {
     />
 
     <div class="flex flex-1 min-h-0">
-      <EditorToolPanel
-        v-model:pending-op="pendingOp"
-        @apply="handleApply"
-      />
+      <!-- Dar ikon çubuğu -->
+      <EditorToolIconBar v-model:active-tool="activeTool" />
+
+      <!-- Params paneli: araç seçilince ikon çubuğunun yanında açılır -->
+      <Transition
+        enter-active-class="transition-all duration-150 ease-out"
+        leave-active-class="transition-all duration-100 ease-in"
+        enter-from-class="opacity-0 -translate-x-2"
+        leave-to-class="opacity-0 -translate-x-2"
+      >
+        <EditorToolParams
+          v-if="activeTool"
+          :tool="activeTool"
+          v-model:pending-op="pendingOp"
+          @apply="handleApply"
+        />
+      </Transition>
 
       <EditorCanvas
         :file-path="editor.filePath"
