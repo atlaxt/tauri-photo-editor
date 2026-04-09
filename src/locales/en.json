@@ -42,6 +42,22 @@
       "title": "History",
       "opened": "File opened"
     },
+    "panel": {
+      "layers": "Layers",
+      "history": "History",
+      "info": "Info",
+      "histogram": "Histogram",
+      "infoFormat": "Format",
+      "infoDimensions": "Dimensions",
+      "infoOpacity": "Opacity",
+      "infoRotation": "Rotation",
+      "infoUnknown": "Unknown",
+      "histogramR": "R",
+      "histogramG": "G",
+      "histogramB": "B",
+      "histogramLum": "Luminance",
+      "noFile": "No file open"
+    },
     "canvas": {
       "noFile": "No file open",
       "noFileHint": "Open an image from the home screen"

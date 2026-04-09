@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { invoke } from '@tauri-apps/api/core'
@@ -22,6 +22,19 @@ const pendingOp = ref<Operation | null>(null)
 const saving = ref(false)
 const imageWidth = ref<number | null>(null)
 const imageHeight = ref<number | null>(null)
+const zoomLevel = ref<number | null>(null)
+const canvasImageUrl = ref<string | null>(null)
+
+watch(() => editor.filePath, async (path) => {
+  if (!path) { canvasImageUrl.value = null; return }
+  try {
+    const { convertFileSrc } = await import('@tauri-apps/api/core')
+    canvasImageUrl.value = convertFileSrc(path)
+  }
+  catch {
+    canvasImageUrl.value = path
+  }
+}, { immediate: true })
 
 function handleApply(op: Operation) {
   editor.addOperation(op, op.op)
@@ -111,11 +124,16 @@ async function handleSaveAs() {
         :operations="editor.operations"
         :pending-op="pendingOp"
         @image-size-change="(w, h) => { imageWidth = w; imageHeight = h }"
+        @zoom-change="(z) => { zoomLevel = z }"
       />
 
-      <EditorRightPanel />
+      <EditorRightPanel
+        :image-width="imageWidth"
+        :image-height="imageHeight"
+        :image-url="canvasImageUrl"
+      />
     </div>
 
-    <EditorStatusBar :image-width="imageWidth" :image-height="imageHeight" />
+    <EditorStatusBar :image-width="imageWidth" :image-height="imageHeight" :zoom="zoomLevel" />
   </div>
 </template>

@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useEditorStore } from '../../stores/editor'
 
 const props = defineProps<{
   imageWidth: number | null
   imageHeight: number | null
+  zoom: number | null
 }>()
+
+const zoomLabel = computed(() => {
+  if (props.zoom === null) return null
+  return `${Math.round(props.zoom * 100)}%`
+})
 
 const { t } = useI18n()
 const editor = useEditorStore()
@@ -22,6 +29,12 @@ const editor = useEditorStore()
         {{ t('editor.statusBar.noFile') }}
       </template>
     </span>
+
+    <!-- Separator -->
+    <template v-if="zoomLabel">
+      <span class="text-[11px] text-muted/30">·</span>
+      <span class="text-[11px] text-muted tabular-nums">{{ zoomLabel }}</span>
+    </template>
 
     <!-- Spacer -->
     <div class="flex-1" />

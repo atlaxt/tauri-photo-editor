@@ -42,6 +42,22 @@
       "title": "Geçmiş",
       "opened": "Dosya açıldı"
     },
+    "panel": {
+      "layers": "Katmanlar",
+      "history": "Geçmiş",
+      "info": "Bilgi",
+      "histogram": "Histogram",
+      "infoFormat": "Format",
+      "infoDimensions": "Boyutlar",
+      "infoOpacity": "Opaklık",
+      "infoRotation": "Döndürme",
+      "infoUnknown": "Bilinmiyor",
+      "histogramR": "K",
+      "histogramG": "Y",
+      "histogramB": "M",
+      "histogramLum": "Parlaklık",
+      "noFile": "Dosya açılmadı"
+    },
     "canvas": {
       "noFile": "Dosya açılmadı",
       "noFileHint": "Ana ekrandan bir resim açın"

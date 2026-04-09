@@ -1,197 +1,296 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useEditorStore } from '../../stores/editor'
+import EditorPanelTabContent from './EditorPanelTabContent.vue'
+
+const props = defineProps<{
+  imageWidth: number | null
+  imageHeight: number | null
+  imageUrl: string | null
+}>()
 
 const { t } = useI18n()
-const editor = useEditorStore()
 
-// Thumbnail URL — filePath'ten convertFileSrc ile
-const thumbUrl = ref<string | null>(null)
+// ─── Types ──────────────────────────────────────────────────────────────────
 
-watch(() => editor.filePath, async (path) => {
-  if (!path) {
-    thumbUrl.value = null
+type TabId = 'layers' | 'history' | 'info' | 'histogram'
+
+interface Pane {
+  id: string
+  tabs: TabId[]
+  activeTab: TabId
+}
+
+const TAB_DEFS: Record<TabId, { icon: string, labelKey: string }> = {
+  layers: { icon: 'i-ph-stack', labelKey: 'editor.panel.layers' },
+  history: { icon: 'i-ph-clock-counter-clockwise', labelKey: 'editor.panel.history' },
+  info: { icon: 'i-ph-info', labelKey: 'editor.panel.info' },
+  histogram: { icon: 'i-ph-chart-bar', labelKey: 'editor.panel.histogram' },
+}
+
+const TAB_BAR_H = 36
+
+// ─── Pane state ──────────────────────────────────────────────────────────────
+
+let _uid = 0
+const uid = () => `pane-${++_uid}`
+
+const panes = ref<Pane[]>([
+  { id: uid(), tabs: ['layers', 'info', 'histogram'], activeTab: 'layers' },
+  { id: uid(), tabs: ['history'], activeTab: 'history' },
+])
+const paneSizes = ref<number[]>([60, 40])
+
+// ─── Drag state ──────────────────────────────────────────────────────────────
+
+const dragTab = ref<TabId | null>(null)
+const dragSourcePaneId = ref<string | null>(null)
+const dropPaneId = ref<string | null>(null)
+const dropZone = ref<'tabbar' | 'top' | 'bottom' | null>(null)
+
+// Her pane'in DOM referansı — koordinat tespiti için
+const paneEls = ref<Map<string, HTMLElement>>(new Map())
+
+function setPaneEl(paneId: string, el: HTMLElement | null) {
+  if (el)
+    paneEls.value.set(paneId, el)
+  else paneEls.value.delete(paneId)
+}
+
+function onTabDragStart(tab: TabId, paneId: string, e: DragEvent) {
+  dragTab.value = tab
+  dragSourcePaneId.value = paneId
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'move'
+    // Bazı browser'lar veri olmadan drop izni vermiyor
+    e.dataTransfer.setData('text/plain', tab)
+  }
+}
+
+function onTabDragEnd() {
+  dragTab.value = null
+  dragSourcePaneId.value = null
+  dropPaneId.value = null
+  dropZone.value = null
+}
+
+// Aside seviyesinde tek dragover — child elementler devre dışı
+function onAsideDragOver(e: DragEvent) {
+  e.preventDefault()
+  if (!dragTab.value || !e.dataTransfer)
+    return
+  e.dataTransfer.dropEffect = 'move'
+
+  // Hangi pane'in üzerindeyiz? Y koordinatına göre bul
+  for (const pane of panes.value) {
+    const el = paneEls.value.get(pane.id)
+    if (!el)
+      continue
+    const rect = el.getBoundingClientRect()
+    if (e.clientY < rect.top || e.clientY > rect.bottom)
+      continue
+
+    dropPaneId.value = pane.id
+    const y = e.clientY - rect.top
+
+    if (y <= TAB_BAR_H) {
+      dropZone.value = 'tabbar'
+    }
+    else {
+      const contentY = y - TAB_BAR_H
+      const contentH = rect.height - TAB_BAR_H
+      dropZone.value = contentY < contentH / 2 ? 'top' : 'bottom'
+    }
     return
   }
-  try {
-    const { convertFileSrc } = await import('@tauri-apps/api/core')
-    thumbUrl.value = convertFileSrc(path)
-  }
-  catch {
-    thumbUrl.value = path
-  }
-}, { immediate: true })
 
-const opLabels: Record<string, string> = {
-  brightness: 'editor.tools.adjust',
-  contrast: 'editor.tools.adjust',
-  saturation: 'editor.tools.adjust',
-  sharpen: 'editor.tools.sharpen',
-  rotate: 'editor.tools.rotate',
-  flip_horizontal: 'editor.params.flipH',
-  flip_vertical: 'editor.params.flipV',
-  grayscale: 'editor.tools.grayscale',
-  resize: 'editor.tools.resize',
+  dropPaneId.value = null
+  dropZone.value = null
 }
+
+function onAsideDragLeave(e: DragEvent) {
+  const related = e.relatedTarget as HTMLElement | null
+  const aside = e.currentTarget as HTMLElement
+  if (!related || !aside.contains(related)) {
+    dropPaneId.value = null
+    dropZone.value = null
+  }
+}
+
+function onAsideDrop(e: DragEvent) {
+  e.preventDefault()
+  const tab = dragTab.value
+  const sourceId = dragSourcePaneId.value
+  const zone = dropZone.value
+  const targetId = dropPaneId.value
+
+  if (!tab || !sourceId || !zone || !targetId) {
+    onTabDragEnd()
+    return
+  }
+
+  if (zone === 'tabbar') {
+    removeTabFromPane(sourceId, tab)
+    const target = panes.value.find(p => p.id === targetId)
+    if (target && !target.tabs.includes(tab)) {
+      target.tabs.push(tab)
+      target.activeTab = tab
+    }
+  }
+  else {
+    removeTabFromPane(sourceId, tab)
+    const targetIdx = panes.value.findIndex(p => p.id === targetId)
+    if (targetIdx !== -1) {
+      const newPane: Pane = { id: uid(), tabs: [tab], activeTab: tab }
+      const insertAt = zone === 'top' ? targetIdx : targetIdx + 1
+      panes.value.splice(insertAt, 0, newPane)
+      redistributeSizes()
+    }
+  }
+
+  onTabDragEnd()
+}
+
+function removeTabFromPane(paneId: string, tab: TabId) {
+  const idx = panes.value.findIndex(p => p.id === paneId)
+  if (idx === -1)
+    return
+
+  const pane = panes.value[idx]
+  const tabIdx = pane.tabs.indexOf(tab)
+  if (tabIdx === -1)
+    return
+
+  pane.tabs.splice(tabIdx, 1)
+
+  if (pane.tabs.length === 0) {
+    panes.value.splice(idx, 1)
+    paneSizes.value.splice(idx, 1)
+    redistributeSizes()
+  }
+  else if (pane.activeTab === tab) {
+    pane.activeTab = pane.tabs[0]
+  }
+}
+
+function redistributeSizes() {
+  const count = panes.value.length
+  if (count === 0)
+    return
+  paneSizes.value = new Array(count).fill(100 / count)
+}
+
+// ─── Resize ──────────────────────────────────────────────────────────────────
+
+const containerRef = ref<HTMLElement | null>(null)
+let resizingIdx = -1
+let resizeStartY = 0
+let resizeStartSizes: number[] = []
+
+function onResizerDown(idx: number, e: MouseEvent) {
+  e.preventDefault()
+  resizingIdx = idx
+  resizeStartY = e.clientY
+  resizeStartSizes = [...paneSizes.value]
+  window.addEventListener('mousemove', onResizerMove)
+  window.addEventListener('mouseup', onResizerUp)
+}
+
+function onResizerMove(e: MouseEvent) {
+  if (resizingIdx === -1 || !containerRef.value)
+    return
+  const totalH = containerRef.value.clientHeight
+  const deltaPct = ((e.clientY - resizeStartY) / totalH) * 100
+  const next = [...resizeStartSizes]
+  next[resizingIdx] = Math.max(15, next[resizingIdx] + deltaPct)
+  next[resizingIdx + 1] = Math.max(15, next[resizingIdx + 1] - deltaPct)
+  paneSizes.value = next
+}
+
+function onResizerUp() {
+  resizingIdx = -1
+  window.removeEventListener('mousemove', onResizerMove)
+  window.removeEventListener('mouseup', onResizerUp)
+}
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', onResizerMove)
+  window.removeEventListener('mouseup', onResizerUp)
+})
 </script>
 
 <template>
-  <aside class="w-52 flex flex-col border-l border-default shrink-0">
-    <!-- Katmanlar (üst) -->
-    <div class="flex flex-col border-b border-default" style="flex: 1 1 0; min-height: 0;">
-      <div class="px-3 py-2 shrink-0">
-        <p class="text-xs font-medium text-muted uppercase tracking-wider">
-          {{ t('editor.layers.title') }}
-        </p>
-      </div>
-
-      <div class="flex-1 overflow-y-auto">
-        <div v-if="editor.layers.length === 0" class="flex items-center justify-center h-full">
-          <p class="text-xs text-muted opacity-30">
-            —
-          </p>
-        </div>
-
-        <!-- Katman satırı -->
+  <aside
+    ref="containerRef"
+    class="w-56 flex flex-col border-l border-default shrink-0 overflow-hidden"
+    @dragover="onAsideDragOver"
+    @dragenter.prevent
+    @dragleave="onAsideDragLeave"
+    @drop="onAsideDrop"
+  >
+    <template v-for="(pane, paneIdx) in panes" :key="pane.id">
+      <!-- ── Pane ── -->
+      <div
+        :ref="(el) => setPaneEl(pane.id, el as HTMLElement | null)"
+        class="flex flex-col min-h-0 relative"
+        :style="{ flex: `${paneSizes[paneIdx]} 1 0%` }"
+      >
+        <!-- Tab bar -->
         <div
-          v-for="layer in editor.layers"
-          :key="layer.id"
-          class="group relative flex items-center gap-2 px-2 hover:bg-elevated transition-colors"
-          style="height: 44px;"
+          class="flex items-stretch border-b border-default shrink-0 transition-colors"
+          :class="dropPaneId === pane.id && dropZone === 'tabbar' ? 'bg-primary/10' : ''"
+          :style="{ height: `${TAB_BAR_H}px` }"
         >
-          <!-- Görünürlük toggle -->
           <button
-            class="shrink-0 flex items-center justify-center w-5 h-5 rounded transition-colors"
-            :class="layer.visible
-              ? 'text-muted/40 hover:text-muted'
-              : 'text-primary'"
-            @click="editor.updateLayer(layer.id, { visible: !layer.visible })"
+            v-for="tab in pane.tabs"
+            :key="tab"
+            draggable="true"
+            :title="t(TAB_DEFS[tab].labelKey)"
+            class="flex items-center gap-1.5 px-2.5 h-full text-xs transition-colors border-b-2 shrink-0 active:cursor-grabbing"
+            :class="pane.activeTab === tab
+              ? 'text-default border-primary'
+              : 'text-muted border-transparent hover:text-default hover:border-default'"
+            @click="pane.activeTab = tab"
+            @dragstart="onTabDragStart(tab, pane.id, $event)"
+            @dragend="onTabDragEnd"
           >
-            <UIcon
-              :name="layer.visible ? 'i-ph-eye' : 'i-ph-eye-slash'"
-              class="size-3"
-            />
+            <UIcon :name="TAB_DEFS[tab].icon" class="size-3.5 shrink-0" />
+            <span v-if="pane.activeTab === tab" class="text-[11px] font-medium">
+              {{ t(TAB_DEFS[tab].labelKey) }}
+            </span>
           </button>
-
-          <!-- Thumbnail -->
-          <div
-            class="size-8 rounded shrink-0 overflow-hidden ring-1 ring-inset ring-black/10 dark:ring-white/10 transition-opacity"
-            :class="layer.visible ? '' : 'opacity-30'"
-          >
-            <img
-              v-if="thumbUrl"
-              :src="thumbUrl"
-              class="w-full h-full object-cover select-none"
-              draggable="false"
-            >
-            <div v-else class="w-full h-full bg-elevated flex items-center justify-center">
-              <UIcon name="i-ph-image" class="size-3 text-muted opacity-30" />
-            </div>
-          </div>
-
-          <!-- İsim + opaklık -->
-          <div class="flex-1 min-w-0 flex flex-col justify-center gap-px" :class="layer.visible ? '' : 'opacity-40'">
-            <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
-            <span class="text-[10px] text-muted tabular-nums leading-none">{{ layer.opacity }}%</span>
-          </div>
-
-          <!-- Ayar popover (hover'da görünür) -->
-          <UPopover :ui="{ content: 'w-52' }">
-            <button
-              class="shrink-0 flex items-center justify-center w-5 h-5 rounded text-muted opacity-0 group-hover:opacity-100 hover:text-default hover:bg-elevated transition-all"
-            >
-              <UIcon name="i-ph-dots-three" class="size-3.5" />
-            </button>
-
-            <template #content>
-              <div class="p-3 space-y-4">
-                <p class="text-xs font-semibold">
-                  {{ t('editor.layers.settings') }}
-                </p>
-
-                <!-- İsim -->
-                <div class="space-y-1.5">
-                  <p class="text-xs text-muted">
-                    {{ t('editor.layers.name') }}
-                  </p>
-                  <UInput
-                    :model-value="layer.name"
-                    size="xs"
-                    @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
-                  />
-                </div>
-
-                <!-- Opaklık -->
-                <div class="space-y-1.5">
-                  <div class="flex justify-between">
-                    <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
-                    <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
-                  </div>
-                  <input
-                    :value="layer.opacity"
-                    type="range" min="0" max="100"
-                    class="w-full h-1 accent-primary cursor-pointer"
-                    @input="editor.updateLayer(layer.id, { opacity: Number(($event.target as HTMLInputElement).value) })"
-                  >
-                </div>
-
-                <!-- Döndürme -->
-                <div class="space-y-1.5">
-                  <div class="flex justify-between">
-                    <span class="text-xs text-muted">{{ t('editor.layers.rotation') }}</span>
-                    <span class="text-xs tabular-nums text-muted">{{ layer.rotation }}°</span>
-                  </div>
-                  <input
-                    :value="layer.rotation"
-                    type="range" min="-180" max="180"
-                    class="w-full h-1 accent-primary cursor-pointer"
-                    @input="editor.updateLayer(layer.id, { rotation: Number(($event.target as HTMLInputElement).value) })"
-                  >
-                </div>
-              </div>
-            </template>
-          </UPopover>
         </div>
-      </div>
-    </div>
 
-    <!-- Geçmiş (alt) -->
-    <div class="flex flex-col" style="flex: 1 1 0; min-height: 0;">
-      <div class="px-3 py-2 shrink-0">
-        <p class="text-xs font-medium text-muted uppercase tracking-wider">
-          {{ t('editor.history.title') }}
-        </p>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-2 space-y-0.5">
-        <button
-          v-for="(entry, i) in editor.history"
-          :key="i"
-          class="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left transition-colors text-xs"
-          :class="i === editor.historyIndex
-            ? 'bg-primary/10 text-primary font-medium'
-            : 'hover:bg-elevated text-muted'"
-          @click="editor.jumpTo(i)"
-        >
-          <UIcon
-            :name="i === 0 ? 'i-ph-folder-open' : 'i-ph-dot-outline'"
-            class="size-3 shrink-0"
-            :class="i === editor.historyIndex ? 'text-primary' : 'opacity-40'"
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto min-h-0 relative">
+          <EditorPanelTabContent
+            :tab-id="pane.activeTab"
+            :image-width="props.imageWidth"
+            :image-height="props.imageHeight"
+            :image-url="props.imageUrl"
           />
-          <span class="truncate">
-            {{ i === 0
-              ? t('editor.history.opened')
-              : t(opLabels[entry.label] ?? 'editor.tools.adjust') }}
-          </span>
-        </button>
 
-        <div v-if="editor.history.length === 0" class="flex items-center justify-center py-6">
-          <p class="text-xs text-muted opacity-40">
-            —
-          </p>
+          <!-- Drop zone overlays -->
+          <div
+            v-if="dropPaneId === pane.id && dropZone === 'top'"
+            class="absolute inset-x-0 top-0 h-1/2 pointer-events-none z-10 rounded"
+            style="background: color-mix(in srgb, #3b82f6 12%, transparent); border: 2px dashed color-mix(in srgb, #3b82f6 50%, transparent);"
+          />
+          <div
+            v-if="dropPaneId === pane.id && dropZone === 'bottom'"
+            class="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none z-10 rounded"
+            style="background: color-mix(in srgb, #3b82f6 12%, transparent); border: 2px dashed color-mix(in srgb, #3b82f6 50%, transparent);"
+          />
         </div>
       </div>
-    </div>
+
+      <!-- ── Resize handle ── -->
+      <div
+        v-if="paneIdx < panes.length - 1"
+        class="shrink-0 cursor-row-resize bg-default hover:bg-primary/40 transition-colors"
+        style="height: 4px;"
+        @mousedown="onResizerDown(paneIdx, $event)"
+      />
+    </template>
   </aside>
 </template>
