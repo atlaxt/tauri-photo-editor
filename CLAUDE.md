@@ -260,3 +260,34 @@ Kenar çubuğu navigasyonu **yoktur**. Uygulama iki modda çalışır:
 - Bulut senkronizasyonu
 - Eklenti sistemi
 - AI destekli otomatik düzeltme
+
+---
+
+## Otomatik Güncelleme (Faz 2+ notu)
+
+Kullanıcı bilgisayarlarına dağıtılmış sürümleri güncellemek için **`tauri-plugin-updater`** kullanılacak.
+
+### Genel akış
+1. `tauri build` ile imzalı binary üretilir (önceden `TAURI_SIGNING_PRIVATE_KEY` env değişkeni tanımlı olmalı)
+2. Her release için bir `latest.json` manifest dosyası hazırlanır ve host edilir
+3. Uygulama açılışında `check()` ile yeni sürüm sorgulanır; varsa indirilip kurulur
+
+### Host seçeneği
+- **GitHub Releases** — önerilen; ücretsiz, `latest.json` + binary asset olarak eklenir
+- Alternatif: kendi sunucu veya Tauri Cloud
+
+### Eklenecek bağımlılıklar (zamanı gelince)
+```toml
+# Cargo.toml
+tauri-plugin-updater = "2"
+```
+```json
+// tauri.conf.json → plugins
+{
+  "updater": { "pubkey": "<PUBLIC_KEY>" }
+}
+```
+
+### Önemli
+- İmzalama **zorunlu**; imzasız güncelleme Tauri tarafından reddedilir
+- Private key bir kez üretilir, güvenli saklanır; kaybolursa yeniden imzalamak gerekir

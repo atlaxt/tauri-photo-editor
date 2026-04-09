@@ -11,8 +11,10 @@ import './assets/css/main.css'
 const app = createApp(App)
 
 const i18n = createI18n({
+  legacy: false,
   locale: 'en',
   fallbackLocale: 'en',
+  availableLocales: ['en', 'tr'],
   messages: { en, tr },
 })
 

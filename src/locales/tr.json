@@ -46,7 +46,11 @@
       "noFile": "Dosya açılmadı",
       "noFileHint": "Ana ekrandan bir resim açın"
     },
-    "unsavedWarning": "Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?"
+    "unsavedWarning": "Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?",
+    "statusBar": {
+      "dimensions": "{w} × {h} px",
+      "noFile": "Dosya açılmadı"
+    }
   },
   "home": {
     "welcome": "Merhaba.",

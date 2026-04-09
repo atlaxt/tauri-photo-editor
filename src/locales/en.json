@@ -46,7 +46,11 @@
       "noFile": "No file open",
       "noFileHint": "Open an image from the home screen"
     },
-    "unsavedWarning": "You have unsaved changes. Are you sure you want to leave?"
+    "unsavedWarning": "You have unsaved changes. Are you sure you want to leave?",
+    "statusBar": {
+      "dimensions": "{w} × {h} px",
+      "noFile": "No file open"
+    }
   },
   "home": {
     "welcome": "Hello.",

@@ -27,8 +27,8 @@ function toggle(id: ToolId) {
       v-for="tool in tools"
       :key="tool.id"
       :text="t(tool.labelKey)"
-      :delay-duration="300"
-      side="right"
+      :delay-duration="0"
+      :content="{ side: 'right', position: 'center' }"
     >
       <button
         class="flex items-center justify-center size-8 rounded-lg transition-colors"

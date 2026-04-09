@@ -2,6 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { useEditorStore } from '../../stores/editor'
 
+defineProps<{ saving?: boolean }>()
+
 const emit = defineEmits<{
   back: []
   save: []
@@ -57,6 +59,7 @@ const editor = useEditorStore()
         variant="ghost"
         color="neutral"
         size="sm"
+        :disabled="saving"
         @click="emit('saveAs')"
       />
       <UButton
@@ -64,6 +67,7 @@ const editor = useEditorStore()
         variant="solid"
         color="primary"
         size="sm"
+        :loading="saving"
         @click="emit('save')"
       />
     </div>

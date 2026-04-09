@@ -2,8 +2,10 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { invoke } from '@tauri-apps/api/core'
 import EditorCanvas from '../components/editor/EditorCanvas.vue'
 import EditorRightPanel from '../components/editor/EditorRightPanel.vue'
+import EditorStatusBar from '../components/editor/EditorStatusBar.vue'
 import EditorToolIconBar from '../components/editor/EditorToolIconBar.vue'
 import EditorToolParams from '../components/editor/EditorToolParams.vue'
 import EditorToolbar from '../components/editor/EditorToolbar.vue'
@@ -17,6 +19,9 @@ const editor = useEditorStore()
 
 const activeTool = ref<ToolId | null>(null)
 const pendingOp = ref<Operation | null>(null)
+const saving = ref(false)
+const imageWidth = ref<number | null>(null)
+const imageHeight = ref<number | null>(null)
 
 function handleApply(op: Operation) {
   editor.addOperation(op, op.op)
@@ -33,17 +38,50 @@ function handleBack() {
 }
 
 async function handleSave() {
-  // Görev #5'te Rust invoke bağlanacak
+  if (!editor.filePath || saving.value) return
+  saving.value = true
+  try {
+    await invoke('save_image', {
+      sourcePath: editor.filePath,
+      destPath: editor.filePath,
+      ops: editor.operations,
+    })
+  }
+  finally {
+    saving.value = false
+  }
 }
 
 async function handleSaveAs() {
-  // Görev #5'te Rust invoke bağlanacak
+  if (!editor.filePath || saving.value) return
+  const { save } = await import('@tauri-apps/plugin-dialog')
+  const dest = await save({
+    defaultPath: editor.fileName ?? undefined,
+    filters: [
+      { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
+      { name: 'PNG', extensions: ['png'] },
+      { name: 'WebP', extensions: ['webp'] },
+    ],
+  })
+  if (!dest) return
+  saving.value = true
+  try {
+    await invoke('save_image', {
+      sourcePath: editor.filePath,
+      destPath: dest,
+      ops: editor.operations,
+    })
+  }
+  finally {
+    saving.value = false
+  }
 }
 </script>
 
 <template>
   <div class="flex flex-col h-screen overflow-hidden">
     <EditorToolbar
+      :saving="saving"
       @back="handleBack"
       @save="handleSave"
       @save-as="handleSaveAs"
@@ -72,9 +110,12 @@ async function handleSaveAs() {
         :file-path="editor.filePath"
         :operations="editor.operations"
         :pending-op="pendingOp"
+        @image-size-change="(w, h) => { imageWidth = w; imageHeight = h }"
       />
 
       <EditorRightPanel />
     </div>
+
+    <EditorStatusBar :image-width="imageWidth" :image-height="imageHeight" />
   </div>
 </template>

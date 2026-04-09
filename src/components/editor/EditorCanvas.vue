@@ -9,7 +9,16 @@ const props = defineProps<{
   pendingOp: Operation | null
 }>()
 
+const emit = defineEmits<{
+  imageSizeChange: [width: number, height: number]
+}>()
+
 const { t } = useI18n()
+
+function onImageLoad(e: Event) {
+  const img = e.target as HTMLImageElement
+  emit('imageSizeChange', img.naturalWidth, img.naturalHeight)
+}
 
 // Tauri'de dosya yolunu webview URL'ye çevir
 const imageUrl = ref<string | null>(null)
@@ -101,6 +110,7 @@ const cssTransform = computed(() => {
       :style="{ filter: cssFilter, transform: cssTransform }"
       class="max-w-full max-h-full object-contain select-none transition-[filter,transform] duration-150"
       draggable="false"
+      @load="onImageLoad"
     >
   </div>
 </template>
