@@ -64,27 +64,18 @@ Kullanıcının tek tek fotoğraf düzenleyebildiği, kaydedebildiği, şablon i
 
 ### Ekranlar / Görünümler
 
-#### 1. Ana Ekran (`/`)
-- Sol kenar çubuğu: son projeler / klasörler listesi
-- Merkez: fotoğraf sürükle-bırak veya "Aç" alanı
-- Üst araç çubuğu: `UDashboardToolbar` (mevcut)
+#### 1. Başlangıç Ekranı (`/`)
+Editörde açık dosya yokken gösterilir. Kenar çubuğu yoktur.
+- Üst: minimal başlık + renk modu butonu
+- Orta: üç eylem kartı — *Yeni Oluştur*, *Resmi Aç*, *Şablon Kullan*
+- Alt: *Taslak Projeler* listesi (son açılan/kaydedilmemiş dosyalar)
 
 #### 2. Editör Görünümü (`/editor`)
+Tam ekran, kenar çubuğu yoktur. Şablon ve toplu işlem bu ekrana entegre edilir (araç paneli veya üst menü aracılığıyla).
 - Sol panel: araç seçenekleri (kırpma, döndürme, filtreler, ayarlar)
 - Merkez: Canvas — düzenlenen görüntü önizlemesi
 - Sağ panel: şablon kaydeder / yükler; geçmiş (history) listesi
 - Alt çubuk: Kaydet, Farklı Kaydet, Geri Al
-
-#### 3. Şablon Yöneticisi (`/presets`)
-- Kaydedilmiş şablonların listesi
-- Her şablonun içerdiği işlem adımları
-- Düzenle / Sil / Dışa Aktar
-
-#### 4. Toplu İşlem (`/batch`)
-- Kaynak klasör seçimi
-- Hedef klasör seçimi
-- Hangi şablonun uygulanacağı seçimi
-- İlerleme çubuğu ve log
 
 ---
 
@@ -235,6 +226,29 @@ pinia
   - [ ] Şablon seçimi
   - [ ] İlerleme göstergesi
   - [ ] Hata log'u
+
+---
+
+## Tasarım İlkeleri
+
+Uygulamanın her ekranı **modern ve native** hissettirmelidir. Referans: macOS/Apple HIG standartları.
+
+### Genel kurallar
+- **Minimal chrome**: gereksiz border, shadow, dekorasyon yok. Boşluk ve tipografi ile hiyerarşi kurulur.
+- **Purposeful spacing**: elemanlar nefes alır; tight grid'den kaçınılır.
+- **Subtle motion**: geçişler `transition-all duration-200` gibi kısa ve yumuşak. Abartılı animasyon yok.
+- **Native renk**: sistem rengi (`neutral`) baz, vurgu için `primary` (blue) kısıtlı kullanılır.
+- **Tipografi**: boyut hiyerarşisi nettir; etiket/açıklama çiftleri tutarlıdır.
+- **Yoğunluk**: bir ekranda tek bir ana eylem öne çıkar, geri kalanlar ikincil kalır.
+- **Durum geri bildirimi**: her tıklanabilir eleman hover/active durumu gösterir; işlemler loading state içerir.
+
+### Navigasyon mimarisi
+Kenar çubuğu navigasyonu **yoktur**. Uygulama iki modda çalışır:
+
+1. **Başlangıç ekranı** (`/`): Editörde açık dosya yoksa gösterilir.
+   - Üç büyük eylem kartı: *Yeni Oluştur*, *Resmi Aç*, *Şablon Kullan*
+   - Altında: *Taslak Projeler* listesi (son açılan/kaydedilmemiş dosyalar)
+2. **Editör modu** (`/editor`): Dosya açıldığında tam ekran editör. Şablon yöneticisi ve toplu işlem araçlara veya menüye gömülüdür.
 
 ---
 
