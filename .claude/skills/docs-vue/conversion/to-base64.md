@@ -23,7 +23,7 @@ Convert CE.SDK exports to Base64-encoded strings for embedding in HTML, storing 
 Base64 encoding transforms binary image data into ASCII text, enabling you to embed images directly in HTML, store them in text-only databases, or transmit them through JSON APIs without binary handling.
 
 ```typescript file=@cesdk_web_examples/guides-conversion-to-base64-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,23 +38,24 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
-    if (!cesdk) throw new Error('CE.SDK instance is required');
+    if (!cesdk)
+      throw new Error('CE.SDK instance is required')
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -65,24 +66,24 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage()!;
+    )
+    const page = engine.scene.getCurrentPage()!
 
-    await engine.scene.zoomToBlock(page);
+    await engine.scene.zoomToBlock(page)
 
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
       id: 'ly.img.actions.navigationBar',
@@ -90,45 +91,45 @@ class Example implements EditorPlugin {
         {
           id: 'ly.img.action.navigationBar',
           onClick: async () => {
-            const currentPage = engine.scene.getCurrentPage()!;
+            const currentPage = engine.scene.getCurrentPage()!
             const blob = await engine.block.export(currentPage, {
               mimeType: 'image/png'
-            });
-            const base64 = await this.blobToBase64(blob);
-            await cesdk.utils.downloadFile(blob, 'image/png');
+            })
+            const base64 = await this.blobToBase64(blob)
+            await cesdk.utils.downloadFile(blob, 'image/png')
             cesdk.ui.showNotification({
               message: `Base64: ${(base64.length / 1024).toFixed(0)} KB`,
               type: 'success'
-            });
+            })
           },
           key: 'export-base64',
           label: 'To Base64',
           icon: '@imgly/Save'
         }
       ]
-    });
+    })
 
     cesdk.actions.register('exportDesign', async () => {
-      const currentPage = engine.scene.getCurrentPage()!;
+      const currentPage = engine.scene.getCurrentPage()!
       const blob = await engine.block.export(currentPage, {
         mimeType: 'image/png'
-      });
-      const base64 = await this.blobToBase64(blob);
-      await cesdk.utils.downloadFile(blob, 'image/png');
-    });
+      })
+      const base64 = await this.blobToBase64(blob)
+      await cesdk.utils.downloadFile(blob, 'image/png')
+    })
   }
 
   private blobToBase64(blob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(blob);
-    });
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = () => reject(reader.error)
+      reader.readAsDataURL(blob)
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Export a Block to Base64
@@ -136,11 +137,11 @@ export default Example;
 Use `engine.block.export()` to export a design block as a Blob, then convert it to a Base64 data URI.
 
 ```typescript
-const currentPage = engine.scene.getCurrentPage()!;
+const currentPage = engine.scene.getCurrentPage()!
 const blob = await engine.block.export(currentPage, {
   mimeType: 'image/png'
-});
-const base64 = await blobToBase64(blob);
+})
+const base64 = await blobToBase64(blob)
 ```
 
 The export returns a Blob containing the rendered image. You then convert this Blob to a Base64 data URI using the browser's `FileReader` API. The resulting string includes the MIME type prefix (`data:image/png;base64,...`), making it ready for immediate use as an image source.
@@ -168,13 +169,13 @@ Override the default `exportDesign` action to integrate Base64 conversion into C
 
 ```typescript highlight=highlight-custom-action
 cesdk.actions.register('exportDesign', async () => {
-  const currentPage = engine.scene.getCurrentPage()!;
+  const currentPage = engine.scene.getCurrentPage()!
   const blob = await engine.block.export(currentPage, {
     mimeType: 'image/png'
-  });
-  const base64 = await this.blobToBase64(blob);
-  await cesdk.utils.downloadFile(blob, 'image/png');
-});
+  })
+  const base64 = await this.blobToBase64(blob)
+  await cesdk.utils.downloadFile(blob, 'image/png')
+})
 ```
 
 When registered, this action replaces the default export behavior. Any UI component or keyboard shortcut that triggers `exportDesign` will use your custom handler instead.

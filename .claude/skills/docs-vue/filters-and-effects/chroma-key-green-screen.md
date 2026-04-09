@@ -24,7 +24,7 @@ for video compositing and virtual background applications.
 The green screen effect (chroma key) replaces a specified color with transparency, enabling compositing workflows where foreground subjects appear over different backgrounds. While green is the most common key color due to its contrast with skin tones, the effect works with any solid color—blue screens, white backgrounds, or custom colors. CE.SDK processes chroma keying in real-time using GPU-accelerated shaders.
 
 ```typescript file=@cesdk_web_examples/guides-filters-and-effects-chroma-key-green-screen-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Chroma Key (Green Screen) Guide
@@ -55,22 +55,22 @@ import packageJson from './package.json';
  * - Managing and toggling effects
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -81,22 +81,22 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create an image block to apply the green screen effect
     const imageBlock = await engine.block.addImage(
@@ -104,16 +104,16 @@ class Example implements EditorPlugin {
       {
         size: { width: 600, height: 450 }
       }
-    );
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 100);
-    engine.block.setPositionY(imageBlock, 75);
+    )
+    engine.block.appendChild(page, imageBlock)
+    engine.block.setPositionX(imageBlock, 100)
+    engine.block.setPositionY(imageBlock, 75)
 
     // Create the green screen effect
-    const greenScreenEffect = engine.block.createEffect('green_screen');
+    const greenScreenEffect = engine.block.createEffect('green_screen')
 
     // Apply the effect to the image block
-    engine.block.appendEffect(imageBlock, greenScreenEffect);
+    engine.block.appendEffect(imageBlock, greenScreenEffect)
 
     // Set the target color to key out
     // Use off-white to remove the bright sky background
@@ -123,7 +123,7 @@ class Example implements EditorPlugin {
       g: 0.98,
       b: 0.98,
       a: 1.0
-    });
+    })
 
     // Adjust color matching tolerance
     // Higher values (closer to 1.0) key out more color variations
@@ -132,7 +132,7 @@ class Example implements EditorPlugin {
       greenScreenEffect,
       'effect/green_screen/colorMatch',
       0.26
-    );
+    )
 
     // Control edge smoothness for natural transitions
     // Higher values create softer edges that blend with backgrounds
@@ -140,93 +140,93 @@ class Example implements EditorPlugin {
       greenScreenEffect,
       'effect/green_screen/smoothness',
       1.0
-    );
+    )
 
     // Remove color spill from reflective surfaces
     // Reduces color tint on edges near the keyed background
-    engine.block.setFloat(greenScreenEffect, 'effect/green_screen/spill', 1.0);
+    engine.block.setFloat(greenScreenEffect, 'effect/green_screen/spill', 1.0)
 
     // Create a background layer for compositing
-    const backgroundBlock = engine.block.create('graphic');
-    const backgroundShape = engine.block.createShape('rect');
-    engine.block.setShape(backgroundBlock, backgroundShape);
+    const backgroundBlock = engine.block.create('graphic')
+    const backgroundShape = engine.block.createShape('rect')
+    engine.block.setShape(backgroundBlock, backgroundShape)
 
     // Create a solid color fill for the background
-    const backgroundFill = engine.block.createFill('color');
+    const backgroundFill = engine.block.createFill('color')
     engine.block.setColor(backgroundFill, 'fill/color/value', {
       r: 0.2,
       g: 0.4,
       b: 0.8,
       a: 1.0
-    });
-    engine.block.setFill(backgroundBlock, backgroundFill);
+    })
+    engine.block.setFill(backgroundBlock, backgroundFill)
 
     // Size and position the background to cover the page
-    engine.block.setWidth(backgroundBlock, 800);
-    engine.block.setHeight(backgroundBlock, 600);
-    engine.block.setPositionX(backgroundBlock, 0);
-    engine.block.setPositionY(backgroundBlock, 0);
+    engine.block.setWidth(backgroundBlock, 800)
+    engine.block.setHeight(backgroundBlock, 600)
+    engine.block.setPositionX(backgroundBlock, 0)
+    engine.block.setPositionY(backgroundBlock, 0)
 
     // Add to page and send to back
-    engine.block.appendChild(page, backgroundBlock);
-    engine.block.sendToBack(backgroundBlock);
+    engine.block.appendChild(page, backgroundBlock)
+    engine.block.sendToBack(backgroundBlock)
 
     // Bring the keyed image to front
-    engine.block.bringToFront(imageBlock);
+    engine.block.bringToFront(imageBlock)
 
     // Check if the effect is currently enabled
-    const isEnabled = engine.block.isEffectEnabled(greenScreenEffect);
-    console.log('Green screen effect enabled:', isEnabled);
+    const isEnabled = engine.block.isEffectEnabled(greenScreenEffect)
+    console.log('Green screen effect enabled:', isEnabled)
 
     // Toggle the effect on or off
-    engine.block.setEffectEnabled(greenScreenEffect, !isEnabled);
+    engine.block.setEffectEnabled(greenScreenEffect, !isEnabled)
     console.log(
       'Effect toggled:',
       engine.block.isEffectEnabled(greenScreenEffect)
-    );
+    )
 
     // Re-enable for demonstration
-    engine.block.setEffectEnabled(greenScreenEffect, true);
+    engine.block.setEffectEnabled(greenScreenEffect, true)
 
     // Check if the block supports effects
-    const supportsEffects = engine.block.supportsEffects(imageBlock);
-    console.log('Block supports effects:', supportsEffects);
+    const supportsEffects = engine.block.supportsEffects(imageBlock)
+    console.log('Block supports effects:', supportsEffects)
 
     // Get all effects applied to the block
-    const effects = engine.block.getEffects(imageBlock);
-    console.log('Number of effects:', effects.length);
+    const effects = engine.block.getEffects(imageBlock)
+    console.log('Number of effects:', effects.length)
 
     // Remove the effect from the block (by index)
-    engine.block.removeEffect(imageBlock, 0);
-    console.log('Effect removed from block');
+    engine.block.removeEffect(imageBlock, 0)
+    console.log('Effect removed from block')
 
     // Destroy the effect instance to free resources
-    engine.block.destroy(greenScreenEffect);
-    console.log('Effect destroyed');
+    engine.block.destroy(greenScreenEffect)
+    console.log('Effect destroyed')
 
     // Re-apply the effect for final display
-    const finalEffect = engine.block.createEffect('green_screen');
-    engine.block.appendEffect(imageBlock, finalEffect);
+    const finalEffect = engine.block.createEffect('green_screen')
+    engine.block.appendEffect(imageBlock, finalEffect)
     engine.block.setColor(finalEffect, 'effect/green_screen/fromColor', {
       r: 0.98,
       g: 0.98,
       b: 0.98,
       a: 1.0
-    });
-    engine.block.setFloat(finalEffect, 'effect/green_screen/colorMatch', 0.26);
-    engine.block.setFloat(finalEffect, 'effect/green_screen/smoothness', 1.0);
-    engine.block.setFloat(finalEffect, 'effect/green_screen/spill', 1.0);
+    })
+    engine.block.setFloat(finalEffect, 'effect/green_screen/colorMatch', 0.26)
+    engine.block.setFloat(finalEffect, 'effect/green_screen/smoothness', 1.0)
+    engine.block.setFloat(finalEffect, 'effect/green_screen/spill', 1.0)
 
     // Select the image block so the inspector panel shows it
-    engine.block.setSelected(imageBlock, true);
+    engine.block.setSelected(imageBlock, true)
 
     console.log(
       'Chroma key guide initialized. Select the image to see effect parameters.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to apply the green screen effect programmatically, configure color selection and keying parameters, composite with background layers, and manage effects on blocks.
@@ -236,22 +236,22 @@ This guide covers how to apply the green screen effect programmatically, configu
 We start by creating an image block and applying the green screen effect to it. The effect immediately processes the target color, making matching pixels transparent.
 
 ```typescript highlight-create-effect
-    // Create an image block to apply the green screen effect
-    const imageBlock = await engine.block.addImage(
-      'https://img.ly/static/ubq_samples/sample_4.jpg',
-      {
-        size: { width: 600, height: 450 }
-      }
-    );
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 100);
-    engine.block.setPositionY(imageBlock, 75);
+// Create an image block to apply the green screen effect
+const imageBlock = await engine.block.addImage(
+  'https://img.ly/static/ubq_samples/sample_4.jpg',
+  {
+    size: { width: 600, height: 450 }
+  }
+)
+engine.block.appendChild(page, imageBlock)
+engine.block.setPositionX(imageBlock, 100)
+engine.block.setPositionY(imageBlock, 75)
 
-    // Create the green screen effect
-    const greenScreenEffect = engine.block.createEffect('green_screen');
+// Create the green screen effect
+const greenScreenEffect = engine.block.createEffect('green_screen')
 
-    // Apply the effect to the image block
-    engine.block.appendEffect(imageBlock, greenScreenEffect);
+// Apply the effect to the image block
+engine.block.appendEffect(imageBlock, greenScreenEffect)
 ```
 
 The `createEffect('green_screen')` method creates a new green screen effect instance. We then attach it to the image block using `appendEffect()`, which adds the effect to the block's effect stack.
@@ -269,7 +269,7 @@ engine.block.setColor(greenScreenEffect, 'effect/green_screen/fromColor', {
   g: 0.98,
   b: 0.98,
   a: 1.0
-});
+})
 ```
 
 The example uses off-white (`r: 0.98, g: 0.98, b: 0.98`) to key out a bright sky background. For traditional green screen footage, use pure green (`r: 0.0, g: 1.0, b: 0.0`). For blue screen footage, set the color to pure blue. Match the exact color you want to remove for best results.
@@ -286,7 +286,7 @@ engine.block.setFloat(
   greenScreenEffect,
   'effect/green_screen/colorMatch',
   0.26
-);
+)
 ```
 
 Higher values (closer to 1.0) key out a wider range of similar colors, which is useful for footage with uneven lighting or color variations in the background. Lower values create more precise keying for well-lit footage with uniform backgrounds.
@@ -302,7 +302,7 @@ engine.block.setFloat(
   greenScreenEffect,
   'effect/green_screen/smoothness',
   1.0
-);
+)
 ```
 
 Higher smoothness values create softer edges that blend naturally with new backgrounds, reducing harsh outlines. Lower values produce sharper edges, which may be preferable for high-contrast composites or when preserving fine detail.
@@ -314,7 +314,7 @@ Color spill occurs when the key color reflects onto the foreground subject, crea
 ```typescript highlight-adjust-spill
 // Remove color spill from reflective surfaces
 // Reduces color tint on edges near the keyed background
-engine.block.setFloat(greenScreenEffect, 'effect/green_screen/spill', 1.0);
+engine.block.setFloat(greenScreenEffect, 'effect/green_screen/spill', 1.0)
 ```
 
 Increase the spill value when you notice the key color appearing on subject edges or reflective surfaces. This is common with shiny hair, glasses, or metallic objects near the screen.
@@ -324,33 +324,33 @@ Increase the spill value when you notice the key color appearing on subject edge
 After keying, we can layer the transparent content over backgrounds using block ordering. We create a background block and use `sendToBack()` to place it behind the keyed image.
 
 ```typescript highlight-composite-background
-    // Create a background layer for compositing
-    const backgroundBlock = engine.block.create('graphic');
-    const backgroundShape = engine.block.createShape('rect');
-    engine.block.setShape(backgroundBlock, backgroundShape);
+// Create a background layer for compositing
+const backgroundBlock = engine.block.create('graphic')
+const backgroundShape = engine.block.createShape('rect')
+engine.block.setShape(backgroundBlock, backgroundShape)
 
-    // Create a solid color fill for the background
-    const backgroundFill = engine.block.createFill('color');
-    engine.block.setColor(backgroundFill, 'fill/color/value', {
-      r: 0.2,
-      g: 0.4,
-      b: 0.8,
-      a: 1.0
-    });
-    engine.block.setFill(backgroundBlock, backgroundFill);
+// Create a solid color fill for the background
+const backgroundFill = engine.block.createFill('color')
+engine.block.setColor(backgroundFill, 'fill/color/value', {
+  r: 0.2,
+  g: 0.4,
+  b: 0.8,
+  a: 1.0
+})
+engine.block.setFill(backgroundBlock, backgroundFill)
 
-    // Size and position the background to cover the page
-    engine.block.setWidth(backgroundBlock, 800);
-    engine.block.setHeight(backgroundBlock, 600);
-    engine.block.setPositionX(backgroundBlock, 0);
-    engine.block.setPositionY(backgroundBlock, 0);
+// Size and position the background to cover the page
+engine.block.setWidth(backgroundBlock, 800)
+engine.block.setHeight(backgroundBlock, 600)
+engine.block.setPositionX(backgroundBlock, 0)
+engine.block.setPositionY(backgroundBlock, 0)
 
-    // Add to page and send to back
-    engine.block.appendChild(page, backgroundBlock);
-    engine.block.sendToBack(backgroundBlock);
+// Add to page and send to back
+engine.block.appendChild(page, backgroundBlock)
+engine.block.sendToBack(backgroundBlock)
 
-    // Bring the keyed image to front
-    engine.block.bringToFront(imageBlock);
+// Bring the keyed image to front
+engine.block.bringToFront(imageBlock)
 ```
 
 The background appears through the transparent areas where the key color was removed. You can use image or video fills instead of solid colors for more dynamic backgrounds.
@@ -361,14 +361,14 @@ We can check whether an effect is enabled using `isEffectEnabled()`.
 
 ```typescript highlight-check-enabled
 // Check if the effect is currently enabled
-const isEnabled = engine.block.isEffectEnabled(greenScreenEffect);
+const isEnabled = engine.block.isEffectEnabled(greenScreenEffect)
 ```
 
 To toggle the effect on or off, use `setEffectEnabled()`. This preserves the effect configuration while temporarily removing its visual impact.
 
 ```typescript highlight-set-enabled
 // Toggle the effect on or off
-engine.block.setEffectEnabled(greenScreenEffect, !isEnabled);
+engine.block.setEffectEnabled(greenScreenEffect, !isEnabled)
 ```
 
 Toggling effects is useful for before/after comparisons or conditional processing without removing and recreating the effect.
@@ -378,21 +378,21 @@ Toggling effects is useful for before/after comparisons or conditional processin
 Beyond toggling, you can query, remove, and clean up effects. Use `supportsEffects()` to check if a block can have effects, `getEffects()` to list all applied effects, `removeEffect()` to detach an effect from a block, and `destroy()` to free the effect's resources.
 
 ```typescript highlight-manage-effects
-    // Check if the block supports effects
-    const supportsEffects = engine.block.supportsEffects(imageBlock);
-    console.log('Block supports effects:', supportsEffects);
+// Check if the block supports effects
+const supportsEffects = engine.block.supportsEffects(imageBlock)
+console.log('Block supports effects:', supportsEffects)
 
-    // Get all effects applied to the block
-    const effects = engine.block.getEffects(imageBlock);
-    console.log('Number of effects:', effects.length);
+// Get all effects applied to the block
+const effects = engine.block.getEffects(imageBlock)
+console.log('Number of effects:', effects.length)
 
-    // Remove the effect from the block (by index)
-    engine.block.removeEffect(imageBlock, 0);
-    console.log('Effect removed from block');
+// Remove the effect from the block (by index)
+engine.block.removeEffect(imageBlock, 0)
+console.log('Effect removed from block')
 
-    // Destroy the effect instance to free resources
-    engine.block.destroy(greenScreenEffect);
-    console.log('Effect destroyed');
+// Destroy the effect instance to free resources
+engine.block.destroy(greenScreenEffect)
+console.log('Effect destroyed')
 ```
 
 When removing effects, use the index from `getEffects()` to specify which effect to remove. After removing an effect from a block, call `destroy()` on the effect instance to release its resources. This is important for memory management in long-running applications.

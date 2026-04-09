@@ -25,15 +25,15 @@ Note: short types are also accepted, e.g. 'color' instead of '//ly.img.ubq/fill/
 Not all types of design blocks support fills, so you should always first call the `supportsFill(id: number): boolean` API before accessing any of the following APIs.
 
 ```javascript
-engine.block.supportsFill(scene); // Returns false
-engine.block.supportsFill(block); // Returns true
+engine.block.supportsFill(scene) // Returns false
+engine.block.supportsFill(block) // Returns true
 ```
 
 In order to receive the fill id of a design block, call the `getFill(id: number): number` API. You can now pass this id into other APIs in order to query more information about the fill, e.g. its type via the `getType(id: number): ObjectType` API.
 
 ```javascript
-const colorFill = engine.block.getFill(block);
-const defaultRectFillType = engine.block.getType(colorFill);
+const colorFill = engine.block.getFill(block)
+const defaultRectFillType = engine.block.getType(colorFill)
 ```
 
 ## Fill Properties
@@ -45,7 +45,7 @@ For the solid color fill in this example, the call would return `["fill/color/va
 Please refer to the [design blocks](./concepts/blocks.md) for a complete list of all available properties for each type of fill.
 
 ```javascript
-const allFillProperties = engine.block.findAllProperties(colorFill);
+const allFillProperties = engine.block.findAllProperties(colorFill)
 ```
 
 Once we know the property keys of a fill, we can use the same APIs as for design blocks in order to modify those properties. For example, we can use `setColor(id: number, property: string, value: Color): void` in order to change the color of the fill to red.
@@ -58,7 +58,7 @@ engine.block.setColor(colorFill, 'fill/color/value', {
   g: 0.0,
   b: 0.0,
   a: 1.0
-});
+})
 ```
 
 ## Disabling Fills
@@ -66,8 +66,8 @@ engine.block.setColor(colorFill, 'fill/color/value', {
 You can disable and enable a fill using the `setFillEnabled(id: number, enabled: boolean): void` API, for example in cases where the design block should only have a stroke but no fill. Notice that you have to pass the id of the design block and not of the fill to the API.
 
 ```javascript
-engine.block.setFillEnabled(block, false);
-engine.block.setFillEnabled(block, !engine.block.isFillEnabled(block));
+engine.block.setFillEnabled(block, false)
+engine.block.setFillEnabled(block, !engine.block.isFillEnabled(block))
 ```
 
 ## Changing Fill Types
@@ -75,12 +75,12 @@ engine.block.setFillEnabled(block, !engine.block.isFillEnabled(block));
 All design blocks that support fills allow you to also exchange their current fill for any other type of fill. In order to do this, you need to first create a new fill object using `createFill(type: FillType): number`.
 
 ```javascript
-const imageFill = engine.block.createFill('image');
+const imageFill = engine.block.createFill('image')
 engine.block.setString(
   imageFill,
   'fill/image/imageFileURI',
   'https://img.ly/static/ubq_samples/sample_1.jpg'
-);
+)
 ```
 
 In order to assign a fill to a design block, simply call `setFill(id: number, fill: number): void`. Make sure to delete the previous fill of the design block first if you don't need it any more, otherwise we will have leaked it into the scene and won't be able to access it any more, because we don't know its id.
@@ -90,8 +90,8 @@ Notice that we don't use the `appendChild` API here, which only works with desig
 When a fill is attached to one design block, it will be automatically destroyed when the block itself gets destroyed.
 
 ```javascript
-engine.block.destroy(engine.block.getFill(block));
-engine.block.setFill(block, imageFill);
+engine.block.destroy(engine.block.getFill(block))
+engine.block.setFill(block, imageFill)
 
 /* The following line would also destroy imageFill */
 // engine.block.destroy(circle);
@@ -102,14 +102,14 @@ engine.block.setFill(block, imageFill);
 If we duplicate a design block with a fill that is only attached to this block, the fill will automatically be duplicated as well. In order to modify the properties of the duplicate fill, we have to query its id from the duplicate block.
 
 ```javascript
-const duplicateBlock = engine.block.duplicate(block);
-engine.block.setPositionX(duplicateBlock, 450);
-const autoDuplicateFill = engine.block.getFill(duplicateBlock);
+const duplicateBlock = engine.block.duplicate(block)
+engine.block.setPositionX(duplicateBlock, 450)
+const autoDuplicateFill = engine.block.getFill(duplicateBlock)
 engine.block.setString(
   autoDuplicateFill,
   'fill/image/imageFileURI',
   'https://img.ly/static/ubq_samples/sample_2.jpg'
-);
+)
 
 // const manualDuplicateFill = engine.block.duplicate(autoDuplicateFill);
 // /* We could now assign this fill to another block. */
@@ -123,15 +123,15 @@ It is also possible to share a single fill instance between multiple design bloc
 Destroying a block with a shared fill will not destroy the fill until there are no other design blocks left that still use that fill.
 
 ```javascript
-const sharedFillBlock = engine.block.create('graphic');
-engine.block.setShape(sharedFillBlock, engine.block.createShape('rect'));
-engine.block.setPositionX(sharedFillBlock, 350);
-engine.block.setPositionY(sharedFillBlock, 400);
-engine.block.setWidth(sharedFillBlock, 100);
-engine.block.setHeight(sharedFillBlock, 100);
-engine.block.appendChild(page, sharedFillBlock);
+const sharedFillBlock = engine.block.create('graphic')
+engine.block.setShape(sharedFillBlock, engine.block.createShape('rect'))
+engine.block.setPositionX(sharedFillBlock, 350)
+engine.block.setPositionY(sharedFillBlock, 400)
+engine.block.setWidth(sharedFillBlock, 100)
+engine.block.setHeight(sharedFillBlock, 100)
+engine.block.appendChild(page, sharedFillBlock)
 
-engine.block.setFill(sharedFillBlock, engine.block.getFill(block));
+engine.block.setFill(sharedFillBlock, engine.block.getFill(block))
 ```
 
 

@@ -19,7 +19,7 @@ This guide shows how to use the vector edit APIs to enter path editing mode, swi
 Vector edit mode lets you modify any shape at the path level. When you enter vector edit mode on a shape, CE.SDK converts it to a vector path and exposes its anchor points and bezier handles for direct manipulation.
 
 ```typescript file=@cesdk_web_examples/guides-stickers-and-shapes-vector-edit-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -35,26 +35,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({ include: ['ly.img.image.upload'] })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -65,67 +65,67 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Enable vector path editing feature
-    cesdk.feature.enable('ly.img.shape.edit');
+    cesdk.feature.enable('ly.img.shape.edit')
 
     await cesdk.actions.run('scene.create', {
       page: { width: 100, height: 100, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create a graphic block with a star shape
-    const graphic = engine.block.create('graphic');
-    const starShape = engine.block.createShape('star');
-    engine.block.setShape(graphic, starShape);
+    const graphic = engine.block.create('graphic')
+    const starShape = engine.block.createShape('star')
+    engine.block.setShape(graphic, starShape)
 
-    const solidFill = engine.block.createFill('color');
-    engine.block.setFill(graphic, solidFill);
-    engine.block.setWidth(graphic, 60);
-    engine.block.setHeight(graphic, 60);
-    engine.block.appendChild(page, graphic);
-    engine.block.setPositionX(graphic, 20);
-    engine.block.setPositionY(graphic, 20);
+    const solidFill = engine.block.createFill('color')
+    engine.block.setFill(graphic, solidFill)
+    engine.block.setWidth(graphic, 60)
+    engine.block.setHeight(graphic, 60)
+    engine.block.appendChild(page, graphic)
+    engine.block.setPositionX(graphic, 20)
+    engine.block.setPositionY(graphic, 20)
 
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Select the graphic block and enter vector edit mode.
     // This converts the shape to a vector path so you can
     // manipulate individual anchor points and curves.
-    engine.block.select(graphic);
-    engine.editor.setEditMode('Vector');
+    engine.block.select(graphic)
+    engine.editor.setEditMode('Vector')
 
     // Move mode (default): select and drag anchor points.
     // All mode flags start as false — move mode is active
     // when none of the other modes are set.
 
     // Bend mode: drag path segments to pull out bezier handles.
-    engine.editor.setVectorEditBendMode(true);
-    engine.editor.getVectorEditBendMode(); // true
+    engine.editor.setVectorEditBendMode(true)
+    engine.editor.getVectorEditBendMode() // true
 
     // Add mode: click on a path segment to insert a new anchor point.
-    engine.editor.setVectorEditBendMode(false);
-    engine.editor.setVectorEditAddMode(true);
-    engine.editor.getVectorEditAddMode(); // true
+    engine.editor.setVectorEditBendMode(false)
+    engine.editor.setVectorEditAddMode(true)
+    engine.editor.getVectorEditAddMode() // true
 
     // Delete mode: click an anchor point to remove it from the path.
-    engine.editor.setVectorEditAddMode(false);
-    engine.editor.setVectorEditDeleteMode(true);
-    engine.editor.getVectorEditDeleteMode(); // true
+    engine.editor.setVectorEditAddMode(false)
+    engine.editor.setVectorEditDeleteMode(true)
+    engine.editor.getVectorEditDeleteMode() // true
 
     // Return to move mode by clearing all flags.
-    engine.editor.setVectorEditDeleteMode(false);
+    engine.editor.setVectorEditDeleteMode(false)
 
     // Mirror mode controls how bezier handles behave when you
     // adjust one side of an anchor point.
@@ -133,31 +133,31 @@ class Example implements EditorPlugin {
     // 1 = Angle & Length: handles mirror both angle and length.
     // 2 = Angle Only: handles mirror angle but keep their own length.
     if (engine.editor.hasSelectedVectorNode()) {
-      engine.editor.setSelectedVectorNodeMirrorMode(1);
-      engine.editor.getSelectedVectorNodeMirrorMode(); // 1
+      engine.editor.setSelectedVectorNodeMirrorMode(1)
+      engine.editor.getSelectedVectorNodeMirrorMode() // 1
 
       // Toggle smooth/sharp for the selected node.
-      engine.editor.toggleSelectedVectorNodeSmooth();
+      engine.editor.toggleSelectedVectorNodeSmooth()
     }
 
     // Query whether any vector anchor node is currently selected.
-    engine.editor.hasSelectedVectorNode();
+    engine.editor.hasSelectedVectorNode()
 
     // Insert a new anchor point at the midpoint of the
     // selected segment (only works in add mode).
-    engine.editor.setVectorEditAddMode(true);
+    engine.editor.setVectorEditAddMode(true)
     // engine.editor.addVectorNode();
 
     // Remove the currently selected anchor point from the path.
     // engine.editor.deleteVectorNode();
-    engine.editor.setVectorEditAddMode(false);
+    engine.editor.setVectorEditAddMode(false)
 
     // Exit vector edit mode and return to the normal transform mode.
-    engine.editor.setEditMode('Transform');
+    engine.editor.setEditMode('Transform')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Setup
@@ -165,58 +165,58 @@ export default Example;
 Before using vector edit, enable the `ly.img.shape.edit` feature flag. This flag is disabled by default and must be explicitly enabled. The design editor and video editor starter kits enable it automatically.
 
 ```typescript highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(
-      new UploadAssetSources({ include: ['ly.img.image.upload'] })
-    );
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(
+  new UploadAssetSources({ include: ['ly.img.image.upload'] })
+)
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    // Enable vector path editing feature
-    cesdk.feature.enable('ly.img.shape.edit');
+// Enable vector path editing feature
+cesdk.feature.enable('ly.img.shape.edit')
 
-    await cesdk.actions.run('scene.create', {
-      page: { width: 100, height: 100, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  page: { width: 100, height: 100, unit: 'Pixel' }
+})
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
 
-    // Create a graphic block with a star shape
-    const graphic = engine.block.create('graphic');
-    const starShape = engine.block.createShape('star');
-    engine.block.setShape(graphic, starShape);
+// Create a graphic block with a star shape
+const graphic = engine.block.create('graphic')
+const starShape = engine.block.createShape('star')
+engine.block.setShape(graphic, starShape)
 
-    const solidFill = engine.block.createFill('color');
-    engine.block.setFill(graphic, solidFill);
-    engine.block.setWidth(graphic, 60);
-    engine.block.setHeight(graphic, 60);
-    engine.block.appendChild(page, graphic);
-    engine.block.setPositionX(graphic, 20);
-    engine.block.setPositionY(graphic, 20);
+const solidFill = engine.block.createFill('color')
+engine.block.setFill(graphic, solidFill)
+engine.block.setWidth(graphic, 60)
+engine.block.setHeight(graphic, 60)
+engine.block.appendChild(page, graphic)
+engine.block.setPositionX(graphic, 20)
+engine.block.setPositionY(graphic, 20)
 
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+await engine.scene.zoomToBlock(page, { padding: 40 })
 ```
 
 ## Entering Vector Edit Mode
@@ -227,8 +227,8 @@ Select a block that supports shapes and call `engine.editor.setEditMode('Vector'
 // Select the graphic block and enter vector edit mode.
 // This converts the shape to a vector path so you can
 // manipulate individual anchor points and curves.
-engine.block.select(graphic);
-engine.editor.setEditMode('Vector');
+engine.block.select(graphic)
+engine.editor.setEditMode('Vector')
 ```
 
 ## Edit Modes
@@ -243,26 +243,26 @@ Vector edit provides four mutually exclusive modes. Only one can be active at a 
 | Delete | Click an anchor point to remove it from the path |
 
 ```typescript highlight-modes
-    // Move mode (default): select and drag anchor points.
-    // All mode flags start as false — move mode is active
-    // when none of the other modes are set.
+// Move mode (default): select and drag anchor points.
+// All mode flags start as false — move mode is active
+// when none of the other modes are set.
 
-    // Bend mode: drag path segments to pull out bezier handles.
-    engine.editor.setVectorEditBendMode(true);
-    engine.editor.getVectorEditBendMode(); // true
+// Bend mode: drag path segments to pull out bezier handles.
+engine.editor.setVectorEditBendMode(true)
+engine.editor.getVectorEditBendMode() // true
 
-    // Add mode: click on a path segment to insert a new anchor point.
-    engine.editor.setVectorEditBendMode(false);
-    engine.editor.setVectorEditAddMode(true);
-    engine.editor.getVectorEditAddMode(); // true
+// Add mode: click on a path segment to insert a new anchor point.
+engine.editor.setVectorEditBendMode(false)
+engine.editor.setVectorEditAddMode(true)
+engine.editor.getVectorEditAddMode() // true
 
-    // Delete mode: click an anchor point to remove it from the path.
-    engine.editor.setVectorEditAddMode(false);
-    engine.editor.setVectorEditDeleteMode(true);
-    engine.editor.getVectorEditDeleteMode(); // true
+// Delete mode: click an anchor point to remove it from the path.
+engine.editor.setVectorEditAddMode(false)
+engine.editor.setVectorEditDeleteMode(true)
+engine.editor.getVectorEditDeleteMode() // true
 
-    // Return to move mode by clearing all flags.
-    engine.editor.setVectorEditDeleteMode(false);
+// Return to move mode by clearing all flags.
+engine.editor.setVectorEditDeleteMode(false)
 ```
 
 ## Mirror Mode
@@ -278,18 +278,18 @@ Mirror mode controls how the two bezier handles of an anchor point behave when y
 Use `toggleSelectedVectorNodeSmooth()` to quickly switch between a sharp corner (no handles) and a smooth curve.
 
 ```typescript highlight-mirrorMode
-    // Mirror mode controls how bezier handles behave when you
-    // adjust one side of an anchor point.
-    // 0 = None: handles move independently.
-    // 1 = Angle & Length: handles mirror both angle and length.
-    // 2 = Angle Only: handles mirror angle but keep their own length.
-    if (engine.editor.hasSelectedVectorNode()) {
-      engine.editor.setSelectedVectorNodeMirrorMode(1);
-      engine.editor.getSelectedVectorNodeMirrorMode(); // 1
+// Mirror mode controls how bezier handles behave when you
+// adjust one side of an anchor point.
+// 0 = None: handles move independently.
+// 1 = Angle & Length: handles mirror both angle and length.
+// 2 = Angle Only: handles mirror angle but keep their own length.
+if (engine.editor.hasSelectedVectorNode()) {
+  engine.editor.setSelectedVectorNodeMirrorMode(1)
+  engine.editor.getSelectedVectorNodeMirrorMode() // 1
 
-      // Toggle smooth/sharp for the selected node.
-      engine.editor.toggleSelectedVectorNodeSmooth();
-    }
+  // Toggle smooth/sharp for the selected node.
+  engine.editor.toggleSelectedVectorNodeSmooth()
+}
 ```
 
 ## Node Operations
@@ -297,17 +297,17 @@ Use `toggleSelectedVectorNodeSmooth()` to quickly switch between a sharp corner 
 Use these APIs to query selection state and add or remove anchor points programmatically.
 
 ```typescript highlight-nodeOperations
-    // Query whether any vector anchor node is currently selected.
-    engine.editor.hasSelectedVectorNode();
+// Query whether any vector anchor node is currently selected.
+engine.editor.hasSelectedVectorNode()
 
-    // Insert a new anchor point at the midpoint of the
-    // selected segment (only works in add mode).
-    engine.editor.setVectorEditAddMode(true);
-    // engine.editor.addVectorNode();
+// Insert a new anchor point at the midpoint of the
+// selected segment (only works in add mode).
+engine.editor.setVectorEditAddMode(true)
+// engine.editor.addVectorNode();
 
-    // Remove the currently selected anchor point from the path.
-    // engine.editor.deleteVectorNode();
-    engine.editor.setVectorEditAddMode(false);
+// Remove the currently selected anchor point from the path.
+// engine.editor.deleteVectorNode();
+engine.editor.setVectorEditAddMode(false)
 ```
 
 ## Exiting Vector Edit Mode
@@ -316,7 +316,7 @@ Call `engine.editor.setEditMode('Transform')` to leave vector edit mode and retu
 
 ```typescript highlight-exitVectorEdit
 // Exit vector edit mode and return to the normal transform mode.
-engine.editor.setEditMode('Transform');
+engine.editor.setEditMode('Transform')
 ```
 
 ## Keyboard Shortcuts

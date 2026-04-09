@@ -23,7 +23,7 @@ Adapt the asset library to match your application's structure and user needs.
 The asset library displays assets from registered asset sources. While sources define the data, asset library entries control how that data is presented in the UI. CE.SDK provides default entries for common asset types (images, videos, stickers, etc.), but you can create custom entries or modify existing ones to match your application's needs.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-asset-library-customize-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,17 +68,17 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Section 1: Localizing Entry Labels =====
     // Provide translations for custom entries before creating them
@@ -115,7 +115,7 @@ class Example implements EditorPlugin {
         'libraries.my-custom-assets.ly.img.sticker.//ly.img.cesdk.stickers.marker/category/marker.label':
           'Markers (Group Level)'
       }
-    });
+    })
 
     // ===== Section 2: Creating Custom Entries with Theme-Aware Icons =====
     // Create a custom asset library entry with theme-aware icons
@@ -136,13 +136,13 @@ class Example implements EditorPlugin {
         if (theme === 'dark') {
           return iconSize === 'large'
             ? 'https://img.ly/static/cesdk/guides/icon-large-dark.svg'
-            : 'https://img.ly/static/cesdk/guides/icon-normal-dark.svg';
+            : 'https://img.ly/static/cesdk/guides/icon-normal-dark.svg'
         }
         return iconSize === 'large'
           ? 'https://img.ly/static/cesdk/guides/icon-large-light.svg'
-          : 'https://img.ly/static/cesdk/guides/icon-normal-light.svg';
+          : 'https://img.ly/static/cesdk/guides/icon-normal-light.svg'
       }
-    });
+    })
 
     // ===== Section 3: Creating Entry for Replace Operations =====
     // Create a separate entry for replace operations
@@ -154,19 +154,19 @@ class Example implements EditorPlugin {
       gridItemHeight: 'square',
       previewBackgroundType: 'contain',
       gridBackgroundType: 'contain'
-    });
+    })
 
     // ===== Section 4: Modifying Default Entries =====
     // Update the default images entry with different grid columns
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       gridColumns: 4
-    });
+    })
 
     // ===== Section 5: Extending Source IDs =====
     // Use a callback pattern with currentIds to extend sourceIds
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       sourceIds: ({ currentIds }) => [...currentIds, 'ly.img.upload']
-    });
+    })
 
     // ===== Section 6: Configuring Replace Entries =====
     // Configure which entries appear for replace operations based on block type
@@ -174,20 +174,20 @@ class Example implements EditorPlugin {
       ({ selectedBlocks, defaultEntryIds }) => {
         // Only show replace options when exactly one block is selected
         if (selectedBlocks.length !== 1) {
-          return [];
+          return []
         }
 
-        const { fillType } = selectedBlocks[0];
+        const { fillType } = selectedBlocks[0]
 
         // Show custom replace entry for image fills
         if (fillType === '//ly.img.ubq/fill/image') {
-          return [...defaultEntryIds, 'my-replace-assets'];
+          return [...defaultEntryIds, 'my-replace-assets']
         }
 
         // Return empty array to hide replace button for other fill types
-        return [];
+        return []
       }
-    );
+    )
 
     // ===== Section 7: Adding Entries to the Dock =====
     // Add custom entry to the top of the dock with a separator
@@ -202,7 +202,7 @@ class Example implements EditorPlugin {
       },
       { id: 'ly.img.separator' },
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Create a design scene to display the editor
     await cesdk.actions.run('scene.create', {
@@ -210,50 +210,50 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Add explanatory text to the canvas
-    const page = engine.scene.getCurrentPage();
+    const page = engine.scene.getCurrentPage()
     if (page) {
       // Get page dimensions to constrain text within boundaries
-      const pageWidth = engine.block.getWidth(page);
-      const margin = 20;
-      const textWidth = pageWidth - margin * 2;
+      const pageWidth = engine.block.getWidth(page)
+      const margin = 20
+      const textWidth = pageWidth - margin * 2
 
       // Title text
-      const titleBlock = engine.block.create('text');
-      engine.block.replaceText(titleBlock, 'Customize Asset Library');
-      engine.block.setFloat(titleBlock, 'text/fontSize', 28);
-      engine.block.setWidth(titleBlock, textWidth);
-      engine.block.setHeightMode(titleBlock, 'Auto');
-      engine.block.setPositionX(titleBlock, margin);
-      engine.block.setPositionY(titleBlock, margin);
-      engine.block.appendChild(page, titleBlock);
+      const titleBlock = engine.block.create('text')
+      engine.block.replaceText(titleBlock, 'Customize Asset Library')
+      engine.block.setFloat(titleBlock, 'text/fontSize', 28)
+      engine.block.setWidth(titleBlock, textWidth)
+      engine.block.setHeightMode(titleBlock, 'Auto')
+      engine.block.setPositionX(titleBlock, margin)
+      engine.block.setPositionY(titleBlock, margin)
+      engine.block.appendChild(page, titleBlock)
 
       // Instructions text
-      const instructionsBlock = engine.block.create('text');
+      const instructionsBlock = engine.block.create('text')
       engine.block.replaceText(
         instructionsBlock,
-        '← Click "My Assets (Entry Level)" in the dock.\n\n' +
-          'Labels show navigation hierarchy:\n' +
-          'Entry → Source → Group Level'
-      );
-      engine.block.setFloat(instructionsBlock, 'text/fontSize', 13);
-      engine.block.setWidth(instructionsBlock, textWidth);
-      engine.block.setHeightMode(instructionsBlock, 'Auto');
-      engine.block.setPositionX(instructionsBlock, margin);
-      engine.block.setPositionY(instructionsBlock, 55);
-      engine.block.appendChild(page, instructionsBlock);
+        '← Click "My Assets (Entry Level)" in the dock.\n\n'
+        + 'Labels show navigation hierarchy:\n'
+        + 'Entry → Source → Group Level'
+      )
+      engine.block.setFloat(instructionsBlock, 'text/fontSize', 13)
+      engine.block.setWidth(instructionsBlock, textWidth)
+      engine.block.setHeightMode(instructionsBlock, 'Auto')
+      engine.block.setPositionX(instructionsBlock, margin)
+      engine.block.setPositionY(instructionsBlock, 55)
+      engine.block.appendChild(page, instructionsBlock)
     }
 
     // Open the asset library panel to show the custom entry
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: { entries: ['my-custom-assets'] }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating custom entries with themed icons, modifying default entries, configuring context-aware replacement behavior, and adding custom entries to the dock.
@@ -287,13 +287,13 @@ cesdk.ui.addAssetLibraryEntry({
     if (theme === 'dark') {
       return iconSize === 'large'
         ? 'https://img.ly/static/cesdk/guides/icon-large-dark.svg'
-        : 'https://img.ly/static/cesdk/guides/icon-normal-dark.svg';
+        : 'https://img.ly/static/cesdk/guides/icon-normal-dark.svg'
     }
     return iconSize === 'large'
       ? 'https://img.ly/static/cesdk/guides/icon-large-light.svg'
-      : 'https://img.ly/static/cesdk/guides/icon-normal-light.svg';
+      : 'https://img.ly/static/cesdk/guides/icon-normal-light.svg'
   }
-});
+})
 ```
 
 The icon function is called each time the theme changes, ensuring the correct icon is displayed automatically.
@@ -314,7 +314,7 @@ cesdk.ui.addAssetLibraryEntry({
   gridItemHeight: 'square',
   previewBackgroundType: 'contain',
   gridBackgroundType: 'contain'
-});
+})
 ```
 
 ## Modifying Default Entries
@@ -325,7 +325,7 @@ We update existing entries using `cesdk.ui.updateAssetLibraryEntry()`. The secon
 // Update the default images entry with different grid columns
 cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
   gridColumns: 4
-});
+})
 ```
 
 ### Extending Source IDs
@@ -336,7 +336,7 @@ To extend `sourceIds` while preserving existing sources, we use a callback patte
 // Use a callback pattern with currentIds to extend sourceIds
 cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
   sourceIds: ({ currentIds }) => [...currentIds, 'ly.img.upload']
-});
+})
 ```
 
 The callback receives `currentIds` containing the entry's existing source IDs, allowing us to append additional sources (like `ly.img.upload` for user uploads) without replacing the defaults.
@@ -346,25 +346,25 @@ The callback receives `currentIds` containing the entry's existing source IDs, a
 We control which asset library entries appear when users click "Replace" on a selected block using `cesdk.ui.setReplaceAssetLibraryEntries()`. The callback receives context with `selectedBlocks` (array of block info including `id`, `blockType`, and `fillType`) and `defaultEntryIds`.
 
 ```typescript highlight=highlight-configure-replace-entries
-    // Configure which entries appear for replace operations based on block type
-    cesdk.ui.setReplaceAssetLibraryEntries(
-      ({ selectedBlocks, defaultEntryIds }) => {
-        // Only show replace options when exactly one block is selected
-        if (selectedBlocks.length !== 1) {
-          return [];
-        }
+// Configure which entries appear for replace operations based on block type
+cesdk.ui.setReplaceAssetLibraryEntries(
+  ({ selectedBlocks, defaultEntryIds }) => {
+    // Only show replace options when exactly one block is selected
+    if (selectedBlocks.length !== 1) {
+      return []
+    }
 
-        const { fillType } = selectedBlocks[0];
+    const { fillType } = selectedBlocks[0]
 
-        // Show custom replace entry for image fills
-        if (fillType === '//ly.img.ubq/fill/image') {
-          return [...defaultEntryIds, 'my-replace-assets'];
-        }
+    // Show custom replace entry for image fills
+    if (fillType === '//ly.img.ubq/fill/image') {
+      return [...defaultEntryIds, 'my-replace-assets']
+    }
 
-        // Return empty array to hide replace button for other fill types
-        return [];
-      }
-    );
+    // Return empty array to hide replace button for other fill types
+    return []
+  }
+)
 ```
 
 Return an empty array to hide the replace button for specific block types. This gives you complete control over which assets can replace which blocks.
@@ -386,7 +386,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   },
   { id: 'ly.img.separator' },
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-]);
+])
 ```
 
 Each dock item uses `id: 'ly.img.assetLibrary.dock'` with a unique `key`, `entries` array, and optional `icon` and `label` properties. The `label` property references a translation key.
@@ -434,7 +434,7 @@ cesdk.i18n.setTranslations({
     'libraries.my-custom-assets.ly.img.sticker.//ly.img.cesdk.stickers.marker/category/marker.label':
       'Markers (Group Level)'
   }
-});
+})
 ```
 
 Set translations before adding entries to ensure labels are available when the UI renders. The entry label appears when viewing sources, source labels appear as section headers, and group labels appear when navigating into sources that contain grouped assets (like sticker categories).

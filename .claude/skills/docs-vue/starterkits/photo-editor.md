@@ -193,7 +193,7 @@ Before you begin, make sure you have the following:
     - `ly.img.crop.presets.fixed-ratio.4_5` – Portrait (4:5)
     - `ly.img.crop.presets.fixed-ratio.5_4` – Landscape (5:4)
 
-    
+
   </TabItem>
 
   <TabItem label="Existing Project">
@@ -374,7 +374,7 @@ Before you begin, make sure you have the following:
     - `ly.img.crop.presets.fixed-ratio.4_5` – Portrait (4:5)
     - `ly.img.crop.presets.fixed-ratio.5_4` – Landscape (5:4)
 
-    
+
   </TabItem>
 </Tabs>
 
@@ -384,16 +384,16 @@ CE.SDK offers multiple ways to load content into the editor. Choose the method t
 
 ```typescript title="src/imgly/index.ts"
 // Load from an image URL - creates a new scene with the image
-await cesdk.createFromImage('https://example.com/photo.jpg');
+await cesdk.createFromImage('https://example.com/photo.jpg')
 
 // Load from a template archive - restores a previously saved project
-await cesdk.loadFromArchiveURL('https://example.com/template.zip');
+await cesdk.loadFromArchiveURL('https://example.com/template.zip')
 
 // Create a blank canvas - starts with an empty design scene
-await cesdk.actions.run('scene.create');
+await cesdk.actions.run('scene.create')
 
 // Load from a scene file - restores a scene from JSON
-await cesdk.loadFromURL('https://example.com/scene.json');
+await cesdk.loadFromURL('https://example.com/scene.json')
 ```
 
 The `createFromImage()` method is ideal for photo editing workflows, as it automatically creates a scene sized to the image dimensions.
@@ -413,13 +413,13 @@ import {
   TextAssetSource,
   VectorShapeAssetSource,
   // ...
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
 
 // Add only the sources you need
-await cesdk.addPlugin(new FiltersAssetSource());
-await cesdk.addPlugin(new StickerAssetSource());
-await cesdk.addPlugin(new TextAssetSource());
-await cesdk.addPlugin(new VectorShapeAssetSource());
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 // ...
 ```
 
@@ -443,7 +443,7 @@ Use `cesdk.actions.run()` to execute any action:
 
 ```typescript
 // Run a built-in action
-await cesdk.actions.run('exportDesign', { mimeType: 'image/png' });
+await cesdk.actions.run('exportDesign', { mimeType: 'image/png' })
 ```
 
 #### Import from File Picker
@@ -454,9 +454,9 @@ cesdk.actions.register('importImage', async () => {
   const blobURL = await cesdk.utils.loadFile({
     accept: 'image/*',
     returnType: 'objectURL'
-  });
-  await cesdk.createFromImage(blobURL);
-});
+  })
+  await cesdk.createFromImage(blobURL)
+})
 ```
 
 #### Export and Save
@@ -464,9 +464,9 @@ cesdk.actions.register('importImage', async () => {
 ```typescript title="src/imgly/config/actions.ts"
 // Register export action that downloads the edited photo
 cesdk.actions.register('exportDesign', async (exportOptions) => {
-  const { blobs, options } = await cesdk.utils.export(exportOptions);
-  await cesdk.utils.downloadFile(blobs[0], options.mimeType);
-});
+  const { blobs, options } = await cesdk.utils.export(exportOptions)
+  await cesdk.utils.downloadFile(blobs[0], options.mimeType)
+})
 ```
 
 #### Upload to Your Backend
@@ -474,19 +474,19 @@ cesdk.actions.register('exportDesign', async (exportOptions) => {
 ```typescript title="src/imgly/config/actions.ts"
 // Override the built-in exportDesign action to send to your server
 cesdk.actions.register('exportDesign', async (exportOptions) => {
-  const { blobs } = await cesdk.utils.export(exportOptions);
+  const { blobs } = await cesdk.utils.export(exportOptions)
 
-  const formData = new FormData();
-  formData.append('image', blobs[0], 'edited-photo.png');
+  const formData = new FormData()
+  formData.append('image', blobs[0], 'edited-photo.png')
 
   const response = await fetch('/api/upload', {
     method: 'POST',
     body: formData
-  });
+  })
 
-  const { url } = await response.json();
-  console.log('Uploaded to:', url);
-});
+  const { url } = await response.json()
+  console.log('Uploaded to:', url)
+})
 ```
 
 > **Learn More:** See [Actions](./actions.md) for the full list of built-in actions, how to run them, and how to register custom actions.
@@ -501,7 +501,7 @@ CE.SDK supports light and dark themes out of the box, plus automatic system pref
 
 ```typescript title="src/imgly/config/settings.ts"
 // 'light' | 'dark' | 'system' | (() => 'light' | 'dark')
-cesdk.ui.setTheme('dark');
+cesdk.ui.setTheme('dark')
 ```
 
 See [Theming](./user-interface/appearance/theming.md) for custom color schemes, CSS variables, and advanced styling options.
@@ -518,17 +518,17 @@ cesdk.i18n.setTranslations({
     'common.cancel': 'Cancel',
     'common.apply': 'Apply'
   }
-});
+})
 
 // Add a new language
 cesdk.i18n.setTranslations({
   de: {
     'actions.export.image': 'Foto herunterladen'
   }
-});
+})
 
 // Set the active locale
-cesdk.i18n.setLocale('de');
+cesdk.i18n.setLocale('de')
 ```
 
 See [Localization](./user-interface/localization.md) for supported languages, translation key reference, and right-to-left language support.
@@ -541,28 +541,28 @@ Customize the editor interface by modifying the dock, inspector bar, navigation 
 
 ```typescript title="src/imgly/config/ui/navigationBar.ts"
 // Get current navigation bar components
-const navOrder = cesdk.ui.getNavigationBarOrder();
+const navOrder = cesdk.ui.getNavigationBarOrder()
 
 // Add a custom button to the navigation bar
 cesdk.ui.insertNavigationBarOrderComponent(
   'ly.img.spacer',
   { id: 'my-custom-action' },
   'after'
-);
+)
 
 // Rearrange dock items
 cesdk.ui.setDockOrder([
   'ly.img.assetLibrary.dock',
   'ly.img.separator',
   'my-custom-dock-item'
-]);
+])
 
 // Customize the inspector bar
 cesdk.ui.setInspectorBarOrder([
   'ly.img.fill.inspectorBar',
   'ly.img.separator',
   'ly.img.filter.inspectorBar'
-]);
+])
 ```
 
 The Order API methods follow a consistent pattern across all UI areas:
@@ -580,7 +580,7 @@ Build custom UI components using the builder system and integrate them in the ed
 ```typescript title="src/imgly/config/ui/components.ts"
 // Register a custom component
 cesdk.ui.registerComponent('my-custom-button', ({ builder, engine }) => {
-  const selectedBlocks = engine.block.findAllSelected();
+  const selectedBlocks = engine.block.findAllSelected()
 
   builder.Button('apply-effect', {
     label: 'Apply Effect',
@@ -588,15 +588,15 @@ cesdk.ui.registerComponent('my-custom-button', ({ builder, engine }) => {
     onClick: () => {
       // Apply custom logic to selected blocks
     }
-  });
-});
+  })
+})
 
 // Add the component to the navigation bar
 cesdk.ui.insertNavigationBarOrderComponent(
   'ly.img.spacer',
   'my-custom-button',
   'after'
-);
+)
 ```
 
 Custom components automatically re-render when the engine state they depend on changes—no manual subscription management required.
@@ -610,18 +610,18 @@ Fine-tune editor behavior through settings and features.
 **Settings** configure core engine behavior—rendering, input handling, and history management:
 
 ```typescript title="src/imgly/config/settings.ts"
-cesdk.engine.editor.setSettingBool('page/dimOutOfPageAreas', true);
-cesdk.engine.editor.setSettingBool('mouse/enableZoomControl', true);
-cesdk.engine.editor.setSettingBool('features/undoHistory', true);
+cesdk.engine.editor.setSettingBool('page/dimOutOfPageAreas', true)
+cesdk.engine.editor.setSettingBool('mouse/enableZoomControl', true)
+cesdk.engine.editor.setSettingBool('features/undoHistory', true)
 ```
 
 **Features** toggle which editing tools and panels appear in the UI:
 
 ```typescript title="src/imgly/config/features.ts"
 // Toggle editor features
-cesdk.feature.enable('ly.img.crop', true);
-cesdk.feature.enable('ly.img.filter', true);
-cesdk.feature.enable('ly.img.adjustment', true);
+cesdk.feature.enable('ly.img.crop', true)
+cesdk.feature.enable('ly.img.filter', true)
+cesdk.feature.enable('ly.img.adjustment', true)
 ```
 
 See [Settings](./settings.md) and [Features](./user-interface/customization/disable-or-enable.md) for the complete reference.
@@ -635,10 +635,10 @@ CE.SDK has a rich plugin ecosystem that extends the editor with powerful capabil
 Add AI-powered background removal that runs entirely client-side. The background removal plugin processes images directly in the browser without sending data to external servers.
 
 ```typescript title="src/imgly/config/plugin.ts"
-import BackgroundRemovalPlugin from '@imgly/plugin-background-removal';
+import BackgroundRemovalPlugin from '@imgly/plugin-background-removal'
 
 // Add background removal capability
-await cesdk.addPlugin(BackgroundRemovalPlugin());
+await cesdk.addPlugin(BackgroundRemovalPlugin())
 ```
 
 See [Background Removal](./edit-image/remove-bg.md) for setup instructions and configuration options.
@@ -648,13 +648,13 @@ See [Background Removal](./edit-image/remove-bg.md) for setup instructions and c
 Extend the editor with generative AI capabilities for text-to-image generation, image enhancement, and intelligent editing features. CE.SDK integrates with various AI providers.
 
 ```typescript title="src/imgly/config/plugin.ts"
-import AIPlugin from '@imgly/plugin-ai-generation';
+import AIPlugin from '@imgly/plugin-ai-generation'
 
 // Configure AI generation
 await cesdk.addPlugin(AIPlugin({
   provider: 'your-ai-provider',
   apiKey: 'your-api-key'
-}));
+}))
 ```
 
 See [AI Integration](./user-interface/ai-integration.md) for provider setup and supported AI features.
@@ -664,12 +664,12 @@ See [AI Integration](./user-interface/ai-integration.md) for provider setup and 
 Connect external asset libraries like Unsplash, Getty Images, or your own content management system. Asset sources let users browse and insert content from any source.
 
 ```typescript title="src/imgly/config/plugin.ts"
-import UnsplashAssetSource from '@imgly/plugin-unsplash';
+import UnsplashAssetSource from '@imgly/plugin-unsplash'
 
 // Add Unsplash integration
 await cesdk.addPlugin(UnsplashAssetSource({
   accessKey: 'your-unsplash-access-key'
-}));
+}))
 ```
 
 See [Custom Asset Sources](./import-media/from-remote-source/unsplash.md) for integration patterns.

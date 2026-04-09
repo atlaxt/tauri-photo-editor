@@ -21,7 +21,7 @@ Customize UI text labels in CE.SDK to match your brand voice and product termino
 > - [Live demo](https://img.ly/docs/cesdk/examples/guides-user-interface-appearance-custom-labels-browser/)
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-appearance-custom-labels-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -37,9 +37,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Custom Labels Guide
@@ -53,26 +53,26 @@ import packageJson from './package.json';
  * - Common customization scenarios for branding
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Enable features to demonstrate various UI labels
-    cesdk.feature.enable(['ly.img.fill.color', 'ly.img.fill.image']);
-    cesdk.feature.enable('ly.img.adjustment');
-    cesdk.feature.enable('ly.img.layer');
-    cesdk.feature.enable('ly.img.settings');
-    await cesdk.addPlugin(new DesignEditorConfig());
+    cesdk.feature.enable(['ly.img.fill.color', 'ly.img.fill.image'])
+    cesdk.feature.enable('ly.img.adjustment')
+    cesdk.feature.enable('ly.img.layer')
+    cesdk.feature.enable('ly.img.settings')
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -83,24 +83,24 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // ===== Custom Label Translations =====
     // Apply all custom label translations in a single call
@@ -112,7 +112,7 @@ class Example implements EditorPlugin {
       en: {
         'common.undo': 'Revert'
       }
-    });
+    })
 
     // Example 2: Elements Dock Button
     // Visible in the dock/library panel
@@ -120,7 +120,7 @@ class Example implements EditorPlugin {
       en: {
         'component.library.elements': 'Shapes'
       }
-    });
+    })
 
     // Example 3: Image Dock Button
     // Visible in the dock/library panel
@@ -128,7 +128,7 @@ class Example implements EditorPlugin {
       en: {
         'libraries.ly.img.image.label': 'Photos'
       }
-    });
+    })
 
     // Example 4: Add Page Button
     // Visible in page management controls
@@ -136,7 +136,7 @@ class Example implements EditorPlugin {
       en: {
         'action.page.add': 'New Page'
       }
-    });
+    })
 
     // Example 5: Preview Button
     // Visible in the navigation bar or view controls
@@ -144,10 +144,10 @@ class Example implements EditorPlugin {
       en: {
         'common.mode.preview': 'View Mode'
       }
-    });
+    })
 
     // Create a single text block showing all customizations
-    const textBlock = engine.block.create('text');
+    const textBlock = engine.block.create('text')
     const labelText = `Custom Labels Applied:
 
 1. "Undo" → "Revert"
@@ -156,15 +156,15 @@ class Example implements EditorPlugin {
 4. "Add Page" → "New Page"
 5. "Preview" → "View Mode"
 
-Check the navigation bar, dock, and menus to see these changes!`;
+Check the navigation bar, dock, and menus to see these changes!`
 
-    engine.block.setString(textBlock, 'text/text', labelText);
-    engine.block.setWidth(textBlock, pageWidth * 0.8);
-    engine.block.setHeight(textBlock, pageHeight * 0.8);
-    engine.block.setPositionX(textBlock, pageWidth * 0.1);
-    engine.block.setPositionY(textBlock, pageHeight * 0.1);
-    engine.block.setFloat(textBlock, 'text/fontSize', 30);
-    engine.block.appendChild(page, textBlock);
+    engine.block.setString(textBlock, 'text/text', labelText)
+    engine.block.setWidth(textBlock, pageWidth * 0.8)
+    engine.block.setHeight(textBlock, pageHeight * 0.8)
+    engine.block.setPositionX(textBlock, pageWidth * 0.1)
+    engine.block.setPositionY(textBlock, pageHeight * 0.1)
+    engine.block.setFloat(textBlock, 'text/fontSize', 30)
+    engine.block.appendChild(page, textBlock)
 
     // To discover available translation keys:
     // 1. Download en.json from CDN:
@@ -173,11 +173,11 @@ Check the navigation bar, dock, and menus to see these changes!`;
     // 3. Check console logs when interacting with UI components
 
     // Select the text block to show it in the canvas
-    engine.block.setSelected(textBlock, true);
+    engine.block.setSelected(textBlock, true)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 CreativeEditor SDK (CE.SDK) provides extensive customization of UI text through its internationalization system. Custom labels allow you to override specific UI text elements without changing the entire interface language.
@@ -220,7 +220,7 @@ cesdk.i18n.setTranslations({
   en: {
     'common.undo': 'Revert'
   }
-});
+})
 ```
 
 The API accepts an object where the first key is the locale code (`en` for English), and the value is an object mapping translation keys to custom strings. The system merges your custom labels with the default translations, overriding only the keys you specify.
@@ -236,7 +236,7 @@ cesdk.i18n.setTranslations({
   en: {
     'component.library.elements': 'Shapes'
   }
-});
+})
 ```
 
 This customization is immediately visible in the dock interface, making it clear that users can access shapes and design elements from this button.
@@ -252,7 +252,7 @@ cesdk.i18n.setTranslations({
   en: {
     'libraries.ly.img.image.label': 'Photos'
   }
-});
+})
 ```
 
 This change uses the library-specific translation key to customize how the image library appears in the dock, aligning with consumer-friendly terminology.
@@ -268,7 +268,7 @@ cesdk.i18n.setTranslations({
   en: {
     'action.page.add': 'New Page'
   }
-});
+})
 ```
 
 This customization affects page management buttons and actions, providing clearer terminology for creating new pages in multi-page designs.
@@ -284,7 +284,7 @@ cesdk.i18n.setTranslations({
   en: {
     'common.mode.preview': 'View Mode'
   }
-});
+})
 ```
 
 This change affects the preview/view mode button, making it clearer that users are switching to a different viewing mode rather than just previewing their work.
@@ -339,7 +339,7 @@ cesdk.i18n.setTranslations({
     'common.undo': 'Revert',
     'component.library.elements': 'Shapes'
   }
-});
+})
 
 // ❌ Avoid: Duplicating entire translation file
 // This creates maintenance burden and makes updates difficult
@@ -358,7 +358,7 @@ cesdk.i18n.setTranslations({
     'libraries.ly.img.text.label': 'Typography',
     'libraries.ly.img.sticker.label': 'Graphics'
   }
-});
+})
 ```
 
 **Test Labels in Context**
@@ -391,7 +391,7 @@ cesdk.i18n.setTranslations({
     'libraries.ly.img.image.label': 'Photos',
     'action.page.add': 'New Page'
   }
-});
+})
 ```
 
 ## Custom Labels vs. Full Localization
@@ -417,14 +417,14 @@ You can combine both approaches - set a locale for the primary language, then ov
 
 ```typescript
 // Set German as the primary locale
-cesdk.i18n.setLocale('de');
+cesdk.i18n.setLocale('de')
 
 // Override specific labels even in German
 cesdk.i18n.setTranslations({
   de: {
     'common.export': 'Herunterladen' // Custom German label
   }
-});
+})
 ```
 
 ## API Reference
@@ -462,7 +462,7 @@ cesdk.i18n.setTranslations({
     'common.undo': 'Revert',
     'libraries.ly.img.image.label': 'Photos'
   }
-});
+})
 ```
 
 ### Common Translation Keys

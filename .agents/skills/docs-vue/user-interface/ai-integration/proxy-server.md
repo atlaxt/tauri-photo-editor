@@ -10,8 +10,8 @@ Each AI provider configuration requires a `proxyUrl` parameter, which should poi
 
 ```typescript
 text2image: FalAiImage.RecraftV3({
-    proxyUrl: 'http://your-proxy-server.com/api/proxy'
-});
+  proxyUrl: 'http://your-proxy-server.com/api/proxy'
+})
 
 // Or use Recraft20b with icon style support:
 // text2image: FalAiImage.Recraft20b({

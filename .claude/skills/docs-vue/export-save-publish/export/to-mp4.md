@@ -23,8 +23,8 @@ Export your video compositions as MP4 files with H.264 encoding, progress tracki
 MP4 is the most widely supported video format, using H.264 encoding for efficient compression. CE.SDK handles frame rendering, encoding, and audio muxing entirely client-side, giving you control over quality and file size.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-to-mp4-browser/browser.ts reference-only
-import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type CreativeEditorSDK from '@cesdk/cesdk-js'
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,36 +69,37 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
-    cesdk.feature.enable('ly.img.video');
+    cesdk.feature.enable('ly.img.video')
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.video.template/templates/milli-surf-school.scene'
-    );
-    const page = engine.scene.getCurrentPage();
-    if (!page) throw new Error('No page found');
+    )
+    const page = engine.scene.getCurrentPage()
+    if (!page)
+      throw new Error('No page found')
 
-    await cesdk.actions.run('zoom.toPage', { autoFit: true });
+    await cesdk.actions.run('zoom.toPage', { autoFit: true })
 
     // Setup export functionality
-    await this.setupExportActions(cesdk, page);
+    await this.setupExportActions(cesdk, page)
   }
 
   private async setupExportActions(
     cesdk: CreativeEditorSDK,
     page: number
   ): Promise<void> {
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Add export buttons to navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -110,7 +111,7 @@ class Example implements EditorPlugin {
           label: 'Export Video',
           icon: '@imgly/Save',
           onClick: () => {
-            cesdk.actions.run('exportDesign', { mimeType: 'video/mp4' });
+            cesdk.actions.run('exportDesign', { mimeType: 'video/mp4' })
           }
         },
         {
@@ -123,21 +124,22 @@ class Example implements EditorPlugin {
               title: 'Exporting Video',
               message: 'Encoding MP4...',
               progress: 0
-            });
+            })
 
             try {
               const blob = await engine.block.exportVideo(page, {
                 mimeType: 'video/mp4',
                 onProgress: (_, encoded, total) => {
-                  dialog.updateProgress({ value: encoded, max: total });
+                  dialog.updateProgress({ value: encoded, max: total })
                 }
-              });
+              })
 
-              dialog.close();
-              await cesdk.utils.downloadFile(blob, 'video/mp4');
-            } catch (error) {
-              dialog.showError({ message: 'Export failed' });
-              throw error;
+              dialog.close()
+              await cesdk.utils.downloadFile(blob, 'video/mp4')
+            }
+            catch (error) {
+              dialog.showError({ message: 'Export failed' })
+              throw error
             }
           }
         },
@@ -151,20 +153,21 @@ class Example implements EditorPlugin {
               title: 'Exporting Video',
               message: 'Encoding MP4...',
               progress: 0
-            });
+            })
 
             try {
               const blob = await engine.block.exportVideo(page, {
                 onProgress: (_, encoded, total) => {
-                  dialog.updateProgress({ value: encoded, max: total });
+                  dialog.updateProgress({ value: encoded, max: total })
                 }
-              });
+              })
 
-              dialog.showSuccess({ message: 'Export complete!' });
-              await cesdk.utils.downloadFile(blob, 'video/mp4');
-            } catch (error) {
-              dialog.showError({ message: 'Export failed' });
-              throw error;
+              dialog.showSuccess({ message: 'Export complete!' })
+              await cesdk.utils.downloadFile(blob, 'video/mp4')
+            }
+            catch (error) {
+              dialog.showError({ message: 'Export failed' })
+              throw error
             }
           }
         },
@@ -178,7 +181,7 @@ class Example implements EditorPlugin {
               title: 'Exporting HD Video',
               message: 'Encoding 1080p...',
               progress: 0
-            });
+            })
 
             try {
               const blob = await engine.block.exportVideo(page, {
@@ -186,15 +189,16 @@ class Example implements EditorPlugin {
                 targetHeight: 1080,
                 framerate: 30,
                 onProgress: (_, encoded, total) => {
-                  dialog.updateProgress({ value: encoded, max: total });
+                  dialog.updateProgress({ value: encoded, max: total })
                 }
-              });
+              })
 
-              dialog.close();
-              await cesdk.utils.downloadFile(blob, 'video/mp4');
-            } catch (error) {
-              dialog.showError({ message: 'Export failed' });
-              throw error;
+              dialog.close()
+              await cesdk.utils.downloadFile(blob, 'video/mp4')
+            }
+            catch (error) {
+              dialog.showError({ message: 'Export failed' })
+              throw error
             }
           }
         },
@@ -208,31 +212,32 @@ class Example implements EditorPlugin {
               title: 'Exporting HQ Video',
               message: 'Encoding high quality...',
               progress: 0
-            });
+            })
 
             try {
               const blob = await engine.block.exportVideo(page, {
                 h264Profile: 100,
                 videoBitrate: 8_000_000,
                 onProgress: (_, encoded, total) => {
-                  dialog.updateProgress({ value: encoded, max: total });
+                  dialog.updateProgress({ value: encoded, max: total })
                 }
-              });
+              })
 
-              dialog.close();
-              await cesdk.utils.downloadFile(blob, 'video/mp4');
-            } catch (error) {
-              dialog.showError({ message: 'Export failed' });
-              throw error;
+              dialog.close()
+              await cesdk.utils.downloadFile(blob, 'video/mp4')
+            }
+            catch (error) {
+              dialog.showError({ message: 'Export failed' })
+              throw error
             }
           }
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting videos to MP4, tracking progress, configuring resolution and quality, and using built-in export actions.
@@ -257,25 +262,26 @@ Video export supports configuration options for progress tracking, resolution, f
 Use `cesdk.utils.showLoadingDialog()` to display a progress dialog during export. The `onProgress` callback updates the dialog with rendering progress.
 
 ```typescript highlight=highlight-progress-dialog
-            const dialog = cesdk.utils.showLoadingDialog({
-              title: 'Exporting Video',
-              message: 'Encoding MP4...',
-              progress: 0
-            });
+const dialog = cesdk.utils.showLoadingDialog({
+  title: 'Exporting Video',
+  message: 'Encoding MP4...',
+  progress: 0
+})
 
-            try {
-              const blob = await engine.block.exportVideo(page, {
-                onProgress: (_, encoded, total) => {
-                  dialog.updateProgress({ value: encoded, max: total });
-                }
-              });
+try {
+  const blob = await engine.block.exportVideo(page, {
+    onProgress: (_, encoded, total) => {
+      dialog.updateProgress({ value: encoded, max: total })
+    }
+  })
 
-              dialog.showSuccess({ message: 'Export complete!' });
-              await cesdk.utils.downloadFile(blob, 'video/mp4');
-            } catch (error) {
-              dialog.showError({ message: 'Export failed' });
-              throw error;
-            }
+  dialog.showSuccess({ message: 'Export complete!' })
+  await cesdk.utils.downloadFile(blob, 'video/mp4')
+}
+catch (error) {
+  dialog.showError({ message: 'Export failed' })
+  throw error
+}
 ```
 
 The dialog provides `updateProgress()` to show a progress bar, `showSuccess()` for completion feedback, and `showError()` for failures. The `onProgress` callback receives rendered frames, encoded frames, and total frames.
@@ -331,7 +337,7 @@ const blob = await engine.block.exportVideo(page, {
 CE.SDK provides a built-in `exportDesign` action that handles export with a progress dialog and automatic download. Trigger it with `cesdk.actions.run()`:
 
 ```typescript highlight=highlight-builtin-action
-cesdk.actions.run('exportDesign', { mimeType: 'video/mp4' });
+cesdk.actions.run('exportDesign', { mimeType: 'video/mp4' })
 ```
 
 The built-in action exports the current page as MP4 and prompts the user to download the result. It displays a progress dialog during encoding.

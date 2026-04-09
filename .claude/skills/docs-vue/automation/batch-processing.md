@@ -166,22 +166,21 @@ The export feature allows you to automate thumbnails generation by tweaking the 
 
 ```ts
 // Example: Real-time thumbnail generation
-const thumbnailEngine = await CreativeEngine.init({ container: null });
+const thumbnailEngine = await CreativeEngine.init({ container: null })
 
 async function generateThumbnail(sceneData) {
-  await thumbnailEngine.scene.loadFromString(sceneData);
-  const page = thumbnailEngine.scene.getPages()[0];
+  await thumbnailEngine.scene.loadFromString(sceneData)
+  const page = thumbnailEngine.scene.getPages()[0]
 
   // Generate small preview
   const thumbnail = await thumbnailEngine.block.export(page, 'image/jpeg', {
     targetWidth: 200,
     targetHeight: 200,
     quality: 0.7,
-  });
+  })
 
-  return thumbnail;
+  return thumbnail
 }
-
 ```
 
 Read more about thumbnails generation in [the Engine guide](./engine-interface.md).
@@ -203,31 +202,30 @@ Extract representative frames from videos efficiently, and automate this action 
 The following code shows how to **generate thumbnails from a video**:
 
 ```ts
-import CreativeEngine from '@cesdk/engine';
+import CreativeEngine from '@cesdk/engine'
 
-const engine = await CreativeEngine.init({ license: LICENSE_KEY });
-await engine.scene.loadFromURL('/assets/video-scene.scene');
+const engine = await CreativeEngine.init({ license: LICENSE_KEY })
+await engine.scene.loadFromURL('/assets/video-scene.scene')
 
-const [page] = engine.scene.getPages();
+const [page] = engine.scene.getPages()
 const videoBlock = engine.block
   .getChildren(page)
-  .find((child) => engine.block.getType(child) === 'video');
+  .find(child => engine.block.getType(child) === 'video')
 
 if (videoBlock) {
-  const videoFill = engine.block.getFill(videoBlock);
-  await engine.block.setPlaybackTime(videoFill, 4.2);
+  const videoFill = engine.block.getFill(videoBlock)
+  await engine.block.setPlaybackTime(videoFill, 4.2)
 
   const thumbnail = await engine.block.export(page, {
     mimeType: 'image/png',
     targetWidth: 640,
     targetHeight: 360
-  });
+  })
 
-  await downloadBlob(thumbnail, 'scene-thumb.png');
+  await downloadBlob(thumbnail, 'scene-thumb.png')
 }
 
-engine.dispose();
-
+engine.dispose()
 ```
 
 The preceding code:
@@ -286,39 +284,43 @@ When your job encounters one of these errors, you can proactively **avoid the jo
 For example, the preceding code to generate thumbnails now handles errors gracefully to avoid crashes:
 
 ```ts
-import CreativeEngine from '@cesdk/engine';
+import CreativeEngine from '@cesdk/engine'
 
-let engine;
+let engine
 try {
-  engine = await CreativeEngine.init({ license: LICENSE_KEY });
-  await engine.scene.loadFromURL('/assets/video-scene.scene');
+  engine = await CreativeEngine.init({ license: LICENSE_KEY })
+  await engine.scene.loadFromURL('/assets/video-scene.scene')
 
-  const [page] = engine.scene.getPages();
-  if (!page) throw new Error('Scene has no pages.');
+  const [page] = engine.scene.getPages()
+  if (!page)
+    throw new Error('Scene has no pages.')
 
   const videoBlock = engine.block
     .getChildren(page)
-    .find((child) => engine.block.getType(child) === 'video');
-  if (!videoBlock) throw new Error('No video block found.');
+    .find(child => engine.block.getType(child) === 'video')
+  if (!videoBlock)
+    throw new Error('No video block found.')
 
-  const videoFill = engine.block.getFill(videoBlock);
-  if (!videoFill) throw new Error('Video block is missing its fill.');
+  const videoFill = engine.block.getFill(videoBlock)
+  if (!videoFill)
+    throw new Error('Video block is missing its fill.')
 
-  await engine.block.setPlaybackTime(videoFill, 4.2);
+  await engine.block.setPlaybackTime(videoFill, 4.2)
 
   const thumbnail = await engine.block.export(page, {
     mimeType: 'image/png',
     targetWidth: 640,
     targetHeight: 360
-  });
+  })
 
-  await downloadBlob(thumbnail, 'scene-thumb.png');
-} catch (error) {
-  console.error('Failed to generate thumbnail', error);
-} finally {
-  engine?.dispose();
+  await downloadBlob(thumbnail, 'scene-thumb.png')
 }
-
+catch (error) {
+  console.error('Failed to generate thumbnail', error)
+}
+finally {
+  engine?.dispose()
+}
 ```
 
 ### Use Retry Logic
@@ -376,18 +378,18 @@ It throws descriptive errors if any of these elements are missing.
 ```ts
 function validateRecord(record) {
   if (typeof record !== 'object' || record === null) {
-    throw new Error('Record must be an object');
+    throw new Error('Record must be an object')
   }
   if (typeof record.id !== 'string') {
-    throw new Error('Missing record id');
+    throw new TypeError('Missing record id')
   }
   if (!record.templateUrl?.startsWith('https://')) {
-    throw new Error('Invalid template URL');
+    throw new Error('Invalid template URL')
   }
   if (!Array.isArray(record.variants) || record.variants.length === 0) {
-    throw new Error('Record requires at least one variant');
+    throw new Error('Record requires at least one variant')
   }
-  return true;
+  return true
 }
 ```
 
@@ -429,15 +431,14 @@ function reportBatchMetrics(batchMetrics) {
   const entry = {
     timestamp: new Date().toISOString(),
     ...batchMetrics,
-  };
-  console.table([entry]);
+  }
+  console.table([entry])
   return fetch('/api/logs', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(entry),
-  });
+  })
 }
-
 ```
 
 ## Troubleshooting

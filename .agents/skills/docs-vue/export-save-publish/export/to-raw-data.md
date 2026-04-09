@@ -26,8 +26,7 @@ where you need to manipulate individual pixels programmatically.
 > - [Live demo](https://img.ly/docs/cesdk/examples/guides-export-save-publish-export-to-raw-data-browser/)
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-to-raw-data-browser/src/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
-import packageJson from '../package.json';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   CaptionPresetsAssetSource,
@@ -42,87 +41,88 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from '../design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from '../design-editor/plugin'
+import packageJson from '../package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Load asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: ['ly.img.image.*']
       })
-    );
-    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } });
+    )
+    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Set explicit page dimensions
 
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Create a single image block to demonstrate raw data export
     const imageBlock = await engine.block.addImage(imageUri, {
       size: { width: 800, height: 600 }
-    });
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 0);
-    engine.block.setPositionY(imageBlock, 0);
+    })
+    engine.block.appendChild(page, imageBlock)
+    engine.block.setPositionX(imageBlock, 0)
+    engine.block.setPositionY(imageBlock, 0)
 
     // Add export button to navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
       id: 'ly.img.actions.navigationBar',
       children: ['ly.img.exportImage.navigationBar']
-    });
+    })
 
     // Override the built-in exportDesign action
     cesdk.actions.register('exportDesign', async () => {
       // Export to raw pixel data
-      const width = Math.floor(engine.block.getWidth(imageBlock));
-      const height = Math.floor(engine.block.getHeight(imageBlock));
+      const width = Math.floor(engine.block.getWidth(imageBlock))
+      const height = Math.floor(engine.block.getHeight(imageBlock))
 
       const blob = await engine.block.export(imageBlock, {
         mimeType: 'application/octet-stream',
         targetWidth: width,
         targetHeight: height
-      });
+      })
 
       // Convert blob to raw pixel array
-      const arrayBuffer = await blob.arrayBuffer();
-      const pixelData = new Uint8Array(arrayBuffer);
+      const arrayBuffer = await blob.arrayBuffer()
+      const pixelData = new Uint8Array(arrayBuffer)
 
       // Apply grayscale processing
-      const processedData = this.toGrayscale(pixelData, width, height);
+      const processedData = this.toGrayscale(pixelData, width, height)
 
       // Download processed image
-      await this.downloadProcessedImage(processedData, width, height);
-    });
+      await this.downloadProcessedImage(processedData, width, height)
+    })
   }
 
   /**
@@ -133,15 +133,15 @@ class Example implements EditorPlugin {
     _width: number,
     _height: number
   ): Uint8Array {
-    const result = new Uint8Array(pixelData);
+    const result = new Uint8Array(pixelData)
     for (let i = 0; i < result.length; i += 4) {
-      const avg = Math.round((result[i] + result[i + 1] + result[i + 2]) / 3);
-      result[i] = avg; // R
-      result[i + 1] = avg; // G
-      result[i + 2] = avg; // B
+      const avg = Math.round((result[i] + result[i + 1] + result[i + 2]) / 3)
+      result[i] = avg // R
+      result[i + 1] = avg // G
+      result[i + 2] = avg // B
       // Keep alpha unchanged: result[i + 3]
     }
-    return result;
+    return result
   }
 
   /**
@@ -152,15 +152,14 @@ class Example implements EditorPlugin {
     width: number,
     height: number
   ): Promise<void> {
-
     // Create canvas and render pixel data
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
 
     if (!ctx) {
-      throw new Error('Failed to get canvas context');
+      throw new Error('Failed to get canvas context')
     }
 
     // Create ImageData from pixel array
@@ -168,37 +167,38 @@ class Example implements EditorPlugin {
       new Uint8ClampedArray(pixelData),
       width,
       height
-    );
-    ctx.putImageData(imageData, 0, 0);
+    )
+    ctx.putImageData(imageData, 0, 0)
 
     // Convert canvas to blob
     const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
-        blob => {
+        (blob) => {
           if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to convert canvas to blob'));
+            resolve(blob)
+          }
+          else {
+            reject(new Error('Failed to convert canvas to blob'))
           }
         },
         'image/png',
         1.0
-      );
-    });
+      )
+    })
 
     // Trigger download
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'processed-image.png';
-    link.click();
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'processed-image.png'
+    link.click()
 
     // Clean up
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## When to Use Raw Data Export
@@ -225,7 +225,7 @@ const blob = await engine.block.export(imageBlock, {
   mimeType: 'application/octet-stream',
   targetWidth: width,
   targetHeight: height
-});
+})
 ```
 
 This returns a Blob containing uncompressed RGBA pixel data that you can process with custom algorithms.
@@ -235,25 +235,25 @@ This returns a Blob containing uncompressed RGBA pixel data that you can process
 The example overrides the built-in `exportDesign` action to implement a custom workflow that exports to raw data, processes the pixels, and downloads the result:
 
 ```typescript highlight-export-action-body
-      // Export to raw pixel data
-      const width = Math.floor(engine.block.getWidth(imageBlock));
-      const height = Math.floor(engine.block.getHeight(imageBlock));
+// Export to raw pixel data
+const width = Math.floor(engine.block.getWidth(imageBlock))
+const height = Math.floor(engine.block.getHeight(imageBlock))
 
-      const blob = await engine.block.export(imageBlock, {
-        mimeType: 'application/octet-stream',
-        targetWidth: width,
-        targetHeight: height
-      });
+const blob = await engine.block.export(imageBlock, {
+  mimeType: 'application/octet-stream',
+  targetWidth: width,
+  targetHeight: height
+})
 
-      // Convert blob to raw pixel array
-      const arrayBuffer = await blob.arrayBuffer();
-      const pixelData = new Uint8Array(arrayBuffer);
+// Convert blob to raw pixel array
+const arrayBuffer = await blob.arrayBuffer()
+const pixelData = new Uint8Array(arrayBuffer)
 
-      // Apply grayscale processing
-      const processedData = this.toGrayscale(pixelData, width, height);
+// Apply grayscale processing
+const processedData = this.toGrayscale(pixelData, width, height)
 
-      // Download processed image
-      await this.downloadProcessedImage(processedData, width, height);
+// Download processed image
+await this.downloadProcessedImage(processedData, width, height)
 ```
 
 This complete workflow demonstrates exporting to raw pixel data, applying grayscale processing, and downloading the processed image as PNG.
@@ -269,7 +269,7 @@ const blob = await engine.block.export(blockId, {
   mimeType: 'application/octet-stream',
   targetWidth: 960,
   targetHeight: 540
-});
+})
 ```
 
 **Processing Speed**: Operating directly on pixel data from CE.SDK exports is fast because there's no encoding/decoding overhead. However, processing millions of pixels can be time-consuming for complex algorithms. Consider using Web Workers for heavy processing to avoid blocking the main thread.

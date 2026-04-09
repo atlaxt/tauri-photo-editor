@@ -23,7 +23,7 @@ Create a template library where users can browse, preview, and apply templates f
 Templates in CE.SDK are stored and accessed through the asset system. A template library is a local asset source configured to hold and serve template assets, allowing users to browse thumbnails and apply templates to their designs.
 
 ```typescript file=@cesdk_web_examples/guides-create-templates-add-to-template-library-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Add to Template Library
@@ -53,25 +53,25 @@ import packageJson from './package.json';
  * 4. Saving scenes as templates
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a local asset source for templates
     engine.asset.addLocalSource('my-templates', undefined, async (asset) => {
       // Apply the selected template to the current scene
-      await engine.scene.applyTemplateFromURL(asset.meta!.uri as string);
+      await engine.scene.applyTemplateFromURL(asset.meta!.uri as string)
       // Set zoom to auto-fit after applying template
-      await cesdk.actions.run('zoom.toPage', { autoFit: true });
-      return undefined;
-    });
+      await cesdk.actions.run('zoom.toPage', { autoFit: true })
+      return undefined
+    })
 
     // Add a template to the source with metadata
     engine.asset.addAssetToSource('my-templates', {
@@ -82,7 +82,7 @@ class Example implements EditorPlugin {
         thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_postcard_1.jpg'
       }
-    });
+    })
 
     // Add more templates
     engine.asset.addAssetToSource('my-templates', {
@@ -93,7 +93,7 @@ class Example implements EditorPlugin {
         thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_business_card_1.jpg'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('my-templates', {
       id: 'template-social-media',
@@ -103,12 +103,12 @@ class Example implements EditorPlugin {
         thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_instagram_post_1.jpg'
       }
-    });
+    })
 
     // Add translation for the library entry
     cesdk.i18n.setTranslations({
       en: { 'libraries.my-templates-entry.label': 'My Templates' }
-    });
+    })
 
     // Add the template source to the asset library
     cesdk.ui.addAssetLibraryEntry({
@@ -119,7 +119,7 @@ class Example implements EditorPlugin {
       gridBackgroundType: 'cover',
       gridColumns: 2,
       cardLabelPosition: () => 'below'
-    });
+    })
 
     // Add template library to the dock
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -132,46 +132,46 @@ class Example implements EditorPlugin {
         icon: '@imgly/Template',
         entries: ['my-templates-entry']
       }
-    ]);
+    ])
 
     // Load the first template
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
+    )
 
     // Set zoom to auto-fit
-    await cesdk.actions.run('zoom.toPage', { autoFit: true });
+    await cesdk.actions.run('zoom.toPage', { autoFit: true })
 
     // Open the template library panel by default
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: { entries: ['my-templates-entry'] }
-    });
+    })
 
     // Save as string format (lightweight, references remote assets)
-    const templateString = await engine.scene.saveToString();
-    console.log('Template saved as string. Length:', templateString.length);
+    const templateString = await engine.scene.saveToString()
+    console.log('Template saved as string. Length:', templateString.length)
 
     // Save as archive format (self-contained with bundled assets)
-    const templateBlob = await engine.scene.saveToArchive();
-    console.log('Template saved as archive. Size:', templateBlob.size, 'bytes');
+    const templateBlob = await engine.scene.saveToArchive()
+    console.log('Template saved as archive. Size:', templateBlob.size, 'bytes')
 
     // List all registered asset sources
-    const sources = engine.asset.findAllSources();
-    console.log('Registered sources:', sources);
+    const sources = engine.asset.findAllSources()
+    console.log('Registered sources:', sources)
 
     // Notify UI when source contents change
-    engine.asset.assetSourceContentsChanged('my-templates');
+    engine.asset.assetSourceContentsChanged('my-templates')
 
     // Query templates from the source
     const queryResult = await engine.asset.findAssets('my-templates', {
       page: 0,
       perPage: 10
-    });
-    console.log('Templates in library:', queryResult.total);
+    })
+    console.log('Templates in library:', queryResult.total)
 
     // Remove a template from the source
-    engine.asset.removeAssetFromSource('my-templates', 'template-social-media');
-    console.log('Removed template-social-media from library');
+    engine.asset.removeAssetFromSource('my-templates', 'template-social-media')
+    console.log('Removed template-social-media from library')
 
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
       id: 'ly.img.actions.navigationBar',
@@ -179,11 +179,11 @@ class Example implements EditorPlugin {
         'ly.img.saveScene.navigationBar',
         'ly.img.exportArchive.navigationBar'
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to save scenes as templates, create a template asset source, and add templates with metadata.
@@ -198,8 +198,8 @@ Use `engine.scene.saveToString()` to serialize the scene to a base64 string. Thi
 
 ```typescript highlight=highlight-save-string
 // Save as string format (lightweight, references remote assets)
-const templateString = await engine.scene.saveToString();
-console.log('Template saved as string. Length:', templateString.length);
+const templateString = await engine.scene.saveToString()
+console.log('Template saved as string. Length:', templateString.length)
 ```
 
 ### Archive Format
@@ -208,8 +208,8 @@ For self-contained templates that bundle all assets, use `engine.scene.saveToArc
 
 ```typescript highlight=highlight-save-archive
 // Save as archive format (self-contained with bundled assets)
-const templateBlob = await engine.scene.saveToArchive();
-console.log('Template saved as archive. Size:', templateBlob.size, 'bytes');
+const templateBlob = await engine.scene.saveToArchive()
+console.log('Template saved as archive. Size:', templateBlob.size, 'bytes')
 ```
 
 ## Creating a Template Asset Source
@@ -220,11 +220,11 @@ Register a local asset source using `engine.asset.addLocalSource()` with an ID a
 // Create a local asset source for templates
 engine.asset.addLocalSource('my-templates', undefined, async (asset) => {
   // Apply the selected template to the current scene
-  await engine.scene.applyTemplateFromURL(asset.meta!.uri as string);
+  await engine.scene.applyTemplateFromURL(asset.meta!.uri as string)
   // Set zoom to auto-fit after applying template
-  await cesdk.actions.run('zoom.toPage', { autoFit: true });
-  return undefined;
-});
+  await cesdk.actions.run('zoom.toPage', { autoFit: true })
+  return undefined
+})
 ```
 
 The `applyAsset` callback receives the selected asset and determines how to apply it. We use `engine.scene.applyTemplateFromURL()` to load the template from the asset's `meta.uri` property. The template is applied to the current scene, adjusting content to fit the existing page dimensions.
@@ -243,7 +243,7 @@ engine.asset.addAssetToSource('my-templates', {
     thumbUri:
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_postcard_1.jpg'
   }
-});
+})
 ```
 
 Each template asset requires:
@@ -258,23 +258,23 @@ Each template asset requires:
 After the initial setup, you can manage templates programmatically.
 
 ```typescript highlight=highlight-manage-templates
-    // List all registered asset sources
-    const sources = engine.asset.findAllSources();
-    console.log('Registered sources:', sources);
+// List all registered asset sources
+const sources = engine.asset.findAllSources()
+console.log('Registered sources:', sources)
 
-    // Notify UI when source contents change
-    engine.asset.assetSourceContentsChanged('my-templates');
+// Notify UI when source contents change
+engine.asset.assetSourceContentsChanged('my-templates')
 
-    // Query templates from the source
-    const queryResult = await engine.asset.findAssets('my-templates', {
-      page: 0,
-      perPage: 10
-    });
-    console.log('Templates in library:', queryResult.total);
+// Query templates from the source
+const queryResult = await engine.asset.findAssets('my-templates', {
+  page: 0,
+  perPage: 10
+})
+console.log('Templates in library:', queryResult.total)
 
-    // Remove a template from the source
-    engine.asset.removeAssetFromSource('my-templates', 'template-social-media');
-    console.log('Removed template-social-media from library');
+// Remove a template from the source
+engine.asset.removeAssetFromSource('my-templates', 'template-social-media')
+console.log('Removed template-social-media from library')
 ```
 
 Use `engine.asset.findAllSources()` to list registered sources. When you add or remove templates from a source, call `engine.asset.assetSourceContentsChanged()` to refresh the UI. To remove a template, use `engine.asset.removeAssetFromSource()`.

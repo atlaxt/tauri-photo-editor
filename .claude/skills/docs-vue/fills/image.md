@@ -24,7 +24,7 @@ uploads, or asset libraries using CE.SDK's versatile image fill system.
 Image fills paint design blocks with raster or vector image content, supporting various formats including PNG, JPEG, WebP, and SVG. You can load images from remote URLs, local files, data URIs, and asset libraries, with built-in support for responsive images through source sets and multiple content fill modes for flexible positioning.
 
 ```typescript file=@cesdk_web_examples/guides-fills-image-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,34 +40,34 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Fill features are enabled by default in CE.SDK
     // You can check and control fill feature availability:
     const isFillEnabled = cesdk.feature.isEnabled('ly.img.fill', {
       engine: cesdk.engine
-    });
-    console.log('Fill feature enabled:', isFillEnabled);
-    await cesdk.addPlugin(new DesignEditorConfig());
+    })
+    console.log('Fill feature enabled:', isFillEnabled)
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -78,65 +78,65 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Calculate responsive grid layout for demonstrations
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const layout = calculateGridLayout(pageWidth, pageHeight, 7);
-    const { blockWidth, blockHeight, getPosition } = layout;
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const layout = calculateGridLayout(pageWidth, pageHeight, 7)
+    const { blockWidth, blockHeight, getPosition } = layout
 
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
-    const blockSize = { width: blockWidth, height: blockHeight };
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
+    const blockSize = { width: blockWidth, height: blockHeight }
 
     // ===== Section 1: Check Fill Support =====
     // Check if a block supports fills before accessing fill APIs
-    const testBlock = engine.block.create('graphic');
-    const canHaveFill = engine.block.supportsFill(testBlock);
-    console.log('Block supports fills:', canHaveFill);
-    engine.block.destroy(testBlock);
+    const testBlock = engine.block.create('graphic')
+    const canHaveFill = engine.block.supportsFill(testBlock)
+    console.log('Block supports fills:', canHaveFill)
+    engine.block.destroy(testBlock)
 
     // ===== Section 2: Create and Apply Image Fill =====
     // Create a new image fill using the convenience API
     const coverImageBlock = await engine.block.addImage(imageUri, {
       size: blockSize
-    });
-    engine.block.appendChild(page, coverImageBlock);
+    })
+    engine.block.appendChild(page, coverImageBlock)
 
     // Or create manually for more control
-    const manualBlock = engine.block.create('graphic');
-    engine.block.setShape(manualBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(manualBlock, blockWidth);
-    engine.block.setHeight(manualBlock, blockHeight);
+    const manualBlock = engine.block.create('graphic')
+    engine.block.setShape(manualBlock, engine.block.createShape('rect'))
+    engine.block.setWidth(manualBlock, blockWidth)
+    engine.block.setHeight(manualBlock, blockHeight)
 
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_2.jpg'
-    );
-    engine.block.setFill(manualBlock, imageFill);
-    engine.block.appendChild(page, manualBlock);
+    )
+    engine.block.setFill(manualBlock, imageFill)
+    engine.block.appendChild(page, manualBlock)
 
     // Get the current fill from a block
-    const currentFill = engine.block.getFill(coverImageBlock);
-    const fillType = engine.block.getType(currentFill);
-    console.log('Fill type:', fillType); // '//ly.img.ubq/fill/image'
+    const currentFill = engine.block.getFill(coverImageBlock)
+    const fillType = engine.block.getType(currentFill)
+    console.log('Fill type:', fillType) // '//ly.img.ubq/fill/image'
 
     // ===== Section 3: Content Fill Modes =====
     // Cover mode: Fill entire block, may crop image
@@ -145,9 +145,9 @@ class Example implements EditorPlugin {
       {
         size: blockSize
       }
-    );
-    engine.block.appendChild(page, coverBlock);
-    engine.block.setEnum(coverBlock, 'contentFill/mode', 'Cover');
+    )
+    engine.block.appendChild(page, coverBlock)
+    engine.block.setEnum(coverBlock, 'contentFill/mode', 'Cover')
 
     // Contain mode: Fit entire image, may leave empty space
     const containBlock = await engine.block.addImage(
@@ -155,22 +155,22 @@ class Example implements EditorPlugin {
       {
         size: blockSize
       }
-    );
-    engine.block.appendChild(page, containBlock);
-    engine.block.setEnum(containBlock, 'contentFill/mode', 'Contain');
+    )
+    engine.block.appendChild(page, containBlock)
+    engine.block.setEnum(containBlock, 'contentFill/mode', 'Contain')
 
     // Get current fill mode
-    const currentMode = engine.block.getEnum(containBlock, 'contentFill/mode');
-    console.log('Current fill mode:', currentMode);
+    const currentMode = engine.block.getEnum(containBlock, 'contentFill/mode')
+    console.log('Current fill mode:', currentMode)
 
     // ===== Section 4: Source Sets (Responsive Images) =====
     // Use source sets for responsive images
-    const responsiveBlock = engine.block.create('graphic');
-    engine.block.setShape(responsiveBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(responsiveBlock, blockWidth);
-    engine.block.setHeight(responsiveBlock, blockHeight);
+    const responsiveBlock = engine.block.create('graphic')
+    engine.block.setShape(responsiveBlock, engine.block.createShape('rect'))
+    engine.block.setWidth(responsiveBlock, blockWidth)
+    engine.block.setHeight(responsiveBlock, blockHeight)
 
-    const responsiveFill = engine.block.createFill('image');
+    const responsiveFill = engine.block.createFill('image')
     engine.block.setSourceSet(responsiveFill, 'fill/image/sourceSet', [
       {
         uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
@@ -187,34 +187,34 @@ class Example implements EditorPlugin {
         width: 2048,
         height: 1366
       }
-    ]);
-    engine.block.setFill(responsiveBlock, responsiveFill);
-    engine.block.appendChild(page, responsiveBlock);
+    ])
+    engine.block.setFill(responsiveBlock, responsiveFill)
+    engine.block.appendChild(page, responsiveBlock)
 
     // Get current source set
     const sourceSet = engine.block.getSourceSet(
       responsiveFill,
       'fill/image/sourceSet'
-    );
-    console.log('Source set entries:', sourceSet.length);
+    )
+    console.log('Source set entries:', sourceSet.length)
 
     // ===== Section 5: Data URI / Base64 Images =====
     // Use data URI for embedded images (small SVG example)
     const svgContent = `<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="40" fill="#4CAF50"/>
         <text x="50" y="55" text-anchor="middle" fill="white" font-size="20" font-weight="bold">SVG</text>
-      </svg>`;
-    const svgDataUri = `data:image/svg+xml;base64,${btoa(svgContent)}`;
+      </svg>`
+    const svgDataUri = `data:image/svg+xml;base64,${btoa(svgContent)}`
 
-    const dataUriBlock = engine.block.create('graphic');
-    engine.block.setShape(dataUriBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(dataUriBlock, blockWidth);
-    engine.block.setHeight(dataUriBlock, blockHeight);
+    const dataUriBlock = engine.block.create('graphic')
+    engine.block.setShape(dataUriBlock, engine.block.createShape('rect'))
+    engine.block.setWidth(dataUriBlock, blockWidth)
+    engine.block.setHeight(dataUriBlock, blockHeight)
 
-    const dataUriFill = engine.block.createFill('image');
-    engine.block.setString(dataUriFill, 'fill/image/imageFileURI', svgDataUri);
-    engine.block.setFill(dataUriBlock, dataUriFill);
-    engine.block.appendChild(page, dataUriBlock);
+    const dataUriFill = engine.block.createFill('image')
+    engine.block.setString(dataUriFill, 'fill/image/imageFileURI', svgDataUri)
+    engine.block.setFill(dataUriBlock, dataUriFill)
+    engine.block.appendChild(page, dataUriBlock)
 
     // ===== Section 6: Opacity =====
     // Control opacity for transparency effects
@@ -223,9 +223,9 @@ class Example implements EditorPlugin {
       {
         size: blockSize
       }
-    );
-    engine.block.appendChild(page, opacityBlock);
-    engine.block.setFloat(opacityBlock, 'opacity', 0.6);
+    )
+    engine.block.appendChild(page, opacityBlock)
+    engine.block.setFloat(opacityBlock, 'opacity', 0.6)
 
     // ===== Position all blocks in grid layout =====
     const blocks = [
@@ -236,20 +236,20 @@ class Example implements EditorPlugin {
       responsiveBlock, // Position 4
       dataUriBlock, // Position 5
       opacityBlock // Position 6
-    ];
+    ]
 
     blocks.forEach((block, index) => {
-      const pos = getPosition(index);
-      engine.block.setPositionX(block, pos.x);
-      engine.block.setPositionY(block, pos.y);
-    });
+      const pos = getPosition(index)
+      engine.block.setPositionX(block, pos.x)
+      engine.block.setPositionY(block, pos.y)
+    })
 
     // Zoom to show all content
-    await engine.scene.zoomToBlock(page);
+    await engine.scene.zoomToBlock(page)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create and apply image fills programmatically, configure content fill modes, work with responsive images, and load images from different sources.
@@ -266,10 +266,10 @@ Before working with fills, we should verify that a block supports fill operation
 
 ```typescript highlight-check-fill-support
 // Check if a block supports fills before accessing fill APIs
-const testBlock = engine.block.create('graphic');
-const canHaveFill = engine.block.supportsFill(testBlock);
-console.log('Block supports fills:', canHaveFill);
-engine.block.destroy(testBlock);
+const testBlock = engine.block.create('graphic')
+const canHaveFill = engine.block.supportsFill(testBlock)
+console.log('Block supports fills:', canHaveFill)
+engine.block.destroy(testBlock)
 ```
 
 The `supportsFill()` method returns `true` if the block can have a fill assigned to it. Always check this before attempting to access fill APIs to avoid errors.
@@ -286,8 +286,8 @@ The fastest way to create a block with an image fill is using the `addImage()` m
 // Create a new image fill using the convenience API
 const coverImageBlock = await engine.block.addImage(imageUri, {
   size: blockSize
-});
-engine.block.appendChild(page, coverImageBlock);
+})
+engine.block.appendChild(page, coverImageBlock)
 ```
 
 This convenience method handles all the underlying setup automatically, including creating the graphic block, shape, fill, and positioning.
@@ -297,20 +297,20 @@ This convenience method handles all the underlying setup automatically, includin
 For more control over the fill configuration or to apply fills to existing blocks, you can create fills manually:
 
 ```typescript highlight-manual-fill-creation
-    // Or create manually for more control
-    const manualBlock = engine.block.create('graphic');
-    engine.block.setShape(manualBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(manualBlock, blockWidth);
-    engine.block.setHeight(manualBlock, blockHeight);
+// Or create manually for more control
+const manualBlock = engine.block.create('graphic')
+engine.block.setShape(manualBlock, engine.block.createShape('rect'))
+engine.block.setWidth(manualBlock, blockWidth)
+engine.block.setHeight(manualBlock, blockHeight)
 
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://img.ly/static/ubq_samples/sample_2.jpg'
-    );
-    engine.block.setFill(manualBlock, imageFill);
-    engine.block.appendChild(page, manualBlock);
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://img.ly/static/ubq_samples/sample_2.jpg'
+)
+engine.block.setFill(manualBlock, imageFill)
+engine.block.appendChild(page, manualBlock)
 ```
 
 When creating fills manually, the fill exists independently until you attach it to a block using `setFill()`. If you create a fill but don't attach it to a block, you must destroy it manually to avoid memory leaks.
@@ -321,9 +321,9 @@ You can retrieve the fill from any block and inspect its type to verify it's an 
 
 ```typescript highlight-get-current-fill
 // Get the current fill from a block
-const currentFill = engine.block.getFill(coverImageBlock);
-const fillType = engine.block.getType(currentFill);
-console.log('Fill type:', fillType); // '//ly.img.ubq/fill/image'
+const currentFill = engine.block.getFill(coverImageBlock)
+const fillType = engine.block.getType(currentFill)
+console.log('Fill type:', fillType) // '//ly.img.ubq/fill/image'
 ```
 
 The `getFill()` method returns the fill's block ID, which you can then use to query the fill's type and properties.
@@ -343,9 +343,9 @@ const coverBlock = await engine.block.addImage(
   {
     size: blockSize
   }
-);
-engine.block.appendChild(page, coverBlock);
-engine.block.setEnum(coverBlock, 'contentFill/mode', 'Cover');
+)
+engine.block.appendChild(page, coverBlock)
+engine.block.setEnum(coverBlock, 'contentFill/mode', 'Cover')
 ```
 
 Cover mode is ideal for backgrounds, hero images, and photo frames where you want the block completely filled with image content. The image is scaled to cover the entire area, and any overflow is cropped.
@@ -361,9 +361,9 @@ const containBlock = await engine.block.addImage(
   {
     size: blockSize
   }
-);
-engine.block.appendChild(page, containBlock);
-engine.block.setEnum(containBlock, 'contentFill/mode', 'Contain');
+)
+engine.block.appendChild(page, containBlock)
+engine.block.setEnum(containBlock, 'contentFill/mode', 'Contain')
 ```
 
 Contain mode is best for logos, product images, and situations where preserving the complete image visibility is more important than filling the entire block.
@@ -374,8 +374,8 @@ You can query the current fill mode to understand how the image is being display
 
 ```typescript highlight-get-fill-mode
 // Get current fill mode
-const currentMode = engine.block.getEnum(containBlock, 'contentFill/mode');
-console.log('Current fill mode:', currentMode);
+const currentMode = engine.block.getEnum(containBlock, 'contentFill/mode')
+console.log('Current fill mode:', currentMode)
 ```
 
 This returns either `'Cover'` or `'Contain'` depending on the current configuration.
@@ -389,32 +389,32 @@ Source sets enable responsive images by providing multiple resolutions of the sa
 A source set is an array of image sources, each with a URI and dimensions:
 
 ```typescript highlight-source-set
-    // Use source sets for responsive images
-    const responsiveBlock = engine.block.create('graphic');
-    engine.block.setShape(responsiveBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(responsiveBlock, blockWidth);
-    engine.block.setHeight(responsiveBlock, blockHeight);
+// Use source sets for responsive images
+const responsiveBlock = engine.block.create('graphic')
+engine.block.setShape(responsiveBlock, engine.block.createShape('rect'))
+engine.block.setWidth(responsiveBlock, blockWidth)
+engine.block.setHeight(responsiveBlock, blockHeight)
 
-    const responsiveFill = engine.block.createFill('image');
-    engine.block.setSourceSet(responsiveFill, 'fill/image/sourceSet', [
-      {
-        uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        width: 512,
-        height: 341
-      },
-      {
-        uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        width: 1024,
-        height: 683
-      },
-      {
-        uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        width: 2048,
-        height: 1366
-      }
-    ]);
-    engine.block.setFill(responsiveBlock, responsiveFill);
-    engine.block.appendChild(page, responsiveBlock);
+const responsiveFill = engine.block.createFill('image')
+engine.block.setSourceSet(responsiveFill, 'fill/image/sourceSet', [
+  {
+    uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    width: 512,
+    height: 341
+  },
+  {
+    uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    width: 1024,
+    height: 683
+  },
+  {
+    uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    width: 2048,
+    height: 1366
+  }
+])
+engine.block.setFill(responsiveBlock, responsiveFill)
+engine.block.appendChild(page, responsiveBlock)
 ```
 
 Each entry in the source set specifies a URI and the image's width and height in pixels. The engine calculates the current drawing size and selects the source with the closest size that exceeds the required dimensions.
@@ -432,8 +432,8 @@ You can get the current source set from a fill to inspect or modify it:
 const sourceSet = engine.block.getSourceSet(
   responsiveFill,
   'fill/image/sourceSet'
-);
-console.log('Source set entries:', sourceSet.length);
+)
+console.log('Source set entries:', sourceSet.length)
 ```
 
 ## Loading Images from Different Sources
@@ -445,22 +445,22 @@ CE.SDK's image fills support multiple image source types, giving you flexibility
 You can embed image data directly using data URIs, which is particularly useful for small images, icons, or dynamically generated graphics:
 
 ```typescript highlight-data-uri
-    // Use data URI for embedded images (small SVG example)
-    const svgContent = `<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+// Use data URI for embedded images (small SVG example)
+const svgContent = `<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="40" fill="#4CAF50"/>
         <text x="50" y="55" text-anchor="middle" fill="white" font-size="20" font-weight="bold">SVG</text>
-      </svg>`;
-    const svgDataUri = `data:image/svg+xml;base64,${btoa(svgContent)}`;
+      </svg>`
+const svgDataUri = `data:image/svg+xml;base64,${btoa(svgContent)}`
 
-    const dataUriBlock = engine.block.create('graphic');
-    engine.block.setShape(dataUriBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(dataUriBlock, blockWidth);
-    engine.block.setHeight(dataUriBlock, blockHeight);
+const dataUriBlock = engine.block.create('graphic')
+engine.block.setShape(dataUriBlock, engine.block.createShape('rect'))
+engine.block.setWidth(dataUriBlock, blockWidth)
+engine.block.setHeight(dataUriBlock, blockHeight)
 
-    const dataUriFill = engine.block.createFill('image');
-    engine.block.setString(dataUriFill, 'fill/image/imageFileURI', svgDataUri);
-    engine.block.setFill(dataUriBlock, dataUriFill);
-    engine.block.appendChild(page, dataUriBlock);
+const dataUriFill = engine.block.createFill('image')
+engine.block.setString(dataUriFill, 'fill/image/imageFileURI', svgDataUri)
+engine.block.setFill(dataUriBlock, dataUriFill)
+engine.block.appendChild(page, dataUriBlock)
 ```
 
 Data URIs embed the entire image within the URI string itself, eliminating the need for network requests. However, this increases the scene file size, so it's best reserved for smaller images or cases where you need guaranteed availability without network dependencies.
@@ -478,9 +478,9 @@ const opacityBlock = await engine.block.addImage(
   {
     size: blockSize
   }
-);
-engine.block.appendChild(page, opacityBlock);
-engine.block.setFloat(opacityBlock, 'opacity', 0.6);
+)
+engine.block.appendChild(page, opacityBlock)
+engine.block.setFloat(opacityBlock, 'opacity', 0.6)
 ```
 
 The opacity value ranges from 0 (fully transparent) to 1 (fully opaque). This affects the entire block, including the image fill. For transparency within the image itself, use image formats that support alpha channels like PNG, WebP, or SVG.
@@ -524,9 +524,9 @@ The opacity value ranges from 0 (fully transparent) to 1 (fully opaque). This af
 
 ```typescript
 interface SourceSetEntry {
-  uri: string; // Image URI
-  width: number; // Image width in pixels
-  height: number; // Image height in pixels
+  uri: string // Image URI
+  width: number // Image width in pixels
+  height: number // Image height in pixels
 }
 ```
 

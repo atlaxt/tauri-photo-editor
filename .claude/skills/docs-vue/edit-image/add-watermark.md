@@ -23,7 +23,7 @@ Add text and image watermarks to designs programmatically using CE.SDK's block A
 Watermarks protect intellectual property, indicate ownership, add branding, or mark content as drafts. CE.SDK supports two types of watermarks: **text watermarks** created from text blocks for copyright notices and brand names, and **image watermarks** created from graphic blocks with image fills for logos and symbols.
 
 ```typescript file=@cesdk_web_examples/guides-edit-image-add-watermark-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Add Watermark Guide
@@ -54,157 +54,157 @@ import packageJson from './package.json';
  * - Exporting watermarked designs
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a scene with custom page dimensions
-    const scene = engine.scene.create();
-    const page = engine.block.create('page');
-    engine.block.setWidth(page, 800);
-    engine.block.setHeight(page, 600);
-    engine.block.appendChild(scene, page);
+    const scene = engine.scene.create()
+    const page = engine.block.create('page')
+    engine.block.setWidth(page, 800)
+    engine.block.setHeight(page, 600)
+    engine.block.appendChild(scene, page)
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Create a gradient background for the page
-    const gradientFill = engine.block.createFill('gradient/linear');
+    const gradientFill = engine.block.createFill('gradient/linear')
 
     // Set a modern purple-to-cyan gradient
     engine.block.setGradientColorStops(gradientFill, 'fill/gradient/colors', [
       { color: { r: 0.39, g: 0.4, b: 0.95, a: 1 }, stop: 0 }, // Indigo
       { color: { r: 0.02, g: 0.71, b: 0.83, a: 1 }, stop: 1 } // Cyan
-    ]);
+    ])
 
     // Set diagonal gradient direction (top-left to bottom-right)
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointX', 0);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointY', 0);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointY', 1);
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointX', 0)
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointY', 0)
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointY', 1)
 
     // Apply gradient to page
-    engine.block.setFill(page, gradientFill);
+    engine.block.setFill(page, gradientFill)
 
     // Create a centered title text
-    const titleText = engine.block.create('text');
-    engine.block.setString(titleText, 'text/text', 'Add Watermark');
-    engine.block.setEnum(titleText, 'text/horizontalAlignment', 'Center');
-    engine.block.appendChild(page, titleText);
+    const titleText = engine.block.create('text')
+    engine.block.setString(titleText, 'text/text', 'Add Watermark')
+    engine.block.setEnum(titleText, 'text/horizontalAlignment', 'Center')
+    engine.block.appendChild(page, titleText)
 
     // Style the title
-    engine.block.setTextFontSize(titleText, 14);
-    engine.block.setTextColor(titleText, { r: 1, g: 1, b: 1, a: 1 });
-    engine.block.setWidthMode(titleText, 'Auto');
-    engine.block.setHeightMode(titleText, 'Auto');
+    engine.block.setTextFontSize(titleText, 14)
+    engine.block.setTextColor(titleText, { r: 1, g: 1, b: 1, a: 1 })
+    engine.block.setWidthMode(titleText, 'Auto')
+    engine.block.setHeightMode(titleText, 'Auto')
 
     // Center the title on the page
-    const titleWidth = engine.block.getFrameWidth(titleText);
-    const titleHeight = engine.block.getFrameHeight(titleText);
-    engine.block.setPositionX(titleText, (pageWidth - titleWidth) / 2);
-    engine.block.setPositionY(titleText, (pageHeight - titleHeight) / 2);
+    const titleWidth = engine.block.getFrameWidth(titleText)
+    const titleHeight = engine.block.getFrameHeight(titleText)
+    engine.block.setPositionX(titleText, (pageWidth - titleWidth) / 2)
+    engine.block.setPositionY(titleText, (pageHeight - titleHeight) / 2)
 
     // Create a text block for the watermark
-    const textWatermark = engine.block.create('text');
+    const textWatermark = engine.block.create('text')
 
     // Set the watermark text content
-    engine.block.setString(textWatermark, 'text/text', '© 2024 img.ly');
+    engine.block.setString(textWatermark, 'text/text', '© 2024 img.ly')
 
     // Left-align the text for the watermark
-    engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left');
+    engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left')
 
     // Add the text block to the page
-    engine.block.appendChild(page, textWatermark);
+    engine.block.appendChild(page, textWatermark)
 
     // Set font size for the watermark
-    engine.block.setTextFontSize(textWatermark, 4);
+    engine.block.setTextFontSize(textWatermark, 4)
 
     // Set text color to white for contrast
-    engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 });
+    engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 })
 
     // Set opacity to make it semi-transparent
-    engine.block.setOpacity(textWatermark, 0.8);
+    engine.block.setOpacity(textWatermark, 0.8)
 
     // Set width mode to auto so text fits its content
-    engine.block.setWidthMode(textWatermark, 'Auto');
-    engine.block.setHeightMode(textWatermark, 'Auto');
+    engine.block.setWidthMode(textWatermark, 'Auto')
+    engine.block.setHeightMode(textWatermark, 'Auto')
 
     // Create a graphic block for the logo watermark
-    const logoWatermark = engine.block.create('graphic');
+    const logoWatermark = engine.block.create('graphic')
 
     // Create a rect shape for the logo
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(logoWatermark, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(logoWatermark, rectShape)
 
     // Create an image fill with a logo
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/imgly_logo.jpg'
-    );
+    )
 
     // Apply the fill to the graphic block
-    engine.block.setFill(logoWatermark, imageFill);
+    engine.block.setFill(logoWatermark, imageFill)
 
     // Set content fill mode to contain the image within bounds
-    engine.block.setContentFillMode(logoWatermark, 'Contain');
+    engine.block.setContentFillMode(logoWatermark, 'Contain')
 
     // Add to page
-    engine.block.appendChild(page, logoWatermark);
+    engine.block.appendChild(page, logoWatermark)
 
     // Size the logo watermark
-    const logoWidth = 80;
-    const logoHeight = 50;
-    engine.block.setWidth(logoWatermark, logoWidth);
-    engine.block.setHeight(logoWatermark, logoHeight);
+    const logoWidth = 80
+    const logoHeight = 50
+    engine.block.setWidth(logoWatermark, logoWidth)
+    engine.block.setHeight(logoWatermark, logoHeight)
 
     // Set opacity for the logo watermark
-    engine.block.setOpacity(logoWatermark, 0.8);
+    engine.block.setOpacity(logoWatermark, 0.8)
 
     // Position padding from edges
-    const padding = 15;
+    const padding = 15
 
     // Position text watermark at bottom-left
-    engine.block.setPositionX(textWatermark, padding);
-    engine.block.setPositionY(textWatermark, pageHeight - padding - 20);
+    engine.block.setPositionX(textWatermark, padding)
+    engine.block.setPositionY(textWatermark, pageHeight - padding - 20)
 
     // Position logo watermark at top-right
-    engine.block.setPositionX(logoWatermark, pageWidth - padding - logoWidth);
-    engine.block.setPositionY(logoWatermark, padding);
+    engine.block.setPositionX(logoWatermark, pageWidth - padding - logoWidth)
+    engine.block.setPositionY(logoWatermark, padding)
 
     // Add drop shadow to text watermark for better visibility
-    engine.block.setDropShadowEnabled(textWatermark, true);
-    engine.block.setDropShadowOffsetX(textWatermark, 1);
-    engine.block.setDropShadowOffsetY(textWatermark, 1);
-    engine.block.setDropShadowBlurRadiusX(textWatermark, 2);
-    engine.block.setDropShadowBlurRadiusY(textWatermark, 2);
+    engine.block.setDropShadowEnabled(textWatermark, true)
+    engine.block.setDropShadowOffsetX(textWatermark, 1)
+    engine.block.setDropShadowOffsetY(textWatermark, 1)
+    engine.block.setDropShadowBlurRadiusX(textWatermark, 2)
+    engine.block.setDropShadowBlurRadiusY(textWatermark, 2)
     engine.block.setDropShadowColor(textWatermark, {
       r: 0,
       g: 0,
       b: 0,
       a: 0.5
-    });
+    })
 
     // Add drop shadow to logo watermark
-    engine.block.setDropShadowEnabled(logoWatermark, true);
-    engine.block.setDropShadowOffsetX(logoWatermark, 1);
-    engine.block.setDropShadowOffsetY(logoWatermark, 1);
-    engine.block.setDropShadowBlurRadiusX(logoWatermark, 2);
-    engine.block.setDropShadowBlurRadiusY(logoWatermark, 2);
+    engine.block.setDropShadowEnabled(logoWatermark, true)
+    engine.block.setDropShadowOffsetX(logoWatermark, 1)
+    engine.block.setDropShadowOffsetY(logoWatermark, 1)
+    engine.block.setDropShadowBlurRadiusX(logoWatermark, 2)
+    engine.block.setDropShadowBlurRadiusY(logoWatermark, 2)
     engine.block.setDropShadowColor(logoWatermark, {
       r: 0,
       g: 0,
       b: 0,
       a: 0.5
-    });
+    })
 
     // Add export button to the navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -219,22 +219,22 @@ class Example implements EditorPlugin {
             // Export the watermarked design
             const blob = await engine.block.export(page, {
               mimeType: 'image/png'
-            });
+            })
 
             // Download the watermarked image
-            await cesdk.utils.downloadFile(blob, 'image/png');
+            await cesdk.utils.downloadFile(blob, 'image/png')
           }
         }
       ]
-    });
+    })
 
     // Zoom to fit the page in view with padding and enable auto-fit
-    await engine.scene.zoomToBlock(page, { padding: 40 });
-    engine.scene.enableZoomAutoFit(page, 'Both', 40, 40, 40, 40);
+    await engine.scene.zoomToBlock(page, { padding: 40 })
+    engine.scene.enableZoomAutoFit(page, 'Both', 40, 40, 40, 40)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create text and logo watermarks, position them on a design, style them for visibility, and export the watermarked result.
@@ -244,17 +244,17 @@ This guide covers how to create text and logo watermarks, position them on a des
 We start by initializing CE.SDK, loading asset sources, and creating a scene with a custom page size. The page provides the canvas where we'll add our watermarks.
 
 ```typescript highlight=highlight-setup
-    const engine = cesdk.engine;
+const engine = cesdk.engine
 
-    // Create a scene with custom page dimensions
-    const scene = engine.scene.create();
-    const page = engine.block.create('page');
-    engine.block.setWidth(page, 800);
-    engine.block.setHeight(page, 600);
-    engine.block.appendChild(scene, page);
+// Create a scene with custom page dimensions
+const scene = engine.scene.create()
+const page = engine.block.create('page')
+engine.block.setWidth(page, 800)
+engine.block.setHeight(page, 600)
+engine.block.appendChild(scene, page)
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+const pageWidth = engine.block.getWidth(page)
+const pageHeight = engine.block.getHeight(page)
 ```
 
 We use `engine.scene.create('VerticalStack', {...})` to create a scene with custom page dimensions. The page dimensions are retrieved for positioning calculations later.
@@ -264,17 +264,17 @@ We use `engine.scene.create('VerticalStack', {...})` to create a scene with cust
 Text watermarks display copyright notices, URLs, or brand names. We create a text block, set its content, and add it to the page.
 
 ```typescript highlight=highlight-create-text-watermark
-    // Create a text block for the watermark
-    const textWatermark = engine.block.create('text');
+// Create a text block for the watermark
+const textWatermark = engine.block.create('text')
 
-    // Set the watermark text content
-    engine.block.setString(textWatermark, 'text/text', '© 2024 img.ly');
+// Set the watermark text content
+engine.block.setString(textWatermark, 'text/text', '© 2024 img.ly')
 
-    // Left-align the text for the watermark
-    engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left');
+// Left-align the text for the watermark
+engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left')
 
-    // Add the text block to the page
-    engine.block.appendChild(page, textWatermark);
+// Add the text block to the page
+engine.block.appendChild(page, textWatermark)
 ```
 
 The `engine.block.create('text')` method creates a new text block. We set the text content using `engine.block.setString()` with the `'text/text'` property.
@@ -284,18 +284,18 @@ The `engine.block.create('text')` method creates a new text block. We set the te
 We configure the font size, color, and opacity to make the watermark visible but unobtrusive.
 
 ```typescript highlight=highlight-style-text-watermark
-    // Set font size for the watermark
-    engine.block.setTextFontSize(textWatermark, 4);
+// Set font size for the watermark
+engine.block.setTextFontSize(textWatermark, 4)
 
-    // Set text color to white for contrast
-    engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 });
+// Set text color to white for contrast
+engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 })
 
-    // Set opacity to make it semi-transparent
-    engine.block.setOpacity(textWatermark, 0.8);
+// Set opacity to make it semi-transparent
+engine.block.setOpacity(textWatermark, 0.8)
 
-    // Set width mode to auto so text fits its content
-    engine.block.setWidthMode(textWatermark, 'Auto');
-    engine.block.setHeightMode(textWatermark, 'Auto');
+// Set width mode to auto so text fits its content
+engine.block.setWidthMode(textWatermark, 'Auto')
+engine.block.setHeightMode(textWatermark, 'Auto')
 ```
 
 Key styling options:
@@ -310,16 +310,16 @@ Key styling options:
 We calculate the watermark positions based on the page dimensions and place the logo and text side-by-side at the bottom center of the page.
 
 ```typescript highlight=highlight-position-text-watermark
-    // Position padding from edges
-    const padding = 15;
+// Position padding from edges
+const padding = 15
 
-    // Position text watermark at bottom-left
-    engine.block.setPositionX(textWatermark, padding);
-    engine.block.setPositionY(textWatermark, pageHeight - padding - 20);
+// Position text watermark at bottom-left
+engine.block.setPositionX(textWatermark, padding)
+engine.block.setPositionY(textWatermark, pageHeight - padding - 20)
 
-    // Position logo watermark at top-right
-    engine.block.setPositionX(logoWatermark, pageWidth - padding - logoWidth);
-    engine.block.setPositionY(logoWatermark, padding);
+// Position logo watermark at top-right
+engine.block.setPositionX(logoWatermark, pageWidth - padding - logoWidth)
+engine.block.setPositionY(logoWatermark, padding)
 ```
 
 We retrieve the rendered frame dimensions using `engine.block.getFrameWidth()` and `engine.block.getFrameHeight()`, calculate the total width of both watermarks with spacing, then center them horizontally. The vertical position places them near the bottom with padding from the edge.
@@ -329,29 +329,29 @@ We retrieve the rendered frame dimensions using `engine.block.getFrameWidth()` a
 Logo watermarks use graphic blocks with image fills to display brand symbols or company logos.
 
 ```typescript highlight=highlight-create-logo-watermark
-    // Create a graphic block for the logo watermark
-    const logoWatermark = engine.block.create('graphic');
+// Create a graphic block for the logo watermark
+const logoWatermark = engine.block.create('graphic')
 
-    // Create a rect shape for the logo
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(logoWatermark, rectShape);
+// Create a rect shape for the logo
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(logoWatermark, rectShape)
 
-    // Create an image fill with a logo
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://img.ly/static/ubq_samples/imgly_logo.jpg'
-    );
+// Create an image fill with a logo
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://img.ly/static/ubq_samples/imgly_logo.jpg'
+)
 
-    // Apply the fill to the graphic block
-    engine.block.setFill(logoWatermark, imageFill);
+// Apply the fill to the graphic block
+engine.block.setFill(logoWatermark, imageFill)
 
-    // Set content fill mode to contain the image within bounds
-    engine.block.setContentFillMode(logoWatermark, 'Contain');
+// Set content fill mode to contain the image within bounds
+engine.block.setContentFillMode(logoWatermark, 'Contain')
 
-    // Add to page
-    engine.block.appendChild(page, logoWatermark);
+// Add to page
+engine.block.appendChild(page, logoWatermark)
 ```
 
 We create a graphic block, assign a rect shape, then create an image fill with the logo URI. The fill is applied to the graphic block before adding it to the page.
@@ -361,14 +361,14 @@ We create a graphic block, assign a rect shape, then create an image fill with t
 We set fixed dimensions for the logo and apply opacity to match the text watermark.
 
 ```typescript highlight=highlight-size-logo-watermark
-    // Size the logo watermark
-    const logoWidth = 80;
-    const logoHeight = 50;
-    engine.block.setWidth(logoWatermark, logoWidth);
-    engine.block.setHeight(logoWatermark, logoHeight);
+// Size the logo watermark
+const logoWidth = 80
+const logoHeight = 50
+engine.block.setWidth(logoWatermark, logoWidth)
+engine.block.setHeight(logoWatermark, logoHeight)
 
-    // Set opacity for the logo watermark
-    engine.block.setOpacity(logoWatermark, 0.8);
+// Set opacity for the logo watermark
+engine.block.setOpacity(logoWatermark, 0.8)
 ```
 
 A good rule is to size logos to 10-20% of the page width. This keeps them visible without dominating the design.
@@ -378,31 +378,31 @@ A good rule is to size logos to 10-20% of the page width. This keeps them visibl
 Drop shadows improve watermark readability against varied backgrounds by adding contrast.
 
 ```typescript highlight=highlight-add-drop-shadow
-    // Add drop shadow to text watermark for better visibility
-    engine.block.setDropShadowEnabled(textWatermark, true);
-    engine.block.setDropShadowOffsetX(textWatermark, 1);
-    engine.block.setDropShadowOffsetY(textWatermark, 1);
-    engine.block.setDropShadowBlurRadiusX(textWatermark, 2);
-    engine.block.setDropShadowBlurRadiusY(textWatermark, 2);
-    engine.block.setDropShadowColor(textWatermark, {
-      r: 0,
-      g: 0,
-      b: 0,
-      a: 0.5
-    });
+// Add drop shadow to text watermark for better visibility
+engine.block.setDropShadowEnabled(textWatermark, true)
+engine.block.setDropShadowOffsetX(textWatermark, 1)
+engine.block.setDropShadowOffsetY(textWatermark, 1)
+engine.block.setDropShadowBlurRadiusX(textWatermark, 2)
+engine.block.setDropShadowBlurRadiusY(textWatermark, 2)
+engine.block.setDropShadowColor(textWatermark, {
+  r: 0,
+  g: 0,
+  b: 0,
+  a: 0.5
+})
 
-    // Add drop shadow to logo watermark
-    engine.block.setDropShadowEnabled(logoWatermark, true);
-    engine.block.setDropShadowOffsetX(logoWatermark, 1);
-    engine.block.setDropShadowOffsetY(logoWatermark, 1);
-    engine.block.setDropShadowBlurRadiusX(logoWatermark, 2);
-    engine.block.setDropShadowBlurRadiusY(logoWatermark, 2);
-    engine.block.setDropShadowColor(logoWatermark, {
-      r: 0,
-      g: 0,
-      b: 0,
-      a: 0.5
-    });
+// Add drop shadow to logo watermark
+engine.block.setDropShadowEnabled(logoWatermark, true)
+engine.block.setDropShadowOffsetX(logoWatermark, 1)
+engine.block.setDropShadowOffsetY(logoWatermark, 1)
+engine.block.setDropShadowBlurRadiusX(logoWatermark, 2)
+engine.block.setDropShadowBlurRadiusY(logoWatermark, 2)
+engine.block.setDropShadowColor(logoWatermark, {
+  r: 0,
+  g: 0,
+  b: 0,
+  a: 0.5
+})
 ```
 
 Drop shadow parameters:
@@ -416,27 +416,27 @@ Drop shadow parameters:
 After adding watermarks, we add an export button to the navigation bar that downloads the watermarked image when clicked.
 
 ```typescript highlight=highlight-export-watermarked
-    // Add export button to the navigation bar
-    cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
-      id: 'ly.img.actions.navigationBar',
-      children: [
-        {
-          id: 'ly.img.action.navigationBar',
-          key: 'export-watermarked',
-          label: 'Export',
-          icon: '@imgly/Download',
-          onClick: async () => {
-            // Export the watermarked design
-            const blob = await engine.block.export(page, {
-              mimeType: 'image/png'
-            });
+// Add export button to the navigation bar
+cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
+  id: 'ly.img.actions.navigationBar',
+  children: [
+    {
+      id: 'ly.img.action.navigationBar',
+      key: 'export-watermarked',
+      label: 'Export',
+      icon: '@imgly/Download',
+      onClick: async () => {
+        // Export the watermarked design
+        const blob = await engine.block.export(page, {
+          mimeType: 'image/png'
+        })
 
-            // Download the watermarked image
-            await cesdk.utils.downloadFile(blob, 'image/png');
-          }
-        }
-      ]
-    });
+        // Download the watermarked image
+        await cesdk.utils.downloadFile(blob, 'image/png')
+      }
+    }
+  ]
+})
 ```
 
 We use `cesdk.ui.insertOrderComponent()` to add a custom button to the editor's navigation bar. When clicked, `engine.block.export()` renders the page with all watermarks and returns a blob that `cesdk.utils.downloadFile()` downloads to the user's device. Supported formats include PNG, JPEG, and WebP.

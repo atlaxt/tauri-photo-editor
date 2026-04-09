@@ -28,9 +28,7 @@ import type {
   AssetDefinition,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -45,16 +43,18 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * Type definition for IMG.LY Premium Assets content.json manifest
  */
 interface ContentJSON {
-  version: string;
-  id: string;
-  assets: AssetDefinition[];
+  version: string
+  id: string
+  assets: AssetDefinition[]
 }
 
 /**
@@ -67,22 +67,22 @@ interface ContentJSON {
  * - Adding template assets to the asset library
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -93,94 +93,94 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Configure the base URL where premium assets are hosted
     // This points to IMG.LY's premium templates CDN
-    const baseURL = import.meta.env.VITE_CESDK_PREMIUM_TEMPLATES_URL;
+    const baseURL = import.meta.env.VITE_CESDK_PREMIUM_TEMPLATES_URL
 
     if (!baseURL) {
       throw new Error(
         'VITE_CESDK_PREMIUM_TEMPLATES_URL environment variable is required'
-      );
+      )
     }
 
     // Fetch the content.json manifest file
     // This file lists all available templates and their metadata
-    const contentJSONUrl = `${baseURL}/dist/templates/content.json`;
-    const response = await fetch(contentJSONUrl);
+    const contentJSONUrl = `${baseURL}/dist/templates/content.json`
+    const response = await fetch(contentJSONUrl)
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch content.json: ${response.statusText}`);
+      throw new Error(`Failed to fetch content.json: ${response.statusText}`)
     }
 
-    const content: ContentJSON = await response.json();
+    const content: ContentJSON = await response.json()
 
     // Extract the source ID and assets array from the manifest
-    const { assets, id: sourceId } = content;
+    const { assets, id: sourceId } = content
 
     // Create a local asset source for the premium templates with custom apply handler
     // Templates are archive files that need special loading
     engine.asset.addLocalSource(sourceId, [], async (asset) => {
       // Load the template from the archive URL
-      await engine.scene.loadFromArchiveURL(asset.meta.uri);
+      await engine.scene.loadFromArchiveURL(asset.meta.uri)
       // Return the scene ID after loading
-      return engine.scene.get()!;
-    });
+      return engine.scene.get()!
+    })
 
     // Process each asset and add it to the source
     assets.forEach((asset) => {
       // Replace {{base_url}} placeholders in asset metadata
       // Note: We append '/dist' to match the CDN structure
-      const replacementURL = `${baseURL}/dist`;
+      const replacementURL = `${baseURL}/dist`
       if (asset.meta) {
         Object.entries(asset.meta).forEach(([key, value]: [any, any]) => {
-          const stringValue: string = value.toString();
+          const stringValue: string = value.toString()
           if (stringValue.includes('{{base_url}}')) {
-            const updated = stringValue.replace('{{base_url}}', replacementURL);
+            const updated = stringValue.replace('{{base_url}}', replacementURL)
             if (asset.meta) {
-              asset.meta[key] = updated;
+              asset.meta[key] = updated
             }
           }
-        });
+        })
       }
 
       // Replace {{base_url}} in payload sourceSet for responsive images
       // cSpell:ignore sourceset
       if (asset.payload?.sourceSet) {
         asset.payload.sourceSet.forEach((sourceSet) => {
-          sourceSet.uri = sourceSet.uri.replace('{{base_url}}', replacementURL);
-        });
+          sourceSet.uri = sourceSet.uri.replace('{{base_url}}', replacementURL)
+        })
       }
 
       // Add the processed asset to the local source
-      engine.asset.addAssetToSource(sourceId, asset);
-    });
+      engine.asset.addAssetToSource(sourceId, asset)
+    })
 
     // Query and apply the second template to demonstrate the integration
     const result = await engine.asset.findAssets(sourceId, {
       page: 0,
       perPage: 2
-    });
+    })
 
     if (result.assets.length > 1) {
       // Apply the second template - this triggers the custom applyAsset callback
-      await engine.asset.apply(sourceId, result.assets[1]);
+      await engine.asset.apply(sourceId, result.assets[1])
     }
 
     // Set translations for category labels
@@ -199,7 +199,7 @@ class Example implements EditorPlugin {
         'libraries.ly.img.template.premium.ly.img.template.premium1.socials.label':
           'Socials'
       }
-    });
+    })
 
     // Configure the asset library dock entry for premium templates
     cesdk.ui.addAssetLibraryEntry({
@@ -208,7 +208,7 @@ class Example implements EditorPlugin {
       previewLength: 3,
       gridColumns: 3,
       gridItemHeight: 'auto'
-    });
+    })
 
     // Add premium templates as the first button in the dock with a separator
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -220,16 +220,16 @@ class Example implements EditorPlugin {
       },
       { id: 'ly.img.separator' },
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Open the Premium Templates panel to showcase the feature on load
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: { entries: ['ly.img.template.premium'] }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers environment setup, fetching and parsing the content manifest, creating local asset sources with archive loading support, replacing URL placeholders, configuring category labels, and displaying templates as a prominent dock entry in the asset library.
@@ -310,15 +310,15 @@ Add `.env` to your `.gitignore` to prevent exposing sensitive URLs:
 Load the base URL from environment variables with validation:
 
 ```typescript highlight-base-url-config
-    // Configure the base URL where premium assets are hosted
-    // This points to IMG.LY's premium templates CDN
-    const baseURL = import.meta.env.VITE_CESDK_PREMIUM_TEMPLATES_URL;
+// Configure the base URL where premium assets are hosted
+// This points to IMG.LY's premium templates CDN
+const baseURL = import.meta.env.VITE_CESDK_PREMIUM_TEMPLATES_URL
 
-    if (!baseURL) {
-      throw new Error(
-        'VITE_CESDK_PREMIUM_TEMPLATES_URL environment variable is required'
-      );
-    }
+if (!baseURL) {
+  throw new Error(
+    'VITE_CESDK_PREMIUM_TEMPLATES_URL environment variable is required'
+  )
+}
 ```
 
 The base URL points to the root directory where template folders are hosted. This URL can be a CDN, your own server, or any accessible HTTP location. Using environment variables keeps your hosting location confidential and allows different configurations for development, staging, and production environments.
@@ -332,16 +332,16 @@ We configure CE.SDK to load premium templates by fetching the `content.json` man
 First, we fetch and parse the `content.json` file that lists all available templates.
 
 ```typescript highlight-fetch-content-json
-    // Fetch the content.json manifest file
-    // This file lists all available templates and their metadata
-    const contentJSONUrl = `${baseURL}/dist/templates/content.json`;
-    const response = await fetch(contentJSONUrl);
+// Fetch the content.json manifest file
+// This file lists all available templates and their metadata
+const contentJSONUrl = `${baseURL}/dist/templates/content.json`
+const response = await fetch(contentJSONUrl)
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch content.json: ${response.statusText}`);
-    }
+if (!response.ok) {
+  throw new Error(`Failed to fetch content.json: ${response.statusText}`)
+}
 
-    const content: ContentJSON = await response.json();
+const content: ContentJSON = await response.json()
 ```
 
 The manifest contains the source ID and an array of asset definitions with metadata for each template.
@@ -352,7 +352,7 @@ We extract the source ID and assets array from the parsed manifest.
 
 ```typescript highlight-extract-source-data
 // Extract the source ID and assets array from the manifest
-const { assets, id: sourceId } = content;
+const { assets, id: sourceId } = content
 ```
 
 The source ID determines which asset library panel displays the templates. The assets array contains all template definitions.
@@ -366,10 +366,10 @@ We create a local asset source with a custom apply handler for loading template 
 // Templates are archive files that need special loading
 engine.asset.addLocalSource(sourceId, [], async (asset) => {
   // Load the template from the archive URL
-  await engine.scene.loadFromArchiveURL(asset.meta.uri);
+  await engine.scene.loadFromArchiveURL(asset.meta.uri)
   // Return the scene ID after loading
-  return engine.scene.get()!;
-});
+  return engine.scene.get()!
+})
 ```
 
 Premium templates are distributed as `.zip` archives, so we provide a custom `applyAsset` callback that uses `loadFromArchiveURL()` instead of the standard asset application logic. This callback:
@@ -385,34 +385,34 @@ Local sources are ideal for finite asset collections that don't require custom q
 We process each asset to replace `{{base_url}}` placeholders with the actual hosting URL, then add them to the source.
 
 ```typescript highlight-process-assets
-    // Process each asset and add it to the source
-    assets.forEach((asset) => {
-      // Replace {{base_url}} placeholders in asset metadata
-      // Note: We append '/dist' to match the CDN structure
-      const replacementURL = `${baseURL}/dist`;
-      if (asset.meta) {
-        Object.entries(asset.meta).forEach(([key, value]: [any, any]) => {
-          const stringValue: string = value.toString();
-          if (stringValue.includes('{{base_url}}')) {
-            const updated = stringValue.replace('{{base_url}}', replacementURL);
-            if (asset.meta) {
-              asset.meta[key] = updated;
-            }
-          }
-        });
+// Process each asset and add it to the source
+assets.forEach((asset) => {
+  // Replace {{base_url}} placeholders in asset metadata
+  // Note: We append '/dist' to match the CDN structure
+  const replacementURL = `${baseURL}/dist`
+  if (asset.meta) {
+    Object.entries(asset.meta).forEach(([key, value]: [any, any]) => {
+      const stringValue: string = value.toString()
+      if (stringValue.includes('{{base_url}}')) {
+        const updated = stringValue.replace('{{base_url}}', replacementURL)
+        if (asset.meta) {
+          asset.meta[key] = updated
+        }
       }
+    })
+  }
 
-      // Replace {{base_url}} in payload sourceSet for responsive images
-      // cSpell:ignore sourceset
-      if (asset.payload?.sourceSet) {
-        asset.payload.sourceSet.forEach((sourceSet) => {
-          sourceSet.uri = sourceSet.uri.replace('{{base_url}}', replacementURL);
-        });
-      }
+  // Replace {{base_url}} in payload sourceSet for responsive images
+  // cSpell:ignore sourceset
+  if (asset.payload?.sourceSet) {
+    asset.payload.sourceSet.forEach((sourceSet) => {
+      sourceSet.uri = sourceSet.uri.replace('{{base_url}}', replacementURL)
+    })
+  }
 
-      // Add the processed asset to the local source
-      engine.asset.addAssetToSource(sourceId, asset);
-    });
+  // Add the processed asset to the local source
+  engine.asset.addAssetToSource(sourceId, asset)
+})
 ```
 
 For each asset, we replace placeholders in two locations: the `meta` object and the `payload.sourceSet` array.
@@ -424,17 +424,17 @@ We iterate through the `meta` object to replace any `{{base_url}}` placeholders.
 ```typescript highlight-replace-meta-placeholders
 // Replace {{base_url}} placeholders in asset metadata
 // Note: We append '/dist' to match the CDN structure
-const replacementURL = `${baseURL}/dist`;
+const replacementURL = `${baseURL}/dist`
 if (asset.meta) {
   Object.entries(asset.meta).forEach(([key, value]: [any, any]) => {
-    const stringValue: string = value.toString();
+    const stringValue: string = value.toString()
     if (stringValue.includes('{{base_url}}')) {
-      const updated = stringValue.replace('{{base_url}}', replacementURL);
+      const updated = stringValue.replace('{{base_url}}', replacementURL)
       if (asset.meta) {
-        asset.meta[key] = updated;
+        asset.meta[key] = updated
       }
     }
-  });
+  })
 }
 ```
 
@@ -449,8 +449,8 @@ We also replace placeholders in the `payload.sourceSet` array for responsive ima
 // cSpell:ignore sourceset
 if (asset.payload?.sourceSet) {
   asset.payload.sourceSet.forEach((sourceSet) => {
-    sourceSet.uri = sourceSet.uri.replace('{{base_url}}', replacementURL);
-  });
+    sourceSet.uri = sourceSet.uri.replace('{{base_url}}', replacementURL)
+  })
 }
 ```
 
@@ -462,7 +462,7 @@ After processing, we add the asset to the local source.
 
 ```typescript highlight-add-asset
 // Add the processed asset to the local source
-engine.asset.addAssetToSource(sourceId, asset);
+engine.asset.addAssetToSource(sourceId, asset)
 ```
 
 The engine stores the asset and makes it available for search queries and display.
@@ -492,7 +492,7 @@ cesdk.i18n.setTranslations({
     'libraries.ly.img.template.premium.ly.img.template.premium1.socials.label':
       'Socials'
   }
-});
+})
 ```
 
 These translations map the internal category identifiers from `content.json` (like `e-commerce`, `event`, `personal`) to readable labels that appear in the asset library interface. The translation keys follow the pattern: `libraries.{sourceId}.{categoryId}.label`.
@@ -502,26 +502,26 @@ These translations map the internal category identifiers from `content.json` (li
 We add a custom dock entry as the first button in the asset library dock, followed by a separator for visual grouping.
 
 ```typescript highlight-setup
-    // Configure the asset library dock entry for premium templates
-    cesdk.ui.addAssetLibraryEntry({
-      id: 'ly.img.template.premium',
-      sourceIds: [sourceId],
-      previewLength: 3,
-      gridColumns: 3,
-      gridItemHeight: 'auto'
-    });
+// Configure the asset library dock entry for premium templates
+cesdk.ui.addAssetLibraryEntry({
+  id: 'ly.img.template.premium',
+  sourceIds: [sourceId],
+  previewLength: 3,
+  gridColumns: 3,
+  gridItemHeight: 'auto'
+})
 
-    // Add premium templates as the first button in the dock with a separator
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
-      {
-        id: 'ly.img.assetLibrary.dock',
-        key: 'premium-templates',
-        label: 'Premium Templates',
-        entries: ['ly.img.template.premium']
-      },
-      { id: 'ly.img.separator' },
-      ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+// Add premium templates as the first button in the dock with a separator
+cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
+  {
+    id: 'ly.img.assetLibrary.dock',
+    key: 'premium-templates',
+    label: 'Premium Templates',
+    entries: ['ly.img.template.premium']
+  },
+  { id: 'ly.img.separator' },
+  ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
+])
 ```
 
 This configuration:
@@ -542,9 +542,9 @@ Verify templates appear in the asset library and load correctly with all assets.
 const result = await engine.asset.findAssets('imgly-premium-templates', {
   page: 0,
   perPage: 10,
-});
+})
 
-console.log(`Found ${result.total} templates`);
+console.log(`Found ${result.total} templates`)
 ```
 
 ### Applying Templates Programmatically
@@ -552,16 +552,16 @@ console.log(`Found ${result.total} templates`);
 To demonstrate the integration working immediately upon load, apply a template programmatically after the asset source is configured:
 
 ```typescript highlight-apply-first-template
-    // Query and apply the second template to demonstrate the integration
-    const result = await engine.asset.findAssets(sourceId, {
-      page: 0,
-      perPage: 2
-    });
+// Query and apply the second template to demonstrate the integration
+const result = await engine.asset.findAssets(sourceId, {
+  page: 0,
+  perPage: 2
+})
 
-    if (result.assets.length > 1) {
-      // Apply the second template - this triggers the custom applyAsset callback
-      await engine.asset.apply(sourceId, result.assets[1]);
-    }
+if (result.assets.length > 1) {
+  // Apply the second template - this triggers the custom applyAsset callback
+  await engine.asset.apply(sourceId, result.assets[1])
+}
 ```
 
 This queries the asset source for templates and applies the second one (index 1) to the canvas. This provides immediate visual feedback that the integration is working correctly. Users can then click other templates in the asset library to explore the full collection.

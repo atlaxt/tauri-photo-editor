@@ -23,7 +23,7 @@ combined with fills.
 > - [Live demo](https://img.ly/docs/cesdk/examples/guides-stickers-and-shapes-create-shapes-browser/)
 
 ```typescript file=@cesdk_web_examples/guides-stickers-and-shapes-create-shapes-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,188 +68,188 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 300, height: 200, unit: 'Pixel' },
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
-    const testGraphic = engine.block.create('graphic');
-    engine.block.supportsShape(testGraphic); // Returns true
+    const testGraphic = engine.block.create('graphic')
+    engine.block.supportsShape(testGraphic) // Returns true
 
-    const testText = engine.block.create('text');
-    engine.block.supportsShape(testText); // Returns false
+    const testText = engine.block.create('text')
+    engine.block.supportsShape(testText) // Returns false
 
-    engine.block.destroy(testText);
-    engine.block.destroy(testGraphic);
+    engine.block.destroy(testText)
+    engine.block.destroy(testGraphic)
 
-    const rectGraphic = engine.block.create('graphic');
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(rectGraphic, rectShape);
+    const rectGraphic = engine.block.create('graphic')
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(rectGraphic, rectShape)
 
-    const redFill = engine.block.createFill('color');
+    const redFill = engine.block.createFill('color')
     engine.block.setColor(redFill, 'fill/color/value', {
       r: 1.0,
       g: 0.0,
       b: 0.0,
       a: 1.0,
-    });
-    engine.block.setFill(rectGraphic, redFill);
+    })
+    engine.block.setFill(rectGraphic, redFill)
 
-    engine.block.setWidth(rectGraphic, 64);
-    engine.block.setHeight(rectGraphic, 64);
-    engine.block.appendChild(page, rectGraphic);
-    engine.block.setPositionX(rectGraphic, 10);
-    engine.block.setPositionY(rectGraphic, 10);
+    engine.block.setWidth(rectGraphic, 64)
+    engine.block.setHeight(rectGraphic, 64)
+    engine.block.appendChild(page, rectGraphic)
+    engine.block.setPositionX(rectGraphic, 10)
+    engine.block.setPositionY(rectGraphic, 10)
 
-    const ellipseGraphic = engine.block.create('graphic');
-    const ellipseShape = engine.block.createShape('ellipse');
-    engine.block.setShape(ellipseGraphic, ellipseShape);
+    const ellipseGraphic = engine.block.create('graphic')
+    const ellipseShape = engine.block.createShape('ellipse')
+    engine.block.setShape(ellipseGraphic, ellipseShape)
 
-    const gradientFill = engine.block.createFill('gradient/linear');
+    const gradientFill = engine.block.createFill('gradient/linear')
     engine.block.setGradientColorStops(gradientFill, 'fill/gradient/colors', [
       { color: { r: 0.2, g: 0.6, b: 0.9, a: 1.0 }, stop: 0.0 },
       { color: { r: 0.9, g: 0.3, b: 0.6, a: 1.0 }, stop: 1.0 },
-    ]);
-    engine.block.setFill(ellipseGraphic, gradientFill);
+    ])
+    engine.block.setFill(ellipseGraphic, gradientFill)
 
-    engine.block.setWidth(ellipseGraphic, 64);
-    engine.block.setHeight(ellipseGraphic, 64);
-    engine.block.appendChild(page, ellipseGraphic);
-    engine.block.setPositionX(ellipseGraphic, 82);
-    engine.block.setPositionY(ellipseGraphic, 10);
+    engine.block.setWidth(ellipseGraphic, 64)
+    engine.block.setHeight(ellipseGraphic, 64)
+    engine.block.appendChild(page, ellipseGraphic)
+    engine.block.setPositionX(ellipseGraphic, 82)
+    engine.block.setPositionY(ellipseGraphic, 10)
 
     // Discover what properties are available on a shape
-    const exampleStarShape = engine.block.createShape('star');
-    engine.block.findAllProperties(exampleStarShape);
+    const exampleStarShape = engine.block.createShape('star')
+    engine.block.findAllProperties(exampleStarShape)
     // Returns: ['shape/star/points', 'shape/star/innerDiameter', 'type', ...]
-    engine.block.destroy(exampleStarShape);
+    engine.block.destroy(exampleStarShape)
 
-    const starGraphic = engine.block.create('graphic');
-    const starShape = engine.block.createShape('star');
-    engine.block.setShape(starGraphic, starShape);
+    const starGraphic = engine.block.create('graphic')
+    const starShape = engine.block.createShape('star')
+    engine.block.setShape(starGraphic, starShape)
 
-    engine.block.setInt(starShape, 'shape/star/points', 5);
-    engine.block.setFloat(starShape, 'shape/star/innerDiameter', 0.5);
+    engine.block.setInt(starShape, 'shape/star/points', 5)
+    engine.block.setFloat(starShape, 'shape/star/innerDiameter', 0.5)
 
-    const yellowFill = engine.block.createFill('color');
+    const yellowFill = engine.block.createFill('color')
     engine.block.setColor(yellowFill, 'fill/color/value', {
       r: 1.0,
       g: 0.8,
       b: 0.0,
       a: 1.0,
-    });
-    engine.block.setFill(starGraphic, yellowFill);
+    })
+    engine.block.setFill(starGraphic, yellowFill)
 
-    engine.block.setWidth(starGraphic, 64);
-    engine.block.setHeight(starGraphic, 64);
-    engine.block.appendChild(page, starGraphic);
-    engine.block.setPositionX(starGraphic, 154);
-    engine.block.setPositionY(starGraphic, 10);
+    engine.block.setWidth(starGraphic, 64)
+    engine.block.setHeight(starGraphic, 64)
+    engine.block.appendChild(page, starGraphic)
+    engine.block.setPositionX(starGraphic, 154)
+    engine.block.setPositionY(starGraphic, 10)
 
-    const polygonGraphic = engine.block.create('graphic');
-    const polygonShape = engine.block.createShape('polygon');
-    engine.block.setShape(polygonGraphic, polygonShape);
+    const polygonGraphic = engine.block.create('graphic')
+    const polygonShape = engine.block.createShape('polygon')
+    engine.block.setShape(polygonGraphic, polygonShape)
 
-    engine.block.setInt(polygonShape, 'shape/polygon/sides', 8);
+    engine.block.setInt(polygonShape, 'shape/polygon/sides', 8)
 
-    const greenFill = engine.block.createFill('color');
+    const greenFill = engine.block.createFill('color')
     engine.block.setColor(greenFill, 'fill/color/value', {
       r: 0.2,
       g: 0.8,
       b: 0.3,
       a: 1.0,
-    });
-    engine.block.setFill(polygonGraphic, greenFill);
+    })
+    engine.block.setFill(polygonGraphic, greenFill)
 
-    engine.block.setWidth(polygonGraphic, 64);
-    engine.block.setHeight(polygonGraphic, 64);
-    engine.block.appendChild(page, polygonGraphic);
-    engine.block.setPositionX(polygonGraphic, 226);
-    engine.block.setPositionY(polygonGraphic, 10);
+    engine.block.setWidth(polygonGraphic, 64)
+    engine.block.setHeight(polygonGraphic, 64)
+    engine.block.appendChild(page, polygonGraphic)
+    engine.block.setPositionX(polygonGraphic, 226)
+    engine.block.setPositionY(polygonGraphic, 10)
 
-    const lineGraphic = engine.block.create('graphic');
-    const lineShape = engine.block.createShape('line');
-    engine.block.setShape(lineGraphic, lineShape);
+    const lineGraphic = engine.block.create('graphic')
+    const lineShape = engine.block.createShape('line')
+    engine.block.setShape(lineGraphic, lineShape)
 
-    const purpleFill = engine.block.createFill('color');
+    const purpleFill = engine.block.createFill('color')
     engine.block.setColor(purpleFill, 'fill/color/value', {
       r: 0.6,
       g: 0.2,
       b: 0.9,
       a: 1.0,
-    });
-    engine.block.setFill(lineGraphic, purpleFill);
+    })
+    engine.block.setFill(lineGraphic, purpleFill)
 
-    engine.block.setWidth(lineGraphic, 64);
-    engine.block.setHeight(lineGraphic, 10);
-    engine.block.appendChild(page, lineGraphic);
-    engine.block.setPositionX(lineGraphic, 10);
-    engine.block.setPositionY(lineGraphic, 109);
+    engine.block.setWidth(lineGraphic, 64)
+    engine.block.setHeight(lineGraphic, 10)
+    engine.block.appendChild(page, lineGraphic)
+    engine.block.setPositionX(lineGraphic, 10)
+    engine.block.setPositionY(lineGraphic, 109)
 
-    const vectorPathGraphic = engine.block.create('graphic');
-    const vectorPathShape = engine.block.createShape('vector_path');
-    engine.block.setShape(vectorPathGraphic, vectorPathShape);
+    const vectorPathGraphic = engine.block.create('graphic')
+    const vectorPathShape = engine.block.createShape('vector_path')
+    engine.block.setShape(vectorPathGraphic, vectorPathShape)
 
     engine.block.setString(
       vectorPathShape,
       'shape/vector_path/path',
       'M 0,0 L 100,50 L 0,100 Z',
-    );
+    )
 
-    const orangeFill = engine.block.createFill('color');
+    const orangeFill = engine.block.createFill('color')
     engine.block.setColor(orangeFill, 'fill/color/value', {
       r: 1.0,
       g: 0.5,
       b: 0.0,
       a: 1.0,
-    });
-    engine.block.setFill(vectorPathGraphic, orangeFill);
+    })
+    engine.block.setFill(vectorPathGraphic, orangeFill)
 
-    engine.block.setWidth(vectorPathGraphic, 64);
-    engine.block.setHeight(vectorPathGraphic, 64);
-    engine.block.appendChild(page, vectorPathGraphic);
-    engine.block.setPositionX(vectorPathGraphic, 82);
-    engine.block.setPositionY(vectorPathGraphic, 82);
+    engine.block.setWidth(vectorPathGraphic, 64)
+    engine.block.setHeight(vectorPathGraphic, 64)
+    engine.block.appendChild(page, vectorPathGraphic)
+    engine.block.setPositionX(vectorPathGraphic, 82)
+    engine.block.setPositionY(vectorPathGraphic, 82)
 
-    const roundedRectGraphic = engine.block.create('graphic');
-    const roundedRectShape = engine.block.createShape('rect');
-    engine.block.setShape(roundedRectGraphic, roundedRectShape);
+    const roundedRectGraphic = engine.block.create('graphic')
+    const roundedRectShape = engine.block.createShape('rect')
+    engine.block.setShape(roundedRectGraphic, roundedRectShape)
 
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTL', 5.0);
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTR', 5.0);
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBL', 5.0);
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBR', 5.0);
+    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTL', 5.0)
+    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTR', 5.0)
+    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBL', 5.0)
+    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBR', 5.0)
 
-    const cyanFill = engine.block.createFill('color');
+    const cyanFill = engine.block.createFill('color')
     engine.block.setColor(cyanFill, 'fill/color/value', {
       r: 0.0,
       g: 0.8,
       b: 0.8,
       a: 1.0,
-    });
-    engine.block.setFill(roundedRectGraphic, cyanFill);
+    })
+    engine.block.setFill(roundedRectGraphic, cyanFill)
 
-    engine.block.setWidth(roundedRectGraphic, 64);
-    engine.block.setHeight(roundedRectGraphic, 64);
-    engine.block.appendChild(page, roundedRectGraphic);
-    engine.block.setPositionX(roundedRectGraphic, 154);
-    engine.block.setPositionY(roundedRectGraphic, 82);
+    engine.block.setWidth(roundedRectGraphic, 64)
+    engine.block.setHeight(roundedRectGraphic, 64)
+    engine.block.appendChild(page, roundedRectGraphic)
+    engine.block.setPositionX(roundedRectGraphic, 154)
+    engine.block.setPositionY(roundedRectGraphic, 82)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Understanding Shapes and Graphic Blocks
@@ -289,14 +289,14 @@ You can use short type names like `'rect'` or fully qualified names like `'//ly.
 Before applying shapes, we verify that a block type supports them. Not all block types can have shapes—graphic blocks support shapes, but text blocks, scenes, and pages don't.
 
 ```typescript highlight-check-shape-support
-    const testGraphic = engine.block.create('graphic');
-    engine.block.supportsShape(testGraphic); // Returns true
+const testGraphic = engine.block.create('graphic')
+engine.block.supportsShape(testGraphic) // Returns true
 
-    const testText = engine.block.create('text');
-    engine.block.supportsShape(testText); // Returns false
+const testText = engine.block.create('text')
+engine.block.supportsShape(testText) // Returns false
 
-    engine.block.destroy(testText);
-    engine.block.destroy(testGraphic);
+engine.block.destroy(testText)
+engine.block.destroy(testGraphic)
 ```
 
 We always check `supportsShape()` to prevent errors when working with unknown or dynamic block types. Graphic blocks return `true`, while text blocks return `false`.
@@ -308,24 +308,24 @@ We always check `supportsShape()` to prevent errors when working with unknown or
 We create a graphic block, apply a rectangle shape, and add a fill to make it visible:
 
 ```typescript highlight-create-rectangle
-    const rectGraphic = engine.block.create('graphic');
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(rectGraphic, rectShape);
+const rectGraphic = engine.block.create('graphic')
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(rectGraphic, rectShape)
 
-    const redFill = engine.block.createFill('color');
-    engine.block.setColor(redFill, 'fill/color/value', {
-      r: 1.0,
-      g: 0.0,
-      b: 0.0,
-      a: 1.0,
-    });
-    engine.block.setFill(rectGraphic, redFill);
+const redFill = engine.block.createFill('color')
+engine.block.setColor(redFill, 'fill/color/value', {
+  r: 1.0,
+  g: 0.0,
+  b: 0.0,
+  a: 1.0,
+})
+engine.block.setFill(rectGraphic, redFill)
 
-    engine.block.setWidth(rectGraphic, 64);
-    engine.block.setHeight(rectGraphic, 64);
-    engine.block.appendChild(page, rectGraphic);
-    engine.block.setPositionX(rectGraphic, 10);
-    engine.block.setPositionY(rectGraphic, 10);
+engine.block.setWidth(rectGraphic, 64)
+engine.block.setHeight(rectGraphic, 64)
+engine.block.appendChild(page, rectGraphic)
+engine.block.setPositionX(rectGraphic, 10)
+engine.block.setPositionY(rectGraphic, 10)
 ```
 
 Shapes require fills to become visible. The shape defines the geometry while the fill provides the visual content.
@@ -337,96 +337,96 @@ Creating other shapes follows the same pattern with different shape types and pr
 Ellipse with gradient fill:
 
 ```typescript highlight-create-ellipse
-    const ellipseGraphic = engine.block.create('graphic');
-    const ellipseShape = engine.block.createShape('ellipse');
-    engine.block.setShape(ellipseGraphic, ellipseShape);
+const ellipseGraphic = engine.block.create('graphic')
+const ellipseShape = engine.block.createShape('ellipse')
+engine.block.setShape(ellipseGraphic, ellipseShape)
 
-    const gradientFill = engine.block.createFill('gradient/linear');
-    engine.block.setGradientColorStops(gradientFill, 'fill/gradient/colors', [
-      { color: { r: 0.2, g: 0.6, b: 0.9, a: 1.0 }, stop: 0.0 },
-      { color: { r: 0.9, g: 0.3, b: 0.6, a: 1.0 }, stop: 1.0 },
-    ]);
-    engine.block.setFill(ellipseGraphic, gradientFill);
+const gradientFill = engine.block.createFill('gradient/linear')
+engine.block.setGradientColorStops(gradientFill, 'fill/gradient/colors', [
+  { color: { r: 0.2, g: 0.6, b: 0.9, a: 1.0 }, stop: 0.0 },
+  { color: { r: 0.9, g: 0.3, b: 0.6, a: 1.0 }, stop: 1.0 },
+])
+engine.block.setFill(ellipseGraphic, gradientFill)
 
-    engine.block.setWidth(ellipseGraphic, 64);
-    engine.block.setHeight(ellipseGraphic, 64);
-    engine.block.appendChild(page, ellipseGraphic);
-    engine.block.setPositionX(ellipseGraphic, 82);
-    engine.block.setPositionY(ellipseGraphic, 10);
+engine.block.setWidth(ellipseGraphic, 64)
+engine.block.setHeight(ellipseGraphic, 64)
+engine.block.appendChild(page, ellipseGraphic)
+engine.block.setPositionX(ellipseGraphic, 82)
+engine.block.setPositionY(ellipseGraphic, 10)
 ```
 
 Star with configurable points:
 
 ```typescript highlight-create-star
-    const starGraphic = engine.block.create('graphic');
-    const starShape = engine.block.createShape('star');
-    engine.block.setShape(starGraphic, starShape);
+const starGraphic = engine.block.create('graphic')
+const starShape = engine.block.createShape('star')
+engine.block.setShape(starGraphic, starShape)
 
-    engine.block.setInt(starShape, 'shape/star/points', 5);
-    engine.block.setFloat(starShape, 'shape/star/innerDiameter', 0.5);
+engine.block.setInt(starShape, 'shape/star/points', 5)
+engine.block.setFloat(starShape, 'shape/star/innerDiameter', 0.5)
 
-    const yellowFill = engine.block.createFill('color');
-    engine.block.setColor(yellowFill, 'fill/color/value', {
-      r: 1.0,
-      g: 0.8,
-      b: 0.0,
-      a: 1.0,
-    });
-    engine.block.setFill(starGraphic, yellowFill);
+const yellowFill = engine.block.createFill('color')
+engine.block.setColor(yellowFill, 'fill/color/value', {
+  r: 1.0,
+  g: 0.8,
+  b: 0.0,
+  a: 1.0,
+})
+engine.block.setFill(starGraphic, yellowFill)
 
-    engine.block.setWidth(starGraphic, 64);
-    engine.block.setHeight(starGraphic, 64);
-    engine.block.appendChild(page, starGraphic);
-    engine.block.setPositionX(starGraphic, 154);
-    engine.block.setPositionY(starGraphic, 10);
+engine.block.setWidth(starGraphic, 64)
+engine.block.setHeight(starGraphic, 64)
+engine.block.appendChild(page, starGraphic)
+engine.block.setPositionX(starGraphic, 154)
+engine.block.setPositionY(starGraphic, 10)
 ```
 
 Polygon with custom number of sides:
 
 ```typescript highlight-create-polygon
-    const polygonGraphic = engine.block.create('graphic');
-    const polygonShape = engine.block.createShape('polygon');
-    engine.block.setShape(polygonGraphic, polygonShape);
+const polygonGraphic = engine.block.create('graphic')
+const polygonShape = engine.block.createShape('polygon')
+engine.block.setShape(polygonGraphic, polygonShape)
 
-    engine.block.setInt(polygonShape, 'shape/polygon/sides', 8);
+engine.block.setInt(polygonShape, 'shape/polygon/sides', 8)
 
-    const greenFill = engine.block.createFill('color');
-    engine.block.setColor(greenFill, 'fill/color/value', {
-      r: 0.2,
-      g: 0.8,
-      b: 0.3,
-      a: 1.0,
-    });
-    engine.block.setFill(polygonGraphic, greenFill);
+const greenFill = engine.block.createFill('color')
+engine.block.setColor(greenFill, 'fill/color/value', {
+  r: 0.2,
+  g: 0.8,
+  b: 0.3,
+  a: 1.0,
+})
+engine.block.setFill(polygonGraphic, greenFill)
 
-    engine.block.setWidth(polygonGraphic, 64);
-    engine.block.setHeight(polygonGraphic, 64);
-    engine.block.appendChild(page, polygonGraphic);
-    engine.block.setPositionX(polygonGraphic, 226);
-    engine.block.setPositionY(polygonGraphic, 10);
+engine.block.setWidth(polygonGraphic, 64)
+engine.block.setHeight(polygonGraphic, 64)
+engine.block.appendChild(page, polygonGraphic)
+engine.block.setPositionX(polygonGraphic, 226)
+engine.block.setPositionY(polygonGraphic, 10)
 ```
 
 Line with stroke styling:
 
 ```typescript highlight-create-line
-    const lineGraphic = engine.block.create('graphic');
-    const lineShape = engine.block.createShape('line');
-    engine.block.setShape(lineGraphic, lineShape);
+const lineGraphic = engine.block.create('graphic')
+const lineShape = engine.block.createShape('line')
+engine.block.setShape(lineGraphic, lineShape)
 
-    const purpleFill = engine.block.createFill('color');
-    engine.block.setColor(purpleFill, 'fill/color/value', {
-      r: 0.6,
-      g: 0.2,
-      b: 0.9,
-      a: 1.0,
-    });
-    engine.block.setFill(lineGraphic, purpleFill);
+const purpleFill = engine.block.createFill('color')
+engine.block.setColor(purpleFill, 'fill/color/value', {
+  r: 0.6,
+  g: 0.2,
+  b: 0.9,
+  a: 1.0,
+})
+engine.block.setFill(lineGraphic, purpleFill)
 
-    engine.block.setWidth(lineGraphic, 64);
-    engine.block.setHeight(lineGraphic, 10);
-    engine.block.appendChild(page, lineGraphic);
-    engine.block.setPositionX(lineGraphic, 10);
-    engine.block.setPositionY(lineGraphic, 109);
+engine.block.setWidth(lineGraphic, 64)
+engine.block.setHeight(lineGraphic, 10)
+engine.block.appendChild(page, lineGraphic)
+engine.block.setPositionX(lineGraphic, 10)
+engine.block.setPositionY(lineGraphic, 109)
 ```
 
 ## Configuring Shape Properties
@@ -437,10 +437,10 @@ Each shape type has unique properties that control its appearance. We discover t
 
 ```typescript highlight-discover-properties
 // Discover what properties are available on a shape
-const exampleStarShape = engine.block.createShape('star');
-engine.block.findAllProperties(exampleStarShape);
+const exampleStarShape = engine.block.createShape('star')
+engine.block.findAllProperties(exampleStarShape)
 // Returns: ['shape/star/points', 'shape/star/innerDiameter', 'type', ...]
-engine.block.destroy(exampleStarShape);
+engine.block.destroy(exampleStarShape)
 ```
 
 This shows what can be configured for each shape type.
@@ -450,29 +450,29 @@ This shows what can be configured for each shape type.
 Rectangles support independent corner radius values:
 
 ```typescript highlight-configure-properties
-    const roundedRectGraphic = engine.block.create('graphic');
-    const roundedRectShape = engine.block.createShape('rect');
-    engine.block.setShape(roundedRectGraphic, roundedRectShape);
+const roundedRectGraphic = engine.block.create('graphic')
+const roundedRectShape = engine.block.createShape('rect')
+engine.block.setShape(roundedRectGraphic, roundedRectShape)
 
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTL', 5.0);
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTR', 5.0);
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBL', 5.0);
-    engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBR', 5.0);
+engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTL', 5.0)
+engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusTR', 5.0)
+engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBL', 5.0)
+engine.block.setFloat(roundedRectShape, 'shape/rect/cornerRadiusBR', 5.0)
 
-    const cyanFill = engine.block.createFill('color');
-    engine.block.setColor(cyanFill, 'fill/color/value', {
-      r: 0.0,
-      g: 0.8,
-      b: 0.8,
-      a: 1.0,
-    });
-    engine.block.setFill(roundedRectGraphic, cyanFill);
+const cyanFill = engine.block.createFill('color')
+engine.block.setColor(cyanFill, 'fill/color/value', {
+  r: 0.0,
+  g: 0.8,
+  b: 0.8,
+  a: 1.0,
+})
+engine.block.setFill(roundedRectGraphic, cyanFill)
 
-    engine.block.setWidth(roundedRectGraphic, 64);
-    engine.block.setHeight(roundedRectGraphic, 64);
-    engine.block.appendChild(page, roundedRectGraphic);
-    engine.block.setPositionX(roundedRectGraphic, 154);
-    engine.block.setPositionY(roundedRectGraphic, 82);
+engine.block.setWidth(roundedRectGraphic, 64)
+engine.block.setHeight(roundedRectGraphic, 64)
+engine.block.appendChild(page, roundedRectGraphic)
+engine.block.setPositionX(roundedRectGraphic, 154)
+engine.block.setPositionY(roundedRectGraphic, 82)
 ```
 
 Set each corner independently using `cornerRadiusTL`, `cornerRadiusTR`, `cornerRadiusBL`, and `cornerRadiusBR` (values in pixels).
@@ -482,27 +482,27 @@ Set each corner independently using `cornerRadiusTL`, `cornerRadiusTR`, `cornerR
 Configure star shapes using two properties:
 
 ```typescript highlight-create-star
-    const starGraphic = engine.block.create('graphic');
-    const starShape = engine.block.createShape('star');
-    engine.block.setShape(starGraphic, starShape);
+const starGraphic = engine.block.create('graphic')
+const starShape = engine.block.createShape('star')
+engine.block.setShape(starGraphic, starShape)
 
-    engine.block.setInt(starShape, 'shape/star/points', 5);
-    engine.block.setFloat(starShape, 'shape/star/innerDiameter', 0.5);
+engine.block.setInt(starShape, 'shape/star/points', 5)
+engine.block.setFloat(starShape, 'shape/star/innerDiameter', 0.5)
 
-    const yellowFill = engine.block.createFill('color');
-    engine.block.setColor(yellowFill, 'fill/color/value', {
-      r: 1.0,
-      g: 0.8,
-      b: 0.0,
-      a: 1.0,
-    });
-    engine.block.setFill(starGraphic, yellowFill);
+const yellowFill = engine.block.createFill('color')
+engine.block.setColor(yellowFill, 'fill/color/value', {
+  r: 1.0,
+  g: 0.8,
+  b: 0.0,
+  a: 1.0,
+})
+engine.block.setFill(starGraphic, yellowFill)
 
-    engine.block.setWidth(starGraphic, 64);
-    engine.block.setHeight(starGraphic, 64);
-    engine.block.appendChild(page, starGraphic);
-    engine.block.setPositionX(starGraphic, 154);
-    engine.block.setPositionY(starGraphic, 10);
+engine.block.setWidth(starGraphic, 64)
+engine.block.setHeight(starGraphic, 64)
+engine.block.appendChild(page, starGraphic)
+engine.block.setPositionX(starGraphic, 154)
+engine.block.setPositionY(starGraphic, 10)
 ```
 
 The `points` property (minimum 3) sets the number of points. The `innerDiameter` (0.0 to 1.0) controls point sharpness.
@@ -512,26 +512,26 @@ The `points` property (minimum 3) sets the number of points. The `innerDiameter`
 Configure polygons by setting the number of sides:
 
 ```typescript highlight-create-polygon
-    const polygonGraphic = engine.block.create('graphic');
-    const polygonShape = engine.block.createShape('polygon');
-    engine.block.setShape(polygonGraphic, polygonShape);
+const polygonGraphic = engine.block.create('graphic')
+const polygonShape = engine.block.createShape('polygon')
+engine.block.setShape(polygonGraphic, polygonShape)
 
-    engine.block.setInt(polygonShape, 'shape/polygon/sides', 8);
+engine.block.setInt(polygonShape, 'shape/polygon/sides', 8)
 
-    const greenFill = engine.block.createFill('color');
-    engine.block.setColor(greenFill, 'fill/color/value', {
-      r: 0.2,
-      g: 0.8,
-      b: 0.3,
-      a: 1.0,
-    });
-    engine.block.setFill(polygonGraphic, greenFill);
+const greenFill = engine.block.createFill('color')
+engine.block.setColor(greenFill, 'fill/color/value', {
+  r: 0.2,
+  g: 0.8,
+  b: 0.3,
+  a: 1.0,
+})
+engine.block.setFill(polygonGraphic, greenFill)
 
-    engine.block.setWidth(polygonGraphic, 64);
-    engine.block.setHeight(polygonGraphic, 64);
-    engine.block.appendChild(page, polygonGraphic);
-    engine.block.setPositionX(polygonGraphic, 226);
-    engine.block.setPositionY(polygonGraphic, 10);
+engine.block.setWidth(polygonGraphic, 64)
+engine.block.setHeight(polygonGraphic, 64)
+engine.block.appendChild(page, polygonGraphic)
+engine.block.setPositionX(polygonGraphic, 226)
+engine.block.setPositionY(polygonGraphic, 10)
 ```
 
 ### Vector Paths: Custom SVG Paths
@@ -539,30 +539,30 @@ Configure polygons by setting the number of sides:
 Create custom shapes using SVG path data:
 
 ```typescript highlight-create-vector-path
-    const vectorPathGraphic = engine.block.create('graphic');
-    const vectorPathShape = engine.block.createShape('vector_path');
-    engine.block.setShape(vectorPathGraphic, vectorPathShape);
+const vectorPathGraphic = engine.block.create('graphic')
+const vectorPathShape = engine.block.createShape('vector_path')
+engine.block.setShape(vectorPathGraphic, vectorPathShape)
 
-    engine.block.setString(
-      vectorPathShape,
-      'shape/vector_path/path',
-      'M 0,0 L 100,50 L 0,100 Z',
-    );
+engine.block.setString(
+  vectorPathShape,
+  'shape/vector_path/path',
+  'M 0,0 L 100,50 L 0,100 Z',
+)
 
-    const orangeFill = engine.block.createFill('color');
-    engine.block.setColor(orangeFill, 'fill/color/value', {
-      r: 1.0,
-      g: 0.5,
-      b: 0.0,
-      a: 1.0,
-    });
-    engine.block.setFill(vectorPathGraphic, orangeFill);
+const orangeFill = engine.block.createFill('color')
+engine.block.setColor(orangeFill, 'fill/color/value', {
+  r: 1.0,
+  g: 0.5,
+  b: 0.0,
+  a: 1.0,
+})
+engine.block.setFill(vectorPathGraphic, orangeFill)
 
-    engine.block.setWidth(vectorPathGraphic, 64);
-    engine.block.setHeight(vectorPathGraphic, 64);
-    engine.block.appendChild(page, vectorPathGraphic);
-    engine.block.setPositionX(vectorPathGraphic, 82);
-    engine.block.setPositionY(vectorPathGraphic, 82);
+engine.block.setWidth(vectorPathGraphic, 64)
+engine.block.setHeight(vectorPathGraphic, 64)
+engine.block.appendChild(page, vectorPathGraphic)
+engine.block.setPositionX(vectorPathGraphic, 82)
+engine.block.setPositionY(vectorPathGraphic, 82)
 ```
 
 Vector paths support single-path SVG data only. For complex multi-path graphics, use image fills with SVG files.
@@ -587,10 +587,10 @@ We can access the current shape on any graphic block:
 
 ```typescript
 // Get the shape ID from a graphic block
-const shapeId = engine.block.getShape(graphic);
+const shapeId = engine.block.getShape(graphic)
 
 // Check what type of shape it is
-const shapeType = engine.block.getType(shapeId);
+const shapeType = engine.block.getType(shapeId)
 // Returns: '//ly.img.ubq/shape/rect' or similar
 ```
 
@@ -601,11 +601,11 @@ Use this pattern to inspect and modify existing shapes.
 Replace shapes by applying the new shape first, then destroying the old one:
 
 ```typescript
-const oldShape = engine.block.getShape(graphic);
-const newShape = engine.block.createShape('ellipse');
+const oldShape = engine.block.getShape(graphic)
+const newShape = engine.block.createShape('ellipse')
 
-engine.block.setShape(graphic, newShape);
-engine.block.destroy(oldShape);
+engine.block.setShape(graphic, newShape)
+engine.block.destroy(oldShape)
 ```
 
 Always destroy old shapes after replacement to prevent memory leaks.
@@ -615,14 +615,14 @@ Always destroy old shapes after replacement to prevent memory leaks.
 Transforms apply to the graphic block. The shape geometry scales automatically:
 
 ```typescript
-const page = engine.block.findByType('page')[0];
-engine.block.appendChild(page, graphic);
+const page = engine.block.findByType('page')[0]
+engine.block.appendChild(page, graphic)
 
-engine.block.setPositionX(graphic, 100);
-engine.block.setPositionY(graphic, 100);
-engine.block.setRotation(graphic, Math.PI / 4);
-engine.block.setWidth(graphic, 200);
-engine.block.setHeight(graphic, 200);
+engine.block.setPositionX(graphic, 100)
+engine.block.setPositionY(graphic, 100)
+engine.block.setRotation(graphic, Math.PI / 4)
+engine.block.setWidth(graphic, 200)
+engine.block.setHeight(graphic, 200)
 ```
 
 ## Troubleshooting
@@ -634,37 +634,37 @@ If your shape doesn't appear, verify these requirements:
 **Check fill is applied:**
 
 ```typescript
-const fill = engine.block.getFill(graphic);
+const fill = engine.block.getFill(graphic)
 if (!fill) {
-  const colorFill = engine.block.createFill('color');
+  const colorFill = engine.block.createFill('color')
   engine.block.setColor(colorFill, 'fill/color/value', {
     r: 1,
     g: 0,
     b: 0,
     a: 1
-  });
-  engine.block.setFill(graphic, colorFill);
+  })
+  engine.block.setFill(graphic, colorFill)
 }
 ```
 
 **Check dimensions:**
 
 ```typescript
-const width = engine.block.getWidth(graphic);
-const height = engine.block.getHeight(graphic);
+const width = engine.block.getWidth(graphic)
+const height = engine.block.getHeight(graphic)
 if (width === 0 || height === 0) {
-  engine.block.setWidth(graphic, 100);
-  engine.block.setHeight(graphic, 100);
+  engine.block.setWidth(graphic, 100)
+  engine.block.setHeight(graphic, 100)
 }
 ```
 
 **Check scene hierarchy:**
 
 ```typescript
-const parent = engine.block.getParent(graphic);
+const parent = engine.block.getParent(graphic)
 if (!parent) {
-  const page = engine.block.findByType('page')[0];
-  engine.block.appendChild(page, graphic);
+  const page = engine.block.findByType('page')[0]
+  engine.block.appendChild(page, graphic)
 }
 ```
 
@@ -674,9 +674,9 @@ Verify the block type supports shapes:
 
 ```typescript
 if (!engine.block.supportsShape(blockId)) {
-  console.error('This block type does not support shapes');
+  console.error('This block type does not support shapes')
   // Use a graphic block instead
-  const graphic = engine.block.create('graphic');
+  const graphic = engine.block.create('graphic')
 }
 ```
 
@@ -686,20 +686,20 @@ Use the correct setter method for each property type:
 
 ```typescript
 // Integer properties
-engine.block.setInt(shape, 'shape/polygon/sides', 5);
+engine.block.setInt(shape, 'shape/polygon/sides', 5)
 
 // Float properties
-engine.block.setFloat(shape, 'shape/star/innerDiameter', 0.5);
+engine.block.setFloat(shape, 'shape/star/innerDiameter', 0.5)
 
 // String properties
-engine.block.setString(shape, 'shape/vector_path/path', 'M 0,0 L 100,100');
+engine.block.setString(shape, 'shape/vector_path/path', 'M 0,0 L 100,100')
 ```
 
 List available properties first if you're unsure:
 
 ```typescript
-const properties = engine.block.findAllProperties(shape);
-console.log('Available properties:', properties);
+const properties = engine.block.findAllProperties(shape)
+console.log('Available properties:', properties)
 ```
 
 ## API Reference

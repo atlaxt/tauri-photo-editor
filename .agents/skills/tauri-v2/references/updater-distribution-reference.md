@@ -81,7 +81,7 @@ use tauri_plugin_updater::UpdaterExt;
 async fn check_for_updates(app: tauri::AppHandle) -> Result<String, String> {
     let update = app.updater().map_err(|e| e.to_string())?
         .check().await.map_err(|e| e.to_string())?;
-    
+
     if let Some(update) = update {
         update.download_and_install(|_, _| {}, || {})
             .await.map_err(|e| e.to_string())?;

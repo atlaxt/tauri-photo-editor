@@ -24,7 +24,7 @@ blend mode system for professional layered compositions.
 Blend modes control how a block's colors combine with underlying layers, similar to blend modes in Photoshop or other design tools. CE.SDK provides 27 blend modes organized into categories: Normal, Darken, Lighten, Contrast, Inversion, and Component. Each category serves different compositing needs—darken modes make images darker, lighten modes make them brighter, and contrast modes increase midtone contrast.
 
 ```typescript file=@cesdk_web_examples/guides-create-composition-blend-modes-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Blend Modes Guide
@@ -55,23 +55,23 @@ import packageJson from './package.json';
  * - Available blend mode values
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -82,117 +82,116 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Grid configuration: 3 columns x 2 rows
-    const cols = 3;
-    const rows = 2;
-    const cellWidth = 280;
-    const cellHeight = 210;
-    const padding = 20;
-    const pageWidth = cols * cellWidth + (cols + 1) * padding;
-    const pageHeight = rows * cellHeight + (rows + 1) * padding;
+    const cols = 3
+    const rows = 2
+    const cellWidth = 280
+    const cellHeight = 210
+    const padding = 20
+    const pageWidth = cols * cellWidth + (cols + 1) * padding
+    const pageHeight = rows * cellHeight + (rows + 1) * padding
 
     // Set page dimensions
-    engine.block.setWidth(page, pageWidth);
-    engine.block.setHeight(page, pageHeight);
+    engine.block.setWidth(page, pageWidth)
+    engine.block.setHeight(page, pageHeight)
 
     // Base and overlay image URLs
-    const baseImageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg';
-    const overlayImageUrl = 'https://img.ly/static/ubq_samples/sample_2.jpg';
+    const baseImageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg'
+    const overlayImageUrl = 'https://img.ly/static/ubq_samples/sample_2.jpg'
 
     // Six commonly used blend modes to demonstrate
     const blendModes: Array<
       'Multiply' | 'Screen' | 'Overlay' | 'Darken' | 'Lighten' | 'ColorBurn'
-    > = ['Multiply', 'Screen', 'Overlay', 'Darken', 'Lighten', 'ColorBurn'];
+    > = ['Multiply', 'Screen', 'Overlay', 'Darken', 'Lighten', 'ColorBurn']
 
     // Create 6 image pairs in a grid layout
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
-        const index = row * cols + col;
-        const x = padding + col * (cellWidth + padding);
-        const y = padding + row * (cellHeight + padding);
+        const index = row * cols + col
+        const x = padding + col * (cellWidth + padding)
+        const y = padding + row * (cellHeight + padding)
 
         // Create a background image block as the base layer
-        const backgroundBlock = engine.block.create('graphic');
-        const backgroundShape = engine.block.createShape('rect');
-        engine.block.setShape(backgroundBlock, backgroundShape);
-        engine.block.setWidth(backgroundBlock, cellWidth);
-        engine.block.setHeight(backgroundBlock, cellHeight);
-        engine.block.setPositionX(backgroundBlock, x);
-        engine.block.setPositionY(backgroundBlock, y);
+        const backgroundBlock = engine.block.create('graphic')
+        const backgroundShape = engine.block.createShape('rect')
+        engine.block.setShape(backgroundBlock, backgroundShape)
+        engine.block.setWidth(backgroundBlock, cellWidth)
+        engine.block.setHeight(backgroundBlock, cellHeight)
+        engine.block.setPositionX(backgroundBlock, x)
+        engine.block.setPositionY(backgroundBlock, y)
 
         // Set the image fill for the background
-        const backgroundFill = engine.block.createFill('image');
+        const backgroundFill = engine.block.createFill('image')
         engine.block.setString(
           backgroundFill,
           'fill/image/imageFileURI',
           baseImageUrl
-        );
-        engine.block.setFill(backgroundBlock, backgroundFill);
-        engine.block.setContentFillMode(backgroundBlock, 'Cover');
-        engine.block.appendChild(page, backgroundBlock);
+        )
+        engine.block.setFill(backgroundBlock, backgroundFill)
+        engine.block.setContentFillMode(backgroundBlock, 'Cover')
+        engine.block.appendChild(page, backgroundBlock)
 
         // Create a second image block on top for blending
-        const overlayBlock = engine.block.create('graphic');
-        const overlayShape = engine.block.createShape('rect');
-        engine.block.setShape(overlayBlock, overlayShape);
-        engine.block.setWidth(overlayBlock, cellWidth);
-        engine.block.setHeight(overlayBlock, cellHeight);
-        engine.block.setPositionX(overlayBlock, x);
-        engine.block.setPositionY(overlayBlock, y);
+        const overlayBlock = engine.block.create('graphic')
+        const overlayShape = engine.block.createShape('rect')
+        engine.block.setShape(overlayBlock, overlayShape)
+        engine.block.setWidth(overlayBlock, cellWidth)
+        engine.block.setHeight(overlayBlock, cellHeight)
+        engine.block.setPositionX(overlayBlock, x)
+        engine.block.setPositionY(overlayBlock, y)
 
         // Set a different image fill for the overlay
-        const overlayFill = engine.block.createFill('image');
+        const overlayFill = engine.block.createFill('image')
         engine.block.setString(
           overlayFill,
           'fill/image/imageFileURI',
           overlayImageUrl
-        );
-        engine.block.setFill(overlayBlock, overlayFill);
-        engine.block.setContentFillMode(overlayBlock, 'Cover');
-        engine.block.appendChild(page, overlayBlock);
+        )
+        engine.block.setFill(overlayBlock, overlayFill)
+        engine.block.setContentFillMode(overlayBlock, 'Cover')
+        engine.block.appendChild(page, overlayBlock)
 
         // Check if the block supports blend modes before applying
         if (engine.block.supportsBlendMode(overlayBlock)) {
-
           // Apply a different blend mode to each overlay
-          const blendMode = blendModes[index];
-          engine.block.setBlendMode(overlayBlock, blendMode);
+          const blendMode = blendModes[index]
+          engine.block.setBlendMode(overlayBlock, blendMode)
 
           // Retrieve and log the current blend mode
-          const currentMode = engine.block.getBlendMode(overlayBlock);
-          // eslint-disable-next-line no-console
-          console.log(`Cell ${index + 1} blend mode:`, currentMode);
+          const currentMode = engine.block.getBlendMode(overlayBlock)
+
+          console.log(`Cell ${index + 1} blend mode:`, currentMode)
         }
 
         // Check if the block supports opacity
         if (engine.block.supportsOpacity(overlayBlock)) {
           // Set the opacity to 80% for clear visibility
-          engine.block.setOpacity(overlayBlock, 0.8);
+          engine.block.setOpacity(overlayBlock, 0.8)
         }
 
         // Retrieve and log the opacity value
-        const opacity = engine.block.getOpacity(overlayBlock);
-        // eslint-disable-next-line no-console
-        console.log(`Cell ${index + 1} opacity:`, opacity);
+        const opacity = engine.block.getOpacity(overlayBlock)
+
+        console.log(`Cell ${index + 1} opacity:`, opacity)
       }
     }
 
@@ -204,11 +203,11 @@ class Example implements EditorPlugin {
         right: 40,
         bottom: 40
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to check blend mode support, apply blend modes programmatically, understand the available blend mode options, and combine blend modes with opacity for fine control over layer compositing.
@@ -230,17 +229,17 @@ Apply a blend mode with `setBlendMode()` and retrieve the current mode with `get
 
 ```typescript highlight-set-blend-mode
 // Apply a different blend mode to each overlay
-const blendMode = blendModes[index];
-engine.block.setBlendMode(overlayBlock, blendMode);
+const blendMode = blendModes[index]
+engine.block.setBlendMode(overlayBlock, blendMode)
 ```
 
 After setting a blend mode, you can confirm the change by retrieving the current value:
 
 ```typescript highlight-get-blend-mode
 // Retrieve and log the current blend mode
-const currentMode = engine.block.getBlendMode(overlayBlock);
-// eslint-disable-next-line no-console
-console.log(`Cell ${index + 1} blend mode:`, currentMode);
+const currentMode = engine.block.getBlendMode(overlayBlock)
+
+console.log(`Cell ${index + 1} blend mode:`, currentMode)
 ```
 
 ## Available Blend Modes
@@ -310,7 +309,7 @@ For finer control over compositing, combine blend modes with opacity. Opacity re
 // Check if the block supports opacity
 if (engine.block.supportsOpacity(overlayBlock)) {
   // Set the opacity to 80% for clear visibility
-  engine.block.setOpacity(overlayBlock, 0.8);
+  engine.block.setOpacity(overlayBlock, 0.8)
 }
 ```
 
@@ -318,9 +317,9 @@ You can retrieve the current opacity value to confirm changes or read existing s
 
 ```typescript highlight-get-opacity
 // Retrieve and log the opacity value
-const opacity = engine.block.getOpacity(overlayBlock);
-// eslint-disable-next-line no-console
-console.log(`Cell ${index + 1} opacity:`, opacity);
+const opacity = engine.block.getOpacity(overlayBlock)
+
+console.log(`Cell ${index + 1} opacity:`, opacity)
 ```
 
 > **Tip:** Start with full opacity (1.0) when experimenting with blend modes, then reduce

@@ -23,7 +23,7 @@ Editor state determines how users interact with content on the canvas by control
 Edit modes define what type of content users can currently modify. Each mode enables different interaction behaviors—Transform mode for moving and resizing, Crop mode for adjusting content within frames, Text mode for inline text editing, and so on. The engine maintains the current edit mode as part of its state and notifies subscribers when it changes.
 
 ```typescript file=@cesdk_web_examples/guides-concepts-editor-state-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Editor State Guide
@@ -54,22 +54,22 @@ import packageJson from './package.json';
  * - Detecting active interactions
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -80,139 +80,139 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    })
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Add an image block to demonstrate Crop mode
-    const imageBlock = engine.block.create('graphic');
-    engine.block.appendChild(page, imageBlock);
+    const imageBlock = engine.block.create('graphic')
+    engine.block.appendChild(page, imageBlock)
 
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(imageBlock, rectShape)
 
-    engine.block.setWidth(imageBlock, 350);
-    engine.block.setHeight(imageBlock, 250);
-    engine.block.setPositionX(imageBlock, 50);
-    engine.block.setPositionY(imageBlock, 175);
+    engine.block.setWidth(imageBlock, 350)
+    engine.block.setHeight(imageBlock, 250)
+    engine.block.setPositionX(imageBlock, 50)
+    engine.block.setPositionY(imageBlock, 175)
 
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
+    )
+    engine.block.setFill(imageBlock, imageFill)
 
     // Add a text block to demonstrate Text mode
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(page, textBlock);
+    const textBlock = engine.block.create('text')
+    engine.block.appendChild(page, textBlock)
 
-    engine.block.replaceText(textBlock, 'Edit this text');
-    engine.block.setTextFontSize(textBlock, 48);
-    engine.block.setTextColor(textBlock, { r: 0.2, g: 0.2, b: 0.2, a: 1.0 });
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
-    engine.block.setPositionX(textBlock, 450);
-    engine.block.setPositionY(textBlock, 275);
+    engine.block.replaceText(textBlock, 'Edit this text')
+    engine.block.setTextFontSize(textBlock, 48)
+    engine.block.setTextColor(textBlock, { r: 0.2, g: 0.2, b: 0.2, a: 1.0 })
+    engine.block.setWidthMode(textBlock, 'Auto')
+    engine.block.setHeightMode(textBlock, 'Auto')
+    engine.block.setPositionX(textBlock, 450)
+    engine.block.setPositionY(textBlock, 275)
 
     // Subscribe to state changes to track mode transitions
     // The returned function can be called to unsubscribe when no longer needed
     const unsubscribeFromStateChanges = engine.editor.onStateChanged(() => {
-      const currentMode = engine.editor.getEditMode();
-      console.log('Edit mode changed to:', currentMode);
+      const currentMode = engine.editor.getEditMode()
+      console.log('Edit mode changed to:', currentMode)
 
       // Also log cursor state when state changes
-      const cursorType = engine.editor.getCursorType();
-      console.log('Current cursor type:', cursorType);
-    });
+      const cursorType = engine.editor.getCursorType()
+      console.log('Current cursor type:', cursorType)
+    })
 
-    console.log('State change subscription active');
+    console.log('State change subscription active')
 
     // Example: Unsubscribe after a delay (in a real app, call when component unmounts)
     setTimeout(() => {
-      unsubscribeFromStateChanges();
-      console.log('Unsubscribed from state changes');
-    }, 10000);
+      unsubscribeFromStateChanges()
+      console.log('Unsubscribed from state changes')
+    }, 10000)
 
     // Get the current edit mode (default is Transform)
-    const initialMode = engine.editor.getEditMode();
-    console.log('Initial edit mode:', initialMode);
+    const initialMode = engine.editor.getEditMode()
+    console.log('Initial edit mode:', initialMode)
 
     // Select the image block and switch to Crop mode
-    engine.block.select(imageBlock);
-    engine.editor.setEditMode('Crop');
-    console.log('Switched to Crop mode on image block');
+    engine.block.select(imageBlock)
+    engine.editor.setEditMode('Crop')
+    console.log('Switched to Crop mode on image block')
 
     // After a moment, switch to Transform mode
-    engine.editor.setEditMode('Transform');
-    console.log('Switched back to Transform mode');
+    engine.editor.setEditMode('Transform')
+    console.log('Switched back to Transform mode')
 
     // Create a custom edit mode that inherits from Crop behavior
-    engine.editor.setEditMode('MyCustomCropMode', 'Crop');
+    engine.editor.setEditMode('MyCustomCropMode', 'Crop')
     console.log(
       'Created custom mode based on Crop:',
       engine.editor.getEditMode()
-    );
+    )
 
     // Switch back to Transform for the demo
-    engine.editor.setEditMode('Transform');
+    engine.editor.setEditMode('Transform')
 
     // Get the cursor type to display the appropriate mouse cursor
-    const cursorType = engine.editor.getCursorType();
-    console.log('Cursor type:', cursorType);
+    const cursorType = engine.editor.getCursorType()
+    console.log('Cursor type:', cursorType)
     // Returns: 'Arrow', 'Move', 'MoveNotPermitted', 'Resize', 'Rotate', or 'Text'
 
     // Get cursor rotation for directional cursors like resize handles
-    const cursorRotation = engine.editor.getCursorRotation();
-    console.log('Cursor rotation (radians):', cursorRotation);
+    const cursorRotation = engine.editor.getCursorRotation()
+    console.log('Cursor rotation (radians):', cursorRotation)
     // Apply to cursor element: transform: rotate(${cursorRotation}rad)
 
     // Select the text block and switch to Text mode to get cursor position
-    engine.block.select(textBlock);
-    engine.editor.setEditMode('Text');
+    engine.block.select(textBlock)
+    engine.editor.setEditMode('Text')
 
     // Get text cursor position in screen space
-    const textCursorX = engine.editor.getTextCursorPositionInScreenSpaceX();
-    const textCursorY = engine.editor.getTextCursorPositionInScreenSpaceY();
-    console.log('Text cursor position:', { x: textCursorX, y: textCursorY });
+    const textCursorX = engine.editor.getTextCursorPositionInScreenSpaceX()
+    const textCursorY = engine.editor.getTextCursorPositionInScreenSpaceY()
+    console.log('Text cursor position:', { x: textCursorX, y: textCursorY })
     // Use these coordinates to position a floating toolbar near the text cursor
 
     // Check if a user interaction is currently in progress
-    const isInteracting = engine.editor.unstable_isInteractionHappening();
-    console.log('Is interaction happening:', isInteracting);
+    const isInteracting = engine.editor.unstable_isInteractionHappening()
+    console.log('Is interaction happening:', isInteracting)
     // Use this to defer expensive operations during drag/resize operations
     if (!isInteracting) {
-      console.log('Safe to perform heavy updates');
+      console.log('Safe to perform heavy updates')
     }
 
     // Switch back to Transform mode and select the image for the hero screenshot
-    engine.editor.setEditMode('Transform');
-    engine.block.select(imageBlock);
+    engine.editor.setEditMode('Transform')
+    engine.block.select(imageBlock)
 
     // Zoom to fit the page
-    engine.scene.enableZoomAutoFit(page, 'Both');
+    engine.scene.enableZoomAutoFit(page, 'Both')
 
-    console.log('Editor State guide initialized successfully.');
-    console.log('Try clicking on blocks to see edit modes change.');
-    console.log('Double-click on the text block to enter Text mode.');
-    console.log('Select the image and use the crop handle to enter Crop mode.');
+    console.log('Editor State guide initialized successfully.')
+    console.log('Try clicking on blocks to see edit modes change.')
+    console.log('Double-click on the text block to enter Text mode.')
+    console.log('Select the image and use the crop handle to enter Crop mode.')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers:
@@ -235,8 +235,8 @@ Transform is the default mode that allows users to move, resize, and rotate bloc
 
 ```typescript highlight=highlight-get-edit-mode
 // Get the current edit mode (default is Transform)
-const initialMode = engine.editor.getEditMode();
-console.log('Initial edit mode:', initialMode);
+const initialMode = engine.editor.getEditMode()
+console.log('Initial edit mode:', initialMode)
 ```
 
 Query the current mode using `engine.editor.getEditMode()`. The initial mode is always `'Transform'`.
@@ -246,14 +246,14 @@ Query the current mode using `engine.editor.getEditMode()`. The initial mode is 
 Use `engine.editor.setEditMode()` to change the current editing mode. The mode determines what interactions are available on selected blocks.
 
 ```typescript highlight=highlight-set-edit-mode
-    // Select the image block and switch to Crop mode
-    engine.block.select(imageBlock);
-    engine.editor.setEditMode('Crop');
-    console.log('Switched to Crop mode on image block');
+// Select the image block and switch to Crop mode
+engine.block.select(imageBlock)
+engine.editor.setEditMode('Crop')
+console.log('Switched to Crop mode on image block')
 
-    // After a moment, switch to Transform mode
-    engine.editor.setEditMode('Transform');
-    console.log('Switched back to Transform mode');
+// After a moment, switch to Transform mode
+engine.editor.setEditMode('Transform')
+console.log('Switched back to Transform mode')
 ```
 
 Available modes include:
@@ -270,15 +270,15 @@ Available modes include:
 You can create custom modes that inherit behavior from a built-in base mode. Pass an optional second parameter to `setEditMode()` specifying the base mode.
 
 ```typescript highlight=highlight-custom-edit-mode
-    // Create a custom edit mode that inherits from Crop behavior
-    engine.editor.setEditMode('MyCustomCropMode', 'Crop');
-    console.log(
-      'Created custom mode based on Crop:',
-      engine.editor.getEditMode()
-    );
+// Create a custom edit mode that inherits from Crop behavior
+engine.editor.setEditMode('MyCustomCropMode', 'Crop')
+console.log(
+  'Created custom mode based on Crop:',
+  engine.editor.getEditMode()
+)
 
-    // Switch back to Transform for the demo
-    engine.editor.setEditMode('Transform');
+// Switch back to Transform for the demo
+engine.editor.setEditMode('Transform')
 ```
 
 Custom modes are useful when you need to track application-specific states while maintaining standard editing behavior. For example, you might use a custom mode to indicate that a specific tool is active in your UI while still allowing Transform interactions.
@@ -292,24 +292,24 @@ The engine notifies subscribers whenever the editor state changes, including mod
 Subscribe to state changes using `engine.editor.onStateChanged()`. The callback fires at the end of each engine update where state changed. The subscription returns an unsubscribe function for cleanup.
 
 ```typescript highlight=highlight-on-state-changed
-    // Subscribe to state changes to track mode transitions
-    // The returned function can be called to unsubscribe when no longer needed
-    const unsubscribeFromStateChanges = engine.editor.onStateChanged(() => {
-      const currentMode = engine.editor.getEditMode();
-      console.log('Edit mode changed to:', currentMode);
+// Subscribe to state changes to track mode transitions
+// The returned function can be called to unsubscribe when no longer needed
+const unsubscribeFromStateChanges = engine.editor.onStateChanged(() => {
+  const currentMode = engine.editor.getEditMode()
+  console.log('Edit mode changed to:', currentMode)
 
-      // Also log cursor state when state changes
-      const cursorType = engine.editor.getCursorType();
-      console.log('Current cursor type:', cursorType);
-    });
+  // Also log cursor state when state changes
+  const cursorType = engine.editor.getCursorType()
+  console.log('Current cursor type:', cursorType)
+})
 
-    console.log('State change subscription active');
+console.log('State change subscription active')
 
-    // Example: Unsubscribe after a delay (in a real app, call when component unmounts)
-    setTimeout(() => {
-      unsubscribeFromStateChanges();
-      console.log('Unsubscribed from state changes');
-    }, 10000);
+// Example: Unsubscribe after a delay (in a real app, call when component unmounts)
+setTimeout(() => {
+  unsubscribeFromStateChanges()
+  console.log('Unsubscribed from state changes')
+}, 10000)
 ```
 
 Common use cases include:
@@ -331,8 +331,8 @@ Use `engine.editor.getCursorType()` to get the cursor type to display.
 
 ```typescript highlight=highlight-cursor-type
 // Get the cursor type to display the appropriate mouse cursor
-const cursorType = engine.editor.getCursorType();
-console.log('Cursor type:', cursorType);
+const cursorType = engine.editor.getCursorType()
+console.log('Cursor type:', cursorType)
 // Returns: 'Arrow', 'Move', 'MoveNotPermitted', 'Resize', 'Rotate', or 'Text'
 ```
 
@@ -352,8 +352,8 @@ For directional cursors like resize handles, use `engine.editor.getCursorRotatio
 
 ```typescript highlight=highlight-cursor-rotation
 // Get cursor rotation for directional cursors like resize handles
-const cursorRotation = engine.editor.getCursorRotation();
-console.log('Cursor rotation (radians):', cursorRotation);
+const cursorRotation = engine.editor.getCursorRotation()
+console.log('Cursor rotation (radians):', cursorRotation)
 // Apply to cursor element: transform: rotate(${cursorRotation}rad)
 ```
 
@@ -368,15 +368,15 @@ When in Text edit mode, you can track the text cursor (caret) position for rende
 Use `engine.editor.getTextCursorPositionInScreenSpaceX()` and `engine.editor.getTextCursorPositionInScreenSpaceY()` to get the cursor position in screen pixels.
 
 ```typescript highlight=highlight-text-cursor-position
-    // Select the text block and switch to Text mode to get cursor position
-    engine.block.select(textBlock);
-    engine.editor.setEditMode('Text');
+// Select the text block and switch to Text mode to get cursor position
+engine.block.select(textBlock)
+engine.editor.setEditMode('Text')
 
-    // Get text cursor position in screen space
-    const textCursorX = engine.editor.getTextCursorPositionInScreenSpaceX();
-    const textCursorY = engine.editor.getTextCursorPositionInScreenSpaceY();
-    console.log('Text cursor position:', { x: textCursorX, y: textCursorY });
-    // Use these coordinates to position a floating toolbar near the text cursor
+// Get text cursor position in screen space
+const textCursorX = engine.editor.getTextCursorPositionInScreenSpaceX()
+const textCursorY = engine.editor.getTextCursorPositionInScreenSpaceY()
+console.log('Text cursor position:', { x: textCursorX, y: textCursorY })
+// Use these coordinates to position a floating toolbar near the text cursor
 ```
 
 These values update as the user moves through text. Use them to position floating toolbars, formatting menus, or other UI elements relative to where the user is editing.
@@ -391,11 +391,11 @@ Call `engine.editor.unstable_isInteractionHappening()` to check if a user intera
 
 ```typescript highlight=highlight-interaction-happening
 // Check if a user interaction is currently in progress
-const isInteracting = engine.editor.unstable_isInteractionHappening();
-console.log('Is interaction happening:', isInteracting);
+const isInteracting = engine.editor.unstable_isInteractionHappening()
+console.log('Is interaction happening:', isInteracting)
 // Use this to defer expensive operations during drag/resize operations
 if (!isInteracting) {
-  console.log('Safe to perform heavy updates');
+  console.log('Safe to perform heavy updates')
 }
 ```
 

@@ -23,7 +23,7 @@ Redact sensitive video content using blur, pixelization, or solid overlays for p
 CE.SDK applies effects to blocks themselves, not as overlays affecting content beneath. This means redaction involves applying effects directly to the block for complete obscuration. Four techniques cover most privacy scenarios: full-block blur, radial blur, pixelization, and solid overlays.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-redaction-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 // Video URLs for demonstrating different redaction scenarios
 const VIDEOS = {
@@ -56,7 +56,7 @@ const VIDEOS = {
     'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-taryn-elliott-8713109.mp4',
   nature2:
     'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-taryn-elliott-8713114.mp4'
-};
+}
 
 // Labels for each redaction technique
 const LABELS = [
@@ -65,10 +65,10 @@ const LABELS = [
   'Pixelization',
   'Solid Overlay',
   'Time-Based'
-];
+]
 
 // Duration for each video segment (in seconds)
-const SEGMENT_DURATION = 5.0;
+const SEGMENT_DURATION = 5.0
 
 /**
  * CE.SDK Plugin: Video Redaction Guide
@@ -81,29 +81,29 @@ const SEGMENT_DURATION = 5.0;
  * - Time-based redactions
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    cesdk.feature.enable('ly.img.blur');
-    cesdk.feature.enable('ly.img.effect');
-    await cesdk.addPlugin(new VideoEditorConfig());
+    cesdk.feature.enable('ly.img.blur')
+    cesdk.feature.enable('ly.img.effect')
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -113,9 +113,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -129,26 +129,26 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const scene = engine.scene.get();
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : scene;
+    const engine = cesdk.engine
+    const scene = engine.scene.get()
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : scene
 
     // Set 16:9 page dimensions (1920x1080)
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Load all videos simultaneously
     const videoUrls = [
@@ -157,184 +157,182 @@ class Example implements EditorPlugin {
       VIDEOS.lifestyle1,
       VIDEOS.lifestyle2,
       VIDEOS.nature1
-    ];
+    ]
 
     const videos = await Promise.all(
-      videoUrls.map((url) => engine.block.addVideo(url, pageWidth, pageHeight))
-    );
+      videoUrls.map(url => engine.block.addVideo(url, pageWidth, pageHeight))
+    )
 
     const [
       radialVideo,
       fullBlurVideo,
-      pixelVideo, // Base video for overlay segment (overlay is created separately)
-      ,
+      pixelVideo,, // Base video for overlay segment (overlay is created separately)
       timedVideo
-    ] = videos;
+    ] = videos
 
     // Position all videos at origin (they'll play sequentially)
     videos.forEach((video, index) => {
-      engine.block.setPositionX(video, 0);
-      engine.block.setPositionY(video, 0);
-      engine.block.setDuration(video, SEGMENT_DURATION);
-      engine.block.setTimeOffset(video, index * SEGMENT_DURATION);
-      engine.block.appendChild(page, video);
-    });
+      engine.block.setPositionX(video, 0)
+      engine.block.setPositionY(video, 0)
+      engine.block.setDuration(video, SEGMENT_DURATION)
+      engine.block.setTimeOffset(video, index * SEGMENT_DURATION)
+      engine.block.appendChild(page, video)
+    })
 
     // Full-Block Blur: Apply blur to entire video
     // Use this when the entire video content needs obscuring
 
     // Check if the block supports blur
-    const supportsBlur = engine.block.supportsBlur(fullBlurVideo);
-    // eslint-disable-next-line no-console
-    console.log('Video supports blur:', supportsBlur);
+    const supportsBlur = engine.block.supportsBlur(fullBlurVideo)
+
+    console.log('Video supports blur:', supportsBlur)
 
     // Create and apply uniform blur to entire video
-    const uniformBlur = engine.block.createBlur('uniform');
-    engine.block.setFloat(uniformBlur, 'blur/uniform/intensity', 0.7);
-    engine.block.setBlur(fullBlurVideo, uniformBlur);
-    engine.block.setBlurEnabled(fullBlurVideo, true);
+    const uniformBlur = engine.block.createBlur('uniform')
+    engine.block.setFloat(uniformBlur, 'blur/uniform/intensity', 0.7)
+    engine.block.setBlur(fullBlurVideo, uniformBlur)
+    engine.block.setBlurEnabled(fullBlurVideo, true)
 
     // Pixelization: Apply mosaic effect for clearly intentional censoring
 
     // Check if the block supports effects
     if (engine.block.supportsEffects(pixelVideo)) {
       // Create and apply pixelize effect
-      const pixelizeEffect = engine.block.createEffect('pixelize');
+      const pixelizeEffect = engine.block.createEffect('pixelize')
       engine.block.setInt(
         pixelizeEffect,
         'effect/pixelize/horizontalPixelSize',
         24
-      );
+      )
       engine.block.setInt(
         pixelizeEffect,
         'effect/pixelize/verticalPixelSize',
         24
-      );
-      engine.block.appendEffect(pixelVideo, pixelizeEffect);
-      engine.block.setEffectEnabled(pixelizeEffect, true);
+      )
+      engine.block.appendEffect(pixelVideo, pixelizeEffect)
+      engine.block.setEffectEnabled(pixelizeEffect, true)
     }
 
     // Solid Overlay: Create opaque shape for complete blocking
     // Best for highly sensitive information like documents or credentials
 
     // Create a solid rectangle overlay
-    const overlay = engine.block.create('//ly.img.ubq/graphic');
-    const rectShape = engine.block.createShape('//ly.img.ubq/shape/rect');
-    engine.block.setShape(overlay, rectShape);
+    const overlay = engine.block.create('//ly.img.ubq/graphic')
+    const rectShape = engine.block.createShape('//ly.img.ubq/shape/rect')
+    engine.block.setShape(overlay, rectShape)
 
     // Create solid black fill
-    const solidFill = engine.block.createFill('//ly.img.ubq/fill/color');
+    const solidFill = engine.block.createFill('//ly.img.ubq/fill/color')
     engine.block.setColor(solidFill, 'fill/color/value', {
       r: 0.1,
       g: 0.1,
       b: 0.1,
       a: 1.0
-    });
-    engine.block.setFill(overlay, solidFill);
+    })
+    engine.block.setFill(overlay, solidFill)
 
     // Position and size the overlay
-    engine.block.setWidth(overlay, pageWidth * 0.4);
-    engine.block.setHeight(overlay, pageHeight * 0.3);
-    engine.block.setPositionX(overlay, pageWidth * 0.55);
-    engine.block.setPositionY(overlay, pageHeight * 0.65);
-    engine.block.appendChild(page, overlay);
-    engine.block.setTimeOffset(overlay, 3 * SEGMENT_DURATION);
-    engine.block.setDuration(overlay, SEGMENT_DURATION);
+    engine.block.setWidth(overlay, pageWidth * 0.4)
+    engine.block.setHeight(overlay, pageHeight * 0.3)
+    engine.block.setPositionX(overlay, pageWidth * 0.55)
+    engine.block.setPositionY(overlay, pageHeight * 0.65)
+    engine.block.appendChild(page, overlay)
+    engine.block.setTimeOffset(overlay, 3 * SEGMENT_DURATION)
+    engine.block.setDuration(overlay, SEGMENT_DURATION)
 
     // Time-Based Redaction: Redaction appears only during specific time range
 
     // Apply blur to the video
-    const timedBlur = engine.block.createBlur('uniform');
-    engine.block.setFloat(timedBlur, 'blur/uniform/intensity', 0.9);
-    engine.block.setBlur(timedVideo, timedBlur);
-    engine.block.setBlurEnabled(timedVideo, true);
+    const timedBlur = engine.block.createBlur('uniform')
+    engine.block.setFloat(timedBlur, 'blur/uniform/intensity', 0.9)
+    engine.block.setBlur(timedVideo, timedBlur)
+    engine.block.setBlurEnabled(timedVideo, true)
 
     // The video is already timed to appear at a specific offset (set earlier)
     // You can adjust timeOffset and duration to control when redaction is visible
-    engine.block.setTimeOffset(timedVideo, 4 * SEGMENT_DURATION);
-    engine.block.setDuration(timedVideo, SEGMENT_DURATION);
+    engine.block.setTimeOffset(timedVideo, 4 * SEGMENT_DURATION)
+    engine.block.setDuration(timedVideo, SEGMENT_DURATION)
 
     // Radial Blur: Use radial blur for face-like regions
 
     // Apply radial blur for circular redaction effect
-    const radialBlur = engine.block.createBlur('radial');
-    engine.block.setFloat(radialBlur, 'blur/radial/blurRadius', 50);
-    engine.block.setFloat(radialBlur, 'blur/radial/radius', 25);
-    engine.block.setFloat(radialBlur, 'blur/radial/gradientRadius', 35);
-    engine.block.setFloat(radialBlur, 'blur/radial/x', 0.5);
-    engine.block.setFloat(radialBlur, 'blur/radial/y', 0.45);
-    engine.block.setBlur(radialVideo, radialBlur);
-    engine.block.setBlurEnabled(radialVideo, true);
+    const radialBlur = engine.block.createBlur('radial')
+    engine.block.setFloat(radialBlur, 'blur/radial/blurRadius', 50)
+    engine.block.setFloat(radialBlur, 'blur/radial/radius', 25)
+    engine.block.setFloat(radialBlur, 'blur/radial/gradientRadius', 35)
+    engine.block.setFloat(radialBlur, 'blur/radial/x', 0.5)
+    engine.block.setFloat(radialBlur, 'blur/radial/y', 0.45)
+    engine.block.setBlur(radialVideo, radialBlur)
+    engine.block.setBlurEnabled(radialVideo, true)
 
     // Add text labels for each video segment (positioned top-right)
-    const labelWidth = 400;
-    const labelHeight = 60;
-    const labelPadding = 20;
-    const labelMargin = 30;
+    const labelWidth = 400
+    const labelHeight = 60
+    const labelPadding = 20
+    const labelMargin = 30
 
     videos.forEach((_, index) => {
-      const label = LABELS[index];
+      const label = LABELS[index]
 
       // Add background first (so it's behind text)
-      const labelBg = engine.block.create('//ly.img.ubq/graphic');
-      const labelBgShape = engine.block.createShape('//ly.img.ubq/shape/rect');
-      engine.block.setShape(labelBg, labelBgShape);
+      const labelBg = engine.block.create('//ly.img.ubq/graphic')
+      const labelBgShape = engine.block.createShape('//ly.img.ubq/shape/rect')
+      engine.block.setShape(labelBg, labelBgShape)
 
-      const labelBgFill = engine.block.createFill('//ly.img.ubq/fill/color');
+      const labelBgFill = engine.block.createFill('//ly.img.ubq/fill/color')
       engine.block.setColor(labelBgFill, 'fill/color/value', {
         r: 0.0,
         g: 0.0,
         b: 0.0,
         a: 0.8
-      });
-      engine.block.setFill(labelBg, labelBgFill);
+      })
+      engine.block.setFill(labelBg, labelBgFill)
 
-      engine.block.setWidth(labelBg, labelWidth);
-      engine.block.setHeight(labelBg, labelHeight + labelPadding);
-      engine.block.setPositionX(labelBg, pageWidth - labelWidth - labelMargin);
-      engine.block.setPositionY(labelBg, labelMargin);
-      engine.block.setTimeOffset(labelBg, index * SEGMENT_DURATION);
-      engine.block.setDuration(labelBg, SEGMENT_DURATION);
-      engine.block.appendChild(page, labelBg);
+      engine.block.setWidth(labelBg, labelWidth)
+      engine.block.setHeight(labelBg, labelHeight + labelPadding)
+      engine.block.setPositionX(labelBg, pageWidth - labelWidth - labelMargin)
+      engine.block.setPositionY(labelBg, labelMargin)
+      engine.block.setTimeOffset(labelBg, index * SEGMENT_DURATION)
+      engine.block.setDuration(labelBg, SEGMENT_DURATION)
+      engine.block.appendChild(page, labelBg)
 
       // Create text block for label
-      const textBlock = engine.block.create('//ly.img.ubq/text');
-      engine.block.setString(textBlock, 'text/text', label);
-      engine.block.setFloat(textBlock, 'text/fontSize', 48);
-      engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center');
-      engine.block.setEnum(textBlock, 'text/verticalAlignment', 'Center');
+      const textBlock = engine.block.create('//ly.img.ubq/text')
+      engine.block.setString(textBlock, 'text/text', label)
+      engine.block.setFloat(textBlock, 'text/fontSize', 48)
+      engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center')
+      engine.block.setEnum(textBlock, 'text/verticalAlignment', 'Center')
 
       // Set white text color
-      engine.block.setTextColor(textBlock, { r: 1.0, g: 1.0, b: 1.0, a: 1.0 });
+      engine.block.setTextColor(textBlock, { r: 1.0, g: 1.0, b: 1.0, a: 1.0 })
 
       // Position label at top right
-      engine.block.setWidth(textBlock, labelWidth);
-      engine.block.setHeight(textBlock, labelHeight);
+      engine.block.setWidth(textBlock, labelWidth)
+      engine.block.setHeight(textBlock, labelHeight)
       engine.block.setPositionX(
         textBlock,
         pageWidth - labelWidth - labelMargin
-      );
-      engine.block.setPositionY(textBlock, labelMargin + labelPadding / 2);
-      engine.block.setTimeOffset(textBlock, index * SEGMENT_DURATION);
-      engine.block.setDuration(textBlock, SEGMENT_DURATION);
+      )
+      engine.block.setPositionY(textBlock, labelMargin + labelPadding / 2)
+      engine.block.setTimeOffset(textBlock, index * SEGMENT_DURATION)
+      engine.block.setDuration(textBlock, SEGMENT_DURATION)
 
-      engine.block.appendChild(page, textBlock);
-    });
+      engine.block.appendChild(page, textBlock)
+    })
 
     // Enable auto-fit to keep page in view
-    cesdk.engine.scene.enableZoomAutoFit(page, 'Both', 40, 40, 40, 40);
+    cesdk.engine.scene.enableZoomAutoFit(page, 'Both', 40, 40, 40, 40)
 
     // Select first video to show timeline controls
-    engine.block.select(fullBlurVideo);
+    engine.block.select(fullBlurVideo)
 
-    // eslint-disable-next-line no-console
     console.log(
       'Video redaction guide initialized. Videos play sequentially - press play to see each redaction technique.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use the built-in UI for blur and pixelization effects, and how to apply redaction programmatically using blur, pixelization, solid overlays, and time-based controls.
@@ -375,16 +373,16 @@ Larger pixel sizes create stronger obscuration but are more visually disruptive.
 When the entire video needs obscuring, apply blur directly to the original block without duplication. This approach works well for background content or privacy placeholders.
 
 ```typescript highlight-full-block-blur
-    // Check if the block supports blur
-    const supportsBlur = engine.block.supportsBlur(fullBlurVideo);
-    // eslint-disable-next-line no-console
-    console.log('Video supports blur:', supportsBlur);
+// Check if the block supports blur
+const supportsBlur = engine.block.supportsBlur(fullBlurVideo)
 
-    // Create and apply uniform blur to entire video
-    const uniformBlur = engine.block.createBlur('uniform');
-    engine.block.setFloat(uniformBlur, 'blur/uniform/intensity', 0.7);
-    engine.block.setBlur(fullBlurVideo, uniformBlur);
-    engine.block.setBlurEnabled(fullBlurVideo, true);
+console.log('Video supports blur:', supportsBlur)
+
+// Create and apply uniform blur to entire video
+const uniformBlur = engine.block.createBlur('uniform')
+engine.block.setFloat(uniformBlur, 'blur/uniform/intensity', 0.7)
+engine.block.setBlur(fullBlurVideo, uniformBlur)
+engine.block.setBlurEnabled(fullBlurVideo, true)
 ```
 
 We first check that the block supports blur with `supportsBlur()`. Then we create a uniform blur, configure its intensity, attach it to the video block with `setBlur()`, and enable it with `setBlurEnabled()`. The intensity value ranges from 0.0 to 1.0, where higher values create stronger blur.
@@ -397,19 +395,19 @@ Pixelization creates a mosaic effect that's clearly intentional and renders fast
 // Check if the block supports effects
 if (engine.block.supportsEffects(pixelVideo)) {
   // Create and apply pixelize effect
-  const pixelizeEffect = engine.block.createEffect('pixelize');
+  const pixelizeEffect = engine.block.createEffect('pixelize')
   engine.block.setInt(
     pixelizeEffect,
     'effect/pixelize/horizontalPixelSize',
     24
-  );
+  )
   engine.block.setInt(
     pixelizeEffect,
     'effect/pixelize/verticalPixelSize',
     24
-  );
-  engine.block.appendEffect(pixelVideo, pixelizeEffect);
-  engine.block.setEffectEnabled(pixelizeEffect, true);
+  )
+  engine.block.appendEffect(pixelVideo, pixelizeEffect)
+  engine.block.setEffectEnabled(pixelizeEffect, true)
 }
 ```
 
@@ -420,27 +418,27 @@ We check `supportsEffects()` before creating the pixelize effect. The horizontal
 For complete blocking without any visual hint of the underlying content, create an opaque shape overlay. This approach doesn't require block duplication.
 
 ```typescript highlight-solid-overlay
-    // Create a solid rectangle overlay
-    const overlay = engine.block.create('//ly.img.ubq/graphic');
-    const rectShape = engine.block.createShape('//ly.img.ubq/shape/rect');
-    engine.block.setShape(overlay, rectShape);
+// Create a solid rectangle overlay
+const overlay = engine.block.create('//ly.img.ubq/graphic')
+const rectShape = engine.block.createShape('//ly.img.ubq/shape/rect')
+engine.block.setShape(overlay, rectShape)
 
-    // Create solid black fill
-    const solidFill = engine.block.createFill('//ly.img.ubq/fill/color');
-    engine.block.setColor(solidFill, 'fill/color/value', {
-      r: 0.1,
-      g: 0.1,
-      b: 0.1,
-      a: 1.0
-    });
-    engine.block.setFill(overlay, solidFill);
+// Create solid black fill
+const solidFill = engine.block.createFill('//ly.img.ubq/fill/color')
+engine.block.setColor(solidFill, 'fill/color/value', {
+  r: 0.1,
+  g: 0.1,
+  b: 0.1,
+  a: 1.0
+})
+engine.block.setFill(overlay, solidFill)
 
-    // Position and size the overlay
-    engine.block.setWidth(overlay, pageWidth * 0.4);
-    engine.block.setHeight(overlay, pageHeight * 0.3);
-    engine.block.setPositionX(overlay, pageWidth * 0.55);
-    engine.block.setPositionY(overlay, pageHeight * 0.65);
-    engine.block.appendChild(page, overlay);
+// Position and size the overlay
+engine.block.setWidth(overlay, pageWidth * 0.4)
+engine.block.setHeight(overlay, pageHeight * 0.3)
+engine.block.setPositionX(overlay, pageWidth * 0.55)
+engine.block.setPositionY(overlay, pageHeight * 0.65)
+engine.block.appendChild(page, overlay)
 ```
 
 We create a graphic block with a rectangle shape and solid color fill. The overlay uses absolute page coordinates for positioning. Set the alpha to 1.0 for complete opacity.
@@ -450,16 +448,16 @@ We create a graphic block with a rectangle shape and solid color fill. The overl
 Redactions can appear only during specific portions of the video. We use `setTimeOffset()` and `setDuration()` to control when the redaction is visible.
 
 ```typescript highlight-time-based-redaction
-    // Apply blur to the video
-    const timedBlur = engine.block.createBlur('uniform');
-    engine.block.setFloat(timedBlur, 'blur/uniform/intensity', 0.9);
-    engine.block.setBlur(timedVideo, timedBlur);
-    engine.block.setBlurEnabled(timedVideo, true);
+// Apply blur to the video
+const timedBlur = engine.block.createBlur('uniform')
+engine.block.setFloat(timedBlur, 'blur/uniform/intensity', 0.9)
+engine.block.setBlur(timedVideo, timedBlur)
+engine.block.setBlurEnabled(timedVideo, true)
 
-    // The video is already timed to appear at a specific offset (set earlier)
-    // You can adjust timeOffset and duration to control when redaction is visible
-    engine.block.setTimeOffset(timedVideo, 4 * SEGMENT_DURATION);
-    engine.block.setDuration(timedVideo, SEGMENT_DURATION);
+// The video is already timed to appear at a specific offset (set earlier)
+// You can adjust timeOffset and duration to control when redaction is visible
+engine.block.setTimeOffset(timedVideo, 4 * SEGMENT_DURATION)
+engine.block.setDuration(timedVideo, SEGMENT_DURATION)
 ```
 
 The time offset specifies when the redaction appears (in seconds from the start), and the duration controls how long it remains visible. This is useful for redacting faces or information that only appears briefly.
@@ -470,14 +468,14 @@ For face-like regions, radial blur creates a circular blur pattern that works we
 
 ```typescript highlight-radial-blur
 // Apply radial blur for circular redaction effect
-const radialBlur = engine.block.createBlur('radial');
-engine.block.setFloat(radialBlur, 'blur/radial/blurRadius', 50);
-engine.block.setFloat(radialBlur, 'blur/radial/radius', 25);
-engine.block.setFloat(radialBlur, 'blur/radial/gradientRadius', 35);
-engine.block.setFloat(radialBlur, 'blur/radial/x', 0.5);
-engine.block.setFloat(radialBlur, 'blur/radial/y', 0.45);
-engine.block.setBlur(radialVideo, radialBlur);
-engine.block.setBlurEnabled(radialVideo, true);
+const radialBlur = engine.block.createBlur('radial')
+engine.block.setFloat(radialBlur, 'blur/radial/blurRadius', 50)
+engine.block.setFloat(radialBlur, 'blur/radial/radius', 25)
+engine.block.setFloat(radialBlur, 'blur/radial/gradientRadius', 35)
+engine.block.setFloat(radialBlur, 'blur/radial/x', 0.5)
+engine.block.setFloat(radialBlur, 'blur/radial/y', 0.45)
+engine.block.setBlur(radialVideo, radialBlur)
+engine.block.setBlurEnabled(radialVideo, true)
 ```
 
 Radial blur properties control the blur center (`x`, `y` from 0.0-1.0), the unblurred center area (`radius`), the blur transition zone (`gradientRadius`), and the blur strength (`blurRadius`).

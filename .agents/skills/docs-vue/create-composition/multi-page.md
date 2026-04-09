@@ -23,7 +23,7 @@ Create multi-page designs in CE.SDK for brochures, presentations, catalogs, and 
 Multi-page layouts allow you to create documents with multiple artboards within a single scene. Each page operates as an independent canvas that can contain different content while sharing the same scene context. CE.SDK provides scene layout modes that automatically arrange pages vertically, horizontally, or in a free-form canvas.
 
 ```typescript file=@cesdk_web_examples/guides-create-composition-multi-page-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Multi-Page Layouts Guide
@@ -53,62 +53,62 @@ import packageJson from './package.json';
  * - Stack spacing between pages
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a scene with HorizontalStack layout
-    engine.scene.create('HorizontalStack');
+    engine.scene.create('HorizontalStack')
 
     // Get the stack container
-    const [stack] = engine.block.findByType('stack');
+    const [stack] = engine.block.findByType('stack')
 
     // Add spacing between pages (20 pixels in screen space)
-    engine.block.setFloat(stack, 'stack/spacing', 20);
-    engine.block.setBool(stack, 'stack/spacingInScreenspace', true);
+    engine.block.setFloat(stack, 'stack/spacing', 20)
+    engine.block.setBool(stack, 'stack/spacingInScreenspace', true)
 
     // Create the first page
-    const firstPage = engine.block.create('page');
-    engine.block.setWidth(firstPage, 800);
-    engine.block.setHeight(firstPage, 600);
-    engine.block.appendChild(stack, firstPage);
+    const firstPage = engine.block.create('page')
+    engine.block.setWidth(firstPage, 800)
+    engine.block.setHeight(firstPage, 600)
+    engine.block.appendChild(stack, firstPage)
 
     // Add content to the first page
     const imageBlock1 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_1.jpg',
       { size: { width: 300, height: 200 } }
-    );
-    engine.block.setPositionX(imageBlock1, 250);
-    engine.block.setPositionY(imageBlock1, 200);
-    engine.block.appendChild(firstPage, imageBlock1);
+    )
+    engine.block.setPositionX(imageBlock1, 250)
+    engine.block.setPositionY(imageBlock1, 200)
+    engine.block.appendChild(firstPage, imageBlock1)
 
     // Create a second page with different content
-    const secondPage = engine.block.create('page');
-    engine.block.setWidth(secondPage, 800);
-    engine.block.setHeight(secondPage, 600);
-    engine.block.appendChild(stack, secondPage);
+    const secondPage = engine.block.create('page')
+    engine.block.setWidth(secondPage, 800)
+    engine.block.setHeight(secondPage, 600)
+    engine.block.appendChild(stack, secondPage)
 
     // Add a different image to the second page
     const imageBlock2 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_2.jpg',
       { size: { width: 300, height: 200 } }
-    );
-    engine.block.setPositionX(imageBlock2, 250);
-    engine.block.setPositionY(imageBlock2, 200);
-    engine.block.appendChild(secondPage, imageBlock2);
+    )
+    engine.block.setPositionX(imageBlock2, 250)
+    engine.block.setPositionY(imageBlock2, 200)
+    engine.block.appendChild(secondPage, imageBlock2)
 
-    engine.block.select(firstPage);
-    engine.scene.enableZoomAutoFit(firstPage, 'Both');
+    engine.block.select(firstPage)
+    engine.scene.enableZoomAutoFit(firstPage, 'Both')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create multi-page scenes, add pages, and configure spacing between pages.
@@ -128,21 +128,21 @@ We can create scenes with multiple pages using the engine API. The scene acts as
 We create a new scene using `engine.scene.create()` and specify the layout type. The layout type determines how pages are arranged in the viewport. After creating the scene, we get the stack container and create pages within it.
 
 ```typescript highlight=highlight-create-scene
-    // Create a scene with HorizontalStack layout
-    engine.scene.create('HorizontalStack');
+// Create a scene with HorizontalStack layout
+engine.scene.create('HorizontalStack')
 
-    // Get the stack container
-    const [stack] = engine.block.findByType('stack');
+// Get the stack container
+const [stack] = engine.block.findByType('stack')
 
-    // Add spacing between pages (20 pixels in screen space)
-    engine.block.setFloat(stack, 'stack/spacing', 20);
-    engine.block.setBool(stack, 'stack/spacingInScreenspace', true);
+// Add spacing between pages (20 pixels in screen space)
+engine.block.setFloat(stack, 'stack/spacing', 20)
+engine.block.setBool(stack, 'stack/spacingInScreenspace', true)
 
-    // Create the first page
-    const firstPage = engine.block.create('page');
-    engine.block.setWidth(firstPage, 800);
-    engine.block.setHeight(firstPage, 600);
-    engine.block.appendChild(stack, firstPage);
+// Create the first page
+const firstPage = engine.block.create('page')
+engine.block.setWidth(firstPage, 800)
+engine.block.setHeight(firstPage, 600)
+engine.block.appendChild(stack, firstPage)
 ```
 
 The scene is created with a `HorizontalStack` layout, meaning pages are arranged side by side from left to right. We then create a page, set its dimensions, and append it to the stack container.
@@ -153,8 +153,8 @@ We can add spacing between pages in a stack layout using the `stack/spacing` pro
 
 ```typescript highlight=highlight-stack-spacing
 // Add spacing between pages (20 pixels in screen space)
-engine.block.setFloat(stack, 'stack/spacing', 20);
-engine.block.setBool(stack, 'stack/spacingInScreenspace', true);
+engine.block.setFloat(stack, 'stack/spacing', 20)
+engine.block.setBool(stack, 'stack/spacingInScreenspace', true)
 ```
 
 Setting `stack/spacingInScreenspace` to `true` means the spacing value is interpreted as screen pixels, maintaining consistent visual spacing regardless of zoom level.
@@ -164,20 +164,20 @@ Setting `stack/spacingInScreenspace` to `true` means the spacing value is interp
 To add additional pages, we create new page blocks, set their dimensions, and append them to the stack container.
 
 ```typescript highlight=highlight-add-page
-    // Create a second page with different content
-    const secondPage = engine.block.create('page');
-    engine.block.setWidth(secondPage, 800);
-    engine.block.setHeight(secondPage, 600);
-    engine.block.appendChild(stack, secondPage);
+// Create a second page with different content
+const secondPage = engine.block.create('page')
+engine.block.setWidth(secondPage, 800)
+engine.block.setHeight(secondPage, 600)
+engine.block.appendChild(stack, secondPage)
 
-    // Add a different image to the second page
-    const imageBlock2 = await engine.block.addImage(
-      'https://img.ly/static/ubq_samples/sample_2.jpg',
-      { size: { width: 300, height: 200 } }
-    );
-    engine.block.setPositionX(imageBlock2, 250);
-    engine.block.setPositionY(imageBlock2, 200);
-    engine.block.appendChild(secondPage, imageBlock2);
+// Add a different image to the second page
+const imageBlock2 = await engine.block.addImage(
+  'https://img.ly/static/ubq_samples/sample_2.jpg',
+  { size: { width: 300, height: 200 } }
+)
+engine.block.setPositionX(imageBlock2, 250)
+engine.block.setPositionY(imageBlock2, 200)
+engine.block.appendChild(secondPage, imageBlock2)
 ```
 
 Each page can contain different content. Here we add different images to each page to demonstrate independent page content.
@@ -197,8 +197,8 @@ CE.SDK supports different layout modes that control how pages are arranged on th
 We can control the viewport zoom level using `engine.scene.setZoomLevel()`. A value of 1.0 represents 100% zoom.
 
 ```typescript highlight=highlight-zoom
-engine.block.select(firstPage);
-engine.scene.enableZoomAutoFit(firstPage, 'Both');
+engine.block.select(firstPage)
+engine.scene.enableZoomAutoFit(firstPage, 'Both')
 ```
 
 ## Troubleshooting

@@ -23,8 +23,8 @@ Export your designs as PNG images with full transparency support and configurabl
 PNG (Portable Network Graphics) provides lossless compression with full alpha channel support. It's ideal for web graphics, UI elements, and content requiring crisp edges or transparency.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-to-png-browser/browser.ts reference-only
-import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type CreativeEditorSDK from '@cesdk/cesdk-js'
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,34 +69,35 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage();
-    if (!page) throw new Error('No page found');
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    )
+    const page = engine.scene.getCurrentPage()
+    if (!page)
+      throw new Error('No page found')
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Setup export functionality
-    await this.setupExportActions(cesdk, page);
+    await this.setupExportActions(cesdk, page)
   }
 
   private async setupExportActions(
     cesdk: CreativeEditorSDK,
     page: number
   ): Promise<void> {
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Add export button to navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -110,9 +111,9 @@ class Example implements EditorPlugin {
           onClick: async () => {
             const blob = await engine.block.export(page, {
               mimeType: 'image/png'
-            });
+            })
 
-            await cesdk.utils.downloadFile(blob, 'image/png');
+            await cesdk.utils.downloadFile(blob, 'image/png')
           }
         },
         {
@@ -132,9 +133,9 @@ class Example implements EditorPlugin {
             const compressedBlob = await engine.block.export(page, {
               mimeType: 'image/png',
               pngCompressionLevel: 9
-            });
+            })
 
-            await cesdk.utils.downloadFile(compressedBlob, 'image/png');
+            await cesdk.utils.downloadFile(compressedBlob, 'image/png')
           }
         },
         {
@@ -147,17 +148,17 @@ class Example implements EditorPlugin {
               mimeType: 'image/png',
               targetWidth: 1920,
               targetHeight: 1080
-            });
+            })
 
-            await cesdk.utils.downloadFile(hdBlob, 'image/png');
+            await cesdk.utils.downloadFile(hdBlob, 'image/png')
           }
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting designs to PNG, configuring compression, controlling output dimensions, and using built-in export actions.
@@ -169,7 +170,7 @@ Call `engine.block.export()` with `mimeType: 'image/png'` to export any block as
 ```typescript highlight=highlight-export-png
 const blob = await engine.block.export(page, {
   mimeType: 'image/png'
-});
+})
 ```
 
 Pass the page ID from `engine.scene.getCurrentPage()` or any block ID to export specific elements.
@@ -186,7 +187,7 @@ The `pngCompressionLevel` option (0-9) controls file size vs. encoding speed. Hi
 const compressedBlob = await engine.block.export(page, {
   mimeType: 'image/png',
   pngCompressionLevel: 9
-});
+})
 ```
 
 - **0**: No compression, fastest encoding
@@ -202,7 +203,7 @@ const hdBlob = await engine.block.export(page, {
   mimeType: 'image/png',
   targetWidth: 1920,
   targetHeight: 1080
-});
+})
 ```
 
 If the target aspect ratio differs from the block's aspect ratio, the output extends beyond the target on one axis to preserve proportions.

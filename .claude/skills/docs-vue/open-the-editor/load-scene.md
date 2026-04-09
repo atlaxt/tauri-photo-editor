@@ -23,7 +23,7 @@ Load previously saved scenes to resume editing or modify existing designs.
 Scene files contain layout, properties, and asset references but not the assets themselves. When loading a scene, ensure referenced asset URLs remain accessible. For self-contained packages with bundled assets, use archives instead.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-load-scene-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -38,54 +38,54 @@ import {
   TextComponentAssetSource,
   TypefaceAssetSource,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (cesdk == null) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    cesdk.addPlugin(new DesignEditorConfig());
+    cesdk.addPlugin(new DesignEditorConfig())
 
-    cesdk.addPlugin(new ColorPaletteAssetSource());
-    cesdk.addPlugin(new CropPresetsAssetSource());
-    cesdk.addPlugin(new DemoAssetSources());
-    cesdk.addPlugin(new EffectsAssetSource());
-    cesdk.addPlugin(new FiltersAssetSource());
-    cesdk.addPlugin(new PagePresetsAssetSource());
-    cesdk.addPlugin(new StickerAssetSource());
-    cesdk.addPlugin(new TextAssetSource());
-    cesdk.addPlugin(new TextComponentAssetSource());
-    cesdk.addPlugin(new TypefaceAssetSource());
-    cesdk.addPlugin(new VectorShapeAssetSource());
-    cesdk.addPlugin(new BlurAssetSource());
-    cesdk.addPlugin(new DemoAssetSources());
+    cesdk.addPlugin(new ColorPaletteAssetSource())
+    cesdk.addPlugin(new CropPresetsAssetSource())
+    cesdk.addPlugin(new DemoAssetSources())
+    cesdk.addPlugin(new EffectsAssetSource())
+    cesdk.addPlugin(new FiltersAssetSource())
+    cesdk.addPlugin(new PagePresetsAssetSource())
+    cesdk.addPlugin(new StickerAssetSource())
+    cesdk.addPlugin(new TextAssetSource())
+    cesdk.addPlugin(new TextComponentAssetSource())
+    cesdk.addPlugin(new TypefaceAssetSource())
+    cesdk.addPlugin(new VectorShapeAssetSource())
+    cesdk.addPlugin(new BlurAssetSource())
+    cesdk.addPlugin(new DemoAssetSources())
 
-    const engine = cesdk.engine;
-    const sceneUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
-    await engine.scene.loadFromURL(sceneUrl);
+    const engine = cesdk.engine
+    const sceneUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
+    await engine.scene.loadFromURL(sceneUrl)
 
-    const textBlocks = engine.block.findByType('text');
+    const textBlocks = engine.block.findByType('text')
     if (textBlocks.length > 0) {
-      engine.block.setDropShadowEnabled(textBlocks[0], true);
+      engine.block.setDropShadowEnabled(textBlocks[0], true)
     }
 
     // Zoom to fit the page in view
-    const pages = engine.block.findByType('page');
+    const pages = engine.block.findByType('page')
     if (pages.length > 0) {
-      engine.scene.zoomToBlock(pages[0]);
+      engine.scene.zoomToBlock(pages[0])
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to load scenes from URLs, strings, and blobs, and how to modify loaded scenes.
@@ -95,9 +95,9 @@ This guide covers how to load scenes from URLs, strings, and blobs, and how to m
 The most common approach is loading scenes from a remote URL. The engine replaces any existing scene with the loaded one.
 
 ```typescript highlight-load-from-url
-const sceneUrl =
-  'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
-await engine.scene.loadFromURL(sceneUrl);
+const sceneUrl
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
+await engine.scene.loadFromURL(sceneUrl)
 ```
 
 The scene URL should point to a valid `.scene` file hosted on a server with appropriate CORS headers. This method is ideal for loading scenes from a CDN or your backend API.
@@ -107,8 +107,8 @@ The scene URL should point to a valid `.scene` file hosted on a server with appr
 When scenes are stored in a database or retrieved from local storage, use `engine.scene.loadFromString()`. This accepts the scene data as a string, typically from a previous `engine.scene.saveToString()` call.
 
 ```typescript
-const sceneContent = await fetchFromDatabase();
-await engine.scene.loadFromString(sceneContent);
+const sceneContent = await fetchFromDatabase()
+await engine.scene.loadFromString(sceneContent)
 ```
 
 This approach is useful for restoring saved user designs, loading scenes from your backend API, or working with scenes stored in databases.
@@ -118,9 +118,9 @@ This approach is useful for restoring saved user designs, loading scenes from yo
 For file uploads or blob storage, convert the blob to a string first, then load with `engine.scene.loadFromString()`. Use the blob's `text()` method to extract the scene content.
 
 ```typescript
-const sceneBlob = fileInput.files[0];
-const sceneContent = await sceneBlob.text();
-await engine.scene.loadFromString(sceneContent);
+const sceneBlob = fileInput.files[0]
+const sceneContent = await sceneBlob.text()
+await engine.scene.loadFromString(sceneContent)
 ```
 
 ## Modify a Loaded Scene
@@ -128,9 +128,9 @@ await engine.scene.loadFromString(sceneContent);
 After loading, the scene is immediately editable. Use `engine.block.findByType()` or `engine.block.findByKind()` to locate elements, then modify them with block APIs.
 
 ```typescript highlight-modify-scene
-const textBlocks = engine.block.findByType('text');
+const textBlocks = engine.block.findByType('text')
 if (textBlocks.length > 0) {
-  engine.block.setDropShadowEnabled(textBlocks[0], true);
+  engine.block.setDropShadowEnabled(textBlocks[0], true)
 }
 ```
 

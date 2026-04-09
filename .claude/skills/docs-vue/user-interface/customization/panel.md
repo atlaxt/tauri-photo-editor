@@ -25,9 +25,7 @@ import type {
   EditorPlugin,
   EditorPluginContext,
   PanelPosition
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -42,8 +40,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * Panel Customization Example
@@ -57,25 +57,25 @@ import { DesignEditorConfig } from './design-editor/plugin';
  * - Configure panel payloads
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Enable panel features through Feature API
-    cesdk.feature.enable('ly.img.inspector', () => true);
-    cesdk.feature.enable('ly.img.library.panel', () => true);
-    cesdk.feature.enable('ly.img.settings', () => true);
-    await cesdk.addPlugin(new DesignEditorConfig());
+    cesdk.feature.enable('ly.img.inspector', () => true)
+    cesdk.feature.enable('ly.img.library.panel', () => true)
+    cesdk.feature.enable('ly.img.settings', () => true)
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -86,44 +86,44 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Configure default panel positioning
     cesdk.ui.setPanelPosition(
       '//ly.img.panel/inspector',
       'left' as PanelPosition
-    );
-    cesdk.ui.setPanelFloating('//ly.img.panel/inspector', false);
+    )
+    cesdk.ui.setPanelFloating('//ly.img.panel/inspector', false)
     cesdk.ui.setPanelPosition(
       '//ly.img.panel/assetLibrary',
       'left' as PanelPosition
-    );
+    )
 
     // Check if a panel is open before opening
     if (!cesdk.ui.isPanelOpen('//ly.img.panel/inspector')) {
-      console.log('Inspector is not open yet');
+      console.log('Inspector is not open yet')
     }
 
     // Open inspector panel with default settings
-    cesdk.ui.openPanel('//ly.img.panel/inspector');
+    cesdk.ui.openPanel('//ly.img.panel/inspector')
 
     // Add an image to demonstrate replace library functionality
     const image = await engine.asset.defaultApplyAsset({
@@ -133,20 +133,20 @@ class Example implements EditorPlugin {
         width: 2500,
         height: 1667
       }
-    });
+    })
 
     if (image) {
       // Position the image in the center of the page
-      const pageWidth = engine.block.getWidth(page);
-      const pageHeight = engine.block.getHeight(page);
-      const imageWidth = engine.block.getWidth(image);
-      const imageHeight = engine.block.getHeight(image);
+      const pageWidth = engine.block.getWidth(page)
+      const pageHeight = engine.block.getHeight(page)
+      const imageWidth = engine.block.getWidth(image)
+      const imageHeight = engine.block.getHeight(image)
 
-      engine.block.setPositionX(image, (pageWidth - imageWidth) / 2);
-      engine.block.setPositionY(image, (pageHeight - imageHeight) / 2);
+      engine.block.setPositionX(image, (pageWidth - imageWidth) / 2)
+      engine.block.setPositionY(image, (pageHeight - imageHeight) / 2)
 
       // Select the image
-      engine.block.setSelected(image, true);
+      engine.block.setSelected(image, true)
 
       // Open replace library with custom options
       // This panel will float and be positioned on the right
@@ -154,58 +154,59 @@ class Example implements EditorPlugin {
         position: 'right' as PanelPosition,
         floating: true,
         closableByUser: true
-      });
+      })
 
       // Find all currently open panels
-      const openPanels = cesdk.ui.findAllPanels({ open: true });
-      console.log('Currently open panels:', openPanels);
+      const openPanels = cesdk.ui.findAllPanels({ open: true })
+      console.log('Currently open panels:', openPanels)
 
       // Find all panels on the left
       const leftPanels = cesdk.ui.findAllPanels({
         position: 'left' as PanelPosition
-      });
-      console.log('Panels on the left:', leftPanels);
+      })
+      console.log('Panels on the left:', leftPanels)
 
       // Get panel position and floating state
       const inspectorPosition = cesdk.ui.getPanelPosition(
         '//ly.img.panel/inspector'
-      );
+      )
       const inspectorFloating = cesdk.ui.getPanelFloating(
         '//ly.img.panel/inspector'
-      );
+      )
       console.log(
         `Inspector is on the ${inspectorPosition} side, floating: ${inspectorFloating}`
-      );
+      )
 
       // Demonstrate responsive panel behavior
       const updatePanelLayout = () => {
-        const isNarrowViewport = window.innerWidth < 768;
+        const isNarrowViewport = window.innerWidth < 768
 
         // Float panels on narrow viewports
-        cesdk.ui.setPanelFloating('//ly.img.panel/inspector', isNarrowViewport);
+        cesdk.ui.setPanelFloating('//ly.img.panel/inspector', isNarrowViewport)
 
         // Adjust positioning based on available space
         if (!isNarrowViewport && window.innerWidth > 1200) {
           cesdk.ui.setPanelPosition(
             '//ly.img.panel/inspector',
             'right' as PanelPosition
-          );
-        } else if (!isNarrowViewport) {
+          )
+        }
+        else if (!isNarrowViewport) {
           cesdk.ui.setPanelPosition(
             '//ly.img.panel/inspector',
             'left' as PanelPosition
-          );
+          )
         }
-      };
+      }
 
       // Apply responsive layout
-      updatePanelLayout();
+      updatePanelLayout()
 
       // Update on window resize
-      window.addEventListener('resize', updatePanelLayout);
+      window.addEventListener('resize', updatePanelLayout)
 
       if (cesdk.ui.isPanelOpen('//ly.img.panel/assetLibrary.replace')) {
-        cesdk.ui.closePanel('//ly.img.panel/assetLibrary.replace');
+        cesdk.ui.closePanel('//ly.img.panel/assetLibrary.replace')
       }
 
       cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
@@ -213,7 +214,7 @@ class Example implements EditorPlugin {
           title: 'Custom Media Library',
           entries: ['ly.img.image', 'ly.img.video', 'ly.img.upload']
         }
-      });
+      })
 
       // Example: Close all ly.img panels using wildcard
       // Uncomment to test:
@@ -225,7 +226,7 @@ class Example implements EditorPlugin {
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide demonstrates CE.SDK's Panel API through a working example that shows how to control panels programmatically, including opening, closing, positioning, and configuring panel behavior.
@@ -247,9 +248,9 @@ These panels must be enabled through the Feature API before they can be used:
 
 ```typescript highlight-enable-features
 // Enable panel features through Feature API
-cesdk.feature.enable('ly.img.inspector', () => true);
-cesdk.feature.enable('ly.img.library.panel', () => true);
-cesdk.feature.enable('ly.img.settings', () => true);
+cesdk.feature.enable('ly.img.inspector', () => true)
+cesdk.feature.enable('ly.img.library.panel', () => true)
+cesdk.feature.enable('ly.img.settings', () => true)
 ```
 
 ## Opening and Closing Panels
@@ -262,7 +263,7 @@ Use `cesdk.ui.openPanel()` to display a panel. The panel will only open if it ex
 
 ```typescript highlight-open-panel
 // Open inspector panel with default settings
-cesdk.ui.openPanel('//ly.img.panel/inspector');
+cesdk.ui.openPanel('//ly.img.panel/inspector')
 ```
 
 You can override the panel's default position and floating behavior with options:
@@ -274,7 +275,7 @@ cesdk.ui.openPanel('//ly.img.panel/assetLibrary.replace', {
   position: 'right' as PanelPosition,
   floating: true,
   closableByUser: true
-});
+})
 ```
 
 The options parameter accepts:
@@ -290,7 +291,7 @@ Use `cesdk.ui.closePanel()` to hide panels. This method supports both exact pane
 
 ```typescript highlight-close-panel
 if (cesdk.ui.isPanelOpen('//ly.img.panel/assetLibrary.replace')) {
-  cesdk.ui.closePanel('//ly.img.panel/assetLibrary.replace');
+  cesdk.ui.closePanel('//ly.img.panel/assetLibrary.replace')
 }
 ```
 
@@ -309,7 +310,7 @@ Before opening or manipulating panels, you can check their current state using `
 ```typescript highlight-check-panel-state
 // Check if a panel is open before opening
 if (!cesdk.ui.isPanelOpen('//ly.img.panel/inspector')) {
-  console.log('Inspector is not open yet');
+  console.log('Inspector is not open yet')
 }
 ```
 
@@ -318,15 +319,15 @@ if (!cesdk.ui.isPanelOpen('//ly.img.panel/inspector')) {
 To discover all available panels or filter panels by their state, use `cesdk.ui.findAllPanels()`:
 
 ```typescript highlight-find-all-panels
-      // Find all currently open panels
-      const openPanels = cesdk.ui.findAllPanels({ open: true });
-      console.log('Currently open panels:', openPanels);
+// Find all currently open panels
+const openPanels = cesdk.ui.findAllPanels({ open: true })
+console.log('Currently open panels:', openPanels)
 
-      // Find all panels on the left
-      const leftPanels = cesdk.ui.findAllPanels({
-        position: 'left' as PanelPosition
-      });
-      console.log('Panels on the left:', leftPanels);
+// Find all panels on the left
+const leftPanels = cesdk.ui.findAllPanels({
+  position: 'left' as PanelPosition
+})
+console.log('Panels on the left:', leftPanels)
 ```
 
 This method is particularly useful for debugging or building custom UI that needs to reflect the current panel state.
@@ -337,10 +338,10 @@ Panels can be positioned on the left or right side of the canvas. Use `cesdk.ui.
 
 ```typescript
 // Position inspector on the left
-cesdk.ui.setPanelPosition('//ly.img.panel/inspector', 'left');
+cesdk.ui.setPanelPosition('//ly.img.panel/inspector', 'left')
 
 // Position asset library on the right
-cesdk.ui.setPanelPosition('//ly.img.panel/assetLibrary', 'right');
+cesdk.ui.setPanelPosition('//ly.img.panel/assetLibrary', 'right')
 ```
 
 You can also use a function for dynamic positioning:
@@ -348,9 +349,9 @@ You can also use a function for dynamic positioning:
 ```typescript
 // Position based on viewport width
 cesdk.ui.setPanelPosition('//ly.img.panel/inspector', () => {
-  const viewportWidth = window.innerWidth;
-  return viewportWidth > 1200 ? 'right' : 'left';
-});
+  const viewportWidth = window.innerWidth
+  return viewportWidth > 1200 ? 'right' : 'left'
+})
 ```
 
 To get the current position and floating state of a panel:
@@ -359,13 +360,13 @@ To get the current position and floating state of a panel:
 // Get panel position and floating state
 const inspectorPosition = cesdk.ui.getPanelPosition(
   '//ly.img.panel/inspector'
-);
+)
 const inspectorFloating = cesdk.ui.getPanelFloating(
   '//ly.img.panel/inspector'
-);
+)
 console.log(
   `Inspector is on the ${inspectorPosition} side, floating: ${inspectorFloating}`
-);
+)
 ```
 
 Note that setting the position affects both the default behavior and currently open panels, unless the panel was opened with an explicit `position` option.
@@ -380,10 +381,10 @@ Use `cesdk.ui.setPanelFloating()` to control floating behavior:
 
 ```typescript
 // Make inspector float over the canvas
-cesdk.ui.setPanelFloating('//ly.img.panel/inspector', true);
+cesdk.ui.setPanelFloating('//ly.img.panel/inspector', true)
 
 // Dock asset library beside the canvas
-cesdk.ui.setPanelFloating('//ly.img.panel/assetLibrary', false);
+cesdk.ui.setPanelFloating('//ly.img.panel/assetLibrary', false)
 ```
 
 Like positioning, you can use a function for responsive floating:
@@ -391,8 +392,8 @@ Like positioning, you can use a function for responsive floating:
 ```typescript
 // Float on narrow viewports, dock on wide
 cesdk.ui.setPanelFloating('//ly.img.panel/inspector', () => {
-  return window.innerWidth < 768;
-});
+  return window.innerWidth < 768
+})
 ```
 
 ### Checking Floating State
@@ -400,11 +401,12 @@ cesdk.ui.setPanelFloating('//ly.img.panel/inspector', () => {
 To check if a panel is currently floating:
 
 ```typescript
-const isFloating = cesdk.ui.getPanelFloating('//ly.img.panel/inspector');
+const isFloating = cesdk.ui.getPanelFloating('//ly.img.panel/inspector')
 if (isFloating) {
-  console.log('Inspector is floating over the canvas');
-} else {
-  console.log('Inspector is docked beside the canvas');
+  console.log('Inspector is floating over the canvas')
+}
+else {
+  console.log('Inspector is docked beside the canvas')
 }
 ```
 
@@ -418,7 +420,7 @@ cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
     title: 'Custom Media Library',
     entries: ['ly.img.image', 'ly.img.video', 'ly.img.upload']
   }
-});
+})
 ```
 
 The asset library payload accepts:
@@ -442,7 +444,7 @@ if (!cesdk.ui.isPanelOpen('//ly.img.panel/inspector')) {
   cesdk.ui.openPanel('//ly.img.panel/inspector', {
     position: 'left',
     floating: false
-  });
+  })
 }
 ```
 
@@ -452,12 +454,12 @@ Open the replace library for users to swap content of the selected block:
 
 ```typescript
 // Create scene and add an image
-await cesdk.actions.run('scene.create');
+await cesdk.actions.run('scene.create')
 // Note: Add asset source plugins here (imported from @cesdk/cesdk-js/plugins)
 // e.g. await cesdk.addPlugin(new StickerAssetSource());
 // await cesdk.addPlugin(new DemoAssetSources({ include: [...] }));
 
-const engine = cesdk.engine;
+const engine = cesdk.engine
 const image = await engine.asset.defaultApplyAsset({
   id: 'ly.img.cesdk.images.samples/sample.1',
   meta: {
@@ -465,18 +467,18 @@ const image = await engine.asset.defaultApplyAsset({
     width: 2500,
     height: 1667
   }
-});
+})
 
 if (image) {
   // Select the image
-  engine.block.setSelected(image, true);
+  engine.block.setSelected(image, true)
 
   // Open replace library if not already open
   if (!cesdk.ui.isPanelOpen('//ly.img.panel/assetLibrary.replace')) {
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary.replace', {
       position: 'right',
       floating: false
-    });
+    })
   }
 }
 ```
@@ -491,18 +493,18 @@ Before using panels, enable their features:
 
 ```typescript
 // Enable inspector feature
-cesdk.feature.enable('ly.img.inspector', () => true);
+cesdk.feature.enable('ly.img.inspector', () => true)
 
 // Enable asset library feature
-cesdk.feature.enable('ly.img.library.panel', () => true);
+cesdk.feature.enable('ly.img.library.panel', () => true)
 
 // Enable settings feature
-cesdk.feature.enable('ly.img.settings', () => true);
+cesdk.feature.enable('ly.img.settings', () => true)
 
 // Check if a feature is enabled
 const isInspectorEnabled = cesdk.feature.isEnabled('ly.img.inspector', {
   engine: cesdk.engine
-});
+})
 ```
 
 ## Troubleshooting
@@ -520,13 +522,13 @@ const isInspectorEnabled = cesdk.feature.isEnabled('ly.img.inspector', {
 
 ```typescript
 // Debug panel availability
-const allPanels = cesdk.ui.findAllPanels();
-console.log('Available panels:', allPanels);
+const allPanels = cesdk.ui.findAllPanels()
+console.log('Available panels:', allPanels)
 
 const isEnabled = cesdk.feature.isEnabled('ly.img.inspector', {
   engine: cesdk.engine
-});
-console.log('Inspector feature enabled:', isEnabled);
+})
+console.log('Inspector feature enabled:', isEnabled)
 ```
 
 ### Position or Floating Settings Not Applied
@@ -541,11 +543,11 @@ console.log('Inspector feature enabled:', isEnabled);
 
 ```typescript
 // Set defaults first
-cesdk.ui.setPanelPosition('//ly.img.panel/inspector', 'left');
-cesdk.ui.setPanelFloating('//ly.img.panel/inspector', false);
+cesdk.ui.setPanelPosition('//ly.img.panel/inspector', 'left')
+cesdk.ui.setPanelFloating('//ly.img.panel/inspector', false)
 
 // Then open without overriding options
-cesdk.ui.openPanel('//ly.img.panel/inspector');
+cesdk.ui.openPanel('//ly.img.panel/inspector')
 ```
 
 ### Replace Library Shows Nothing
@@ -560,9 +562,9 @@ cesdk.ui.openPanel('//ly.img.panel/inspector');
 
 ```typescript
 // Ensure a block is selected
-const selectedBlocks = cesdk.engine.block.findAllSelected();
+const selectedBlocks = cesdk.engine.block.findAllSelected()
 if (selectedBlocks.length === 0) {
-  console.warn('No block selected - replace library will be empty');
+  console.warn('No block selected - replace library will be empty')
 }
 ```
 
@@ -580,9 +582,9 @@ if (selectedBlocks.length === 0) {
 ```typescript
 // Close all panels before opening one on mobile
 if (window.innerWidth < 768) {
-  cesdk.ui.closePanel('//ly.img.*');
+  cesdk.ui.closePanel('//ly.img.*')
 }
-cesdk.ui.openPanel('//ly.img.panel/inspector', { floating: true });
+cesdk.ui.openPanel('//ly.img.panel/inspector', { floating: true })
 ```
 
 ## API Reference

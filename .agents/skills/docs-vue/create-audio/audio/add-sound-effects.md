@@ -23,7 +23,7 @@ Generate sound effects programmatically using buffers with arbitrary audio data.
 CE.SDK lets you create audio from code using buffers. This approach generates sound effects dynamically without external files—useful for notification tones, procedural audio, or any scenario where you need to synthesize audio at runtime.
 
 ```typescript file=@cesdk_web_examples/guides-create-audio-add-sound-effects-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   CaptionPresetsAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * Creates a WAV file buffer from audio parameters and a sample generator function.
@@ -54,50 +54,50 @@ import packageJson from './package.json';
 function createWavBuffer(
   sampleRate: number,
   durationSeconds: number,
-  /* eslint-disable-next-line no-unused-vars -- Parameter name documents callback signature */
+
   generator: (time: number) => number
 ): Uint8Array {
-  const bitsPerSample = 16;
-  const channels = 2; // Stereo output
-  const numSamples = Math.floor(durationSeconds * sampleRate);
-  const dataSize = numSamples * channels * (bitsPerSample / 8);
+  const bitsPerSample = 16
+  const channels = 2 // Stereo output
+  const numSamples = Math.floor(durationSeconds * sampleRate)
+  const dataSize = numSamples * channels * (bitsPerSample / 8)
 
   // Create WAV file buffer (44-byte header + audio data)
-  const wavBuffer = new ArrayBuffer(44 + dataSize);
-  const view = new DataView(wavBuffer);
+  const wavBuffer = new ArrayBuffer(44 + dataSize)
+  const view = new DataView(wavBuffer)
 
   // RIFF chunk descriptor
-  view.setUint32(0, 0x52494646, false); // "RIFF"
-  view.setUint32(4, 36 + dataSize, true); // File size - 8
-  view.setUint32(8, 0x57415645, false); // "WAVE"
+  view.setUint32(0, 0x52494646, false) // "RIFF"
+  view.setUint32(4, 36 + dataSize, true) // File size - 8
+  view.setUint32(8, 0x57415645, false) // "WAVE"
 
   // fmt sub-chunk
-  view.setUint32(12, 0x666d7420, false); // "fmt "
-  view.setUint32(16, 16, true); // Sub-chunk size (16 for PCM)
-  view.setUint16(20, 1, true); // Audio format (1 = PCM)
-  view.setUint16(22, channels, true); // Number of channels
-  view.setUint32(24, sampleRate, true); // Sample rate
-  view.setUint32(28, sampleRate * channels * (bitsPerSample / 8), true);
-  view.setUint16(32, channels * (bitsPerSample / 8), true); // Block align
-  view.setUint16(34, bitsPerSample, true); // Bits per sample
+  view.setUint32(12, 0x666D7420, false) // "fmt "
+  view.setUint32(16, 16, true) // Sub-chunk size (16 for PCM)
+  view.setUint16(20, 1, true) // Audio format (1 = PCM)
+  view.setUint16(22, channels, true) // Number of channels
+  view.setUint32(24, sampleRate, true) // Sample rate
+  view.setUint32(28, sampleRate * channels * (bitsPerSample / 8), true)
+  view.setUint16(32, channels * (bitsPerSample / 8), true) // Block align
+  view.setUint16(34, bitsPerSample, true) // Bits per sample
 
   // data sub-chunk
-  view.setUint32(36, 0x64617461, false); // "data"
-  view.setUint32(40, dataSize, true); // Data size
+  view.setUint32(36, 0x64617461, false) // "data"
+  view.setUint32(40, dataSize, true) // Data size
 
   // Generate audio samples
-  let offset = 44;
+  let offset = 44
   for (let i = 0; i < numSamples; i++) {
-    const time = i / sampleRate;
+    const time = i / sampleRate
     // Generate mono sample and duplicate to both channels
-    const value = generator(time);
-    const sample = Math.max(-32768, Math.min(32767, Math.round(value * 32767)));
-    view.setInt16(offset, sample, true); // Left channel
-    view.setInt16(offset + 2, sample, true); // Right channel
-    offset += 4;
+    const value = generator(time)
+    const sample = Math.max(-32768, Math.min(32767, Math.round(value * 32767)))
+    view.setInt16(offset, sample, true) // Left channel
+    view.setInt16(offset + 2, sample, true) // Right channel
+    offset += 4
   }
 
-  return new Uint8Array(wavBuffer);
+  return new Uint8Array(wavBuffer)
 }
 
 /**
@@ -122,25 +122,29 @@ function adsr(
   sustain: number,
   release: number
 ): number {
-  const t = time - noteStart;
-  if (t < 0) return 0;
+  const t = time - noteStart
+  if (t < 0)
+    return 0
 
-  const noteEnd = noteDuration - release;
+  const noteEnd = noteDuration - release
 
   if (t < attack) {
     // Attack phase: ramp up from 0 to 1
-    return t / attack;
-  } else if (t < attack + decay) {
-    // Decay phase: ramp down from 1 to sustain level
-    return 1 - ((t - attack) / decay) * (1 - sustain);
-  } else if (t < noteEnd) {
-    // Sustain phase: hold at sustain level
-    return sustain;
-  } else if (t < noteDuration) {
-    // Release phase: ramp down from sustain to 0
-    return sustain * (1 - (t - noteEnd) / release);
+    return t / attack
   }
-  return 0;
+  else if (t < attack + decay) {
+    // Decay phase: ramp down from 1 to sustain level
+    return 1 - ((t - attack) / decay) * (1 - sustain)
+  }
+  else if (t < noteEnd) {
+    // Sustain phase: hold at sustain level
+    return sustain
+  }
+  else if (t < noteDuration) {
+    // Release phase: ramp down from sustain to 0
+    return sustain * (1 - (t - noteEnd) / release)
+  }
+  return 0
 }
 
 // Musical note frequencies (Hz) for the 4th and 5th octaves
@@ -160,7 +164,7 @@ const NOTE_FREQUENCIES = {
   A5: 880.0,
   B5: 987.77,
   C6: 1046.5
-};
+}
 
 // Sound effect 1: Ascending "success" fanfare (2 seconds)
 // Creates a triumphant feeling with overlapping notes building to a chord
@@ -176,7 +180,7 @@ const SUCCESS_CHIME = {
     { freq: NOTE_FREQUENCIES.G5, start: 0.45, duration: 1.55 }
   ],
   totalDuration: 2.0
-};
+}
 
 // Sound effect 2: Gentle notification melody (2 seconds)
 // A musical phrase that resolves pleasantly
@@ -189,7 +193,7 @@ const NOTIFICATION_MELODY = {
     { freq: NOTE_FREQUENCIES.E5, start: 1.15, duration: 0.85 }
   ],
   totalDuration: 2.0
-};
+}
 
 // Sound effect 3: Alert/warning tone (2 seconds)
 // Descending pattern that grabs attention
@@ -204,7 +208,7 @@ const ALERT_TONE = {
     { freq: NOTE_FREQUENCIES.A4, start: 1.3, duration: 0.7 }
   ],
   totalDuration: 2.0
-};
+}
 
 /**
  * CE.SDK Plugin: Add Sound Effects Guide
@@ -216,26 +220,26 @@ const ALERT_TONE = {
  * - Positioning sound effects on the timeline
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -245,9 +249,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -261,12 +265,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Create a video scene (audio blocks require timeline support)
     await cesdk.actions.run('scene.create', {
@@ -275,56 +279,56 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the page (timeline)
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Calculate total duration: 3 effects × 2s + 2 gaps × 0.5s = 7s
-    const effectDuration = 2.0;
-    const gapDuration = 0.5;
-    const totalDuration = 3 * effectDuration + 2 * gapDuration; // 7 seconds
+    const effectDuration = 2.0
+    const gapDuration = 0.5
+    const totalDuration = 3 * effectDuration + 2 * gapDuration // 7 seconds
 
     // Set page duration to match total effects length
-    engine.block.setDuration(page, totalDuration);
+    engine.block.setDuration(page, totalDuration)
 
     // Add a centered title text to the canvas
-    const text = engine.block.create('text');
-    engine.block.appendChild(page, text);
-    engine.block.replaceText(text, 'Sound Effects Demo');
-    engine.block.setTextColor(text, { r: 1, g: 1, b: 1, a: 1 });
-    engine.block.setFloat(text, 'text/fontSize', 48);
+    const text = engine.block.create('text')
+    engine.block.appendChild(page, text)
+    engine.block.replaceText(text, 'Sound Effects Demo')
+    engine.block.setTextColor(text, { r: 1, g: 1, b: 1, a: 1 })
+    engine.block.setFloat(text, 'text/fontSize', 48)
 
     // Center the text on the canvas
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    engine.block.setWidth(text, pageWidth);
-    engine.block.setHeight(text, 70);
-    engine.block.setPositionX(text, 0);
-    engine.block.setPositionY(text, pageHeight / 2 - 35);
-    engine.block.setEnum(text, 'text/horizontalAlignment', 'Center');
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    engine.block.setWidth(text, pageWidth)
+    engine.block.setHeight(text, 70)
+    engine.block.setPositionX(text, 0)
+    engine.block.setPositionY(text, pageHeight / 2 - 35)
+    engine.block.setEnum(text, 'text/horizontalAlignment', 'Center')
 
     // Make text visible for the entire duration
-    engine.block.setTimeOffset(text, 0);
-    engine.block.setDuration(text, totalDuration);
+    engine.block.setTimeOffset(text, 0)
+    engine.block.setDuration(text, totalDuration)
 
-    const sampleRate = 48000;
+    const sampleRate = 48000
 
     // Create the "success chime" sound effect
-    const chimeBuffer = engine.editor.createBuffer();
+    const chimeBuffer = engine.editor.createBuffer()
 
     // Generate the chime using our helper function
     const chimeWav = createWavBuffer(
       sampleRate,
       SUCCESS_CHIME.totalDuration,
       (time) => {
-        let sample = 0;
+        let sample = 0
 
         // Mix all notes together
         for (const note of SUCCESS_CHIME.notes) {
@@ -337,41 +341,41 @@ class Example implements EditorPlugin {
             0.08, // Gentle decay (80ms)
             0.7, // Sustain at 70%
             0.25 // Smooth release (250ms)
-          );
+          )
 
           if (envelope > 0) {
             // Generate sine wave with slight harmonics for richness
-            const fundamental = Math.sin(2 * Math.PI * note.freq * time);
-            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.25;
-            const harmonic3 = Math.sin(6 * Math.PI * note.freq * time) * 0.1;
+            const fundamental = Math.sin(2 * Math.PI * note.freq * time)
+            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.25
+            const harmonic3 = Math.sin(6 * Math.PI * note.freq * time) * 0.1
 
-            sample += (fundamental + harmonic2 + harmonic3) * envelope * 0.3;
+            sample += (fundamental + harmonic2 + harmonic3) * envelope * 0.3
           }
         }
 
-        return sample;
+        return sample
       }
-    );
+    )
 
     // Write WAV data to the buffer
-    engine.editor.setBufferData(chimeBuffer, 0, chimeWav);
+    engine.editor.setBufferData(chimeBuffer, 0, chimeWav)
 
     // Create audio block for the chime (starts at 0s)
-    const chimeBlock = engine.block.create('audio');
-    engine.block.appendChild(page, chimeBlock);
-    engine.block.setString(chimeBlock, 'audio/fileURI', chimeBuffer);
-    engine.block.setTimeOffset(chimeBlock, 0);
-    engine.block.setDuration(chimeBlock, SUCCESS_CHIME.totalDuration);
-    engine.block.setVolume(chimeBlock, 0.8);
+    const chimeBlock = engine.block.create('audio')
+    engine.block.appendChild(page, chimeBlock)
+    engine.block.setString(chimeBlock, 'audio/fileURI', chimeBuffer)
+    engine.block.setTimeOffset(chimeBlock, 0)
+    engine.block.setDuration(chimeBlock, SUCCESS_CHIME.totalDuration)
+    engine.block.setVolume(chimeBlock, 0.8)
 
     // Create the "notification melody" sound effect
-    const melodyBuffer = engine.editor.createBuffer();
+    const melodyBuffer = engine.editor.createBuffer()
 
     const melodyWav = createWavBuffer(
       sampleRate,
       NOTIFICATION_MELODY.totalDuration,
       (time) => {
-        let sample = 0;
+        let sample = 0
 
         for (const note of NOTIFICATION_MELODY.notes) {
           const envelope = adsr(
@@ -382,39 +386,39 @@ class Example implements EditorPlugin {
             0.06, // Gentle decay (60ms)
             0.6, // Sustain at 60%
             0.2 // Smooth release (200ms)
-          );
+          )
 
           if (envelope > 0) {
             // Pure sine wave with light 2nd harmonic for gentle tone
-            const fundamental = Math.sin(2 * Math.PI * note.freq * time);
-            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.15;
+            const fundamental = Math.sin(2 * Math.PI * note.freq * time)
+            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.15
 
-            sample += (fundamental + harmonic2) * envelope * 0.4;
+            sample += (fundamental + harmonic2) * envelope * 0.4
           }
         }
 
-        return sample;
+        return sample
       }
-    );
+    )
 
-    engine.editor.setBufferData(melodyBuffer, 0, melodyWav);
+    engine.editor.setBufferData(melodyBuffer, 0, melodyWav)
 
     // Starts at 2.5s (after 2s effect + 0.5s gap)
-    const melodyBlock = engine.block.create('audio');
-    engine.block.appendChild(page, melodyBlock);
-    engine.block.setString(melodyBlock, 'audio/fileURI', melodyBuffer);
-    engine.block.setTimeOffset(melodyBlock, effectDuration + gapDuration); // 2.5s
-    engine.block.setDuration(melodyBlock, NOTIFICATION_MELODY.totalDuration);
-    engine.block.setVolume(melodyBlock, 0.8);
+    const melodyBlock = engine.block.create('audio')
+    engine.block.appendChild(page, melodyBlock)
+    engine.block.setString(melodyBlock, 'audio/fileURI', melodyBuffer)
+    engine.block.setTimeOffset(melodyBlock, effectDuration + gapDuration) // 2.5s
+    engine.block.setDuration(melodyBlock, NOTIFICATION_MELODY.totalDuration)
+    engine.block.setVolume(melodyBlock, 0.8)
 
     // Create the "alert" sound effect
-    const alertBuffer = engine.editor.createBuffer();
+    const alertBuffer = engine.editor.createBuffer()
 
     const alertWav = createWavBuffer(
       sampleRate,
       ALERT_TONE.totalDuration,
       (time) => {
-        let sample = 0;
+        let sample = 0
 
         for (const note of ALERT_TONE.notes) {
           const envelope = adsr(
@@ -425,46 +429,45 @@ class Example implements EditorPlugin {
             0.05, // Quick decay (50ms)
             0.5, // Sustain at 50%
             0.15 // Medium release (150ms)
-          );
+          )
 
           if (envelope > 0) {
             // Slightly brighter tone for alert
-            const fundamental = Math.sin(2 * Math.PI * note.freq * time);
-            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.2;
-            const harmonic3 = Math.sin(6 * Math.PI * note.freq * time) * 0.15;
+            const fundamental = Math.sin(2 * Math.PI * note.freq * time)
+            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.2
+            const harmonic3 = Math.sin(6 * Math.PI * note.freq * time) * 0.15
 
-            sample += (fundamental + harmonic2 + harmonic3) * envelope * 0.35;
+            sample += (fundamental + harmonic2 + harmonic3) * envelope * 0.35
           }
         }
 
-        return sample;
+        return sample
       }
-    );
+    )
 
-    engine.editor.setBufferData(alertBuffer, 0, alertWav);
+    engine.editor.setBufferData(alertBuffer, 0, alertWav)
 
     // Starts at 5s (after 2 effects + 2 gaps)
-    const alertBlock = engine.block.create('audio');
-    engine.block.appendChild(page, alertBlock);
-    engine.block.setString(alertBlock, 'audio/fileURI', alertBuffer);
-    engine.block.setTimeOffset(alertBlock, 2 * (effectDuration + gapDuration)); // 5s
-    engine.block.setDuration(alertBlock, ALERT_TONE.totalDuration);
-    engine.block.setVolume(alertBlock, 0.75);
+    const alertBlock = engine.block.create('audio')
+    engine.block.appendChild(page, alertBlock)
+    engine.block.setString(alertBlock, 'audio/fileURI', alertBuffer)
+    engine.block.setTimeOffset(alertBlock, 2 * (effectDuration + gapDuration)) // 5s
+    engine.block.setDuration(alertBlock, ALERT_TONE.totalDuration)
+    engine.block.setVolume(alertBlock, 0.75)
 
     // Select the chime block to show it in the UI
-    engine.block.select(chimeBlock);
+    engine.block.select(chimeBlock)
 
     // Zoom to fit the timeline
-    await cesdk.actions.run('zoom.toPage', { autoFit: true });
+    await cesdk.actions.run('zoom.toPage', { autoFit: true })
 
-    // eslint-disable-next-line no-console
     console.log(
       `Sound effects: Success (0s), Melody (2.5s), Alert (5s) - each 2s, total ${totalDuration}s`
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers working with buffers to create audio data and position it in the composition.
@@ -479,7 +482,7 @@ Create a buffer with `createBuffer()`, which returns a URI you can use to refere
 
 ```typescript highlight-buffer-create
 // Create the "notification melody" sound effect
-const melodyBuffer = engine.editor.createBuffer();
+const melodyBuffer = engine.editor.createBuffer()
 ```
 
 ### Writing Data
@@ -487,7 +490,7 @@ const melodyBuffer = engine.editor.createBuffer();
 Write data to a buffer using `setBufferData()`. The offset parameter specifies where to start writing:
 
 ```typescript highlight-buffer-write
-engine.editor.setBufferData(melodyBuffer, 0, melodyWav);
+engine.editor.setBufferData(melodyBuffer, 0, melodyWav)
 ```
 
 ### Reading Data
@@ -495,8 +498,8 @@ engine.editor.setBufferData(melodyBuffer, 0, melodyWav);
 Read data back from a buffer:
 
 ```typescript
-const length = engine.editor.getBufferLength(buffer);
-const data = engine.editor.getBufferData(buffer, 0, length);
+const length = engine.editor.getBufferLength(buffer)
+const data = engine.editor.getBufferData(buffer, 0, length)
 ```
 
 ### Adding an Audio Track
@@ -505,9 +508,9 @@ Create an audio block and assign the buffer URI to its `audio/fileURI` property.
 
 ```typescript highlight-audio-track
 // Starts at 2.5s (after 2s effect + 0.5s gap)
-const melodyBlock = engine.block.create('audio');
-engine.block.appendChild(page, melodyBlock);
-engine.block.setString(melodyBlock, 'audio/fileURI', melodyBuffer);
+const melodyBlock = engine.block.create('audio')
+engine.block.appendChild(page, melodyBlock)
+engine.block.setString(melodyBlock, 'audio/fileURI', melodyBuffer)
 ```
 
 ### Cleanup
@@ -515,7 +518,7 @@ engine.block.setString(melodyBlock, 'audio/fileURI', melodyBuffer);
 Destroy buffers when no longer needed (buffers are also cleaned up automatically with the scene):
 
 ```typescript
-engine.editor.destroyBuffer(buffer);
+engine.editor.destroyBuffer(buffer)
 ```
 
 ## Generating Audio Data
@@ -523,47 +526,47 @@ engine.editor.destroyBuffer(buffer);
 To use buffers for audio, you need valid audio data. The WAV format is straightforward to generate: a 44-byte header followed by raw PCM samples.
 
 ```typescript highlight-wav-body
-  const bitsPerSample = 16;
-  const channels = 2; // Stereo output
-  const numSamples = Math.floor(durationSeconds * sampleRate);
-  const dataSize = numSamples * channels * (bitsPerSample / 8);
+const bitsPerSample = 16
+const channels = 2 // Stereo output
+const numSamples = Math.floor(durationSeconds * sampleRate)
+const dataSize = numSamples * channels * (bitsPerSample / 8)
 
-  // Create WAV file buffer (44-byte header + audio data)
-  const wavBuffer = new ArrayBuffer(44 + dataSize);
-  const view = new DataView(wavBuffer);
+// Create WAV file buffer (44-byte header + audio data)
+const wavBuffer = new ArrayBuffer(44 + dataSize)
+const view = new DataView(wavBuffer)
 
-  // RIFF chunk descriptor
-  view.setUint32(0, 0x52494646, false); // "RIFF"
-  view.setUint32(4, 36 + dataSize, true); // File size - 8
-  view.setUint32(8, 0x57415645, false); // "WAVE"
+// RIFF chunk descriptor
+view.setUint32(0, 0x52494646, false) // "RIFF"
+view.setUint32(4, 36 + dataSize, true) // File size - 8
+view.setUint32(8, 0x57415645, false) // "WAVE"
 
-  // fmt sub-chunk
-  view.setUint32(12, 0x666d7420, false); // "fmt "
-  view.setUint32(16, 16, true); // Sub-chunk size (16 for PCM)
-  view.setUint16(20, 1, true); // Audio format (1 = PCM)
-  view.setUint16(22, channels, true); // Number of channels
-  view.setUint32(24, sampleRate, true); // Sample rate
-  view.setUint32(28, sampleRate * channels * (bitsPerSample / 8), true);
-  view.setUint16(32, channels * (bitsPerSample / 8), true); // Block align
-  view.setUint16(34, bitsPerSample, true); // Bits per sample
+// fmt sub-chunk
+view.setUint32(12, 0x666D7420, false) // "fmt "
+view.setUint32(16, 16, true) // Sub-chunk size (16 for PCM)
+view.setUint16(20, 1, true) // Audio format (1 = PCM)
+view.setUint16(22, channels, true) // Number of channels
+view.setUint32(24, sampleRate, true) // Sample rate
+view.setUint32(28, sampleRate * channels * (bitsPerSample / 8), true)
+view.setUint16(32, channels * (bitsPerSample / 8), true) // Block align
+view.setUint16(34, bitsPerSample, true) // Bits per sample
 
-  // data sub-chunk
-  view.setUint32(36, 0x64617461, false); // "data"
-  view.setUint32(40, dataSize, true); // Data size
+// data sub-chunk
+view.setUint32(36, 0x64617461, false) // "data"
+view.setUint32(40, dataSize, true) // Data size
 
-  // Generate audio samples
-  let offset = 44;
-  for (let i = 0; i < numSamples; i++) {
-    const time = i / sampleRate;
-    // Generate mono sample and duplicate to both channels
-    const value = generator(time);
-    const sample = Math.max(-32768, Math.min(32767, Math.round(value * 32767)));
-    view.setInt16(offset, sample, true); // Left channel
-    view.setInt16(offset + 2, sample, true); // Right channel
-    offset += 4;
-  }
+// Generate audio samples
+let offset = 44
+for (let i = 0; i < numSamples; i++) {
+  const time = i / sampleRate
+  // Generate mono sample and duplicate to both channels
+  const value = generator(time)
+  const sample = Math.max(-32768, Math.min(32767, Math.round(value * 32767)))
+  view.setInt16(offset, sample, true) // Left channel
+  view.setInt16(offset + 2, sample, true) // Right channel
+  offset += 4
+}
 
-  return new Uint8Array(wavBuffer);
+return new Uint8Array(wavBuffer)
 ```
 
 This code builds a stereo WAV file by writing the RIFF header, format chunk, and data chunk, then iterating through time to generate samples from a generator function that returns values between -1.0 and 1.0.
@@ -573,35 +576,35 @@ This code builds a stereo WAV file by writing the RIFF header, format chunk, and
 Combine the buffer API with the WAV helper to create a complete sound effect. This example generates a notification melody by mixing multiple notes with harmonics:
 
 ```typescript highlight-generate-melody
-    const melodyWav = createWavBuffer(
-      sampleRate,
-      NOTIFICATION_MELODY.totalDuration,
-      (time) => {
-        let sample = 0;
+const melodyWav = createWavBuffer(
+  sampleRate,
+  NOTIFICATION_MELODY.totalDuration,
+  (time) => {
+    let sample = 0
 
-        for (const note of NOTIFICATION_MELODY.notes) {
-          const envelope = adsr(
-            time,
-            note.start,
-            note.duration,
-            0.01, // Soft attack (10ms)
-            0.06, // Gentle decay (60ms)
-            0.6, // Sustain at 60%
-            0.2 // Smooth release (200ms)
-          );
+    for (const note of NOTIFICATION_MELODY.notes) {
+      const envelope = adsr(
+        time,
+        note.start,
+        note.duration,
+        0.01, // Soft attack (10ms)
+        0.06, // Gentle decay (60ms)
+        0.6, // Sustain at 60%
+        0.2 // Smooth release (200ms)
+      )
 
-          if (envelope > 0) {
-            // Pure sine wave with light 2nd harmonic for gentle tone
-            const fundamental = Math.sin(2 * Math.PI * note.freq * time);
-            const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.15;
+      if (envelope > 0) {
+        // Pure sine wave with light 2nd harmonic for gentle tone
+        const fundamental = Math.sin(2 * Math.PI * note.freq * time)
+        const harmonic2 = Math.sin(4 * Math.PI * note.freq * time) * 0.15
 
-            sample += (fundamental + harmonic2) * envelope * 0.4;
-          }
-        }
-
-        return sample;
+        sample += (fundamental + harmonic2) * envelope * 0.4
       }
-    );
+    }
+
+    return sample
+  }
+)
 ```
 
 The generator function mixes overlapping notes, each with its own start time and duration. The `adsr()` function shapes each note's volume over time (attack, decay, sustain, release), preventing harsh clicks. Adding a second harmonic at 15% creates a warmer tone than a pure sine wave.
@@ -611,8 +614,8 @@ The generator function mixes overlapping notes, each with its own start time and
 Position audio blocks using time offset (when it starts) and duration (how long it plays):
 
 ```typescript highlight-timeline-position
-engine.block.setTimeOffset(melodyBlock, effectDuration + gapDuration); // 2.5s
-engine.block.setDuration(melodyBlock, NOTIFICATION_MELODY.totalDuration);
+engine.block.setTimeOffset(melodyBlock, effectDuration + gapDuration) // 2.5s
+engine.block.setDuration(melodyBlock, NOTIFICATION_MELODY.totalDuration)
 ```
 
 This example spaces three sound effects with 0.5-second gaps:

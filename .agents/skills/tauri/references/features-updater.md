@@ -36,15 +36,15 @@ Server receives GET with URL template variables. Respond **204 No Content** if n
 ## Checking and Installing (Frontend)
 
 ```ts
-import { check } from '@tauri-apps/plugin-updater';
-import { relaunch } from '@tauri-apps/plugin-process';
+import { relaunch } from '@tauri-apps/plugin-process'
+import { check } from '@tauri-apps/plugin-updater'
 
-const update = await check();
+const update = await check()
 if (update) {
   await update.downloadAndInstall((event) => {
     // event: Started { contentLength }, Progress { chunkLength }, Finished
-  });
-  await relaunch();
+  })
+  await relaunch()
 }
 ```
 

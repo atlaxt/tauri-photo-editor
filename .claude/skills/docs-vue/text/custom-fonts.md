@@ -23,8 +23,9 @@ Load and configure custom fonts in CE.SDK to match brand guidelines or provide u
 CE.SDK includes a set of default typefaces, but you can customize the available fonts by creating custom asset sources with your own typeface definitions. Fonts are managed through the asset system and displayed in the editor UI via the typeface library.
 
 ```typescript file=@cesdk_web_examples/guides-fonts-typefaces-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
+import type CreativeEngine from '@cesdk/cesdk-js/node_modules/@cesdk/engine'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -39,26 +40,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import type CreativeEngine from '@cesdk/cesdk-js/node_modules/@cesdk/engine';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class CustomFontsExample implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,80 +69,80 @@ class CustomFontsExample implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
-    const orbitronTypeface = createOrbitronTypeface();
+    const engine = cesdk.engine
+    const orbitronTypeface = createOrbitronTypeface()
 
-    const sourceId = 'my-custom-typefaces';
-    engine.asset.addLocalSource(sourceId);
+    const sourceId = 'my-custom-typefaces'
+    engine.asset.addLocalSource(sourceId)
 
     await engine.asset.addAssetToSource(sourceId, {
       id: 'orbitron',
       payload: {
         typeface: orbitronTypeface
       }
-    });
+    })
 
     cesdk.ui.updateAssetLibraryEntry('ly.img.typefaces', {
       sourceIds: ['my-custom-typefaces']
-    });
+    })
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Create a text block and apply the custom font
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
     if (page) {
-      const textBlock = engine.block.create('text');
-      engine.block.appendChild(page, textBlock);
+      const textBlock = engine.block.create('text')
+      engine.block.appendChild(page, textBlock)
 
       // Set the text content
-      engine.block.replaceText(textBlock, 'Custom Font Example');
+      engine.block.replaceText(textBlock, 'Custom Font Example')
 
       // Configure auto-sizing so the block adjusts to content
-      engine.block.setWidthMode(textBlock, 'Auto');
-      engine.block.setHeightMode(textBlock, 'Auto');
+      engine.block.setWidthMode(textBlock, 'Auto')
+      engine.block.setHeightMode(textBlock, 'Auto')
 
       // Apply the custom font to the text block
-      const fontUri = orbitronTypeface.fonts[0].uri;
-      engine.block.setFont(textBlock, fontUri, orbitronTypeface);
+      const fontUri = orbitronTypeface.fonts[0].uri
+      engine.block.setFont(textBlock, fontUri, orbitronTypeface)
 
       // Set font size
-      engine.block.setTextFontSize(textBlock, 24);
+      engine.block.setTextFontSize(textBlock, 24)
 
       // Center the text block on the page
-      centerBlockOnPage(engine, textBlock, page);
+      centerBlockOnPage(engine, textBlock, page)
 
       // Select the text block
-      engine.block.select(textBlock);
+      engine.block.select(textBlock)
     }
   }
 }
 
-export default CustomFontsExample;
+export default CustomFontsExample
 
 // ============================================================================
 // Typeface Definitions
 // ============================================================================
 
-type DesignBlockId = number;
+type DesignBlockId = number
 
 interface TypefaceFont {
-  uri: string;
-  subFamily: string;
+  uri: string
+  subFamily: string
   weight:
     | 'thin'
     | 'extraLight'
@@ -152,20 +152,20 @@ interface TypefaceFont {
     | 'semiBold'
     | 'bold'
     | 'extraBold'
-    | 'heavy';
-  style: 'normal' | 'italic';
+    | 'heavy'
+  style: 'normal' | 'italic'
 }
 
 interface Typeface {
-  name: string;
-  fonts: TypefaceFont[];
+  name: string
+  fonts: TypefaceFont[]
 }
 
 /**
  * Builds a full URL for a font file served from the public directory
  */
 function buildFontUri(filename: string): string {
-  return `${window.location.protocol}//${window.location.host}/${filename}`;
+  return `${window.location.protocol}//${window.location.host}/${filename}`
 }
 
 /**
@@ -188,7 +188,7 @@ function createOrbitronTypeface(): Typeface {
         style: 'normal'
       }
     ]
-  };
+  }
 }
 
 // ============================================================================
@@ -203,12 +203,12 @@ function centerBlockOnPage(
   block: DesignBlockId,
   page: DesignBlockId
 ): void {
-  const pageWidth = engine.block.getWidth(page);
-  const pageHeight = engine.block.getHeight(page);
-  const blockWidth = engine.block.getFrameWidth(block);
-  const blockHeight = engine.block.getFrameHeight(block);
-  engine.block.setPositionX(block, (pageWidth - blockWidth) / 2);
-  engine.block.setPositionY(block, (pageHeight - blockHeight) / 2);
+  const pageWidth = engine.block.getWidth(page)
+  const pageHeight = engine.block.getHeight(page)
+  const blockWidth = engine.block.getFrameWidth(block)
+  const blockHeight = engine.block.getFrameHeight(block)
+  engine.block.setPositionX(block, (pageWidth - blockWidth) / 2)
+  engine.block.setPositionY(block, (pageHeight - blockHeight) / 2)
 }
 ```
 
@@ -227,8 +227,8 @@ Each font in the array requires:
 
 ```typescript highlight=highlight-typeface-structure
 interface TypefaceFont {
-  uri: string;
-  subFamily: string;
+  uri: string
+  subFamily: string
   weight:
     | 'thin'
     | 'extraLight'
@@ -238,13 +238,13 @@ interface TypefaceFont {
     | 'semiBold'
     | 'bold'
     | 'extraBold'
-    | 'heavy';
-  style: 'normal' | 'italic';
+    | 'heavy'
+  style: 'normal' | 'italic'
 }
 
 interface Typeface {
-  name: string;
-  fonts: TypefaceFont[];
+  name: string
+  fonts: TypefaceFont[]
 }
 ```
 
@@ -255,15 +255,15 @@ To make custom fonts available in the editor, we create a local asset source and
 We first create the source with `engine.asset.addLocalSource()`, then add typeface assets with `engine.asset.addAssetToSource()`:
 
 ```typescript highlight=highlight-typeface-source
-    const sourceId = 'my-custom-typefaces';
-    engine.asset.addLocalSource(sourceId);
+const sourceId = 'my-custom-typefaces'
+engine.asset.addLocalSource(sourceId)
 
-    await engine.asset.addAssetToSource(sourceId, {
-      id: 'orbitron',
-      payload: {
-        typeface: orbitronTypeface
-      }
-    });
+await engine.asset.addAssetToSource(sourceId, {
+  id: 'orbitron',
+  payload: {
+    typeface: orbitronTypeface
+  }
+})
 ```
 
 The `name` property defines how the typeface appears in the font dropdown:
@@ -300,7 +300,7 @@ To replace the default typefaces entirely with your custom fonts:
 ```typescript highlight=highlight-update-library
 cesdk.ui.updateAssetLibraryEntry('ly.img.typefaces', {
   sourceIds: ['my-custom-typefaces']
-});
+})
 ```
 
 To extend the default typefaces (keeping them alongside your custom fonts), include both source IDs:
@@ -308,7 +308,7 @@ To extend the default typefaces (keeping them alongside your custom fonts), incl
 ```typescript
 cesdk.ui.updateAssetLibraryEntry('ly.img.typefaces', {
   sourceIds: ['ly.img.typeface', 'my-custom-typefaces']
-});
+})
 ```
 
 The order in `sourceIds` determines the display order in the UI.
@@ -320,54 +320,54 @@ You can apply fonts to text blocks without relying on the UI using the block API
 **setFont** - Sets the font for an entire text block and resets all text formatting:
 
 ```typescript
-engine.block.setFont(textBlock, fontFileUri, typeface);
+engine.block.setFont(textBlock, fontFileUri, typeface)
 ```
 
 **setTypeface** - Applies a typeface to a text range while preserving existing formatting:
 
 ```typescript
-engine.block.setTypeface(textBlock, typeface, from, to);
+engine.block.setTypeface(textBlock, typeface, from, to)
 ```
 
 To query the current font applied to a text block:
 
 ```typescript
 // Get the base typeface of a text block
-const typeface = engine.block.getTypeface(textBlock);
+const typeface = engine.block.getTypeface(textBlock)
 
 // Get unique typefaces within a text range
-const typefaces = engine.block.getTypefaces(textBlock, from, to);
+const typefaces = engine.block.getTypefaces(textBlock, from, to)
 ```
 
 Here's a complete example that creates a text block and applies a custom font:
 
 ```typescript highlight=highlight-apply-font
-    // Create a text block and apply the custom font
-    const page = engine.block.findByType('page')[0];
-    if (page) {
-      const textBlock = engine.block.create('text');
-      engine.block.appendChild(page, textBlock);
+// Create a text block and apply the custom font
+const page = engine.block.findByType('page')[0]
+if (page) {
+  const textBlock = engine.block.create('text')
+  engine.block.appendChild(page, textBlock)
 
-      // Set the text content
-      engine.block.replaceText(textBlock, 'Custom Font Example');
+  // Set the text content
+  engine.block.replaceText(textBlock, 'Custom Font Example')
 
-      // Configure auto-sizing so the block adjusts to content
-      engine.block.setWidthMode(textBlock, 'Auto');
-      engine.block.setHeightMode(textBlock, 'Auto');
+  // Configure auto-sizing so the block adjusts to content
+  engine.block.setWidthMode(textBlock, 'Auto')
+  engine.block.setHeightMode(textBlock, 'Auto')
 
-      // Apply the custom font to the text block
-      const fontUri = orbitronTypeface.fonts[0].uri;
-      engine.block.setFont(textBlock, fontUri, orbitronTypeface);
+  // Apply the custom font to the text block
+  const fontUri = orbitronTypeface.fonts[0].uri
+  engine.block.setFont(textBlock, fontUri, orbitronTypeface)
 
-      // Set font size
-      engine.block.setTextFontSize(textBlock, 24);
+  // Set font size
+  engine.block.setTextFontSize(textBlock, 24)
 
-      // Center the text block on the page
-      centerBlockOnPage(engine, textBlock, page);
+  // Center the text block on the page
+  centerBlockOnPage(engine, textBlock, page)
 
-      // Select the text block
-      engine.block.select(textBlock);
-    }
+  // Select the text block
+  engine.block.select(textBlock)
+}
 ```
 
 ## Troubleshooting

@@ -19,11 +19,12 @@ See: `mockup-editor-architecture.md` (in the rules directory)
 **Solution:** Convert SVGs to PNG (or WebP) before using them in CE.SDK. Use a library like `sharp`:
 
 ```javascript
-import sharp from 'sharp';
+import sharp from 'sharp'
+
 await sharp('mockup.svg')
   .resize(800, 940)
   .png()
-  .toFile('mockup.png');
+  .toFile('mockup.png')
 ```
 
 Ensure PNGs preserve alpha transparency (`hasAlpha: true`).
@@ -39,9 +40,9 @@ Ensure PNGs preserve alpha transparency (`hasAlpha: true`).
 ```typescript
 function resolveLocalUri(uri: string): string {
   if (uri.startsWith('/')) {
-    return `${window.location.origin}${uri}`;
+    return `${window.location.origin}${uri}`
   }
-  return uri;
+  return uri
 }
 ```
 
@@ -62,7 +63,7 @@ await cesdk.actions.run('scene.create', {
     sourceId: 'ly.img.page.presets',
     assetId: 'ly.img.page.presets.print.iso.a6.landscape'
   }
-});
+})
 
 // For video scenes, add mode: 'Video'
 await cesdk.actions.run('scene.create', {
@@ -71,16 +72,16 @@ await cesdk.actions.run('scene.create', {
     sourceId: 'ly.img.page.presets',
     assetId: 'ly.img.page.presets.instagram.story'
   }
-});
+})
 
 // With custom dimensions
 await cesdk.actions.run('scene.create', {
   page: { width: 1080, height: 1920, unit: 'Pixel' }
-});
+})
 
 // Approach B: Manual scene creation (preferred for mockup editors)
-engine.scene.create('Free');
-engine.editor.setSettingBool('page/dimOutOfPageAreas', false);
+engine.scene.create('Free')
+engine.editor.setSettingBool('page/dimOutOfPageAreas', false)
 ```
 
 ---
@@ -93,35 +94,43 @@ engine.editor.setSettingBool('page/dimOutOfPageAreas', false);
 
 ```typescript
 import {
-  BlurAssetSource, ColorPaletteAssetSource, CropPresetsAssetSource,
-  DemoAssetSources, EffectsAssetSource, FiltersAssetSource,
-  PagePresetsAssetSource, StickerAssetSource, TextAssetSource,
-  TextComponentAssetSource, TypefaceAssetSource, UploadAssetSources,
+  BlurAssetSource,
+  ColorPaletteAssetSource,
+  CropPresetsAssetSource,
+  DemoAssetSources,
+  EffectsAssetSource,
+  FiltersAssetSource,
+  PagePresetsAssetSource,
+  StickerAssetSource,
+  TextAssetSource,
+  TextComponentAssetSource,
+  TypefaceAssetSource,
+  UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
 
 // Default asset source plugins
-await cesdk.addPlugin(new BlurAssetSource());
-await cesdk.addPlugin(new ColorPaletteAssetSource());
-await cesdk.addPlugin(new CropPresetsAssetSource());
-await cesdk.addPlugin(new EffectsAssetSource());
-await cesdk.addPlugin(new FiltersAssetSource());
-await cesdk.addPlugin(new PagePresetsAssetSource());
-await cesdk.addPlugin(new StickerAssetSource());
-await cesdk.addPlugin(new TextAssetSource());
-await cesdk.addPlugin(new TextComponentAssetSource());
-await cesdk.addPlugin(new TypefaceAssetSource());
-await cesdk.addPlugin(new VectorShapeAssetSource());
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
 // Demo and upload sources
 await cesdk.addPlugin(
   new UploadAssetSources({ include: ['ly.img.image.upload'] })
-);
+)
 await cesdk.addPlugin(
   new DemoAssetSources({
     include: ['ly.img.image.*', 'ly.img.templates.social.*']
   })
-);
+)
 ```
 
 Asset source IDs:
@@ -169,13 +178,13 @@ Type of member named "contentFillMode" on "ImageFill" is not reflected.
 
 ```typescript
 // Wrong — this property does not exist on the fill
-engine.block.setString(fill, 'fill/content/fillMode', 'Cover');
+engine.block.setString(fill, 'fill/content/fillMode', 'Cover')
 
 // Correct — use the convenience method on the block
-engine.block.setContentFillMode(graphicBlock, 'Cover');
+engine.block.setContentFillMode(graphicBlock, 'Cover')
 
 // Also correct — use setEnum with the property path
-engine.block.setEnum(graphicBlock, 'contentFill/mode', 'Cover');
+engine.block.setEnum(graphicBlock, 'contentFill/mode', 'Cover')
 ```
 
 ---
@@ -190,10 +199,10 @@ engine.block.setEnum(graphicBlock, 'contentFill/mode', 'Cover');
 // Preferred
 engine.block.setSourceSet(fill, 'fill/image/sourceSet', [
   { uri: 'https://example.com/image.png', width: 800, height: 940 }
-]);
+])
 
 // Avoid for production use
-engine.block.setString(fill, 'fill/image/imageFileURI', 'https://example.com/image.png');
+engine.block.setString(fill, 'fill/image/imageFileURI', 'https://example.com/image.png')
 ```
 
 The `Source` type from `@cesdk/engine` defines the shape: `{ uri: string; width: number; height: number }`.
@@ -212,7 +221,7 @@ await engine.scene.zoomToBlock(pageBlock, {
   paddingTop: 40,
   paddingRight: 40,
   paddingBottom: 40
-});
+})
 ```
 
 **Note:** `zoomToBlock` is not for page switching. It only changes the viewport, not the active page. Use `cesdk.unstable_switchPage(pageId)` to switch pages in single-page mode.
@@ -226,7 +235,7 @@ await engine.scene.zoomToBlock(pageBlock, {
 **Solution:** Disable the select scope on page blocks:
 
 ```typescript
-engine.block.setScopeEnabled(page, 'editor/select', false);
+engine.block.setScopeEnabled(page, 'editor/select', false)
 ```
 
 This prevents the page from being selected while still allowing interaction with child elements (text, images, shapes).

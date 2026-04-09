@@ -23,7 +23,7 @@ Rearrange UI components using `getComponentOrder()` to inspect the current layou
 The Component Order API lets you customize the layout of all five UI areas by getting and setting the component order array. Each area maintains an ordered list of components that determines their visual arrangement.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-quick-start-reorder-components-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,28 +68,28 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Get the current order of components in the navigation bar
     const defaultOrder = cesdk.ui.getComponentOrder({
       in: 'ly.img.navigation.bar'
-    });
-    console.log('Default navigation bar order:', defaultOrder);
+    })
+    console.log('Default navigation bar order:', defaultOrder)
 
     // Set a custom order with title centered and actions grouped
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
@@ -99,22 +99,22 @@ class Example implements EditorPlugin {
       'ly.img.spacer',
       'ly.img.undoRedo.navigationBar',
       'ly.img.actions.navigationBar'
-    ]);
-    console.log('Navigation bar reordered with centered title');
+    ])
+    console.log('Navigation bar reordered with centered title')
 
     // Canvas bar requires the 'at' option for top or bottom positioning
     const canvasBarOrder = cesdk.ui.getComponentOrder({
       in: 'ly.img.canvas.bar',
       at: 'top'
-    });
-    console.log('Canvas bar (top) order:', canvasBarOrder);
+    })
+    console.log('Canvas bar (top) order:', canvasBarOrder)
 
     // Set a custom canvas bar order
     cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, [
       'ly.img.page.add.canvasBar',
       'ly.img.spacer',
       'ly.img.zoom.canvasBar'
-    ]);
+    ])
 
     // Use component objects for inline configuration
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -123,8 +123,8 @@ class Example implements EditorPlugin {
         id: 'ly.img.assetLibrary.dock',
         entries: ['ly.img.image', 'ly.img.text', 'ly.img.shape']
       }
-    ]);
-    console.log('Dock reordered with custom asset library entries');
+    ])
+    console.log('Dock reordered with custom asset library entries')
 
     // Set different orders for specific edit modes
     cesdk.ui.setComponentOrder(
@@ -136,30 +136,29 @@ class Example implements EditorPlugin {
         'ly.img.text.bold.inspectorBar',
         'ly.img.text.italic.inspectorBar'
       ]
-    );
-    console.log('Inspector bar customized for Text edit mode');
+    )
+    console.log('Inspector bar customized for Text edit mode')
 
     // Move a specific component to the beginning
     const navOrder = cesdk.ui.getComponentOrder({
       in: 'ly.img.navigation.bar'
-    });
+    })
     const actionsIndex = navOrder.findIndex(
-      (c) => c.id === 'ly.img.actions.navigationBar'
-    );
+      c => c.id === 'ly.img.actions.navigationBar'
+    )
 
     if (actionsIndex > 0) {
-      const [actions] = navOrder.splice(actionsIndex, 1);
-      navOrder.unshift(actions);
-      cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, navOrder);
-      console.log('Moved actions to the beginning of navigation bar');
+      const [actions] = navOrder.splice(actionsIndex, 1)
+      navOrder.unshift(actions)
+      cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, navOrder)
+      console.log('Moved actions to the beginning of navigation bar')
     }
 
-    // eslint-disable-next-line no-console
-    console.log('Reorder Components example loaded successfully');
+    console.log('Reorder Components example loaded successfully')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to get the current component order, set a custom order, use component objects for inline configuration, set edit mode-specific orders, and move individual components programmatically.
@@ -186,8 +185,8 @@ Use `getComponentOrder()` to inspect the current arrangement of components in an
 // Get the current order of components in the navigation bar
 const defaultOrder = cesdk.ui.getComponentOrder({
   in: 'ly.img.navigation.bar'
-});
-console.log('Default navigation bar order:', defaultOrder);
+})
+console.log('Default navigation bar order:', defaultOrder)
 ```
 
 The method returns an array of component objects, each with an `id` property and optional configuration. This is useful for understanding the default layout before making changes.
@@ -205,8 +204,8 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
   'ly.img.spacer',
   'ly.img.undoRedo.navigationBar',
   'ly.img.actions.navigationBar'
-]);
-console.log('Navigation bar reordered with centered title');
+])
+console.log('Navigation bar reordered with centered title')
 ```
 
 The component array completely replaces the existing order. Components not included in the array will not appear in that area.
@@ -216,19 +215,19 @@ The component array completely replaces the existing order. Components not inclu
 The canvas bar is unique in requiring a position parameter. Use `at: 'top'` or `at: 'bottom'` for both get and set operations.
 
 ```typescript highlight=highlight-canvas-bar
-    // Canvas bar requires the 'at' option for top or bottom positioning
-    const canvasBarOrder = cesdk.ui.getComponentOrder({
-      in: 'ly.img.canvas.bar',
-      at: 'top'
-    });
-    console.log('Canvas bar (top) order:', canvasBarOrder);
+// Canvas bar requires the 'at' option for top or bottom positioning
+const canvasBarOrder = cesdk.ui.getComponentOrder({
+  in: 'ly.img.canvas.bar',
+  at: 'top'
+})
+console.log('Canvas bar (top) order:', canvasBarOrder)
 
-    // Set a custom canvas bar order
-    cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, [
-      'ly.img.page.add.canvasBar',
-      'ly.img.spacer',
-      'ly.img.zoom.canvasBar'
-    ]);
+// Set a custom canvas bar order
+cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, [
+  'ly.img.page.add.canvasBar',
+  'ly.img.spacer',
+  'ly.img.zoom.canvasBar'
+])
 ```
 
 ## Using Component Objects
@@ -243,8 +242,8 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
     id: 'ly.img.assetLibrary.dock',
     entries: ['ly.img.image', 'ly.img.text', 'ly.img.shape']
   }
-]);
-console.log('Dock reordered with custom asset library entries');
+])
+console.log('Dock reordered with custom asset library entries')
 ```
 
 The `entries` property specifies which asset categories appear in the dock's asset library button.
@@ -264,8 +263,8 @@ cesdk.ui.setComponentOrder(
     'ly.img.text.bold.inspectorBar',
     'ly.img.text.italic.inspectorBar'
   ]
-);
-console.log('Inspector bar customized for Text edit mode');
+)
+console.log('Inspector bar customized for Text edit mode')
 ```
 
 Common edit modes include `Transform`, `Crop`, `Trim`, and `Text`. The order only applies when the specified edit mode is active.
@@ -275,20 +274,20 @@ Common edit modes include `Transform`, `Crop`, `Trim`, and `Text`. The order onl
 Combine `getComponentOrder()` and `setComponentOrder()` to move individual components. Get the current order, modify the array, and set it back.
 
 ```typescript highlight=highlight-move-component
-    // Move a specific component to the beginning
-    const navOrder = cesdk.ui.getComponentOrder({
-      in: 'ly.img.navigation.bar'
-    });
-    const actionsIndex = navOrder.findIndex(
-      (c) => c.id === 'ly.img.actions.navigationBar'
-    );
+// Move a specific component to the beginning
+const navOrder = cesdk.ui.getComponentOrder({
+  in: 'ly.img.navigation.bar'
+})
+const actionsIndex = navOrder.findIndex(
+  c => c.id === 'ly.img.actions.navigationBar'
+)
 
-    if (actionsIndex > 0) {
-      const [actions] = navOrder.splice(actionsIndex, 1);
-      navOrder.unshift(actions);
-      cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, navOrder);
-      console.log('Moved actions to the beginning of navigation bar');
-    }
+if (actionsIndex > 0) {
+  const [actions] = navOrder.splice(actionsIndex, 1)
+  navOrder.unshift(actions)
+  cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, navOrder)
+  console.log('Moved actions to the beginning of navigation bar')
+}
 ```
 
 Use standard array methods like `splice`, `unshift`, and `push` to rearrange components.

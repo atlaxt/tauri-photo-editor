@@ -17,8 +17,12 @@ onMounted(async () => {
     const { getCurrentWebviewWindow } = await import('@tauri-apps/api/webviewWindow')
     const win = getCurrentWebviewWindow()
     unlistenDragDrop = await win.onDragDropEvent((e) => {
-      if (e.payload.type === 'enter') isDragging.value = true
-      else if (e.payload.type === 'leave') isDragging.value = false
+      if (e.payload.type === 'enter') {
+        isDragging.value = true
+      }
+      else if (e.payload.type === 'leave') {
+        isDragging.value = false
+      }
       else if (e.payload.type === 'drop') {
         isDragging.value = false
         // Görev #3'te işlenecek: e.payload.paths
@@ -40,12 +44,14 @@ let dragCounter = 0
 function onDragEnter(e: DragEvent) {
   e.preventDefault()
   dragCounter++
-  if (dragCounter === 1) isDragging.value = true
+  if (dragCounter === 1)
+    isDragging.value = true
 }
 
 function onDragLeave() {
   dragCounter--
-  if (dragCounter === 0) isDragging.value = false
+  if (dragCounter === 0)
+    isDragging.value = false
 }
 
 function onDragOver(e: DragEvent) {
@@ -94,8 +100,12 @@ function usePreset() {
         <div class="flex flex-col items-center gap-4 rounded-2xl px-20 py-14">
           <UIcon name="i-ph-image" class="size-9 text-primary/70" />
           <div class="text-center">
-            <p class="text-sm font-medium">{{ $t('home.dropZone.title') }}</p>
-            <p class="text-xs text-muted mt-0.5">{{ $t('home.dropZone.subtitle') }}</p>
+            <p class="text-sm font-medium">
+              {{ $t('home.dropZone.title') }}
+            </p>
+            <p class="text-xs text-muted mt-0.5">
+              {{ $t('home.dropZone.subtitle') }}
+            </p>
           </div>
         </div>
       </div>
@@ -117,8 +127,12 @@ function usePreset() {
     >
       <!-- Karşılama -->
       <div class="text-center space-y-1">
-        <h1 class="text-2xl font-semibold tracking-tight">{{ $t('home.welcome') }}</h1>
-        <p class="text-sm text-muted">{{ $t('home.subtitle') }}</p>
+        <h1 class="text-2xl font-semibold tracking-tight">
+          {{ $t('home.welcome') }}
+        </h1>
+        <p class="text-sm text-muted">
+          {{ $t('home.subtitle') }}
+        </p>
       </div>
 
       <!-- Eylem kartları -->
@@ -129,8 +143,12 @@ function usePreset() {
         >
           <UIcon name="i-ph-plus-circle" class="size-7 text-muted group-hover:text-primary transition-colors" />
           <div>
-            <p class="text-sm font-medium">{{ $t('home.actions.newFile') }}</p>
-            <p class="text-xs text-muted mt-0.5">{{ $t('home.actions.newFileDesc') }}</p>
+            <p class="text-sm font-medium">
+              {{ $t('home.actions.newFile') }}
+            </p>
+            <p class="text-xs text-muted mt-0.5">
+              {{ $t('home.actions.newFileDesc') }}
+            </p>
           </div>
         </button>
 
@@ -140,8 +158,12 @@ function usePreset() {
         >
           <UIcon name="i-ph-image" class="size-7 text-muted group-hover:text-primary transition-colors" />
           <div>
-            <p class="text-sm font-medium">{{ $t('home.actions.openFile') }}</p>
-            <p class="text-xs text-muted mt-0.5">{{ $t('home.actions.openFileDesc') }}</p>
+            <p class="text-sm font-medium">
+              {{ $t('home.actions.openFile') }}
+            </p>
+            <p class="text-xs text-muted mt-0.5">
+              {{ $t('home.actions.openFileDesc') }}
+            </p>
           </div>
         </button>
 
@@ -151,19 +173,27 @@ function usePreset() {
         >
           <UIcon name="i-ph-stack" class="size-7 text-muted group-hover:text-primary transition-colors" />
           <div>
-            <p class="text-sm font-medium">{{ $t('home.actions.usePreset') }}</p>
-            <p class="text-xs text-muted mt-0.5">{{ $t('home.actions.usePresetDesc') }}</p>
+            <p class="text-sm font-medium">
+              {{ $t('home.actions.usePreset') }}
+            </p>
+            <p class="text-xs text-muted mt-0.5">
+              {{ $t('home.actions.usePresetDesc') }}
+            </p>
           </div>
         </button>
       </div>
 
       <!-- Taslak projeler -->
       <section class="w-full max-w-xl">
-        <p class="text-xs font-medium text-muted uppercase tracking-wider mb-3">{{ $t('home.drafts.title') }}</p>
+        <p class="text-xs font-medium text-muted uppercase tracking-wider mb-3">
+          {{ $t('home.drafts.title') }}
+        </p>
 
         <div v-if="drafts.length === 0" class="flex flex-col items-center gap-2 py-10 text-muted">
           <UIcon name="i-ph-tray" class="size-8 opacity-40" />
-          <p class="text-sm opacity-60">{{ $t('home.drafts.empty') }}</p>
+          <p class="text-sm opacity-60">
+            {{ $t('home.drafts.empty') }}
+          </p>
         </div>
 
         <ul v-else class="space-y-1">
@@ -176,8 +206,12 @@ function usePreset() {
             <div class="flex items-center gap-3 min-w-0">
               <UIcon name="i-ph-file-image" class="size-4 text-muted shrink-0" />
               <div class="min-w-0">
-                <p class="text-sm font-medium truncate">{{ draft.name }}</p>
-                <p class="text-xs text-muted truncate">{{ draft.path }}</p>
+                <p class="text-sm font-medium truncate">
+                  {{ draft.name }}
+                </p>
+                <p class="text-xs text-muted truncate">
+                  {{ draft.path }}
+                </p>
               </div>
             </div>
             <span class="text-xs text-muted shrink-0 ml-4">{{ draft.updatedAt }}</span>

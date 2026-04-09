@@ -23,7 +23,7 @@ Export CE.SDK designs to JPEG format—ideal for photographs, social media, and 
 JPEG uses lossy compression optimized for photographs and smooth color gradients. Unlike PNG, JPEG does not support transparency—transparent areas render with a solid background.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-to-jpeg-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,23 +38,24 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
-    if (!cesdk) throw new Error('CE.SDK instance is required');
+    if (!cesdk)
+      throw new Error('CE.SDK instance is required')
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -65,25 +66,25 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage()!;
+    )
+    const page = engine.scene.getCurrentPage()!
 
     // Zoom to fit page in view
-    await engine.scene.zoomToBlock(page);
+    await engine.scene.zoomToBlock(page)
 
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
       id: 'ly.img.actions.navigationBar',
@@ -94,7 +95,7 @@ class Example implements EditorPlugin {
             await cesdk.actions.run('exportDesign', {
               mimeType: 'image/jpeg',
               jpegQuality: 0.9
-            });
+            })
           },
           key: 'export-action',
           label: 'Export',
@@ -104,16 +105,16 @@ class Example implements EditorPlugin {
         {
           id: 'ly.img.action.navigationBar',
           onClick: async () => {
-            const currentPage = engine.scene.getCurrentPage()!;
+            const currentPage = engine.scene.getCurrentPage()!
             const exported = await engine.block.export(currentPage, {
               mimeType: 'image/jpeg',
               jpegQuality: 0.9
-            });
-            await cesdk.utils.downloadFile(exported, 'image/jpeg');
+            })
+            await cesdk.utils.downloadFile(exported, 'image/jpeg')
             cesdk.ui.showNotification({
               message: `Standard (${(exported.size / 1024).toFixed(0)} KB)`,
               type: 'success'
-            });
+            })
           },
           key: 'export-standard',
           label: 'Standard',
@@ -122,16 +123,16 @@ class Example implements EditorPlugin {
         {
           id: 'ly.img.action.navigationBar',
           onClick: async () => {
-            const currentPage = engine.scene.getCurrentPage()!;
+            const currentPage = engine.scene.getCurrentPage()!
             const exported = await engine.block.export(currentPage, {
               mimeType: 'image/jpeg',
               jpegQuality: 1.0
-            });
-            await cesdk.utils.downloadFile(exported, 'image/jpeg');
+            })
+            await cesdk.utils.downloadFile(exported, 'image/jpeg')
             cesdk.ui.showNotification({
               message: `High Quality (${(exported.size / 1024).toFixed(0)} KB)`,
               type: 'success'
-            });
+            })
           },
           key: 'export-high',
           label: 'High Quality',
@@ -140,37 +141,37 @@ class Example implements EditorPlugin {
         {
           id: 'ly.img.action.navigationBar',
           onClick: async () => {
-            const currentPage = engine.scene.getCurrentPage()!;
+            const currentPage = engine.scene.getCurrentPage()!
             const exported = await engine.block.export(currentPage, {
               mimeType: 'image/jpeg',
               targetWidth: 1920,
               targetHeight: 1080
-            });
-            await cesdk.utils.downloadFile(exported, 'image/jpeg');
+            })
+            await cesdk.utils.downloadFile(exported, 'image/jpeg')
             cesdk.ui.showNotification({
               message: `1920×1080 (${(exported.size / 1024).toFixed(0)} KB)`,
               type: 'success'
-            });
+            })
           },
           key: 'export-hd',
           label: '1920×1080',
           icon: '@imgly/Save'
         }
       ]
-    });
+    })
 
     cesdk.actions.register('exportDesign', async () => {
-      const currentPage = engine.scene.getCurrentPage()!;
+      const currentPage = engine.scene.getCurrentPage()!
       const jpeg = await engine.block.export(currentPage, {
         mimeType: 'image/jpeg',
         jpegQuality: 0.9
-      });
-      await cesdk.utils.downloadFile(jpeg, 'image/jpeg');
-    });
+      })
+      await cesdk.utils.downloadFile(jpeg, 'image/jpeg')
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting to JPEG, configuring quality and dimensions, and integrating CE.SDK's built-in export action.
@@ -183,8 +184,8 @@ Export a design block to JPEG by calling `engine.block.export()` with `mimeType:
 const exported = await engine.block.export(currentPage, {
   mimeType: 'image/jpeg',
   jpegQuality: 0.9
-});
-await cesdk.utils.downloadFile(exported, 'image/jpeg');
+})
+await cesdk.utils.downloadFile(exported, 'image/jpeg')
 ```
 
 The `jpegQuality` parameter accepts values from greater than 0 to 1. Higher values produce better quality at larger file sizes. The default is 0.9.
@@ -208,8 +209,8 @@ Set `jpegQuality` to 1.0 for maximum quality with minimal compression artifacts.
 const exported = await engine.block.export(currentPage, {
   mimeType: 'image/jpeg',
   jpegQuality: 1.0
-});
-await cesdk.utils.downloadFile(exported, 'image/jpeg');
+})
+await cesdk.utils.downloadFile(exported, 'image/jpeg')
 ```
 
 For web delivery, values around 0.8 balance quality and file size effectively.
@@ -223,8 +224,8 @@ const exported = await engine.block.export(currentPage, {
   mimeType: 'image/jpeg',
   targetWidth: 1920,
   targetHeight: 1080
-});
-await cesdk.utils.downloadFile(exported, 'image/jpeg');
+})
+await cesdk.utils.downloadFile(exported, 'image/jpeg')
 ```
 
 ## Built-in Export Action
@@ -254,13 +255,13 @@ Override the `exportDesign` action to control the export format, quality, and do
 
 ```typescript highlight=highlight-custom-action
 cesdk.actions.register('exportDesign', async () => {
-  const currentPage = engine.scene.getCurrentPage()!;
+  const currentPage = engine.scene.getCurrentPage()!
   const jpeg = await engine.block.export(currentPage, {
     mimeType: 'image/jpeg',
     jpegQuality: 0.9
-  });
-  await cesdk.utils.downloadFile(jpeg, 'image/jpeg');
-});
+  })
+  await cesdk.utils.downloadFile(jpeg, 'image/jpeg')
+})
 ```
 
 When you register `exportDesign`, the built-in export button uses your custom handler instead of the default.

@@ -23,7 +23,7 @@ Detect the MIME type of resources loaded in the engine and relocate them to exte
 When loading scene archives in CE.SDK, embedded media resources are stored with internal `buffer://` URIs rather than their original URLs. These resources include both images and fonts used in the scene. To process these resources correctly—for instance when uploading to a CDN, displaying previews, or exporting a clean scene file—you need to determine their MIME type and relocate them to external URLs.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-retrieve-mimetype-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,89 +39,90 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load an archive that contains embedded resources (images and fonts)
-    const archiveUrl =
-      'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip';
-    await engine.scene.loadFromArchiveURL(archiveUrl);
+    const archiveUrl
+      = 'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip'
+    await engine.scene.loadFromArchiveURL(archiveUrl)
 
     // Find all transient resources (embedded media with buffer:// URIs)
     // This includes both images and fonts embedded in the archive
-    const transientResources = engine.editor.findAllTransientResources();
-    console.log(`Found ${transientResources.length} transient resources`);
+    const transientResources = engine.editor.findAllTransientResources()
+    console.log(`Found ${transientResources.length} transient resources`)
 
     if (transientResources.length === 0) {
-      console.log('No transient resources found in the loaded archive');
-      return;
+      console.log('No transient resources found in the loaded archive')
+      return
     }
 
     // Get MIME types for all resources to see what's included
-    const resourcesByType: Record<string, number> = {};
+    const resourcesByType: Record<string, number> = {}
     for (const resource of transientResources) {
-      const mimeType = await engine.editor.getMimeType(resource.URL);
-      resourcesByType[mimeType] = (resourcesByType[mimeType] || 0) + 1;
+      const mimeType = await engine.editor.getMimeType(resource.URL)
+      resourcesByType[mimeType] = (resourcesByType[mimeType] || 0) + 1
     }
-    console.log('Resources by type:', resourcesByType);
+    console.log('Resources by type:', resourcesByType)
 
     // Filter to find only image resources
-    const imageResources = [];
+    const imageResources = []
     for (const resource of transientResources) {
-      const mimeType = await engine.editor.getMimeType(resource.URL);
+      const mimeType = await engine.editor.getMimeType(resource.URL)
       if (mimeType.startsWith('image/')) {
-        imageResources.push({ ...resource, mimeType });
+        imageResources.push({ ...resource, mimeType })
       }
     }
-    console.log(`Found ${imageResources.length} image resources`);
+    console.log(`Found ${imageResources.length} image resources`)
 
     // Relocate all transient resources from buffer:// URIs to blob: URLs
     // This is useful for displaying previews or preparing for upload
     for (const resource of transientResources) {
-      const bufferUri = resource.URL;
+      const bufferUri = resource.URL
       // Skip internal bundle resources
-      if (bufferUri.includes('bundle://ly.img.cesdk/')) continue;
+      if (bufferUri.includes('bundle://ly.img.cesdk/'))
+        continue
 
-      const mimeType = await engine.editor.getMimeType(bufferUri);
-      const length = engine.editor.getBufferLength(bufferUri);
-      const data = engine.editor.getBufferData(bufferUri, 0, length);
+      const mimeType = await engine.editor.getMimeType(bufferUri)
+      const length = engine.editor.getBufferLength(bufferUri)
+      const data = engine.editor.getBufferData(bufferUri, 0, length)
 
       // Create a blob URL from the buffer data
-      const blob = new Blob([new Uint8Array(data)], { type: mimeType });
-      const blobUrl = URL.createObjectURL(blob);
+      const blob = new Blob([new Uint8Array(data)], { type: mimeType })
+      const blobUrl = URL.createObjectURL(blob)
 
       // Update the scene to use the new URL instead of buffer://
-      engine.editor.relocateResource(bufferUri, blobUrl);
+      engine.editor.relocateResource(bufferUri, blobUrl)
     }
-    console.log('Relocated all transient resources to blob URLs');
+    console.log('Relocated all transient resources to blob URLs')
 
     // After relocation, the scene references blob: URLs instead of buffer:// URIs
     // Note: blob: URLs are still considered transient (runtime) resources
     // For permanent storage, upload to a CDN and relocate to https:// URLs
-    console.log(`Relocated ${transientResources.length} buffer:// URIs to blob: URLs`);
+    console.log(`Relocated ${transientResources.length} buffer:// URIs to blob: URLs`)
 
     // Zoom to fit the scene
-    const pages = engine.block.findByType('page');
+    const pages = engine.block.findByType('page')
     if (pages.length > 0) {
-      await cesdk.engine.scene.zoomToBlock(pages[0], { padding: 40 });
+      await cesdk.engine.scene.zoomToBlock(pages[0], { padding: 40 })
     }
 
-    console.log('Retrieve MIME Type example loaded successfully');
+    console.log('Retrieve MIME Type example loaded successfully')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers loading a scene archive, finding transient resources, retrieving MIME types, filtering by resource type, and relocating resources to external URLs for a clean scene export.
@@ -132,9 +133,9 @@ Scene archives package a complete scene along with its embedded assets. When loa
 
 ```typescript highlight=highlight-load-archive
 // Load an archive that contains embedded resources (images and fonts)
-const archiveUrl =
-  'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip';
-await engine.scene.loadFromArchiveURL(archiveUrl);
+const archiveUrl
+  = 'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip'
+await engine.scene.loadFromArchiveURL(archiveUrl)
 ```
 
 After loading an archive, you can find all embedded resources using the `findAllTransientResources()` method.
@@ -146,8 +147,8 @@ Transient resources are embedded media files stored in memory with `buffer://` U
 ```typescript highlight=highlight-find-transient-resources
 // Find all transient resources (embedded media with buffer:// URIs)
 // This includes both images and fonts embedded in the archive
-const transientResources = engine.editor.findAllTransientResources();
-console.log(`Found ${transientResources.length} transient resources`);
+const transientResources = engine.editor.findAllTransientResources()
+console.log(`Found ${transientResources.length} transient resources`)
 ```
 
 Each resource object contains a `URL` property with the buffer URI and a `size` property indicating the resource size in bytes.
@@ -158,12 +159,12 @@ Use `getMimeType()` to detect the format of each embedded resource. This is usef
 
 ```typescript highlight=highlight-get-mimetype
 // Get MIME types for all resources to see what's included
-const resourcesByType: Record<string, number> = {};
+const resourcesByType: Record<string, number> = {}
 for (const resource of transientResources) {
-  const mimeType = await engine.editor.getMimeType(resource.URL);
-  resourcesByType[mimeType] = (resourcesByType[mimeType] || 0) + 1;
+  const mimeType = await engine.editor.getMimeType(resource.URL)
+  resourcesByType[mimeType] = (resourcesByType[mimeType] || 0) + 1
 }
-console.log('Resources by type:', resourcesByType);
+console.log('Resources by type:', resourcesByType)
 ```
 
 The method returns standard MIME type strings:
@@ -188,14 +189,14 @@ Since transient resources include both images and fonts, you may want to filter 
 
 ```typescript highlight=highlight-filter-images
 // Filter to find only image resources
-const imageResources = [];
+const imageResources = []
 for (const resource of transientResources) {
-  const mimeType = await engine.editor.getMimeType(resource.URL);
+  const mimeType = await engine.editor.getMimeType(resource.URL)
   if (mimeType.startsWith('image/')) {
-    imageResources.push({ ...resource, mimeType });
+    imageResources.push({ ...resource, mimeType })
   }
 }
-console.log(`Found ${imageResources.length} image resources`);
+console.log(`Found ${imageResources.length} image resources`)
 ```
 
 This pattern allows you to separate image processing from font processing, or to handle each resource type differently.
@@ -205,25 +206,26 @@ This pattern allows you to separate image processing from font processing, or to
 After extracting buffer data, use `relocateResource()` to update the scene to reference new URLs instead of `buffer://` URIs. This is essential when uploading resources to a CDN or storage service.
 
 ```typescript highlight=highlight-relocate-resources
-    // Relocate all transient resources from buffer:// URIs to blob: URLs
-    // This is useful for displaying previews or preparing for upload
-    for (const resource of transientResources) {
-      const bufferUri = resource.URL;
-      // Skip internal bundle resources
-      if (bufferUri.includes('bundle://ly.img.cesdk/')) continue;
+// Relocate all transient resources from buffer:// URIs to blob: URLs
+// This is useful for displaying previews or preparing for upload
+for (const resource of transientResources) {
+  const bufferUri = resource.URL
+  // Skip internal bundle resources
+  if (bufferUri.includes('bundle://ly.img.cesdk/'))
+    continue
 
-      const mimeType = await engine.editor.getMimeType(bufferUri);
-      const length = engine.editor.getBufferLength(bufferUri);
-      const data = engine.editor.getBufferData(bufferUri, 0, length);
+  const mimeType = await engine.editor.getMimeType(bufferUri)
+  const length = engine.editor.getBufferLength(bufferUri)
+  const data = engine.editor.getBufferData(bufferUri, 0, length)
 
-      // Create a blob URL from the buffer data
-      const blob = new Blob([new Uint8Array(data)], { type: mimeType });
-      const blobUrl = URL.createObjectURL(blob);
+  // Create a blob URL from the buffer data
+  const blob = new Blob([new Uint8Array(data)], { type: mimeType })
+  const blobUrl = URL.createObjectURL(blob)
 
-      // Update the scene to use the new URL instead of buffer://
-      engine.editor.relocateResource(bufferUri, blobUrl);
-    }
-    console.log('Relocated all transient resources to blob URLs');
+  // Update the scene to use the new URL instead of buffer://
+  engine.editor.relocateResource(bufferUri, blobUrl)
+}
+console.log('Relocated all transient resources to blob URLs')
 ```
 
 In the browser, you can create blob URLs for immediate use. For production workflows, you would upload the blob data to your storage service and use the returned CDN URL.
@@ -236,7 +238,7 @@ After relocating all resources, verify that no `buffer://` URIs remain. Note tha
 // After relocation, the scene references blob: URLs instead of buffer:// URIs
 // Note: blob: URLs are still considered transient (runtime) resources
 // For permanent storage, upload to a CDN and relocate to https:// URLs
-console.log(`Relocated ${transientResources.length} buffer:// URIs to blob: URLs`);
+console.log(`Relocated ${transientResources.length} buffer:// URIs to blob: URLs`)
 ```
 
 For production use, upload resources to a CDN and relocate to permanent `https://` URLs. This produces a scene file that can be stored and loaded in future sessions.

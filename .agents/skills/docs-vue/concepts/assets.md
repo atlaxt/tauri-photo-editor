@@ -30,9 +30,7 @@ import type {
   AssetsQueryResult,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -47,8 +45,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Assets Concepts Guide
@@ -59,21 +59,21 @@ import { DesignEditorConfig } from './design-editor/plugin';
  * - Querying and applying assets
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -84,23 +84,23 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
-    const engine = cesdk.engine;
+    })
+    const engine = cesdk.engine
 
     // An asset is a content definition with metadata
     // It describes content that can be added to designs
@@ -119,7 +119,7 @@ class Example implements EditorPlugin {
         height: 58,
         mimeType: 'image/svg+xml'
       }
-    };
+    }
 
     // Asset sources provide assets to the editor
     // Each source has an id and a findAssets() method
@@ -133,41 +133,41 @@ class Example implements EditorPlugin {
           total: 1,
           currentPage: query.page,
           nextPage: undefined
-        };
+        }
       }
-    };
+    }
 
-    engine.asset.addSource(customSource);
+    engine.asset.addSource(customSource)
 
     // Query assets from a source
     const results = await engine.asset.findAssets('my-assets', {
       page: 0,
       perPage: 10
-    });
-    console.log('Found assets:', results.total);
+    })
+    console.log('Found assets:', results.total)
 
     // Apply an asset to create a block in the scene
     if (results.assets.length > 0) {
-      const blockId = await engine.asset.apply('my-assets', results.assets[0]);
-      console.log('Created block:', blockId);
+      const blockId = await engine.asset.apply('my-assets', results.assets[0])
+      console.log('Created block:', blockId)
 
       // Center the sticker on the page
-      const page = engine.scene.getCurrentPage();
+      const page = engine.scene.getCurrentPage()
       if (page && blockId) {
-        const pageWidth = engine.block.getWidth(page);
-        const pageHeight = engine.block.getHeight(page);
+        const pageWidth = engine.block.getWidth(page)
+        const pageHeight = engine.block.getHeight(page)
         // SVG is 62x58, scale to fit nicely
-        const stickerWidth = 62;
-        const stickerHeight = 58;
-        engine.block.setWidth(blockId, stickerWidth);
-        engine.block.setHeight(blockId, stickerHeight);
-        engine.block.setPositionX(blockId, (pageWidth - stickerWidth) / 2);
-        engine.block.setPositionY(blockId, (pageHeight - stickerHeight) / 2);
+        const stickerWidth = 62
+        const stickerHeight = 58
+        engine.block.setWidth(blockId, stickerWidth)
+        engine.block.setHeight(blockId, stickerHeight)
+        engine.block.setPositionX(blockId, (pageWidth - stickerWidth) / 2)
+        engine.block.setPositionY(blockId, (pageHeight - stickerHeight) / 2)
       }
     }
 
     // Local sources support dynamic add/remove operations
-    engine.asset.addLocalSource('uploads', ['image/svg+xml', 'image/png']);
+    engine.asset.addLocalSource('uploads', ['image/svg+xml', 'image/png'])
 
     engine.asset.addAssetToSource('uploads', {
       id: 'uploaded-1',
@@ -180,21 +180,21 @@ class Example implements EditorPlugin {
         fillType: '//ly.img.ubq/fill/image',
         mimeType: 'image/svg+xml'
       }
-    });
+    })
 
     // Subscribe to asset source lifecycle events
     const unsubscribe = engine.asset.onAssetSourceUpdated((sourceId) => {
-      console.log('Source updated:', sourceId);
-    });
+      console.log('Source updated:', sourceId)
+    })
 
     // Notify that source contents changed
-    engine.asset.assetSourceContentsChanged('uploads');
+    engine.asset.assetSourceContentsChanged('uploads')
 
-    unsubscribe();
+    unsubscribe()
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers the core concepts of the Asset system. For detailed instructions on inserting specific media types, see the [Images](./insert-media/images.md), [Videos](./insert-media/videos.md), and [Shapes & Stickers](./insert-media/shapes-or-stickers.md) guides.
@@ -227,7 +227,7 @@ const stickerAsset: AssetResult = {
     height: 58,
     mimeType: 'image/svg+xml'
   }
-};
+}
 ```
 
 Key properties include:
@@ -245,23 +245,23 @@ Key properties include:
 Asset sources provide assets to the editor. Each source has an `id` and implements a `findAssets()` method that returns paginated results.
 
 ```typescript highlight-asset-source
-    // Asset sources provide assets to the editor
-    // Each source has an id and a findAssets() method
-    const customSource: AssetSource = {
-      id: 'my-assets',
+// Asset sources provide assets to the editor
+// Each source has an id and a findAssets() method
+const customSource: AssetSource = {
+  id: 'my-assets',
 
-      async findAssets(query: AssetQueryData): Promise<AssetsQueryResult> {
-        // Return paginated results matching the query
-        return {
-          assets: [stickerAsset],
-          total: 1,
-          currentPage: query.page,
-          nextPage: undefined
-        };
-      }
-    };
+  async findAssets(query: AssetQueryData): Promise<AssetsQueryResult> {
+    // Return paginated results matching the query
+    return {
+      assets: [stickerAsset],
+      total: 1,
+      currentPage: query.page,
+      nextPage: undefined
+    }
+  }
+}
 
-    engine.asset.addSource(customSource);
+engine.asset.addSource(customSource)
 ```
 
 The `findAssets()` callback receives query parameters (`page`, `perPage`, `query`, `tags`, `groups`) and returns a result object with `assets`, `total`, `currentPage`, and `nextPage`.
@@ -277,8 +277,8 @@ Search and filter assets from registered sources using `findAssets()`:
 const results = await engine.asset.findAssets('my-assets', {
   page: 0,
   perPage: 10
-});
-console.log('Found assets:', results.total);
+})
+console.log('Found assets:', results.total)
 ```
 
 Results include pagination info. Loop through pages until `nextPage` is undefined to retrieve all matching assets.
@@ -288,25 +288,25 @@ Results include pagination info. Loop through pages until `nextPage` is undefine
 Use `apply()` to create a new block from an asset:
 
 ```typescript highlight-apply-asset
-    // Apply an asset to create a block in the scene
-    if (results.assets.length > 0) {
-      const blockId = await engine.asset.apply('my-assets', results.assets[0]);
-      console.log('Created block:', blockId);
+// Apply an asset to create a block in the scene
+if (results.assets.length > 0) {
+  const blockId = await engine.asset.apply('my-assets', results.assets[0])
+  console.log('Created block:', blockId)
 
-      // Center the sticker on the page
-      const page = engine.scene.getCurrentPage();
-      if (page && blockId) {
-        const pageWidth = engine.block.getWidth(page);
-        const pageHeight = engine.block.getHeight(page);
-        // SVG is 62x58, scale to fit nicely
-        const stickerWidth = 62;
-        const stickerHeight = 58;
-        engine.block.setWidth(blockId, stickerWidth);
-        engine.block.setHeight(blockId, stickerHeight);
-        engine.block.setPositionX(blockId, (pageWidth - stickerWidth) / 2);
-        engine.block.setPositionY(blockId, (pageHeight - stickerHeight) / 2);
-      }
-    }
+  // Center the sticker on the page
+  const page = engine.scene.getCurrentPage()
+  if (page && blockId) {
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    // SVG is 62x58, scale to fit nicely
+    const stickerWidth = 62
+    const stickerHeight = 58
+    engine.block.setWidth(blockId, stickerWidth)
+    engine.block.setHeight(blockId, stickerHeight)
+    engine.block.setPositionX(blockId, (pageWidth - stickerWidth) / 2)
+    engine.block.setPositionY(blockId, (pageHeight - stickerHeight) / 2)
+  }
+}
 ```
 
 The method returns the new block ID, which you can use to position and configure the block.
@@ -316,21 +316,21 @@ The method returns the new block ID, which you can use to position and configure
 Local sources store assets in memory and support dynamic add/remove operations. Use these for user uploads or runtime-generated content:
 
 ```typescript highlight-local-source
-    // Local sources support dynamic add/remove operations
-    engine.asset.addLocalSource('uploads', ['image/svg+xml', 'image/png']);
+// Local sources support dynamic add/remove operations
+engine.asset.addLocalSource('uploads', ['image/svg+xml', 'image/png'])
 
-    engine.asset.addAssetToSource('uploads', {
-      id: 'uploaded-1',
-      label: { en: 'Heart Sticker' },
-      meta: {
-        uri: 'https://cdn.img.ly/assets/v3/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_love.svg',
-        thumbUri:
+engine.asset.addAssetToSource('uploads', {
+  id: 'uploaded-1',
+  label: { en: 'Heart Sticker' },
+  meta: {
+    uri: 'https://cdn.img.ly/assets/v3/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_love.svg',
+    thumbUri:
           'https://cdn.img.ly/assets/v3/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_love.svg',
-        blockType: '//ly.img.ubq/graphic',
-        fillType: '//ly.img.ubq/fill/image',
-        mimeType: 'image/svg+xml'
-      }
-    });
+    blockType: '//ly.img.ubq/graphic',
+    fillType: '//ly.img.ubq/fill/image',
+    mimeType: 'image/svg+xml'
+  }
+})
 ```
 
 ## Source Events
@@ -338,15 +338,15 @@ Local sources store assets in memory and support dynamic add/remove operations. 
 Subscribe to asset source lifecycle events for reactive UIs:
 
 ```typescript highlight-source-events
-    // Subscribe to asset source lifecycle events
-    const unsubscribe = engine.asset.onAssetSourceUpdated((sourceId) => {
-      console.log('Source updated:', sourceId);
-    });
+// Subscribe to asset source lifecycle events
+const unsubscribe = engine.asset.onAssetSourceUpdated((sourceId) => {
+  console.log('Source updated:', sourceId)
+})
 
-    // Notify that source contents changed
-    engine.asset.assetSourceContentsChanged('uploads');
+// Notify that source contents changed
+engine.asset.assetSourceContentsChanged('uploads')
 
-    unsubscribe();
+unsubscribe()
 ```
 
 Call `assetSourceContentsChanged()` after modifying a source to notify subscribers.

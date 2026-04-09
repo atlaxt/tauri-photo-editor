@@ -24,7 +24,7 @@ decals, and custom-shaped prints programmatically.
 Cutouts define outline paths that cutting printers cut with a blade rather than print with ink. CE.SDK supports creating cutouts from SVG paths, generating them from block contours, and combining them with boolean operations.
 
 ```typescript file=@cesdk_web_examples/guides-stickers-and-shapes-create-cutout-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,28 +40,28 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import CutoutLibraryPlugin from '@imgly/plugin-cutout-library-web';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import CutoutLibraryPlugin from '@imgly/plugin-cutout-library-web'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Load assets and create scene
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -72,27 +72,27 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Add cutout library plugin for UI-based cutout creation
     await cesdk.addPlugin(
       CutoutLibraryPlugin({
         ui: { locations: ['canvasMenu'] }
       })
-    );
+    )
 
     // Add cutout library to dock as the last entry
     const cutoutAssetEntry = cesdk.ui.getAssetLibraryEntry(
       'ly.img.cutout.entry'
-    );
+    )
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       ...cesdk.ui
         .getComponentOrder({ in: 'ly.img.dock' })
@@ -104,65 +104,65 @@ class Example implements EditorPlugin {
         icon: cutoutAssetEntry?.icon,
         entries: ['ly.img.cutout.entry']
       }
-    ]);
+    ])
 
     // Open cutout library panel on startup
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: {
         entries: ['ly.img.cutout.entry']
       }
-    });
+    })
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create a circular cutout from SVG path (scaled up for visibility)
     const circle = engine.block.createCutoutFromPath(
       'M 0,75 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0 Z'
-    );
-    engine.block.appendChild(page, circle);
-    engine.block.setPositionX(circle, 200);
-    engine.block.setPositionY(circle, 225);
+    )
+    engine.block.appendChild(page, circle)
+    engine.block.setPositionX(circle, 200)
+    engine.block.setPositionY(circle, 225)
 
     // Set cutout type to Dashed for perforated cut line
-    engine.block.setEnum(circle, 'cutout/type', 'Dashed');
+    engine.block.setEnum(circle, 'cutout/type', 'Dashed')
 
     // Set cutout offset distance from source path
-    engine.block.setFloat(circle, 'cutout/offset', 5.0);
+    engine.block.setFloat(circle, 'cutout/offset', 5.0)
 
     // Create a square cutout with solid type (scaled up for visibility)
-    const square = engine.block.createCutoutFromPath('M 0,0 H 150 V 150 H 0 Z');
-    engine.block.appendChild(page, square);
-    engine.block.setPositionX(square, 450);
-    engine.block.setPositionY(square, 225);
-    engine.block.setFloat(square, 'cutout/offset', 8.0);
+    const square = engine.block.createCutoutFromPath('M 0,0 H 150 V 150 H 0 Z')
+    engine.block.appendChild(page, square)
+    engine.block.setPositionX(square, 450)
+    engine.block.setPositionY(square, 225)
+    engine.block.setFloat(square, 'cutout/offset', 8.0)
 
     // Combine cutouts using Union operation
     const combined = engine.block.createCutoutFromOperation(
       [circle, square],
       'Union'
-    );
-    engine.block.appendChild(page, combined);
-    engine.block.setPositionX(combined, 200);
-    engine.block.setPositionY(combined, 225);
+    )
+    engine.block.appendChild(page, combined)
+    engine.block.setPositionX(combined, 200)
+    engine.block.setPositionY(combined, 225)
 
     // Destroy original cutouts to avoid duplicate cuts
-    engine.block.destroy(circle);
-    engine.block.destroy(square);
+    engine.block.destroy(circle)
+    engine.block.destroy(square)
 
     // Customize spot color RGB for rendering (bright blue for visibility)
-    engine.editor.setSpotColorRGB('CutContour', 0.0, 0.4, 0.9);
+    engine.editor.setSpotColorRGB('CutContour', 0.0, 0.4, 0.9)
 
     // Zoom to fit all cutouts
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    await engine.scene.zoomToBlock(page, { padding: 40 })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating cutouts programmatically from SVG paths, configuring cutout types and offsets, combining cutouts with boolean operations, customizing spot colors for printer compatibility, and integrating the cutout library plugin for interactive creation.
@@ -184,10 +184,10 @@ Create cutouts using `engine.block.createCutoutFromPath(path)` with standard SVG
 // Create a circular cutout from SVG path (scaled up for visibility)
 const circle = engine.block.createCutoutFromPath(
   'M 0,75 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0 Z'
-);
-engine.block.appendChild(page, circle);
-engine.block.setPositionX(circle, 200);
-engine.block.setPositionY(circle, 225);
+)
+engine.block.appendChild(page, circle)
+engine.block.setPositionX(circle, 200)
+engine.block.setPositionY(circle, 225)
 ```
 
 The method accepts standard SVG path commands: `M` (move), `L` (line), `H` (horizontal), `V` (vertical), `C` (cubic curve), `Q` (quadratic curve), `A` (arc), and `Z` (close path).
@@ -198,7 +198,7 @@ Set the cutout type using `engine.block.setEnum()` to control whether the printe
 
 ```typescript highlight-configure-cutout-type
 // Set cutout type to Dashed for perforated cut line
-engine.block.setEnum(circle, 'cutout/type', 'Dashed');
+engine.block.setEnum(circle, 'cutout/type', 'Dashed')
 ```
 
 `Solid` creates a continuous cutting line (default), while `Dashed` creates a perforated cutting line for tear-away edges.
@@ -209,7 +209,7 @@ Adjust the distance between the cutout line and the source path using `engine.bl
 
 ```typescript highlight-configure-cutout-offset
 // Set cutout offset distance from source path
-engine.block.setFloat(circle, 'cutout/offset', 5.0);
+engine.block.setFloat(circle, 'cutout/offset', 5.0)
 ```
 
 Positive offset values expand the cutout outward from the path. Use offset to add bleed or margin around designs for cleaner cuts.
@@ -220,11 +220,11 @@ Create additional cutouts with different properties to demonstrate various shape
 
 ```typescript highlight-create-square-cutout
 // Create a square cutout with solid type (scaled up for visibility)
-const square = engine.block.createCutoutFromPath('M 0,0 H 150 V 150 H 0 Z');
-engine.block.appendChild(page, square);
-engine.block.setPositionX(square, 450);
-engine.block.setPositionY(square, 225);
-engine.block.setFloat(square, 'cutout/offset', 8.0);
+const square = engine.block.createCutoutFromPath('M 0,0 H 150 V 150 H 0 Z')
+engine.block.appendChild(page, square)
+engine.block.setPositionX(square, 450)
+engine.block.setPositionY(square, 225)
+engine.block.setFloat(square, 'cutout/offset', 8.0)
 ```
 
 Each cutout can have independent type and offset settings based on your production requirements.
@@ -234,18 +234,18 @@ Each cutout can have independent type and offset settings based on your producti
 Combine multiple cutouts into compound shapes using `engine.block.createCutoutFromOperation(ids, operation)`. Available operations are `Union`, `Difference`, `Intersection`, and `XOR`.
 
 ```typescript highlight-combine-cutouts
-    // Combine cutouts using Union operation
-    const combined = engine.block.createCutoutFromOperation(
-      [circle, square],
-      'Union'
-    );
-    engine.block.appendChild(page, combined);
-    engine.block.setPositionX(combined, 200);
-    engine.block.setPositionY(combined, 225);
+// Combine cutouts using Union operation
+const combined = engine.block.createCutoutFromOperation(
+  [circle, square],
+  'Union'
+)
+engine.block.appendChild(page, combined)
+engine.block.setPositionX(combined, 200)
+engine.block.setPositionY(combined, 225)
 
-    // Destroy original cutouts to avoid duplicate cuts
-    engine.block.destroy(circle);
-    engine.block.destroy(square);
+// Destroy original cutouts to avoid duplicate cuts
+engine.block.destroy(circle)
+engine.block.destroy(square)
 ```
 
 The combined cutout inherits the type from the first cutout in the array and has an offset of 0. Destroy the original cutouts after combining to avoid duplicate cuts.
@@ -260,7 +260,7 @@ Modify the spot color RGB approximation using `engine.editor.setSpotColorRGB()` 
 
 ```typescript highlight-customize-spot-color
 // Customize spot color RGB for rendering (bright blue for visibility)
-engine.editor.setSpotColorRGB('CutContour', 0.0, 0.4, 0.9);
+engine.editor.setSpotColorRGB('CutContour', 0.0, 0.4, 0.9)
 ```
 
 Spot color names (`CutContour`, `PerfCutContour`) are what printers recognize. Adjust the names if your printer uses different conventions.
@@ -288,7 +288,7 @@ Install the plugin:
 Import and register the plugin:
 
 ```typescript highlight-plugin-import
-```
+``
 
 Add the plugin to your editor instance with canvas menu support:
 
@@ -298,35 +298,35 @@ await cesdk.addPlugin(
   CutoutLibraryPlugin({
     ui: { locations: ['canvasMenu'] }
   })
-);
+)
 ```
 
 Configure the dock to display the cutout library and open it by default:
 
 ```typescript highlight-dock-config
-    // Add cutout library to dock as the last entry
-    const cutoutAssetEntry = cesdk.ui.getAssetLibraryEntry(
-      'ly.img.cutout.entry'
-    );
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
-      ...cesdk.ui
-        .getComponentOrder({ in: 'ly.img.dock' })
-        .filter(({ key }) => key !== 'ly.img.templates'),
-      {
-        id: 'ly.img.assetLibrary.dock',
-        label: 'Cutouts',
-        key: 'ly.img.assetLibrary.dock',
-        icon: cutoutAssetEntry?.icon,
-        entries: ['ly.img.cutout.entry']
-      }
-    ]);
+// Add cutout library to dock as the last entry
+const cutoutAssetEntry = cesdk.ui.getAssetLibraryEntry(
+  'ly.img.cutout.entry'
+)
+cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
+  ...cesdk.ui
+    .getComponentOrder({ in: 'ly.img.dock' })
+    .filter(({ key }) => key !== 'ly.img.templates'),
+  {
+    id: 'ly.img.assetLibrary.dock',
+    label: 'Cutouts',
+    key: 'ly.img.assetLibrary.dock',
+    icon: cutoutAssetEntry?.icon,
+    entries: ['ly.img.cutout.entry']
+  }
+])
 
-    // Open cutout library panel on startup
-    cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
-      payload: {
-        entries: ['ly.img.cutout.entry']
-      }
-    });
+// Open cutout library panel on startup
+cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
+  payload: {
+    entries: ['ly.img.cutout.entry']
+  }
+})
 ```
 
 The `setComponentOrder` method adds a "Cutouts" entry to the dock panel with the plugin's icon. The `openPanel` call displays the cutout library immediately when the editor loads, giving users instant access to cutout creation tools.

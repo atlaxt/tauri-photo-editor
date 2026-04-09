@@ -25,7 +25,7 @@ gradients.
 Gradient fills are one of the fundamental fill types in CE.SDK, allowing you to paint design blocks with smooth color transitions. Unlike solid color fills that apply a uniform color or image fills that display photo content, gradient fills create dynamic visual effects with depth and visual interest. The gradient fill system supports three types: linear gradients that transition along a straight line, radial gradients that emanate from a center point, and conical gradients that rotate around a center point like a color wheel.
 
 ```typescript file=@cesdk_web_examples/guides-fills-gradient-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -40,10 +40,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
 
 /**
  * CE.SDK Plugin: Gradient Fills Guide
@@ -56,21 +56,21 @@ import { calculateGridLayout } from './utils';
  * - Advanced gradient techniques
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -81,113 +81,113 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Fill features are enabled by default in CE.SDK
     // You can check and control fill feature availability:
-    const engine = cesdk.engine;
-    const isFillEnabled = cesdk.feature.isEnabled('ly.img.fill', { engine });
-    console.log('Fill feature enabled:', isFillEnabled);
+    const engine = cesdk.engine
+    const isFillEnabled = cesdk.feature.isEnabled('ly.img.fill', { engine })
+    console.log('Fill feature enabled:', isFillEnabled)
 
     // Create a design scene using CE.SDK cesdk method
     await cesdk.actions.run('scene.create', {
       page: { width: 1200, height: 900, unit: 'Pixel' }
-    });
+    })
 
     // Get the page
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Set page background to light gray
-    const pageFill = engine.block.getFill(page);
+    const pageFill = engine.block.getFill(page)
     engine.block.setColor(pageFill, 'fill/color/value', {
       r: 0.95,
       g: 0.95,
       b: 0.95,
       a: 1.0
-    });
+    })
 
     // Calculate responsive grid layout based on page dimensions
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const layout = calculateGridLayout(pageWidth, pageHeight, 15);
-    const { blockWidth, blockHeight, getPosition } = layout;
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const layout = calculateGridLayout(pageWidth, pageHeight, 15)
+    const { blockWidth, blockHeight, getPosition } = layout
 
     // Helper function to create a shape with a fill
     const createShapeWithFill = (
       fillType: 'gradient/linear' | 'gradient/radial' | 'gradient/conical'
-    ): { block: number; fill: number } => {
-      const block = engine.block.create('graphic');
-      const shape = engine.block.createShape('rect');
-      engine.block.setShape(block, shape);
+    ): { block: number, fill: number } => {
+      const block = engine.block.create('graphic')
+      const shape = engine.block.createShape('rect')
+      engine.block.setShape(block, shape)
 
       // Set size
-      engine.block.setWidth(block, blockWidth);
-      engine.block.setHeight(block, blockHeight);
+      engine.block.setWidth(block, blockWidth)
+      engine.block.setHeight(block, blockHeight)
 
       // Append to page
-      engine.block.appendChild(page, block);
+      engine.block.appendChild(page, block)
 
       // Check if block supports fills
-      const canHaveFill = engine.block.supportsFill(block);
+      const canHaveFill = engine.block.supportsFill(block)
       if (!canHaveFill) {
-        throw new Error('Block does not support fills');
+        throw new Error('Block does not support fills')
       }
 
       // Create gradient fill
-      const gradientFill = engine.block.createFill(fillType);
+      const gradientFill = engine.block.createFill(fillType)
 
       // Apply the fill to the block
-      engine.block.setFill(block, gradientFill);
+      engine.block.setFill(block, gradientFill)
 
-      return { block, fill: gradientFill };
-    };
+      return { block, fill: gradientFill }
+    }
 
     // =============================================================================
     // Example 1: Linear Gradient (Vertical)
     // =============================================================================
-    const { block: linearVerticalBlock, fill: linearVertical } =
-      createShapeWithFill('gradient/linear');
+    const { block: linearVerticalBlock, fill: linearVertical }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(linearVertical, 'fill/gradient/colors', [
       { color: { r: 1.0, g: 0.8, b: 0.2, a: 1.0 }, stop: 0 },
       { color: { r: 0.3, g: 0.4, b: 0.7, a: 1.0 }, stop: 1 }
-    ]);
+    ])
 
     // Set vertical gradient (top to bottom)
     engine.block.setFloat(
       linearVertical,
       'fill/gradient/linear/startPointX',
       0.5
-    );
+    )
     engine.block.setFloat(
       linearVertical,
       'fill/gradient/linear/startPointY',
       0
-    );
+    )
     engine.block.setFloat(
       linearVertical,
       'fill/gradient/linear/endPointX',
       0.5
-    );
-    engine.block.setFloat(linearVertical, 'fill/gradient/linear/endPointY', 1);
+    )
+    engine.block.setFloat(linearVertical, 'fill/gradient/linear/endPointY', 1)
 
     // =============================================================================
     // Example 2: Linear Gradient (Horizontal)
     // =============================================================================
-    const { block: linearHorizontalBlock, fill: linearHorizontal } =
-      createShapeWithFill('gradient/linear');
+    const { block: linearHorizontalBlock, fill: linearHorizontal }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(
       linearHorizontal,
@@ -196,114 +196,114 @@ class Example implements EditorPlugin {
         { color: { r: 0.8, g: 0.2, b: 0.4, a: 1.0 }, stop: 0 },
         { color: { r: 0.2, g: 0.8, b: 0.6, a: 1.0 }, stop: 1 }
       ]
-    );
+    )
 
     // Set horizontal gradient (left to right)
     engine.block.setFloat(
       linearHorizontal,
       'fill/gradient/linear/startPointX',
       0
-    );
+    )
     engine.block.setFloat(
       linearHorizontal,
       'fill/gradient/linear/startPointY',
       0.5
-    );
+    )
     engine.block.setFloat(
       linearHorizontal,
       'fill/gradient/linear/endPointX',
       1
-    );
+    )
     engine.block.setFloat(
       linearHorizontal,
       'fill/gradient/linear/endPointY',
       0.5
-    );
+    )
 
     // =============================================================================
     // Example 3: Linear Gradient (Diagonal)
     // =============================================================================
-    const { block: linearDiagonalBlock, fill: linearDiagonal } =
-      createShapeWithFill('gradient/linear');
+    const { block: linearDiagonalBlock, fill: linearDiagonal }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(linearDiagonal, 'fill/gradient/colors', [
       { color: { r: 0.5, g: 0.2, b: 0.8, a: 1.0 }, stop: 0 },
       { color: { r: 0.9, g: 0.6, b: 0.2, a: 1.0 }, stop: 1 }
-    ]);
+    ])
 
     // Set diagonal gradient (top-left to bottom-right)
     engine.block.setFloat(
       linearDiagonal,
       'fill/gradient/linear/startPointX',
       0
-    );
+    )
     engine.block.setFloat(
       linearDiagonal,
       'fill/gradient/linear/startPointY',
       0
-    );
-    engine.block.setFloat(linearDiagonal, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(linearDiagonal, 'fill/gradient/linear/endPointY', 1);
+    )
+    engine.block.setFloat(linearDiagonal, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(linearDiagonal, 'fill/gradient/linear/endPointY', 1)
 
     // =============================================================================
     // Example 4: Multi-Stop Linear Gradient (Aurora Effect)
     // =============================================================================
-    const { block: auroraGradientBlock, fill: auroraGradient } =
-      createShapeWithFill('gradient/linear');
+    const { block: auroraGradientBlock, fill: auroraGradient }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(auroraGradient, 'fill/gradient/colors', [
       { color: { r: 0.4, g: 0.1, b: 0.8, a: 1 }, stop: 0 },
       { color: { r: 0.8, g: 0.2, b: 0.6, a: 1 }, stop: 0.3 },
       { color: { r: 1.0, g: 0.5, b: 0.3, a: 1 }, stop: 0.6 },
       { color: { r: 1.0, g: 0.8, b: 0.2, a: 1 }, stop: 1 }
-    ]);
+    ])
 
     engine.block.setFloat(
       auroraGradient,
       'fill/gradient/linear/startPointX',
       0
-    );
+    )
     engine.block.setFloat(
       auroraGradient,
       'fill/gradient/linear/startPointY',
       0.5
-    );
-    engine.block.setFloat(auroraGradient, 'fill/gradient/linear/endPointX', 1);
+    )
+    engine.block.setFloat(auroraGradient, 'fill/gradient/linear/endPointX', 1)
     engine.block.setFloat(
       auroraGradient,
       'fill/gradient/linear/endPointY',
       0.5
-    );
+    )
 
     // =============================================================================
     // Example 5: Radial Gradient (Centered)
     // =============================================================================
-    const { block: radialCenteredBlock, fill: radialCentered } =
-      createShapeWithFill('gradient/radial');
+    const { block: radialCenteredBlock, fill: radialCentered }
+      = createShapeWithFill('gradient/radial')
 
     engine.block.setGradientColorStops(radialCentered, 'fill/gradient/colors', [
       { color: { r: 1.0, g: 1.0, b: 1.0, a: 0.3 }, stop: 0 },
       { color: { r: 0.2, g: 0.4, b: 0.8, a: 1.0 }, stop: 1 }
-    ]);
+    ])
 
     // Set center point (middle of block)
     engine.block.setFloat(
       radialCentered,
       'fill/gradient/radial/centerPointX',
       0.5
-    );
+    )
     engine.block.setFloat(
       radialCentered,
       'fill/gradient/radial/centerPointY',
       0.5
-    );
-    engine.block.setFloat(radialCentered, 'fill/gradient/radial/radius', 0.8);
+    )
+    engine.block.setFloat(radialCentered, 'fill/gradient/radial/radius', 0.8)
 
     // =============================================================================
     // Example 6: Radial Gradient (Top-Left Highlight)
     // =============================================================================
-    const { block: radialHighlightBlock, fill: radialHighlight } =
-      createShapeWithFill('gradient/radial');
+    const { block: radialHighlightBlock, fill: radialHighlight }
+      = createShapeWithFill('gradient/radial')
 
     engine.block.setGradientColorStops(
       radialHighlight,
@@ -312,50 +312,50 @@ class Example implements EditorPlugin {
         { color: { r: 1.0, g: 1.0, b: 1.0, a: 0.3 }, stop: 0 },
         { color: { r: 0.2, g: 0.4, b: 0.8, a: 1.0 }, stop: 1 }
       ]
-    );
+    )
 
     // Set top-left highlight
     engine.block.setFloat(
       radialHighlight,
       'fill/gradient/radial/centerPointX',
       0
-    );
+    )
     engine.block.setFloat(
       radialHighlight,
       'fill/gradient/radial/centerPointY',
       0
-    );
-    engine.block.setFloat(radialHighlight, 'fill/gradient/radial/radius', 1.0);
+    )
+    engine.block.setFloat(radialHighlight, 'fill/gradient/radial/radius', 1.0)
 
     // =============================================================================
     // Example 7: Radial Gradient (Vignette Effect)
     // =============================================================================
-    const { block: radialVignetteBlock, fill: radialVignette } =
-      createShapeWithFill('gradient/radial');
+    const { block: radialVignetteBlock, fill: radialVignette }
+      = createShapeWithFill('gradient/radial')
 
     engine.block.setGradientColorStops(radialVignette, 'fill/gradient/colors', [
       { color: { r: 0.9, g: 0.9, b: 0.9, a: 1.0 }, stop: 0 },
       { color: { r: 0.1, g: 0.1, b: 0.1, a: 1.0 }, stop: 1 }
-    ]);
+    ])
 
     // Centered vignette
     engine.block.setFloat(
       radialVignette,
       'fill/gradient/radial/centerPointX',
       0.5
-    );
+    )
     engine.block.setFloat(
       radialVignette,
       'fill/gradient/radial/centerPointY',
       0.5
-    );
-    engine.block.setFloat(radialVignette, 'fill/gradient/radial/radius', 0.6);
+    )
+    engine.block.setFloat(radialVignette, 'fill/gradient/radial/radius', 0.6)
 
     // =============================================================================
     // Example 8: Conical Gradient (Color Wheel)
     // =============================================================================
-    const { block: conicalColorWheelBlock, fill: conicalColorWheel } =
-      createShapeWithFill('gradient/conical');
+    const { block: conicalColorWheelBlock, fill: conicalColorWheel }
+      = createShapeWithFill('gradient/conical')
 
     engine.block.setGradientColorStops(
       conicalColorWheel,
@@ -367,73 +367,73 @@ class Example implements EditorPlugin {
         { color: { r: 0.0, g: 0.0, b: 1.0, a: 1 }, stop: 0.75 },
         { color: { r: 1.0, g: 0.0, b: 0.0, a: 1 }, stop: 1 }
       ]
-    );
+    )
 
     // Set center point (middle of block)
     engine.block.setFloat(
       conicalColorWheel,
       'fill/gradient/conical/centerPointX',
       0.5
-    );
+    )
     engine.block.setFloat(
       conicalColorWheel,
       'fill/gradient/conical/centerPointY',
       0.5
-    );
+    )
 
     // =============================================================================
     // Example 9: Conical Gradient (Loading Spinner)
     // =============================================================================
-    const { block: conicalSpinnerBlock, fill: conicalSpinner } =
-      createShapeWithFill('gradient/conical');
+    const { block: conicalSpinnerBlock, fill: conicalSpinner }
+      = createShapeWithFill('gradient/conical')
 
     engine.block.setGradientColorStops(conicalSpinner, 'fill/gradient/colors', [
       { color: { r: 0.2, g: 0.4, b: 0.8, a: 1 }, stop: 0 },
       { color: { r: 0.2, g: 0.4, b: 0.8, a: 0 }, stop: 0.75 },
       { color: { r: 0.2, g: 0.4, b: 0.8, a: 1 }, stop: 1 }
-    ]);
+    ])
 
     engine.block.setFloat(
       conicalSpinner,
       'fill/gradient/conical/centerPointX',
       0.5
-    );
+    )
     engine.block.setFloat(
       conicalSpinner,
       'fill/gradient/conical/centerPointY',
       0.5
-    );
+    )
 
     // =============================================================================
     // Example 10: Gradient with CMYK Colors
     // =============================================================================
-    const { block: cmykGradientBlock, fill: cmykGradient } =
-      createShapeWithFill('gradient/linear');
+    const { block: cmykGradientBlock, fill: cmykGradient }
+      = createShapeWithFill('gradient/linear')
 
     // CMYK color stops for print
     engine.block.setGradientColorStops(cmykGradient, 'fill/gradient/colors', [
       { color: { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 }, stop: 0 },
       { color: { c: 1.0, m: 0.0, y: 1.0, k: 0.0, tint: 1.0 }, stop: 1 }
-    ]);
+    ])
 
-    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/startPointX', 0);
+    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/startPointX', 0)
     engine.block.setFloat(
       cmykGradient,
       'fill/gradient/linear/startPointY',
       0.5
-    );
-    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointY', 0.5);
+    )
+    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointY', 0.5)
 
     // =============================================================================
     // Example 11: Gradient with Spot Colors
     // =============================================================================
     // First define spot colors
-    engine.editor.setSpotColorRGB('BrandPrimary', 0.2, 0.4, 0.8);
-    engine.editor.setSpotColorRGB('BrandSecondary', 1.0, 0.6, 0.0);
+    engine.editor.setSpotColorRGB('BrandPrimary', 0.2, 0.4, 0.8)
+    engine.editor.setSpotColorRGB('BrandSecondary', 1.0, 0.6, 0.0)
 
-    const { block: spotGradientBlock, fill: spotGradient } =
-      createShapeWithFill('gradient/linear');
+    const { block: spotGradientBlock, fill: spotGradient }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(spotGradient, 'fill/gradient/colors', [
       {
@@ -444,18 +444,18 @@ class Example implements EditorPlugin {
         color: { name: 'BrandSecondary', tint: 1.0, externalReference: '' },
         stop: 1
       }
-    ]);
+    ])
 
-    engine.block.setFloat(spotGradient, 'fill/gradient/linear/startPointX', 0);
-    engine.block.setFloat(spotGradient, 'fill/gradient/linear/startPointY', 0);
-    engine.block.setFloat(spotGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(spotGradient, 'fill/gradient/linear/endPointY', 1);
+    engine.block.setFloat(spotGradient, 'fill/gradient/linear/startPointX', 0)
+    engine.block.setFloat(spotGradient, 'fill/gradient/linear/startPointY', 0)
+    engine.block.setFloat(spotGradient, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(spotGradient, 'fill/gradient/linear/endPointY', 1)
 
     // =============================================================================
     // Example 12: Transparency Overlay Gradient
     // =============================================================================
-    const { block: overlayGradientBlock, fill: overlayGradient } =
-      createShapeWithFill('gradient/linear');
+    const { block: overlayGradientBlock, fill: overlayGradient }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(
       overlayGradient,
@@ -464,30 +464,30 @@ class Example implements EditorPlugin {
         { color: { r: 0.0, g: 0.0, b: 0.0, a: 0 }, stop: 0 },
         { color: { r: 0.0, g: 0.0, b: 0.0, a: 0.7 }, stop: 1 }
       ]
-    );
+    )
 
     engine.block.setFloat(
       overlayGradient,
       'fill/gradient/linear/startPointX',
       0.5
-    );
+    )
     engine.block.setFloat(
       overlayGradient,
       'fill/gradient/linear/startPointY',
       0
-    );
+    )
     engine.block.setFloat(
       overlayGradient,
       'fill/gradient/linear/endPointX',
       0.5
-    );
-    engine.block.setFloat(overlayGradient, 'fill/gradient/linear/endPointY', 1);
+    )
+    engine.block.setFloat(overlayGradient, 'fill/gradient/linear/endPointY', 1)
 
     // =============================================================================
     // Example 13: Duotone Gradient
     // =============================================================================
-    const { block: duotoneGradientBlock, fill: duotoneGradient } =
-      createShapeWithFill('gradient/linear');
+    const { block: duotoneGradientBlock, fill: duotoneGradient }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(
       duotoneGradient,
@@ -496,65 +496,65 @@ class Example implements EditorPlugin {
         { color: { r: 0.8, g: 0.2, b: 0.9, a: 1 }, stop: 0 },
         { color: { r: 0.2, g: 0.9, b: 0.8, a: 1 }, stop: 1 }
       ]
-    );
+    )
 
     engine.block.setFloat(
       duotoneGradient,
       'fill/gradient/linear/startPointX',
       0
-    );
+    )
     engine.block.setFloat(
       duotoneGradient,
       'fill/gradient/linear/startPointY',
       0
-    );
-    engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointY', 1);
+    )
+    engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointY', 1)
 
     // =============================================================================
     // Example 14: Shared Gradient Fill
     // =============================================================================
-    const block1 = engine.block.create('graphic');
-    const shape1 = engine.block.createShape('rect');
-    engine.block.setShape(block1, shape1);
-    engine.block.setWidth(block1, blockWidth);
-    engine.block.setHeight(block1, blockHeight / 2 - 5);
-    engine.block.appendChild(page, block1);
+    const block1 = engine.block.create('graphic')
+    const shape1 = engine.block.createShape('rect')
+    engine.block.setShape(block1, shape1)
+    engine.block.setWidth(block1, blockWidth)
+    engine.block.setHeight(block1, blockHeight / 2 - 5)
+    engine.block.appendChild(page, block1)
 
-    const block2 = engine.block.create('graphic');
-    const shape2 = engine.block.createShape('rect');
-    engine.block.setShape(block2, shape2);
-    engine.block.setWidth(block2, blockWidth);
-    engine.block.setHeight(block2, blockHeight / 2 - 5);
-    engine.block.appendChild(page, block2);
+    const block2 = engine.block.create('graphic')
+    const shape2 = engine.block.createShape('rect')
+    engine.block.setShape(block2, shape2)
+    engine.block.setWidth(block2, blockWidth)
+    engine.block.setHeight(block2, blockHeight / 2 - 5)
+    engine.block.appendChild(page, block2)
 
     // Create one gradient fill
-    const sharedGradient = engine.block.createFill('gradient/linear');
+    const sharedGradient = engine.block.createFill('gradient/linear')
     engine.block.setGradientColorStops(sharedGradient, 'fill/gradient/colors', [
       { color: { r: 1, g: 0, b: 0, a: 1 }, stop: 0 },
       { color: { r: 0, g: 0, b: 1, a: 1 }, stop: 1 }
-    ]);
+    ])
 
     engine.block.setFloat(
       sharedGradient,
       'fill/gradient/linear/startPointX',
       0
-    );
+    )
     engine.block.setFloat(
       sharedGradient,
       'fill/gradient/linear/startPointY',
       0.5
-    );
-    engine.block.setFloat(sharedGradient, 'fill/gradient/linear/endPointX', 1);
+    )
+    engine.block.setFloat(sharedGradient, 'fill/gradient/linear/endPointX', 1)
     engine.block.setFloat(
       sharedGradient,
       'fill/gradient/linear/endPointY',
       0.5
-    );
+    )
 
     // Apply to both blocks
-    engine.block.setFill(block1, sharedGradient);
-    engine.block.setFill(block2, sharedGradient);
+    engine.block.setFill(block1, sharedGradient)
+    engine.block.setFill(block2, sharedGradient)
 
     // Change gradient after a delay to show it affects both
     setTimeout(() => {
@@ -565,14 +565,14 @@ class Example implements EditorPlugin {
           { color: { r: 0, g: 1, b: 0, a: 1 }, stop: 0 },
           { color: { r: 1, g: 1, b: 0, a: 1 }, stop: 1 }
         ]
-      );
-    }, 2000);
+      )
+    }, 2000)
 
     // =============================================================================
     // Example 15: Get Gradient Properties
     // =============================================================================
-    const { block: inspectGradientBlock, fill: inspectGradient } =
-      createShapeWithFill('gradient/linear');
+    const { block: inspectGradientBlock, fill: inspectGradient }
+      = createShapeWithFill('gradient/linear')
 
     engine.block.setGradientColorStops(
       inspectGradient,
@@ -581,41 +581,41 @@ class Example implements EditorPlugin {
         { color: { r: 0.6, g: 0.3, b: 0.7, a: 1.0 }, stop: 0 },
         { color: { r: 0.3, g: 0.7, b: 0.6, a: 1.0 }, stop: 1 }
       ]
-    );
+    )
 
     // Get current fill from block
-    const fillId = engine.block.getFill(block1);
-    const fillType = engine.block.getType(fillId);
-    // eslint-disable-next-line no-console
-    console.log('Fill type:', fillType); // '//ly.img.ubq/fill/gradient/linear'
+    const fillId = engine.block.getFill(block1)
+    const fillType = engine.block.getType(fillId)
+
+    console.log('Fill type:', fillType) // '//ly.img.ubq/fill/gradient/linear'
 
     // Get gradient color stops
     const colorStops = engine.block.getGradientColorStops(
       inspectGradient,
       'fill/gradient/colors'
-    );
-    // eslint-disable-next-line no-console
-    console.log('Color stops:', colorStops);
+    )
+
+    console.log('Color stops:', colorStops)
 
     // Get linear gradient position
     const startX = engine.block.getFloat(
       inspectGradient,
       'fill/gradient/linear/startPointX'
-    );
+    )
     const startY = engine.block.getFloat(
       inspectGradient,
       'fill/gradient/linear/startPointY'
-    );
+    )
     const endX = engine.block.getFloat(
       inspectGradient,
       'fill/gradient/linear/endPointX'
-    );
+    )
     const endY = engine.block.getFloat(
       inspectGradient,
       'fill/gradient/linear/endPointY'
-    );
-    // eslint-disable-next-line no-console
-    console.log('Linear gradient position:', { startX, startY, endX, endY });
+    )
+
+    console.log('Linear gradient position:', { startX, startY, endX, endY })
 
     // ===== Position all blocks in grid layout =====
     const blocks = [
@@ -634,18 +634,18 @@ class Example implements EditorPlugin {
       duotoneGradientBlock, // Position 12
       block1, // Position 13 (top half)
       inspectGradientBlock // Position 14
-    ];
+    ]
 
     blocks.forEach((block, index) => {
-      const pos = getPosition(index);
-      engine.block.setPositionX(block, pos.x);
-      engine.block.setPositionY(block, pos.y);
-    });
+      const pos = getPosition(index)
+      engine.block.setPositionX(block, pos.x)
+      engine.block.setPositionY(block, pos.y)
+    })
 
     // Position block2 below block1 in the same grid cell
-    const block1Pos = getPosition(13);
-    engine.block.setPositionX(block2, block1Pos.x);
-    engine.block.setPositionY(block2, block1Pos.y + blockHeight / 2 + 5);
+    const block1Pos = getPosition(13)
+    engine.block.setPositionX(block2, block1Pos.x)
+    engine.block.setPositionY(block2, block1Pos.y + blockHeight / 2 + 5)
 
     // Zoom to fit all content
     await engine.scene.zoomToBlock(page, {
@@ -655,11 +655,11 @@ class Example implements EditorPlugin {
         right: 40,
         bottom: 40
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide demonstrates how to create, apply, and configure gradient fills programmatically, work with color stops, position gradients, and create modern visual effects like aurora gradients and button highlights.
@@ -683,13 +683,13 @@ Each gradient type contains color stops that define colors at specific positions
 Linear gradients transition colors along a straight line defined by start and end points. They're the most common gradient type and create clean, modern looks. Common use cases include hero sections, call-to-action buttons, headers, and banners.
 
 ```typescript highlight-linear-gradient
-    const { block: linearVerticalBlock, fill: linearVertical } =
-      createShapeWithFill('gradient/linear');
+const { block: linearVerticalBlock, fill: linearVertical }
+  = createShapeWithFill('gradient/linear')
 
-    engine.block.setGradientColorStops(linearVertical, 'fill/gradient/colors', [
-      { color: { r: 1.0, g: 0.8, b: 0.2, a: 1.0 }, stop: 0 },
-      { color: { r: 0.3, g: 0.4, b: 0.7, a: 1.0 }, stop: 1 }
-    ]);
+engine.block.setGradientColorStops(linearVertical, 'fill/gradient/colors', [
+  { color: { r: 1.0, g: 0.8, b: 0.2, a: 1.0 }, stop: 0 },
+  { color: { r: 0.3, g: 0.4, b: 0.7, a: 1.0 }, stop: 1 }
+])
 ```
 
 #### Radial Gradients
@@ -700,7 +700,7 @@ Radial gradients emanate from a central point outward, creating circular or elli
 engine.block.setGradientColorStops(radialCentered, 'fill/gradient/colors', [
   { color: { r: 1.0, g: 1.0, b: 1.0, a: 0.3 }, stop: 0 },
   { color: { r: 0.2, g: 0.4, b: 0.8, a: 1.0 }, stop: 1 }
-]);
+])
 ```
 
 #### Conical Gradients
@@ -718,7 +718,7 @@ engine.block.setGradientColorStops(
     { color: { r: 0.0, g: 0.0, b: 1.0, a: 1 }, stop: 0.75 },
     { color: { r: 1.0, g: 0.0, b: 0.0, a: 1 }, stop: 1 }
   ]
-);
+)
 ```
 
 ### Gradient vs Other Fill Types
@@ -745,7 +745,7 @@ engine.block.setGradientColorStops(auroraGradient, 'fill/gradient/colors', [
   { color: { r: 0.8, g: 0.2, b: 0.6, a: 1 }, stop: 0.3 },
   { color: { r: 1.0, g: 0.5, b: 0.3, a: 1 }, stop: 0.6 },
   { color: { r: 1.0, g: 0.8, b: 0.2, a: 1 }, stop: 1 }
-]);
+])
 ```
 
 ## Using the Built-in Gradient UI
@@ -761,9 +761,9 @@ Gradient controls are part of the fill feature system. You can check if the fill
 ```typescript highlight-enable-fill-feature
 // Fill features are enabled by default in CE.SDK
 // You can check and control fill feature availability:
-const engine = cesdk.engine;
-const isFillEnabled = cesdk.feature.isEnabled('ly.img.fill', { engine });
-console.log('Fill feature enabled:', isFillEnabled);
+const engine = cesdk.engine
+const isFillEnabled = cesdk.feature.isEnabled('ly.img.fill', { engine })
+console.log('Fill feature enabled:', isFillEnabled)
 ```
 
 ## Checking Gradient Fill Support
@@ -774,9 +774,9 @@ Before applying gradient fills, verify that the block type supports fills. Not a
 
 ```typescript highlight-check-fill-support
 // Check if block supports fills
-const canHaveFill = engine.block.supportsFill(block);
+const canHaveFill = engine.block.supportsFill(block)
 if (!canHaveFill) {
-  throw new Error('Block does not support fills');
+  throw new Error('Block does not support fills')
 }
 ```
 
@@ -789,8 +789,8 @@ Always check `supportsFill()` before accessing fill APIs. Graphic blocks, shapes
 Create a new linear gradient fill using the `createFill()` method with the type `'gradient/linear'`:
 
 ```typescript highlight-create-linear
-const { block: linearVerticalBlock, fill: linearVertical } =
-  createShapeWithFill('gradient/linear');
+const { block: linearVerticalBlock, fill: linearVertical }
+  = createShapeWithFill('gradient/linear')
 ```
 
 ### Creating a Radial Gradient
@@ -798,8 +798,8 @@ const { block: linearVerticalBlock, fill: linearVertical } =
 Create a radial gradient using the type `'gradient/radial'`:
 
 ```typescript highlight-create-radial
-const { block: radialCenteredBlock, fill: radialCentered } =
-  createShapeWithFill('gradient/radial');
+const { block: radialCenteredBlock, fill: radialCentered }
+  = createShapeWithFill('gradient/radial')
 ```
 
 ### Creating a Conical Gradient
@@ -807,8 +807,8 @@ const { block: radialCenteredBlock, fill: radialCentered } =
 Create a conical gradient using the type `'gradient/conical'`:
 
 ```typescript highlight-create-conical
-const { block: conicalColorWheelBlock, fill: conicalColorWheel } =
-  createShapeWithFill('gradient/conical');
+const { block: conicalColorWheelBlock, fill: conicalColorWheel }
+  = createShapeWithFill('gradient/conical')
 ```
 
 The `createFill()` method returns a numeric fill ID. The fill exists independently until you attach it to a block. If you create a fill but don't attach it to a block, you must destroy it manually to prevent memory leaks.
@@ -820,11 +820,11 @@ The `createFill()` method returns a numeric fill ID. The fill exists independent
 Once you've created a gradient fill, attach it to a block using `setFill()`:
 
 ```typescript highlight-apply-gradient
-      // Create gradient fill
-      const gradientFill = engine.block.createFill(fillType);
+// Create gradient fill
+const gradientFill = engine.block.createFill(fillType)
 
-      // Apply the fill to the block
-      engine.block.setFill(block, gradientFill);
+// Apply the fill to the block
+engine.block.setFill(block, gradientFill)
 ```
 
 ### Getting the Current Fill
@@ -832,23 +832,23 @@ Once you've created a gradient fill, attach it to a block using `setFill()`:
 Retrieve the current fill attached to a block and inspect its type:
 
 ```typescript highlight-get-fill
-    const { block: inspectGradientBlock, fill: inspectGradient } =
-      createShapeWithFill('gradient/linear');
+const { block: inspectGradientBlock, fill: inspectGradient }
+  = createShapeWithFill('gradient/linear')
 
-    engine.block.setGradientColorStops(
-      inspectGradient,
-      'fill/gradient/colors',
-      [
-        { color: { r: 0.6, g: 0.3, b: 0.7, a: 1.0 }, stop: 0 },
-        { color: { r: 0.3, g: 0.7, b: 0.6, a: 1.0 }, stop: 1 }
-      ]
-    );
+engine.block.setGradientColorStops(
+  inspectGradient,
+  'fill/gradient/colors',
+  [
+    { color: { r: 0.6, g: 0.3, b: 0.7, a: 1.0 }, stop: 0 },
+    { color: { r: 0.3, g: 0.7, b: 0.6, a: 1.0 }, stop: 1 }
+  ]
+)
 
-    // Get current fill from block
-    const fillId = engine.block.getFill(block1);
-    const fillType = engine.block.getType(fillId);
-    // eslint-disable-next-line no-console
-    console.log('Fill type:', fillType); // '//ly.img.ubq/fill/gradient/linear'
+// Get current fill from block
+const fillId = engine.block.getFill(block1)
+const fillType = engine.block.getType(fillId)
+
+console.log('Fill type:', fillType) // '//ly.img.ubq/fill/gradient/linear'
 ```
 
 ## Configuring Gradient Color Stops
@@ -861,7 +861,7 @@ Set color stops using the `setGradientColorStops()` method with an array of colo
 engine.block.setGradientColorStops(linearVertical, 'fill/gradient/colors', [
   { color: { r: 1.0, g: 0.8, b: 0.2, a: 1.0 }, stop: 0 },
   { color: { r: 0.3, g: 0.4, b: 0.7, a: 1.0 }, stop: 1 }
-]);
+])
 ```
 
 RGB values are normalized floats from 0.0 to 1.0. Stop positions are normalized where 0.0 represents the start and 1.0 represents the end. The alpha channel controls opacity per color stop.
@@ -875,9 +875,9 @@ Retrieve the current color stops from a gradient fill:
 const colorStops = engine.block.getGradientColorStops(
   inspectGradient,
   'fill/gradient/colors'
-);
-// eslint-disable-next-line no-console
-console.log('Color stops:', colorStops);
+)
+
+console.log('Color stops:', colorStops)
 ```
 
 ### Using Different Color Spaces
@@ -885,23 +885,23 @@ console.log('Color stops:', colorStops);
 Gradient color stops support multiple color spaces:
 
 ```typescript highlight-color-spaces
-    const { block: cmykGradientBlock, fill: cmykGradient } =
-      createShapeWithFill('gradient/linear');
+const { block: cmykGradientBlock, fill: cmykGradient }
+  = createShapeWithFill('gradient/linear')
 
-    // CMYK color stops for print
-    engine.block.setGradientColorStops(cmykGradient, 'fill/gradient/colors', [
-      { color: { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 }, stop: 0 },
-      { color: { c: 1.0, m: 0.0, y: 1.0, k: 0.0, tint: 1.0 }, stop: 1 }
-    ]);
+// CMYK color stops for print
+engine.block.setGradientColorStops(cmykGradient, 'fill/gradient/colors', [
+  { color: { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 }, stop: 0 },
+  { color: { c: 1.0, m: 0.0, y: 1.0, k: 0.0, tint: 1.0 }, stop: 1 }
+])
 
-    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/startPointX', 0);
-    engine.block.setFloat(
-      cmykGradient,
-      'fill/gradient/linear/startPointY',
-      0.5
-    );
-    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointY', 0.5);
+engine.block.setFloat(cmykGradient, 'fill/gradient/linear/startPointX', 0)
+engine.block.setFloat(
+  cmykGradient,
+  'fill/gradient/linear/startPointY',
+  0.5
+)
+engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointX', 1)
+engine.block.setFloat(cmykGradient, 'fill/gradient/linear/endPointY', 0.5)
 ```
 
 ## Positioning Linear Gradients
@@ -916,18 +916,18 @@ engine.block.setFloat(
   linearVertical,
   'fill/gradient/linear/startPointX',
   0.5
-);
+)
 engine.block.setFloat(
   linearVertical,
   'fill/gradient/linear/startPointY',
   0
-);
+)
 engine.block.setFloat(
   linearVertical,
   'fill/gradient/linear/endPointX',
   0.5
-);
-engine.block.setFloat(linearVertical, 'fill/gradient/linear/endPointY', 1);
+)
+engine.block.setFloat(linearVertical, 'fill/gradient/linear/endPointY', 1)
 ```
 
 Coordinates are normalized where (0, 0) represents the top-left corner and (1, 1) represents the bottom-right corner.
@@ -937,19 +937,19 @@ Coordinates are normalized where (0, 0) represents the top-left corner and (1, 1
 **Horizontal (Left to Right):**
 
 ```typescript
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointX', 0);
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointY', 0.5);
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointX', 1);
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointY', 0.5);
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointX', 0)
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointY', 0.5)
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointX', 1)
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointY', 0.5)
 ```
 
 **Diagonal (Top-Left to Bottom-Right):**
 
 ```typescript
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointX', 0);
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointY', 0);
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointX', 1);
-engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointY', 1);
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointX', 0)
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/startPointY', 0)
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointX', 1)
+engine.block.setFloat(linearGradient, 'fill/gradient/linear/endPointY', 1)
 ```
 
 ### Getting Current Position
@@ -961,21 +961,21 @@ Retrieve the current position values:
 const startX = engine.block.getFloat(
   inspectGradient,
   'fill/gradient/linear/startPointX'
-);
+)
 const startY = engine.block.getFloat(
   inspectGradient,
   'fill/gradient/linear/startPointY'
-);
+)
 const endX = engine.block.getFloat(
   inspectGradient,
   'fill/gradient/linear/endPointX'
-);
+)
 const endY = engine.block.getFloat(
   inspectGradient,
   'fill/gradient/linear/endPointY'
-);
-// eslint-disable-next-line no-console
-console.log('Linear gradient position:', { startX, startY, endX, endY });
+)
+
+console.log('Linear gradient position:', { startX, startY, endX, endY })
 ```
 
 ## Positioning Radial Gradients
@@ -990,13 +990,13 @@ engine.block.setFloat(
   radialCentered,
   'fill/gradient/radial/centerPointX',
   0.5
-);
+)
 engine.block.setFloat(
   radialCentered,
   'fill/gradient/radial/centerPointY',
   0.5
-);
-engine.block.setFloat(radialCentered, 'fill/gradient/radial/radius', 0.8);
+)
+engine.block.setFloat(radialCentered, 'fill/gradient/radial/radius', 0.8)
 ```
 
 The `centerPointX/Y` properties use normalized coordinates (0.0 to 1.0) relative to block dimensions. The `radius` property is relative to the smaller side of the block frame, where 1.0 equals full coverage. Default values are centerX = 0.0, centerY = 0.0, and radius = 1.0.
@@ -1006,25 +1006,25 @@ The `centerPointX/Y` properties use normalized coordinates (0.0 to 1.0) relative
 **Centered Circle:**
 
 ```typescript
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointX', 0.5);
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointY', 0.5);
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/radius', 0.7);
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointX', 0.5)
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointY', 0.5)
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/radius', 0.7)
 ```
 
 **Top-Left Highlight:**
 
 ```typescript
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointX', 0);
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointY', 0);
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/radius', 1.0);
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointX', 0)
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointY', 0)
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/radius', 1.0)
 ```
 
 **Bottom-Right Vignette:**
 
 ```typescript
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointX', 1);
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointY', 1);
-engine.block.setFloat(radialGradient, 'fill/gradient/radial/radius', 1.5);
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointX', 1)
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/centerPointY', 1)
+engine.block.setFloat(radialGradient, 'fill/gradient/radial/radius', 1.5)
 ```
 
 ## Positioning Conical Gradients
@@ -1039,12 +1039,12 @@ engine.block.setFloat(
   conicalColorWheel,
   'fill/gradient/conical/centerPointX',
   0.5
-);
+)
 engine.block.setFloat(
   conicalColorWheel,
   'fill/gradient/conical/centerPointY',
   0.5
-);
+)
 ```
 
 The `centerPointX/Y` properties use normalized coordinates (0.0 to 1.0) relative to block dimensions. There is no separate rotation or angle property—the gradient always starts at the top. Default values are centerX = 0.0 and centerY = 0.0.
@@ -1056,59 +1056,59 @@ The `centerPointX/Y` properties use normalized coordinates (0.0 to 1.0) relative
 You can share a single gradient fill between multiple blocks. Changes to the shared gradient affect all blocks using it:
 
 ```typescript highlight-share-gradient
-    const block1 = engine.block.create('graphic');
-    const shape1 = engine.block.createShape('rect');
-    engine.block.setShape(block1, shape1);
-    engine.block.setWidth(block1, blockWidth);
-    engine.block.setHeight(block1, blockHeight / 2 - 5);
-    engine.block.appendChild(page, block1);
+const block1 = engine.block.create('graphic')
+const shape1 = engine.block.createShape('rect')
+engine.block.setShape(block1, shape1)
+engine.block.setWidth(block1, blockWidth)
+engine.block.setHeight(block1, blockHeight / 2 - 5)
+engine.block.appendChild(page, block1)
 
-    const block2 = engine.block.create('graphic');
-    const shape2 = engine.block.createShape('rect');
-    engine.block.setShape(block2, shape2);
-    engine.block.setWidth(block2, blockWidth);
-    engine.block.setHeight(block2, blockHeight / 2 - 5);
-    engine.block.appendChild(page, block2);
+const block2 = engine.block.create('graphic')
+const shape2 = engine.block.createShape('rect')
+engine.block.setShape(block2, shape2)
+engine.block.setWidth(block2, blockWidth)
+engine.block.setHeight(block2, blockHeight / 2 - 5)
+engine.block.appendChild(page, block2)
 
-    // Create one gradient fill
-    const sharedGradient = engine.block.createFill('gradient/linear');
-    engine.block.setGradientColorStops(sharedGradient, 'fill/gradient/colors', [
-      { color: { r: 1, g: 0, b: 0, a: 1 }, stop: 0 },
-      { color: { r: 0, g: 0, b: 1, a: 1 }, stop: 1 }
-    ]);
+// Create one gradient fill
+const sharedGradient = engine.block.createFill('gradient/linear')
+engine.block.setGradientColorStops(sharedGradient, 'fill/gradient/colors', [
+  { color: { r: 1, g: 0, b: 0, a: 1 }, stop: 0 },
+  { color: { r: 0, g: 0, b: 1, a: 1 }, stop: 1 }
+])
 
-    engine.block.setFloat(
-      sharedGradient,
-      'fill/gradient/linear/startPointX',
-      0
-    );
-    engine.block.setFloat(
-      sharedGradient,
-      'fill/gradient/linear/startPointY',
-      0.5
-    );
-    engine.block.setFloat(sharedGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(
-      sharedGradient,
-      'fill/gradient/linear/endPointY',
-      0.5
-    );
+engine.block.setFloat(
+  sharedGradient,
+  'fill/gradient/linear/startPointX',
+  0
+)
+engine.block.setFloat(
+  sharedGradient,
+  'fill/gradient/linear/startPointY',
+  0.5
+)
+engine.block.setFloat(sharedGradient, 'fill/gradient/linear/endPointX', 1)
+engine.block.setFloat(
+  sharedGradient,
+  'fill/gradient/linear/endPointY',
+  0.5
+)
 
-    // Apply to both blocks
-    engine.block.setFill(block1, sharedGradient);
-    engine.block.setFill(block2, sharedGradient);
+// Apply to both blocks
+engine.block.setFill(block1, sharedGradient)
+engine.block.setFill(block2, sharedGradient)
 
-    // Change gradient after a delay to show it affects both
-    setTimeout(() => {
-      engine.block.setGradientColorStops(
-        sharedGradient,
-        'fill/gradient/colors',
-        [
-          { color: { r: 0, g: 1, b: 0, a: 1 }, stop: 0 },
-          { color: { r: 1, g: 1, b: 0, a: 1 }, stop: 1 }
-        ]
-      );
-    }, 2000);
+// Change gradient after a delay to show it affects both
+setTimeout(() => {
+  engine.block.setGradientColorStops(
+    sharedGradient,
+    'fill/gradient/colors',
+    [
+      { color: { r: 0, g: 1, b: 0, a: 1 }, stop: 0 },
+      { color: { r: 1, g: 1, b: 0, a: 1 }, stop: 1 }
+    ]
+  )
+}, 2000)
 ```
 
 ### Duplicating Gradient Fills
@@ -1122,32 +1122,32 @@ When you duplicate a block, its gradient fill is automatically duplicated, creat
 Create dreamy multi-color gradient backgrounds for hero sections:
 
 ```typescript highlight-aurora-gradient
-    const { block: auroraGradientBlock, fill: auroraGradient } =
-      createShapeWithFill('gradient/linear');
+const { block: auroraGradientBlock, fill: auroraGradient }
+  = createShapeWithFill('gradient/linear')
 
-    engine.block.setGradientColorStops(auroraGradient, 'fill/gradient/colors', [
-      { color: { r: 0.4, g: 0.1, b: 0.8, a: 1 }, stop: 0 },
-      { color: { r: 0.8, g: 0.2, b: 0.6, a: 1 }, stop: 0.3 },
-      { color: { r: 1.0, g: 0.5, b: 0.3, a: 1 }, stop: 0.6 },
-      { color: { r: 1.0, g: 0.8, b: 0.2, a: 1 }, stop: 1 }
-    ]);
+engine.block.setGradientColorStops(auroraGradient, 'fill/gradient/colors', [
+  { color: { r: 0.4, g: 0.1, b: 0.8, a: 1 }, stop: 0 },
+  { color: { r: 0.8, g: 0.2, b: 0.6, a: 1 }, stop: 0.3 },
+  { color: { r: 1.0, g: 0.5, b: 0.3, a: 1 }, stop: 0.6 },
+  { color: { r: 1.0, g: 0.8, b: 0.2, a: 1 }, stop: 1 }
+])
 
-    engine.block.setFloat(
-      auroraGradient,
-      'fill/gradient/linear/startPointX',
-      0
-    );
-    engine.block.setFloat(
-      auroraGradient,
-      'fill/gradient/linear/startPointY',
-      0.5
-    );
-    engine.block.setFloat(auroraGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(
-      auroraGradient,
-      'fill/gradient/linear/endPointY',
-      0.5
-    );
+engine.block.setFloat(
+  auroraGradient,
+  'fill/gradient/linear/startPointX',
+  0
+)
+engine.block.setFloat(
+  auroraGradient,
+  'fill/gradient/linear/startPointY',
+  0.5
+)
+engine.block.setFloat(auroraGradient, 'fill/gradient/linear/endPointX', 1)
+engine.block.setFloat(
+  auroraGradient,
+  'fill/gradient/linear/endPointY',
+  0.5
+)
 ```
 
 ### Button Highlight Effect
@@ -1155,30 +1155,30 @@ Create dreamy multi-color gradient backgrounds for hero sections:
 Use radial gradients to add depth and highlight effects to buttons:
 
 ```typescript highlight-button-gradient
-    const { block: radialHighlightBlock, fill: radialHighlight } =
-      createShapeWithFill('gradient/radial');
+const { block: radialHighlightBlock, fill: radialHighlight }
+  = createShapeWithFill('gradient/radial')
 
-    engine.block.setGradientColorStops(
-      radialHighlight,
-      'fill/gradient/colors',
-      [
-        { color: { r: 1.0, g: 1.0, b: 1.0, a: 0.3 }, stop: 0 },
-        { color: { r: 0.2, g: 0.4, b: 0.8, a: 1.0 }, stop: 1 }
-      ]
-    );
+engine.block.setGradientColorStops(
+  radialHighlight,
+  'fill/gradient/colors',
+  [
+    { color: { r: 1.0, g: 1.0, b: 1.0, a: 0.3 }, stop: 0 },
+    { color: { r: 0.2, g: 0.4, b: 0.8, a: 1.0 }, stop: 1 }
+  ]
+)
 
-    // Set top-left highlight
-    engine.block.setFloat(
-      radialHighlight,
-      'fill/gradient/radial/centerPointX',
-      0
-    );
-    engine.block.setFloat(
-      radialHighlight,
-      'fill/gradient/radial/centerPointY',
-      0
-    );
-    engine.block.setFloat(radialHighlight, 'fill/gradient/radial/radius', 1.0);
+// Set top-left highlight
+engine.block.setFloat(
+  radialHighlight,
+  'fill/gradient/radial/centerPointX',
+  0
+)
+engine.block.setFloat(
+  radialHighlight,
+  'fill/gradient/radial/centerPointY',
+  0
+)
+engine.block.setFloat(radialHighlight, 'fill/gradient/radial/radius', 1.0)
 ```
 
 ### Loading Spinner (Conical)
@@ -1186,25 +1186,25 @@ Use radial gradients to add depth and highlight effects to buttons:
 Create circular progress indicators and loading animations with conical gradients:
 
 ```typescript highlight-spinner-gradient
-    const { block: conicalSpinnerBlock, fill: conicalSpinner } =
-      createShapeWithFill('gradient/conical');
+const { block: conicalSpinnerBlock, fill: conicalSpinner }
+  = createShapeWithFill('gradient/conical')
 
-    engine.block.setGradientColorStops(conicalSpinner, 'fill/gradient/colors', [
-      { color: { r: 0.2, g: 0.4, b: 0.8, a: 1 }, stop: 0 },
-      { color: { r: 0.2, g: 0.4, b: 0.8, a: 0 }, stop: 0.75 },
-      { color: { r: 0.2, g: 0.4, b: 0.8, a: 1 }, stop: 1 }
-    ]);
+engine.block.setGradientColorStops(conicalSpinner, 'fill/gradient/colors', [
+  { color: { r: 0.2, g: 0.4, b: 0.8, a: 1 }, stop: 0 },
+  { color: { r: 0.2, g: 0.4, b: 0.8, a: 0 }, stop: 0.75 },
+  { color: { r: 0.2, g: 0.4, b: 0.8, a: 1 }, stop: 1 }
+])
 
-    engine.block.setFloat(
-      conicalSpinner,
-      'fill/gradient/conical/centerPointX',
-      0.5
-    );
-    engine.block.setFloat(
-      conicalSpinner,
-      'fill/gradient/conical/centerPointY',
-      0.5
-    );
+engine.block.setFloat(
+  conicalSpinner,
+  'fill/gradient/conical/centerPointX',
+  0.5
+)
+engine.block.setFloat(
+  conicalSpinner,
+  'fill/gradient/conical/centerPointY',
+  0.5
+)
 ```
 
 ### Transparency Overlay
@@ -1212,34 +1212,34 @@ Create circular progress indicators and loading animations with conical gradient
 Create smooth transparency effects with alpha channel transitions:
 
 ```typescript highlight-overlay-gradient
-    const { block: overlayGradientBlock, fill: overlayGradient } =
-      createShapeWithFill('gradient/linear');
+const { block: overlayGradientBlock, fill: overlayGradient }
+  = createShapeWithFill('gradient/linear')
 
-    engine.block.setGradientColorStops(
-      overlayGradient,
-      'fill/gradient/colors',
-      [
-        { color: { r: 0.0, g: 0.0, b: 0.0, a: 0 }, stop: 0 },
-        { color: { r: 0.0, g: 0.0, b: 0.0, a: 0.7 }, stop: 1 }
-      ]
-    );
+engine.block.setGradientColorStops(
+  overlayGradient,
+  'fill/gradient/colors',
+  [
+    { color: { r: 0.0, g: 0.0, b: 0.0, a: 0 }, stop: 0 },
+    { color: { r: 0.0, g: 0.0, b: 0.0, a: 0.7 }, stop: 1 }
+  ]
+)
 
-    engine.block.setFloat(
-      overlayGradient,
-      'fill/gradient/linear/startPointX',
-      0.5
-    );
-    engine.block.setFloat(
-      overlayGradient,
-      'fill/gradient/linear/startPointY',
-      0
-    );
-    engine.block.setFloat(
-      overlayGradient,
-      'fill/gradient/linear/endPointX',
-      0.5
-    );
-    engine.block.setFloat(overlayGradient, 'fill/gradient/linear/endPointY', 1);
+engine.block.setFloat(
+  overlayGradient,
+  'fill/gradient/linear/startPointX',
+  0.5
+)
+engine.block.setFloat(
+  overlayGradient,
+  'fill/gradient/linear/startPointY',
+  0
+)
+engine.block.setFloat(
+  overlayGradient,
+  'fill/gradient/linear/endPointX',
+  0.5
+)
+engine.block.setFloat(overlayGradient, 'fill/gradient/linear/endPointY', 1)
 ```
 
 ### Duotone Effect
@@ -1247,30 +1247,30 @@ Create smooth transparency effects with alpha channel transitions:
 Create modern two-color gradient overlays:
 
 ```typescript highlight-duotone-gradient
-    const { block: duotoneGradientBlock, fill: duotoneGradient } =
-      createShapeWithFill('gradient/linear');
+const { block: duotoneGradientBlock, fill: duotoneGradient }
+  = createShapeWithFill('gradient/linear')
 
-    engine.block.setGradientColorStops(
-      duotoneGradient,
-      'fill/gradient/colors',
-      [
-        { color: { r: 0.8, g: 0.2, b: 0.9, a: 1 }, stop: 0 },
-        { color: { r: 0.2, g: 0.9, b: 0.8, a: 1 }, stop: 1 }
-      ]
-    );
+engine.block.setGradientColorStops(
+  duotoneGradient,
+  'fill/gradient/colors',
+  [
+    { color: { r: 0.8, g: 0.2, b: 0.9, a: 1 }, stop: 0 },
+    { color: { r: 0.2, g: 0.9, b: 0.8, a: 1 }, stop: 1 }
+  ]
+)
 
-    engine.block.setFloat(
-      duotoneGradient,
-      'fill/gradient/linear/startPointX',
-      0
-    );
-    engine.block.setFloat(
-      duotoneGradient,
-      'fill/gradient/linear/startPointY',
-      0
-    );
-    engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointY', 1);
+engine.block.setFloat(
+  duotoneGradient,
+  'fill/gradient/linear/startPointX',
+  0
+)
+engine.block.setFloat(
+  duotoneGradient,
+  'fill/gradient/linear/startPointY',
+  0
+)
+engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointX', 1)
+engine.block.setFloat(duotoneGradient, 'fill/gradient/linear/endPointY', 1)
 ```
 
 ## Troubleshooting
@@ -1381,15 +1381,15 @@ If color stops don't update:
 
 ```typescript
 interface GradientColorStop {
-  color: Color; // RGB, CMYK, or Spot color
-  stop: number; // Position (0.0 to 1.0)
+  color: Color // RGB, CMYK, or Spot color
+  stop: number // Position (0.0 to 1.0)
 }
 
 // Color formats supported:
-type Color =
-  | { r: number; g: number; b: number; a: number } // RGB
-  | { c: number; m: number; y: number; k: number; tint: number } // CMYK
-  | { name: string; tint: number; externalReference: string }; // Spot
+type Color
+  = | { r: number, g: number, b: number, a: number } // RGB
+    | { c: number, m: number, y: number, k: number, tint: number } // CMYK
+    | { name: string, tint: number, externalReference: string } // Spot
 ```
 
 ## Next Steps

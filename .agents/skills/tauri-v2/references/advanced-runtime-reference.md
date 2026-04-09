@@ -115,7 +115,7 @@ async fn run_sidecar(app: tauri::AppHandle) -> Result<String, String> {
         .output()
         .await
         .map_err(|e| e.to_string())?;
-    
+
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 ```
@@ -190,7 +190,7 @@ Show asset protocol access (most common use case):
 
 ```typescript
 // Access local file via asset protocol
-const imgSrc = convertFileSrc('/path/to/image.png');
+const imgSrc = convertFileSrc('/path/to/image.png')
 ```
 
 Note: Full custom protocol registration (`tauri::Builder::register_uri_scheme_protocol`) is available but underdocumented in official v2+ docs as of 2026-04-02. Prefer asset protocol for local file serving.

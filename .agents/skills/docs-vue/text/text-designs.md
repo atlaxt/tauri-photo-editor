@@ -23,7 +23,7 @@ Create and customize text designs (text components) that appear in CE.SDK's asse
 Text designs (also known as text components) are pre-designed text layouts stored as serialized blocks in the asset library. Users click on these components to insert them into their designs. CE.SDK ships with over 20 default components; this guide shows how to create custom ones programmatically.
 
 ```typescript file=@cesdk_web_examples/guides-text-text-designs-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,11 +39,11 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
 // Import the pre-generated thumbnail for the asset library
-import customTitleThumbnail from './assets/custom-title-thumbnail.png';
+import customTitleThumbnail from './assets/custom-title-thumbnail.png'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Text Designs Guide
@@ -59,22 +59,22 @@ import customTitleThumbnail from './assets/custom-title-thumbnail.png';
  * and host the files. Use block.loadFromURL() pointing to the blocks.blocks file.
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -85,30 +85,30 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create a styled text block that will become our custom component
-    const textComponent = engine.block.create('text');
-    engine.block.appendChild(page, textComponent);
+    const textComponent = engine.block.create('text')
+    engine.block.appendChild(page, textComponent)
 
     // Set text content and styling
-    engine.block.replaceText(textComponent, 'Custom Title');
-    engine.block.setFloat(textComponent, 'text/fontSize', 72);
+    engine.block.replaceText(textComponent, 'Custom Title')
+    engine.block.setFloat(textComponent, 'text/fontSize', 72)
 
     // Set text color to a brand color
     engine.block.setTextColor(textComponent, {
@@ -116,18 +116,18 @@ class Example implements EditorPlugin {
       g: 0.4,
       b: 0.8,
       a: 1.0
-    });
+    })
 
     // Configure dimensions - use fixed frame with clipping
-    engine.block.setWidthMode(textComponent, 'Absolute');
-    engine.block.setHeightMode(textComponent, 'Absolute');
-    engine.block.setWidth(textComponent, 400);
-    engine.block.setHeight(textComponent, 100);
-    engine.block.setBool(textComponent, 'clipped', true);
+    engine.block.setWidthMode(textComponent, 'Absolute')
+    engine.block.setHeightMode(textComponent, 'Absolute')
+    engine.block.setWidth(textComponent, 400)
+    engine.block.setHeight(textComponent, 100)
+    engine.block.setBool(textComponent, 'clipped', true)
 
     // Position the component on the page
-    engine.block.setPositionX(textComponent, 50);
-    engine.block.setPositionY(textComponent, 50);
+    engine.block.setPositionX(textComponent, 50)
+    engine.block.setPositionY(textComponent, 50)
 
     // Define a custom typeface
     // With saveToArchive(), fonts are automatically bundled in the archive
@@ -144,40 +144,40 @@ class Example implements EditorPlugin {
           subFamily: 'Bold'
         }
       ]
-    };
+    }
 
     // Set the font - saveToArchive() will include the font files in the archive
     engine.block.setFont(
       textComponent,
       caveatTypeface.fonts[0].uri,
       caveatTypeface
-    );
+    )
 
     // Configure constraints for flexible resizing
     // These ensure the component maintains proper proportions when resized
 
     // Enable automatic font sizing within constraints
-    engine.block.setBool(textComponent, 'text/automaticFontSizeEnabled', true);
-    engine.block.setFloat(textComponent, 'text/minAutomaticFontSize', 24);
-    engine.block.setFloat(textComponent, 'text/maxAutomaticFontSize', 120);
+    engine.block.setBool(textComponent, 'text/automaticFontSizeEnabled', true)
+    engine.block.setFloat(textComponent, 'text/minAutomaticFontSize', 24)
+    engine.block.setFloat(textComponent, 'text/maxAutomaticFontSize', 120)
 
     // Add a background to visualize the text frame
-    engine.block.setBool(textComponent, 'backgroundColor/enabled', true);
+    engine.block.setBool(textComponent, 'backgroundColor/enabled', true)
     engine.block.setColor(textComponent, 'backgroundColor/color', {
       r: 0.95,
       g: 0.95,
       b: 1.0,
       a: 1.0
-    });
+    })
 
     // Serialize the text component using saveToArchive()
     // This creates a zip archive containing blocks.blocks and all resources (fonts, images)
-    const archiveBlob = await engine.block.saveToArchive([textComponent]);
-    console.log('Archive size:', archiveBlob.size, 'bytes');
+    const archiveBlob = await engine.block.saveToArchive([textComponent])
+    console.log('Archive size:', archiveBlob.size, 'bytes')
 
     // Create a Blob URL for in-memory loading
     // In production, you would extract the archive and host the files on your server
-    const archiveUrl = URL.createObjectURL(archiveBlob);
+    const archiveUrl = URL.createObjectURL(archiveBlob)
 
     // In production, generate thumbnails using block.export():
     //
@@ -190,7 +190,7 @@ class Example implements EditorPlugin {
     // For this example, we use a pre-generated thumbnail to avoid
     // watermarks when running without a license key.
     // Prepend origin to make it an absolute URL (CE.SDK prepends its base URL to relative paths)
-    const thumbnailUri = window.location.origin + customTitleThumbnail;
+    const thumbnailUri = window.location.origin + customTitleThumbnail
 
     // Create the content.json structure for the custom component
     // In production, you would host the serialized component and thumbnail on your server
@@ -212,18 +212,18 @@ class Example implements EditorPlugin {
         }
       ],
       blocks: []
-    };
+    }
     console.log(
       'Content.json structure:',
       JSON.stringify(contentJson, null, 2)
-    );
+    )
 
     // Register a custom asset source with an apply callback
     // The callback handles loading and inserting blocks when clicked
 
     // Store archive URLs in a Map for lookup when applying
-    const archiveUrls = new Map<string, string>();
-    archiveUrls.set('customTitle', archiveUrl);
+    const archiveUrls = new Map<string, string>()
+    archiveUrls.set('customTitle', archiveUrl)
 
     // Create local source with custom apply callback
     engine.asset.addLocalSource(
@@ -231,33 +231,35 @@ class Example implements EditorPlugin {
       undefined, // No MIME type filter
       async (asset) => {
         // Get the archive URL for this asset
-        const assetArchiveUrl = archiveUrls.get(asset.id);
-        if (!assetArchiveUrl) return undefined;
+        const assetArchiveUrl = archiveUrls.get(asset.id)
+        if (!assetArchiveUrl)
+          return undefined
 
         // Load the block from the archive using loadFromArchiveURL()
         const loadedBlocks = await engine.block.loadFromArchiveURL(
           assetArchiveUrl
-        );
-        const newBlock = loadedBlocks[0];
-        if (!newBlock) return undefined;
+        )
+        const newBlock = loadedBlocks[0]
+        if (!newBlock)
+          return undefined
 
         // Add to the current page and center it
-        const currentPage = engine.scene.getCurrentPage();
+        const currentPage = engine.scene.getCurrentPage()
         if (currentPage) {
-          engine.block.appendChild(currentPage, newBlock);
+          engine.block.appendChild(currentPage, newBlock)
           // Center the block on the page
-          const pageWidth = engine.block.getWidth(currentPage);
-          const pageHeight = engine.block.getHeight(currentPage);
-          const blockWidth = engine.block.getWidth(newBlock);
-          const blockHeight = engine.block.getHeight(newBlock);
-          engine.block.setPositionX(newBlock, (pageWidth - blockWidth) / 2);
-          engine.block.setPositionY(newBlock, (pageHeight - blockHeight) / 2);
+          const pageWidth = engine.block.getWidth(currentPage)
+          const pageHeight = engine.block.getHeight(currentPage)
+          const blockWidth = engine.block.getWidth(newBlock)
+          const blockHeight = engine.block.getHeight(newBlock)
+          engine.block.setPositionX(newBlock, (pageWidth - blockWidth) / 2)
+          engine.block.setPositionY(newBlock, (pageHeight - blockHeight) / 2)
         }
 
-        engine.editor.addUndoStep();
-        return newBlock;
+        engine.editor.addUndoStep()
+        return newBlock
       }
-    );
+    )
 
     // Add the text component asset to the source
     engine.asset.addAssetToSource('custom.textComponents', {
@@ -267,14 +269,14 @@ class Example implements EditorPlugin {
         thumbUri: thumbnailUri,
         mimeType: 'application/ubq-blocks-string'
       }
-    });
-    console.log('Custom text components asset source registered');
+    })
+    console.log('Custom text components asset source registered')
 
     // Configure the asset library to display the custom text components
     // Add translation for the library entry label
     cesdk.i18n.setTranslations({
       en: { 'libraries.text-components-entry.label': 'Text Components' }
-    });
+    })
 
     // Add the text components source to the asset library
     cesdk.ui.addAssetLibraryEntry({
@@ -285,7 +287,7 @@ class Example implements EditorPlugin {
       gridBackgroundType: 'contain',
       gridColumns: 2,
       cardLabelPosition: () => 'below'
-    });
+    })
 
     // Add text components library to the dock for easy access
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -298,33 +300,33 @@ class Example implements EditorPlugin {
         icon: '@imgly/Type',
         entries: ['text-components-entry']
       }
-    ]);
+    ])
 
     // Open the text components panel to showcase the result
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: { entries: ['text-components-entry'] }
-    });
+    })
 
     // Add a label explaining what this example demonstrates
-    const label = engine.block.create('text');
-    engine.block.appendChild(page, label);
-    engine.block.setWidthMode(label, 'Auto');
-    engine.block.setHeightMode(label, 'Auto');
+    const label = engine.block.create('text')
+    engine.block.appendChild(page, label)
+    engine.block.setWidthMode(label, 'Auto')
+    engine.block.setHeightMode(label, 'Auto')
     engine.block.replaceText(
       label,
       'This example creates a custom text component,\nserializes it, and registers it as an asset source.'
-    );
-    engine.block.setFloat(label, 'text/fontSize', 54);
-    engine.block.setTextColor(label, { r: 0.4, g: 0.4, b: 0.4, a: 1.0 });
-    engine.block.setPositionX(label, 50);
-    engine.block.setPositionY(label, 200);
+    )
+    engine.block.setFloat(label, 'text/fontSize', 54)
+    engine.block.setTextColor(label, { r: 0.4, g: 0.4, b: 0.4, a: 1.0 })
+    engine.block.setPositionX(label, 50)
+    engine.block.setPositionY(label, 200)
 
     // Create a second example component with different styling
-    const promoComponent = engine.block.create('text');
-    engine.block.appendChild(page, promoComponent);
+    const promoComponent = engine.block.create('text')
+    engine.block.appendChild(page, promoComponent)
 
-    engine.block.replaceText(promoComponent, 'SALE');
-    engine.block.setFloat(promoComponent, 'text/fontSize', 96);
+    engine.block.replaceText(promoComponent, 'SALE')
+    engine.block.setFloat(promoComponent, 'text/fontSize', 96)
 
     // Use a bold red color for the promo text
     engine.block.setTextColor(promoComponent, {
@@ -332,7 +334,7 @@ class Example implements EditorPlugin {
       g: 0.2,
       b: 0.2,
       a: 1.0
-    });
+    })
 
     // Set a bold font for the promo component
     const robotoTypeface = {
@@ -343,37 +345,37 @@ class Example implements EditorPlugin {
           subFamily: 'Bold'
         }
       ]
-    };
+    }
     engine.block.setFont(
       promoComponent,
       robotoTypeface.fonts[0].uri,
       robotoTypeface
-    );
+    )
 
-    engine.block.setWidthMode(promoComponent, 'Absolute');
-    engine.block.setHeightMode(promoComponent, 'Absolute');
-    engine.block.setWidth(promoComponent, 300);
-    engine.block.setHeight(promoComponent, 120);
-    engine.block.setBool(promoComponent, 'clipped', true);
+    engine.block.setWidthMode(promoComponent, 'Absolute')
+    engine.block.setHeightMode(promoComponent, 'Absolute')
+    engine.block.setWidth(promoComponent, 300)
+    engine.block.setHeight(promoComponent, 120)
+    engine.block.setBool(promoComponent, 'clipped', true)
 
     // Add background
-    engine.block.setBool(promoComponent, 'backgroundColor/enabled', true);
+    engine.block.setBool(promoComponent, 'backgroundColor/enabled', true)
     engine.block.setColor(promoComponent, 'backgroundColor/color', {
       r: 1.0,
       g: 0.95,
       b: 0.9,
       a: 1.0
-    });
+    })
 
-    engine.block.setPositionX(promoComponent, 50);
-    engine.block.setPositionY(promoComponent, 350);
+    engine.block.setPositionX(promoComponent, 50)
+    engine.block.setPositionY(promoComponent, 350)
 
     // Select the first text component to show it in the inspector
-    engine.block.select(textComponent);
+    engine.block.select(textComponent)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating styled text components, serializing them for storage, generating thumbnails, and registering them as custom asset sources.
@@ -383,39 +385,39 @@ This guide covers creating styled text components, serializing them for storage,
 We initialize CE.SDK with asset sources and create a design scene. The page provides a canvas where we build our text components.
 
 ```typescript highlight=highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  page: { width: 800, height: 600, unit: 'Pixel' }
+})
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
 ```
 
 With the editor ready, we can create text blocks and configure them as reusable components.
@@ -425,56 +427,56 @@ With the editor ready, we can create text blocks and configure them as reusable 
 We create a text block and configure its styling, dimensions, and position. The component uses fixed frame dimensions with clipping enabled to ensure consistent display. We set an explicit font using the `setFont()` API.
 
 ```typescript highlight=highlight-create-text-component
-    // Create a styled text block that will become our custom component
-    const textComponent = engine.block.create('text');
-    engine.block.appendChild(page, textComponent);
+// Create a styled text block that will become our custom component
+const textComponent = engine.block.create('text')
+engine.block.appendChild(page, textComponent)
 
-    // Set text content and styling
-    engine.block.replaceText(textComponent, 'Custom Title');
-    engine.block.setFloat(textComponent, 'text/fontSize', 72);
+// Set text content and styling
+engine.block.replaceText(textComponent, 'Custom Title')
+engine.block.setFloat(textComponent, 'text/fontSize', 72)
 
-    // Set text color to a brand color
-    engine.block.setTextColor(textComponent, {
-      r: 0.2,
-      g: 0.4,
-      b: 0.8,
-      a: 1.0
-    });
+// Set text color to a brand color
+engine.block.setTextColor(textComponent, {
+  r: 0.2,
+  g: 0.4,
+  b: 0.8,
+  a: 1.0
+})
 
-    // Configure dimensions - use fixed frame with clipping
-    engine.block.setWidthMode(textComponent, 'Absolute');
-    engine.block.setHeightMode(textComponent, 'Absolute');
-    engine.block.setWidth(textComponent, 400);
-    engine.block.setHeight(textComponent, 100);
-    engine.block.setBool(textComponent, 'clipped', true);
+// Configure dimensions - use fixed frame with clipping
+engine.block.setWidthMode(textComponent, 'Absolute')
+engine.block.setHeightMode(textComponent, 'Absolute')
+engine.block.setWidth(textComponent, 400)
+engine.block.setHeight(textComponent, 100)
+engine.block.setBool(textComponent, 'clipped', true)
 
-    // Position the component on the page
-    engine.block.setPositionX(textComponent, 50);
-    engine.block.setPositionY(textComponent, 50);
+// Position the component on the page
+engine.block.setPositionX(textComponent, 50)
+engine.block.setPositionY(textComponent, 50)
 
-    // Define a custom typeface
-    // With saveToArchive(), fonts are automatically bundled in the archive
-    // You can use any font - CDN URLs, bundle:// URIs, or custom fonts
-    const caveatTypeface = {
-      name: 'Caveat',
-      fonts: [
-        {
-          uri: 'https://cdn.img.ly/assets/v3/ly.img.typeface/fonts/Caveat/Caveat-Regular.ttf',
-          subFamily: 'Regular'
-        },
-        {
-          uri: 'https://cdn.img.ly/assets/v3/ly.img.typeface/fonts/Caveat/Caveat-Bold.ttf',
-          subFamily: 'Bold'
-        }
-      ]
-    };
+// Define a custom typeface
+// With saveToArchive(), fonts are automatically bundled in the archive
+// You can use any font - CDN URLs, bundle:// URIs, or custom fonts
+const caveatTypeface = {
+  name: 'Caveat',
+  fonts: [
+    {
+      uri: 'https://cdn.img.ly/assets/v3/ly.img.typeface/fonts/Caveat/Caveat-Regular.ttf',
+      subFamily: 'Regular'
+    },
+    {
+      uri: 'https://cdn.img.ly/assets/v3/ly.img.typeface/fonts/Caveat/Caveat-Bold.ttf',
+      subFamily: 'Bold'
+    }
+  ]
+}
 
-    // Set the font - saveToArchive() will include the font files in the archive
-    engine.block.setFont(
-      textComponent,
-      caveatTypeface.fonts[0].uri,
-      caveatTypeface
-    );
+// Set the font - saveToArchive() will include the font files in the archive
+engine.block.setFont(
+  textComponent,
+  caveatTypeface.fonts[0].uri,
+  caveatTypeface
+)
 ```
 
 The text block now has custom styling including font size, color, and fixed dimensions. The `clipped` property ensures text that exceeds the frame boundaries is hidden. With `saveToArchive()`, fonts are automatically bundled in the archive, so you can use any font source.
@@ -484,22 +486,22 @@ The text block now has custom styling including font size, color, and fixed dime
 We configure the text component with automatic font sizing and constraints. This ensures the component adapts gracefully when users resize it while maintaining readability.
 
 ```typescript highlight=highlight-configure-constraints
-    // Configure constraints for flexible resizing
-    // These ensure the component maintains proper proportions when resized
+// Configure constraints for flexible resizing
+// These ensure the component maintains proper proportions when resized
 
-    // Enable automatic font sizing within constraints
-    engine.block.setBool(textComponent, 'text/automaticFontSizeEnabled', true);
-    engine.block.setFloat(textComponent, 'text/minAutomaticFontSize', 24);
-    engine.block.setFloat(textComponent, 'text/maxAutomaticFontSize', 120);
+// Enable automatic font sizing within constraints
+engine.block.setBool(textComponent, 'text/automaticFontSizeEnabled', true)
+engine.block.setFloat(textComponent, 'text/minAutomaticFontSize', 24)
+engine.block.setFloat(textComponent, 'text/maxAutomaticFontSize', 120)
 
-    // Add a background to visualize the text frame
-    engine.block.setBool(textComponent, 'backgroundColor/enabled', true);
-    engine.block.setColor(textComponent, 'backgroundColor/color', {
-      r: 0.95,
-      g: 0.95,
-      b: 1.0,
-      a: 1.0
-    });
+// Add a background to visualize the text frame
+engine.block.setBool(textComponent, 'backgroundColor/enabled', true)
+engine.block.setColor(textComponent, 'backgroundColor/color', {
+  r: 0.95,
+  g: 0.95,
+  b: 1.0,
+  a: 1.0
+})
 ```
 
 The automatic font sizing scales text between 24pt and 120pt as the frame is resized.
@@ -509,14 +511,14 @@ The automatic font sizing scales text between 24pt and 120pt as the frame is res
 We serialize the text component using `saveToArchive()`. This creates a zip archive containing the `blocks.blocks` file and all referenced resources (fonts, images). The archive is self-contained and portable.
 
 ```typescript highlight=highlight-serialize-component
-    // Serialize the text component using saveToArchive()
-    // This creates a zip archive containing blocks.blocks and all resources (fonts, images)
-    const archiveBlob = await engine.block.saveToArchive([textComponent]);
-    console.log('Archive size:', archiveBlob.size, 'bytes');
+// Serialize the text component using saveToArchive()
+// This creates a zip archive containing blocks.blocks and all resources (fonts, images)
+const archiveBlob = await engine.block.saveToArchive([textComponent])
+console.log('Archive size:', archiveBlob.size, 'bytes')
 
-    // Create a Blob URL for in-memory loading
-    // In production, you would extract the archive and host the files on your server
-    const archiveUrl = URL.createObjectURL(archiveBlob);
+// Create a Blob URL for in-memory loading
+// In production, you would extract the archive and host the files on your server
+const archiveUrl = URL.createObjectURL(archiveBlob)
 ```
 
 For production, extract the archive and host the files on your server. Use `loadFromURL()` pointing to the `blocks.blocks` file. In this example, we create a Blob URL for in-memory loading to demonstrate the workflow.
@@ -529,11 +531,11 @@ For backward compatibility, you can use `saveToString()` instead of `saveToArchi
 // Legacy approach - requires external font URLs
 const serializedComponent = await engine.block.saveToString(
   [textComponent],
-  ['bundle', 'buffer', 'http', 'https']  // Allowed resource schemes
-);
+  ['bundle', 'buffer', 'http', 'https'] // Allowed resource schemes
+)
 
 // Load with loadFromString()
-const loadedBlocks = await engine.block.loadFromString(serializedComponent);
+const loadedBlocks = await engine.block.loadFromString(serializedComponent)
 ```
 
 **Limitations of saveToString():**
@@ -594,7 +596,7 @@ Thumbnails help users preview components before inserting them. In production, g
 // For this example, we use a pre-generated thumbnail to avoid
 // watermarks when running without a license key.
 // Prepend origin to make it an absolute URL (CE.SDK prepends its base URL to relative paths)
-const thumbnailUri = window.location.origin + customTitleThumbnail;
+const thumbnailUri = window.location.origin + customTitleThumbnail
 ```
 
 For this example, we use a pre-generated thumbnail imported as a static asset. In your production code, you would generate thumbnails dynamically or host them alongside your `.blocks` files.
@@ -624,11 +626,11 @@ const contentJson = {
     }
   ],
   blocks: []
-};
+}
 console.log(
   'Content.json structure:',
   JSON.stringify(contentJson, null, 2)
-);
+)
 ```
 
 In production, the `uri` and `thumbUri` fields point to your hosted files. The `mimeType` must be `"application/ubq-blocks-string"` for text components.
@@ -638,57 +640,59 @@ In production, the `uri` and `thumbUri` fields point to your hosted files. The `
 We register a custom asset source using `addLocalSource()` with a custom apply callback. The callback handles loading the block from the archive and inserting it into the scene when users click on a component.
 
 ```typescript highlight=highlight-register-asset-source
-    // Register a custom asset source with an apply callback
-    // The callback handles loading and inserting blocks when clicked
+// Register a custom asset source with an apply callback
+// The callback handles loading and inserting blocks when clicked
 
-    // Store archive URLs in a Map for lookup when applying
-    const archiveUrls = new Map<string, string>();
-    archiveUrls.set('customTitle', archiveUrl);
+// Store archive URLs in a Map for lookup when applying
+const archiveUrls = new Map<string, string>()
+archiveUrls.set('customTitle', archiveUrl)
 
-    // Create local source with custom apply callback
-    engine.asset.addLocalSource(
-      'custom.textComponents',
-      undefined, // No MIME type filter
-      async (asset) => {
-        // Get the archive URL for this asset
-        const assetArchiveUrl = archiveUrls.get(asset.id);
-        if (!assetArchiveUrl) return undefined;
+// Create local source with custom apply callback
+engine.asset.addLocalSource(
+  'custom.textComponents',
+  undefined, // No MIME type filter
+  async (asset) => {
+    // Get the archive URL for this asset
+    const assetArchiveUrl = archiveUrls.get(asset.id)
+    if (!assetArchiveUrl)
+      return undefined
 
-        // Load the block from the archive using loadFromArchiveURL()
-        const loadedBlocks = await engine.block.loadFromArchiveURL(
-          assetArchiveUrl
-        );
-        const newBlock = loadedBlocks[0];
-        if (!newBlock) return undefined;
+    // Load the block from the archive using loadFromArchiveURL()
+    const loadedBlocks = await engine.block.loadFromArchiveURL(
+      assetArchiveUrl
+    )
+    const newBlock = loadedBlocks[0]
+    if (!newBlock)
+      return undefined
 
-        // Add to the current page and center it
-        const currentPage = engine.scene.getCurrentPage();
-        if (currentPage) {
-          engine.block.appendChild(currentPage, newBlock);
-          // Center the block on the page
-          const pageWidth = engine.block.getWidth(currentPage);
-          const pageHeight = engine.block.getHeight(currentPage);
-          const blockWidth = engine.block.getWidth(newBlock);
-          const blockHeight = engine.block.getHeight(newBlock);
-          engine.block.setPositionX(newBlock, (pageWidth - blockWidth) / 2);
-          engine.block.setPositionY(newBlock, (pageHeight - blockHeight) / 2);
-        }
+    // Add to the current page and center it
+    const currentPage = engine.scene.getCurrentPage()
+    if (currentPage) {
+      engine.block.appendChild(currentPage, newBlock)
+      // Center the block on the page
+      const pageWidth = engine.block.getWidth(currentPage)
+      const pageHeight = engine.block.getHeight(currentPage)
+      const blockWidth = engine.block.getWidth(newBlock)
+      const blockHeight = engine.block.getHeight(newBlock)
+      engine.block.setPositionX(newBlock, (pageWidth - blockWidth) / 2)
+      engine.block.setPositionY(newBlock, (pageHeight - blockHeight) / 2)
+    }
 
-        engine.editor.addUndoStep();
-        return newBlock;
-      }
-    );
+    engine.editor.addUndoStep()
+    return newBlock
+  }
+)
 
-    // Add the text component asset to the source
-    engine.asset.addAssetToSource('custom.textComponents', {
-      id: 'customTitle',
-      label: { en: 'Custom Title' },
-      meta: {
-        thumbUri: thumbnailUri,
-        mimeType: 'application/ubq-blocks-string'
-      }
-    });
-    console.log('Custom text components asset source registered');
+// Add the text component asset to the source
+engine.asset.addAssetToSource('custom.textComponents', {
+  id: 'customTitle',
+  label: { en: 'Custom Title' },
+  meta: {
+    thumbUri: thumbnailUri,
+    mimeType: 'application/ubq-blocks-string'
+  }
+})
+console.log('Custom text components asset source registered')
 ```
 
 The apply callback uses `loadFromArchiveURL()` to load the block from the archive and then appends it to the current page. This pattern provides custom handling for inserting text components with their bundled resources.
@@ -698,40 +702,40 @@ The apply callback uses `loadFromArchiveURL()` to load the block from the archiv
 After registering the asset source, we configure the UI to display the text components in an accessible panel. This involves adding translations, creating a library entry, and adding it to the dock navigation.
 
 ```typescript highlight=highlight-configure-asset-library
-    // Configure the asset library to display the custom text components
-    // Add translation for the library entry label
-    cesdk.i18n.setTranslations({
-      en: { 'libraries.text-components-entry.label': 'Text Components' }
-    });
+// Configure the asset library to display the custom text components
+// Add translation for the library entry label
+cesdk.i18n.setTranslations({
+  en: { 'libraries.text-components-entry.label': 'Text Components' }
+})
 
-    // Add the text components source to the asset library
-    cesdk.ui.addAssetLibraryEntry({
-      id: 'text-components-entry',
-      sourceIds: ['custom.textComponents'],
-      previewLength: 2,
-      previewBackgroundType: 'contain',
-      gridBackgroundType: 'contain',
-      gridColumns: 2,
-      cardLabelPosition: () => 'below'
-    });
+// Add the text components source to the asset library
+cesdk.ui.addAssetLibraryEntry({
+  id: 'text-components-entry',
+  sourceIds: ['custom.textComponents'],
+  previewLength: 2,
+  previewBackgroundType: 'contain',
+  gridBackgroundType: 'contain',
+  gridColumns: 2,
+  cardLabelPosition: () => 'below'
+})
 
-    // Add text components library to the dock for easy access
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
-      ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
-      'ly.img.spacer',
-      {
-        id: 'ly.img.assetLibrary.dock',
-        key: 'text-components-dock',
-        label: 'Text Components',
-        icon: '@imgly/Type',
-        entries: ['text-components-entry']
-      }
-    ]);
+// Add text components library to the dock for easy access
+cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
+  ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
+  'ly.img.spacer',
+  {
+    id: 'ly.img.assetLibrary.dock',
+    key: 'text-components-dock',
+    label: 'Text Components',
+    icon: '@imgly/Type',
+    entries: ['text-components-entry']
+  }
+])
 
-    // Open the text components panel to showcase the result
-    cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
-      payload: { entries: ['text-components-entry'] }
-    });
+// Open the text components panel to showcase the result
+cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
+  payload: { entries: ['text-components-entry'] }
+})
 ```
 
 The `addAssetLibraryEntry()` method creates a panel that displays the components with their thumbnails. The `setComponentOrder({ in: 'ly.img.dock' }, order)` method adds a button to the dock so users can access the library. Finally, `openPanel()` opens the library to showcase the result.
@@ -741,53 +745,53 @@ The `addAssetLibraryEntry()` method creates a panel that displays the components
 We create a second component with different styling to demonstrate building a library of text components.
 
 ```typescript highlight=highlight-create-second-component
-    const promoComponent = engine.block.create('text');
-    engine.block.appendChild(page, promoComponent);
+const promoComponent = engine.block.create('text')
+engine.block.appendChild(page, promoComponent)
 
-    engine.block.replaceText(promoComponent, 'SALE');
-    engine.block.setFloat(promoComponent, 'text/fontSize', 96);
+engine.block.replaceText(promoComponent, 'SALE')
+engine.block.setFloat(promoComponent, 'text/fontSize', 96)
 
-    // Use a bold red color for the promo text
-    engine.block.setTextColor(promoComponent, {
-      r: 0.9,
-      g: 0.2,
-      b: 0.2,
-      a: 1.0
-    });
+// Use a bold red color for the promo text
+engine.block.setTextColor(promoComponent, {
+  r: 0.9,
+  g: 0.2,
+  b: 0.2,
+  a: 1.0
+})
 
-    // Set a bold font for the promo component
-    const robotoTypeface = {
-      name: 'Roboto',
-      fonts: [
-        {
-          uri: 'https://cdn.img.ly/assets/v3/ly.img.typeface/fonts/Roboto/Roboto-Bold.ttf',
-          subFamily: 'Bold'
-        }
-      ]
-    };
-    engine.block.setFont(
-      promoComponent,
-      robotoTypeface.fonts[0].uri,
-      robotoTypeface
-    );
+// Set a bold font for the promo component
+const robotoTypeface = {
+  name: 'Roboto',
+  fonts: [
+    {
+      uri: 'https://cdn.img.ly/assets/v3/ly.img.typeface/fonts/Roboto/Roboto-Bold.ttf',
+      subFamily: 'Bold'
+    }
+  ]
+}
+engine.block.setFont(
+  promoComponent,
+  robotoTypeface.fonts[0].uri,
+  robotoTypeface
+)
 
-    engine.block.setWidthMode(promoComponent, 'Absolute');
-    engine.block.setHeightMode(promoComponent, 'Absolute');
-    engine.block.setWidth(promoComponent, 300);
-    engine.block.setHeight(promoComponent, 120);
-    engine.block.setBool(promoComponent, 'clipped', true);
+engine.block.setWidthMode(promoComponent, 'Absolute')
+engine.block.setHeightMode(promoComponent, 'Absolute')
+engine.block.setWidth(promoComponent, 300)
+engine.block.setHeight(promoComponent, 120)
+engine.block.setBool(promoComponent, 'clipped', true)
 
-    // Add background
-    engine.block.setBool(promoComponent, 'backgroundColor/enabled', true);
-    engine.block.setColor(promoComponent, 'backgroundColor/color', {
-      r: 1.0,
-      g: 0.95,
-      b: 0.9,
-      a: 1.0
-    });
+// Add background
+engine.block.setBool(promoComponent, 'backgroundColor/enabled', true)
+engine.block.setColor(promoComponent, 'backgroundColor/color', {
+  r: 1.0,
+  g: 0.95,
+  b: 0.9,
+  a: 1.0
+})
 
-    engine.block.setPositionX(promoComponent, 50);
-    engine.block.setPositionY(promoComponent, 350);
+engine.block.setPositionX(promoComponent, 50)
+engine.block.setPositionY(promoComponent, 350)
 ```
 
 Each component can have unique styling, dimensions, and behavior. Build a library by creating multiple components and adding them to your content.json.

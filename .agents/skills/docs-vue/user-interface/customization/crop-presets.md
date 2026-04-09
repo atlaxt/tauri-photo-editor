@@ -23,7 +23,7 @@ Customize crop presets to provide users with aspect ratio options tailored to yo
 Crop presets define the aspect ratios and dimensions users can select when cropping images or pages. CE.SDK includes a default set of common ratios (1:1, 16:9, 4:3, etc.), and you can replace or extend these with custom presets through asset sources.
 
 ```typescript file=@cesdk_web_examples/guides-crop-presets-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Custom Crop Presets
@@ -52,44 +52,44 @@ import packageJson from './package.json';
  * - Configuring the UI to use custom crop presets
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: ['ly.img.image.*']
       })
-    );
+    )
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Add a custom crop preset asset source.
-    engine.asset.addLocalSource('my-custom-crop-presets');
+    engine.asset.addLocalSource('my-custom-crop-presets')
 
     engine.asset.addAssetToSource(
       'my-custom-crop-presets',
@@ -109,7 +109,7 @@ class Example implements EditorPlugin {
           }
         }
       }
-    );
+    )
 
     engine.asset.addAssetToSource(
       'my-custom-crop-presets',
@@ -131,7 +131,7 @@ class Example implements EditorPlugin {
           }
         }
       }
-    );
+    )
 
     engine.asset.addAssetToSource(
       'my-custom-crop-presets',
@@ -154,7 +154,7 @@ class Example implements EditorPlugin {
           }
         }
       }
-    );
+    )
 
     // Update crop presets library entry
     cesdk.ui.updateAssetLibraryEntry('ly.img.cropPresets', {
@@ -162,54 +162,55 @@ class Example implements EditorPlugin {
         // 'ly.img.crop.presets',
         'my-custom-crop-presets'
       ]
-    });
+    })
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Add an image and enable crop mode to show the presets
-    const page = engine.scene.getCurrentPage();
-    if (page == null) return;
+    const page = engine.scene.getCurrentPage()
+    if (page == null)
+      return
 
     // Get page dimensions for relative sizing
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Create an image block at ~50% of page size
-    const imageBlock = engine.block.create('graphic');
-    engine.block.appendChild(page, imageBlock);
+    const imageBlock = engine.block.create('graphic')
+    engine.block.appendChild(page, imageBlock)
 
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(imageBlock, rectShape)
 
-    const imageWidth = pageWidth * 0.5;
-    const imageHeight = pageHeight * 0.5;
-    engine.block.setWidth(imageBlock, imageWidth);
-    engine.block.setHeight(imageBlock, imageHeight);
+    const imageWidth = pageWidth * 0.5
+    const imageHeight = pageHeight * 0.5
+    engine.block.setWidth(imageBlock, imageWidth)
+    engine.block.setHeight(imageBlock, imageHeight)
 
     // Center the image on the page
-    engine.block.setPositionX(imageBlock, (pageWidth - imageWidth) / 2);
-    engine.block.setPositionY(imageBlock, (pageHeight - imageHeight) / 2);
+    engine.block.setPositionX(imageBlock, (pageWidth - imageWidth) / 2)
+    engine.block.setPositionY(imageBlock, (pageHeight - imageHeight) / 2)
 
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
+    )
+    engine.block.setFill(imageBlock, imageFill)
 
     // Select the image and enter crop mode
-    engine.block.select(imageBlock);
-    engine.editor.setEditMode('Crop');
+    engine.block.select(imageBlock)
+    engine.editor.setEditMode('Crop')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use the built-in crop UI, understand default presets, create custom crop preset sources, and configure which presets appear in the interface.
@@ -221,9 +222,9 @@ The crop interface displays preset options when users enter crop mode. Presets a
 To enable the default crop presets, we load them using the `CropPresetsAssetSource` plugin:
 
 ```javascript
-import { CropPresetsAssetSource } from '@cesdk/cesdk-js/plugins';
+import { CropPresetsAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await instance.addPlugin(new CropPresetsAssetSource());
+await instance.addPlugin(new CropPresetsAssetSource())
 ```
 
 This loads the `ly.img.crop.presets` asset source, which contains common ratios including free, 1:1, 9:16, 16:9, 4:3, and others.
@@ -235,7 +236,7 @@ We can define custom crop presets by [creating a local asset source](./import-me
 First, we create a local asset source to hold our custom presets:
 
 ```javascript
-instance.engine.asset.addLocalSource('my-custom-crop-presets');
+instance.engine.asset.addLocalSource('my-custom-crop-presets')
 ```
 
 ### Free Aspect Ratio
@@ -329,7 +330,7 @@ To show only custom presets, we set `sourceIds` to our custom source:
 ```javascript
 instance.ui.updateAssetLibraryEntry('ly.img.cropPresets', {
   sourceIds: ['my-custom-crop-presets']
-});
+})
 ```
 
 ### Add Presets Alongside Defaults
@@ -339,7 +340,7 @@ To add custom presets while keeping the defaults, we use a callback to append ou
 ```javascript
 instance.ui.updateAssetLibraryEntry('ly.img.cropPresets', {
   sourceIds: ({ currentIds }) => [...currentIds, 'my-custom-crop-presets']
-});
+})
 ```
 
 ## Localization
@@ -360,8 +361,8 @@ label: {
 Verify the asset source exists by checking registered sources:
 
 ```javascript
-const sources = await instance.engine.asset.findAllSources();
-console.log(sources); // Should include your custom source ID
+const sources = await instance.engine.asset.findAllSources()
+console.log(sources) // Should include your custom source ID
 ```
 
 ### Invalid Preset Type

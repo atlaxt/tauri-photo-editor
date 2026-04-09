@@ -23,7 +23,7 @@ The CE.SDK allows you to convert JPEG, PNG, WebP, BMP and SVG images into PDFs d
 The CE.SDK supports converting single or multiple images to PDF while allowing transformations such as cropping, rotating, and adding text before exporting. You can also customize PDF output settings, including resolution, compatibility and underlayer.
 
 ```typescript file=@cesdk_web_examples/guides-conversion-to-pdf-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,9 +38,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: To PDF Guide
@@ -51,18 +51,19 @@ import packageJson from './package.json';
  * - Adding a custom PDF export button to the navigation bar
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
-    if (!cesdk) throw new Error('CE.SDK instance is required');
+    if (!cesdk)
+      throw new Error('CE.SDK instance is required')
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -73,24 +74,24 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load a template scene
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage()!;
-    await engine.scene.zoomToBlock(page);
+    )
+    const page = engine.scene.getCurrentPage()!
+    await engine.scene.zoomToBlock(page)
 
     // Add PDF export buttons to the navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -103,18 +104,18 @@ class Example implements EditorPlugin {
           icon: '@imgly/Download',
           onClick: async () => {
             // Export scene as PDF (includes all pages)
-            const scene = engine.scene.get()!;
+            const scene = engine.scene.get()!
             const pdfBlob = await engine.block.export(scene, {
               mimeType: 'application/pdf'
-            });
+            })
 
             // Download using CE.SDK utils
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
+            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
 
             cesdk.ui.showNotification({
               message: 'PDF exported successfully',
               type: 'success'
-            });
+            })
           }
         },
         {
@@ -123,20 +124,20 @@ class Example implements EditorPlugin {
           label: 'High Compat',
           icon: '@imgly/Download',
           onClick: async () => {
-            const scene = engine.scene.get()!;
+            const scene = engine.scene.get()!
 
             // Enable high compatibility mode for consistent rendering across PDF viewers
             // This rasterizes complex elements like gradients with transparency at scene DPI
             const pdfBlob = await engine.block.export(scene, {
               mimeType: 'application/pdf',
               exportPdfWithHighCompatibility: true
-            });
+            })
 
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
+            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
             cesdk.ui.showNotification({
               message: 'High compatibility PDF exported',
               type: 'success'
-            });
+            })
           }
         },
         {
@@ -145,11 +146,11 @@ class Example implements EditorPlugin {
           label: 'Underlayer',
           icon: '@imgly/Download',
           onClick: async () => {
-            const scene = engine.scene.get()!;
+            const scene = engine.scene.get()!
 
             // Define the underlayer spot color before export
             // RGB values (0.8, 0.8, 0.8) provide a preview representation
-            engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8);
+            engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8)
 
             // Export with underlayer for special media printing
             const pdfBlob = await engine.block.export(scene, {
@@ -159,13 +160,13 @@ class Example implements EditorPlugin {
               underlayerSpotColorName: 'RDG_WHITE',
               // Negative offset shrinks underlayer to prevent visible edges
               underlayerOffset: -2.0
-            });
+            })
 
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
+            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
             cesdk.ui.showNotification({
               message: 'PDF with underlayer exported',
               type: 'success'
-            });
+            })
           }
         },
         {
@@ -174,29 +175,29 @@ class Example implements EditorPlugin {
           label: 'Custom DPI',
           icon: '@imgly/Download',
           onClick: async () => {
-            const scene = engine.scene.get()!;
+            const scene = engine.scene.get()!
 
             // Adjust the scene DPI for print-ready output
             // Higher DPI = better quality but larger file size
-            engine.block.setFloat(scene, 'scene/dpi', 150);
+            engine.block.setFloat(scene, 'scene/dpi', 150)
 
             const pdfBlob = await engine.block.export(scene, {
               mimeType: 'application/pdf'
-            });
+            })
 
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
+            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
             cesdk.ui.showNotification({
               message: 'PDF exported at 150 DPI',
               type: 'success'
-            });
+            })
           }
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting designs as PDF documents, configuring output settings like DPI and compatibility, adding underlayers for specialty printing, and integrating PDF export into the user interface.
@@ -211,20 +212,20 @@ The example below loads an image, applies transformations, and exports it as a P
 
 ```ts
 // Prepare an image URL
-const imageURL = 'https://img.ly/static/ubq_samples/sample_4.jpg';
+const imageURL = 'https://img.ly/static/ubq_samples/sample_4.jpg'
 
 // Create a new scene by loading the image immediately
-await cesdk.createFromImage(imageURL);
+await cesdk.createFromImage(imageURL)
 
 // Find the automatically added graphic block with an image fill
-const block = engine.block.findByType('graphic')[0];
+const block = engine.block.findByType('graphic')[0]
 
 // Apply crop with a scale ratio of 2.0
-engine.block.setCropScaleRatio(block, 2.0);
+engine.block.setCropScaleRatio(block, 2.0)
 
 // Export as PDF Blob
-const page = engine.scene.getCurrentPage()!;
-const blob = await engine.block.export(page, { mimeType: 'application/pdf' });
+const page = engine.scene.getCurrentPage()!
+const blob = await engine.block.export(page, { mimeType: 'application/pdf' })
 // You can now save it or display it in your application
 ```
 
@@ -238,25 +239,25 @@ const images = [
   'https://img.ly/static/ubq_samples/sample_1.jpg',
   'https://img.ly/static/ubq_samples/sample_2.jpg',
   'https://img.ly/static/ubq_samples/sample_3.jpg',
-];
+]
 
 // Create an empty scene with a 'VerticalStack' layout
-const scene = engine.scene.create('VerticalStack');
-const [stack] = engine.block.findByType('stack');
+const scene = engine.scene.create('VerticalStack')
+const [stack] = engine.block.findByType('stack')
 
 // Load all images as pages
 for (const image of images) {
   // Append the new page to the stack
-  const page = engine.block.create('page');
-  engine.block.appendChild(stack, page);
+  const page = engine.block.create('page')
+  engine.block.appendChild(stack, page)
   // Set the image as the fill of the page
-  const imageFill = engine.block.createFill('image');
-  engine.block.setString(imageFill, 'fill/image/imageFileURI', image);
-  engine.block.setFill(page, imageFill);
+  const imageFill = engine.block.createFill('image')
+  engine.block.setString(imageFill, 'fill/image/imageFileURI', image)
+  engine.block.setFill(page, imageFill)
 }
 
 // Export all images as a single PDF blob
-const blob = await engine.block.export(scene, { mimeType: 'application/pdf' });
+const blob = await engine.block.export(scene, { mimeType: 'application/pdf' })
 // You can now save it or display it in your application
 ```
 
@@ -266,10 +267,10 @@ Use `engine.block.export()` to export a design block as a PDF. The method accept
 
 ```typescript highlight=highlight-export-pdf
 // Export scene as PDF (includes all pages)
-const scene = engine.scene.get()!;
+const scene = engine.scene.get()!
 const pdfBlob = await engine.block.export(scene, {
   mimeType: 'application/pdf'
-});
+})
 ```
 
 Export returns a Blob containing the PDF data. You can export a single page for a single-page PDF, or export the entire scene to include all pages in a multi-page PDF document.
@@ -280,7 +281,7 @@ Use `cesdk.utils.downloadFile()` to save the exported PDF to the user's device.
 
 ```typescript highlight=highlight-download
 // Download using CE.SDK utils
-await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
+await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
 ```
 
 The utility handles creating a download link and triggering the browser's save dialog with the appropriate file extension.
@@ -294,107 +295,107 @@ The CE.SDK allows you to enable PDF conversion directly from the user interface.
 Integrate PDF export into the CE.SDK interface by adding a custom button to the navigation bar.
 
 ```typescript highlight=highlight-export-button
-    // Add PDF export buttons to the navigation bar
-    cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
-      id: 'ly.img.actions.navigationBar',
-      children: [
-        {
-          id: 'ly.img.action.navigationBar',
-          key: 'export-pdf',
-          label: 'PDF',
-          icon: '@imgly/Download',
-          onClick: async () => {
-            // Export scene as PDF (includes all pages)
-            const scene = engine.scene.get()!;
-            const pdfBlob = await engine.block.export(scene, {
-              mimeType: 'application/pdf'
-            });
+// Add PDF export buttons to the navigation bar
+cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
+  id: 'ly.img.actions.navigationBar',
+  children: [
+    {
+      id: 'ly.img.action.navigationBar',
+      key: 'export-pdf',
+      label: 'PDF',
+      icon: '@imgly/Download',
+      onClick: async () => {
+        // Export scene as PDF (includes all pages)
+        const scene = engine.scene.get()!
+        const pdfBlob = await engine.block.export(scene, {
+          mimeType: 'application/pdf'
+        })
 
-            // Download using CE.SDK utils
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
+        // Download using CE.SDK utils
+        await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
 
-            cesdk.ui.showNotification({
-              message: 'PDF exported successfully',
-              type: 'success'
-            });
-          }
-        },
-        {
-          id: 'ly.img.action.navigationBar',
-          key: 'export-high-compat',
-          label: 'High Compat',
-          icon: '@imgly/Download',
-          onClick: async () => {
-            const scene = engine.scene.get()!;
+        cesdk.ui.showNotification({
+          message: 'PDF exported successfully',
+          type: 'success'
+        })
+      }
+    },
+    {
+      id: 'ly.img.action.navigationBar',
+      key: 'export-high-compat',
+      label: 'High Compat',
+      icon: '@imgly/Download',
+      onClick: async () => {
+        const scene = engine.scene.get()!
 
-            // Enable high compatibility mode for consistent rendering across PDF viewers
-            // This rasterizes complex elements like gradients with transparency at scene DPI
-            const pdfBlob = await engine.block.export(scene, {
-              mimeType: 'application/pdf',
-              exportPdfWithHighCompatibility: true
-            });
+        // Enable high compatibility mode for consistent rendering across PDF viewers
+        // This rasterizes complex elements like gradients with transparency at scene DPI
+        const pdfBlob = await engine.block.export(scene, {
+          mimeType: 'application/pdf',
+          exportPdfWithHighCompatibility: true
+        })
 
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
-            cesdk.ui.showNotification({
-              message: 'High compatibility PDF exported',
-              type: 'success'
-            });
-          }
-        },
-        {
-          id: 'ly.img.action.navigationBar',
-          key: 'export-underlayer',
-          label: 'Underlayer',
-          icon: '@imgly/Download',
-          onClick: async () => {
-            const scene = engine.scene.get()!;
+        await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
+        cesdk.ui.showNotification({
+          message: 'High compatibility PDF exported',
+          type: 'success'
+        })
+      }
+    },
+    {
+      id: 'ly.img.action.navigationBar',
+      key: 'export-underlayer',
+      label: 'Underlayer',
+      icon: '@imgly/Download',
+      onClick: async () => {
+        const scene = engine.scene.get()!
 
-            // Define the underlayer spot color before export
-            // RGB values (0.8, 0.8, 0.8) provide a preview representation
-            engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8);
+        // Define the underlayer spot color before export
+        // RGB values (0.8, 0.8, 0.8) provide a preview representation
+        engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8)
 
-            // Export with underlayer for special media printing
-            const pdfBlob = await engine.block.export(scene, {
-              mimeType: 'application/pdf',
-              exportPdfWithHighCompatibility: true,
-              exportPdfWithUnderlayer: true,
-              underlayerSpotColorName: 'RDG_WHITE',
-              // Negative offset shrinks underlayer to prevent visible edges
-              underlayerOffset: -2.0
-            });
+        // Export with underlayer for special media printing
+        const pdfBlob = await engine.block.export(scene, {
+          mimeType: 'application/pdf',
+          exportPdfWithHighCompatibility: true,
+          exportPdfWithUnderlayer: true,
+          underlayerSpotColorName: 'RDG_WHITE',
+          // Negative offset shrinks underlayer to prevent visible edges
+          underlayerOffset: -2.0
+        })
 
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
-            cesdk.ui.showNotification({
-              message: 'PDF with underlayer exported',
-              type: 'success'
-            });
-          }
-        },
-        {
-          id: 'ly.img.action.navigationBar',
-          key: 'export-dpi',
-          label: 'Custom DPI',
-          icon: '@imgly/Download',
-          onClick: async () => {
-            const scene = engine.scene.get()!;
+        await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
+        cesdk.ui.showNotification({
+          message: 'PDF with underlayer exported',
+          type: 'success'
+        })
+      }
+    },
+    {
+      id: 'ly.img.action.navigationBar',
+      key: 'export-dpi',
+      label: 'Custom DPI',
+      icon: '@imgly/Download',
+      onClick: async () => {
+        const scene = engine.scene.get()!
 
-            // Adjust the scene DPI for print-ready output
-            // Higher DPI = better quality but larger file size
-            engine.block.setFloat(scene, 'scene/dpi', 150);
+        // Adjust the scene DPI for print-ready output
+        // Higher DPI = better quality but larger file size
+        engine.block.setFloat(scene, 'scene/dpi', 150)
 
-            const pdfBlob = await engine.block.export(scene, {
-              mimeType: 'application/pdf'
-            });
+        const pdfBlob = await engine.block.export(scene, {
+          mimeType: 'application/pdf'
+        })
 
-            await cesdk.utils.downloadFile(pdfBlob, 'application/pdf');
-            cesdk.ui.showNotification({
-              message: 'PDF exported at 150 DPI',
-              type: 'success'
-            });
-          }
-        }
-      ]
-    });
+        await cesdk.utils.downloadFile(pdfBlob, 'application/pdf')
+        cesdk.ui.showNotification({
+          message: 'PDF exported at 150 DPI',
+          type: 'success'
+        })
+      }
+    }
+  ]
+})
 ```
 
 The button triggers the export workflow when clicked, providing users with a convenient way to download their designs as PDF documents.
@@ -414,27 +415,27 @@ cesdk.ui.registerComponent(
       color: 'accent',
       onClick: async () => {
         // Export the current scene as a PDF blob
-        const scene = engine.scene.get()!;
+        const scene = engine.scene.get()!
         const blob = await engine.block.export(scene, {
           mimeType: 'application/pdf',
-        });
+        })
         // Trigger download of the PDF blob
-        const element = document.createElement('a');
-        element.setAttribute('href', window.URL.createObjectURL(blob));
-        element.setAttribute('download', 'converted.pdf');
-        element.style.display = 'none';
-        element.click();
-        element.remove();
+        const element = document.createElement('a')
+        element.setAttribute('href', window.URL.createObjectURL(blob))
+        element.setAttribute('download', 'converted.pdf')
+        element.style.display = 'none'
+        element.click()
+        element.remove()
       },
-    });
+    })
   },
-);
+)
 
 // Add the custom button at the end of the navigation bar
 cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.navigation.bar' }),
   'convert.nav',
-]);
+])
 ```
 
 For more details on customizing the UI, see the [User Interface Configuration Guide](./user-interface/customization.md).
@@ -457,7 +458,7 @@ Control the output resolution by setting the scene's DPI property before export.
 ```typescript highlight=highlight-dpi
 // Adjust the scene DPI for print-ready output
 // Higher DPI = better quality but larger file size
-engine.block.setFloat(scene, 'scene/dpi', 150);
+engine.block.setFloat(scene, 'scene/dpi', 150)
 ```
 
 Higher DPI values produce better quality output but result in larger file sizes. The default is 300 DPI, which is suitable for most print applications.
@@ -472,7 +473,7 @@ Enable high compatibility mode for consistent rendering across different PDF vie
 const pdfBlob = await engine.block.export(scene, {
   mimeType: 'application/pdf',
   exportPdfWithHighCompatibility: true
-});
+})
 ```
 
 When enabled, complex elements like gradients with transparency are rasterized at the scene's DPI setting instead of being embedded as native PDF objects. This ensures consistent appearance in viewers like Safari and macOS Preview but increases file size.
@@ -496,14 +497,14 @@ The `exportPdfWithHighCompatibility` flag significantly impacts PDF export perfo
 - May have rendering issues in Safari/macOS Preview with gradients that use transparency
 
 ```typescript
-const scene = engine.scene.get()!;
+const scene = engine.scene.get()!
 
 // For maximum performance (test with your print workflow first)
-engine.block.setFloat(scene, 'scene/dpi', 150); // Reduce from default 300
+engine.block.setFloat(scene, 'scene/dpi', 150) // Reduce from default 300
 const blob = await engine.block.export(scene, {
   mimeType: 'application/pdf',
   exportPdfWithHighCompatibility: false, // Much faster
-});
+})
 ```
 
 **Before using `exportPdfWithHighCompatibility: false` in production:**
@@ -533,7 +534,7 @@ Add an underlayer for printing on non-white or transparent media like fabric or 
 ```typescript highlight=highlight-spot-color
 // Define the underlayer spot color before export
 // RGB values (0.8, 0.8, 0.8) provide a preview representation
-engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8);
+engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8)
 ```
 
 First define the spot color that will be used for the underlayer. The RGB values provide a preview representation in the editor.
@@ -547,7 +548,7 @@ const pdfBlob = await engine.block.export(scene, {
   underlayerSpotColorName: 'RDG_WHITE',
   // Negative offset shrinks underlayer to prevent visible edges
   underlayerOffset: -2.0
-});
+})
 ```
 
 The underlayer creates a solid background behind your design content. The negative offset shrinks the underlayer slightly to prevent visible edges around the printed output.
@@ -557,13 +558,13 @@ The underlayer creates a solid background behind your design content. The negati
 You can configure all PDF settings together when exporting.
 
 ```ts
-const scene = engine.scene.get()!;
+const scene = engine.scene.get()!
 
 // Adjust the DPI to 72
-engine.block.setFloat(scene, 'scene/dpi', 72);
+engine.block.setFloat(scene, 'scene/dpi', 72)
 
 // Set spot color to be used as underlayer
-engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8);
+engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8)
 
 const blob = await engine.block.export(scene, {
   mimeType: 'application/pdf',
@@ -576,7 +577,7 @@ const blob = await engine.block.export(scene, {
   exportPdfWithUnderlayer: true,
   underlayerSpotColorName: 'RDG_WHITE',
   underlayerOffset: -2.0,
-});
+})
 ```
 
 ## Troubleshooting

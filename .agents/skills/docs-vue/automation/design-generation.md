@@ -43,9 +43,9 @@ Initialize the CE.SDK and load your prepared template:
 
 ```ts example=basic-scene marker=cesdk-init-after
 // Load a template from your server or a CDN
-const sceneUrl =
-  'https://cdn.img.ly/assets/demo/v4/ly.img.template/templates/cesdk_postcard_2.scene';
-await engine.scene.loadFromURL(sceneUrl);
+const sceneUrl
+  = 'https://cdn.img.ly/assets/demo/v4/ly.img.template/templates/cesdk_postcard_2.scene'
+await engine.scene.loadFromURL(sceneUrl)
 ```
 
 ### 3. Provide Data to Populate the Template
@@ -61,13 +61,13 @@ const data = {
     address: '123 Main St.',
     city: 'Anytown',
   },
-};
+}
 // Option 2: Fetch from an API
 // const data = await fetch('https://api.example.com/design-data').then(res => res.json());
-engine.variable.setString('first_name', data.textVariables.first_name);
-engine.variable.setString('last_name', data.textVariables.last_name);
-engine.variable.setString('address', data.textVariables.address);
-engine.variable.setString('city', data.textVariables.city);
+engine.variable.setString('first_name', data.textVariables.first_name)
+engine.variable.setString('last_name', data.textVariables.last_name)
+engine.variable.setString('address', data.textVariables.address)
+engine.variable.setString('city', data.textVariables.city)
 ```
 
 ### 4. Export the Final Design
@@ -77,7 +77,7 @@ Once the template is populated, export the final design in your preferred format
 ```ts example=basic-scene marker=cesdk-init-after
 const output = await engine.block.export(engine.scene.get(), {
   mimeType: 'application/pdf',
-});
+})
 // Success: 'output' contains your generated design as a PDF Blob
 // You can now save it or display it in your application
 ```

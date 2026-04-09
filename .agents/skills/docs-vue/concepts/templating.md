@@ -23,7 +23,7 @@ Templates transform static designs into dynamic, data-driven content. They combi
 A template is a regular CE.SDK scene that contains **variable tokens** in text and **placeholder blocks** for media. When you load a template, you can populate the variables with data and swap placeholder content—producing personalized designs without modifying the underlying layout.
 
 ```typescript file=@cesdk_web_examples/guides-concepts-templating-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Templating Concepts
@@ -52,54 +52,53 @@ import packageJson from './package.json';
  * - Discovering placeholders
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load a postcard template from URL
     // Templates are scenes containing variable tokens and placeholder blocks
-    const templateUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
-    await engine.scene.loadFromURL(templateUrl);
+    const templateUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
+    await engine.scene.loadFromURL(templateUrl)
 
     // Zoom to show the full page in the viewport
-    const page = engine.scene.getCurrentPage();
+    const page = engine.scene.getCurrentPage()
     if (page) {
-      await engine.scene.zoomToBlock(page, { padding: 40 });
+      await engine.scene.zoomToBlock(page, { padding: 40 })
     }
 
     // Discover what variables this template expects
     // Variables are named slots that can be populated with data
-    const variableNames = engine.variable.findAll();
-    // eslint-disable-next-line no-console
-    console.log('Template variables:', variableNames);
+    const variableNames = engine.variable.findAll()
+
+    console.log('Template variables:', variableNames)
 
     // Set variable values to personalize the template
     // These values replace {{variableName}} tokens in text blocks
-    engine.variable.setString('Name', 'Jane');
-    engine.variable.setString('Greeting', 'Wish you were here!');
-    // eslint-disable-next-line no-console
-    console.log('Variables set successfully.');
+    engine.variable.setString('Name', 'Jane')
+    engine.variable.setString('Greeting', 'Wish you were here!')
+
+    console.log('Variables set successfully.')
 
     // Discover placeholder blocks in the template
     // Placeholders mark content slots for user or automation replacement
-    const placeholders = engine.block.findAllPlaceholders();
-    // eslint-disable-next-line no-console
-    console.log('Template placeholders:', placeholders.length);
+    const placeholders = engine.block.findAllPlaceholders()
 
-    // eslint-disable-next-line no-console
-    console.log('Templating guide completed successfully.');
+    console.log('Template placeholders:', placeholders.length)
+
+    console.log('Templating guide completed successfully.')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide explains the core concepts. For implementation details, see the guides linked in each section.
@@ -123,10 +122,10 @@ Variables enable dynamic text without modifying the design structure. Text block
 ```typescript highlight-set-variables
 // Set variable values to personalize the template
 // These values replace {{variableName}} tokens in text blocks
-engine.variable.setString('Name', 'Jane');
-engine.variable.setString('Greeting', 'Wish you were here!');
-// eslint-disable-next-line no-console
-console.log('Variables set successfully.');
+engine.variable.setString('Name', 'Jane')
+engine.variable.setString('Greeting', 'Wish you were here!')
+
+console.log('Variables set successfully.')
 ```
 
 **How variables work:**
@@ -178,17 +177,17 @@ CE.SDK provides two approaches for working with templates:
 **Load a template** with `engine.scene.loadFromURL()` to replace the current scene entirely, including page dimensions:
 
 ```typescript highlight-load-template
-    // Load a postcard template from URL
-    // Templates are scenes containing variable tokens and placeholder blocks
-    const templateUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
-    await engine.scene.loadFromURL(templateUrl);
+// Load a postcard template from URL
+// Templates are scenes containing variable tokens and placeholder blocks
+const templateUrl
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
+await engine.scene.loadFromURL(templateUrl)
 
-    // Zoom to show the full page in the viewport
-    const page = engine.scene.getCurrentPage();
-    if (page) {
-      await engine.scene.zoomToBlock(page, { padding: 40 });
-    }
+// Zoom to show the full page in the viewport
+const page = engine.scene.getCurrentPage()
+if (page) {
+  await engine.scene.zoomToBlock(page, { padding: 40 })
+}
 ```
 
 **Apply a template** with `engine.scene.applyTemplateFromURL()` to merge template content into an existing scene while preserving current page dimensions.

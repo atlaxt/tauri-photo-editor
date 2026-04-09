@@ -23,7 +23,7 @@ CE.SDK lets you load complete design templates from scene files to start project
 Scene files are portable design templates that preserve the entire design structure including blocks, assets, styles, and layout.
 
 ```typescript file=@cesdk_web_examples/guides-create-templates-import-from-scene-file-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,9 +38,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Import Templates from Scene Files
@@ -52,20 +52,20 @@ import packageJson from './package.json';
  * - Understanding the difference between loading and applying templates
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -76,17 +76,17 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Example: Load Scene from Archive URL =====
     // This is the recommended approach for loading complete templates
@@ -96,7 +96,7 @@ class Example implements EditorPlugin {
     // This loads both the scene structure and all embedded assets
     await engine.scene.loadFromArchiveURL(
       'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip'
-    );
+    )
 
     // Alternative: Load scene from URL (.scene file)
     // This loads only the scene structure - assets must be accessible via URLs
@@ -119,32 +119,31 @@ class Example implements EditorPlugin {
     // );
 
     // Get the loaded scene
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (scene) {
-      // eslint-disable-next-line no-console
-      console.log('Scene loaded successfully:', scene);
+      console.log('Scene loaded successfully:', scene)
 
       // Get information about the loaded scene
-      const pages = engine.scene.getPages();
-      // eslint-disable-next-line no-console
-      console.log(`Scene has ${pages.length} page(s)`);
+      const pages = engine.scene.getPages()
+
+      console.log(`Scene has ${pages.length} page(s)`)
 
       // Get design unit
-      const designUnit = engine.scene.getDesignUnit();
-      // eslint-disable-next-line no-console
-      console.log('Design unit:', designUnit);
+      const designUnit = engine.scene.getDesignUnit()
+
+      console.log('Design unit:', designUnit)
     }
 
     // Zoom to fit the loaded content
     if (scene) {
       await engine.scene.zoomToBlock(scene, {
         padding: 40
-      });
+      })
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers loading scenes from archives, loading from URLs, applying templates while preserving dimensions, and understanding scene file formats.
@@ -179,7 +178,7 @@ Archive files are self-contained packages that bundle the scene structure with a
 The most common way to load templates is from archive URLs. This method loads both the scene structure and all embedded assets:
 
 ```typescript file=@cesdk_web_examples/guides-create-templates-import-from-scene-file-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -194,9 +193,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Import Templates from Scene Files
@@ -208,20 +207,20 @@ import packageJson from './package.json';
  * - Understanding the difference between loading and applying templates
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -232,17 +231,17 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Example: Load Scene from Archive URL =====
     // This is the recommended approach for loading complete templates
@@ -252,7 +251,7 @@ class Example implements EditorPlugin {
     // This loads both the scene structure and all embedded assets
     await engine.scene.loadFromArchiveURL(
       'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip'
-    );
+    )
 
     // Alternative: Load scene from URL (.scene file)
     // This loads only the scene structure - assets must be accessible via URLs
@@ -275,32 +274,31 @@ class Example implements EditorPlugin {
     // );
 
     // Get the loaded scene
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (scene) {
-      // eslint-disable-next-line no-console
-      console.log('Scene loaded successfully:', scene);
+      console.log('Scene loaded successfully:', scene)
 
       // Get information about the loaded scene
-      const pages = engine.scene.getPages();
-      // eslint-disable-next-line no-console
-      console.log(`Scene has ${pages.length} page(s)`);
+      const pages = engine.scene.getPages()
+
+      console.log(`Scene has ${pages.length} page(s)`)
 
       // Get design unit
-      const designUnit = engine.scene.getDesignUnit();
-      // eslint-disable-next-line no-console
-      console.log('Design unit:', designUnit);
+      const designUnit = engine.scene.getDesignUnit()
+
+      console.log('Design unit:', designUnit)
     }
 
     // Zoom to fit the loaded content
     if (scene) {
       await engine.scene.zoomToBlock(scene, {
         padding: 40
-      });
+      })
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ```typescript highlight-load-from-archive
@@ -308,7 +306,7 @@ export default Example;
 // This loads both the scene structure and all embedded assets
 await engine.scene.loadFromArchiveURL(
   'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip'
-);
+)
 ```
 
 When you load from an archive:
@@ -375,9 +373,10 @@ Template URLs might be unreachable:
 
 ```typescript
 try {
-  await engine.scene.loadFromArchiveURL(templateUrl);
-} catch (error) {
-  console.error('Failed to load template:', error);
+  await engine.scene.loadFromArchiveURL(templateUrl)
+}
+catch (error) {
+  console.error('Failed to load template:', error)
   // Show error message to user
   // Fall back to default template or empty scene
 }
@@ -389,10 +388,11 @@ The file might not be a valid scene:
 
 ```typescript
 try {
-  await engine.scene.loadFromURL(sceneUrl);
-} catch (error) {
+  await engine.scene.loadFromURL(sceneUrl)
+}
+catch (error) {
   if (error.message.includes('parse')) {
-    console.error('Invalid scene file format');
+    console.error('Invalid scene file format')
   }
 }
 ```

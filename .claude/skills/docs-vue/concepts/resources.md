@@ -24,7 +24,7 @@ reference via URIs in CE.SDK.
 Resources are external media files that blocks reference through URI properties like `fill/image/imageFileURI` or `fill/video/fileURI`. CE.SDK loads resources automatically when needed, but you can preload them for better performance. When working with temporary data like buffers or blobs, you need to persist them before saving. If resource URLs change (such as during CDN migration), you can update the mappings without modifying scene data.
 
 ```typescript file=@cesdk_web_examples/guides-concepts-resources-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Resources Guide
@@ -59,27 +59,27 @@ import packageJson from './package.json';
  * - Detecting MIME types
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -89,9 +89,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -105,141 +105,141 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the current scene and page
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (scene === null) {
-      throw new Error('No scene available');
+      throw new Error('No scene available')
     }
 
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
 
     // Layout configuration: two blocks with equal margins
-    const margin = 30;
-    const gap = 20;
-    const blockWidth = 300;
-    const blockHeight = 200;
+    const margin = 30
+    const gap = 20
+    const blockWidth = 300
+    const blockHeight = 200
 
     // Set page dimensions to hug the blocks
-    const pageWidth = margin + blockWidth + gap + blockWidth + margin;
-    const pageHeight = margin + blockHeight + margin;
-    engine.block.setWidth(page, pageWidth);
-    engine.block.setHeight(page, pageHeight);
+    const pageWidth = margin + blockWidth + gap + blockWidth + margin
+    const pageHeight = margin + blockHeight + margin
+    engine.block.setWidth(page, pageWidth)
+    engine.block.setHeight(page, pageHeight)
 
     // Create a graphic block with an image fill
     // Resources are loaded on-demand when the engine renders the block
-    const imageBlock = engine.block.create('graphic');
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
-    engine.block.setPositionX(imageBlock, margin);
-    engine.block.setPositionY(imageBlock, margin);
-    engine.block.setWidth(imageBlock, blockWidth);
-    engine.block.setHeight(imageBlock, blockHeight);
+    const imageBlock = engine.block.create('graphic')
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(imageBlock, rectShape)
+    engine.block.setPositionX(imageBlock, margin)
+    engine.block.setPositionY(imageBlock, margin)
+    engine.block.setWidth(imageBlock, blockWidth)
+    engine.block.setHeight(imageBlock, blockHeight)
 
     // Create an image fill - the image loads when the block is rendered
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_4.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
-    engine.block.setEnum(imageBlock, 'contentFill/mode', 'Cover');
-    engine.block.appendChild(page, imageBlock);
-    console.log('Created image block - resource loads on-demand when rendered');
+    )
+    engine.block.setFill(imageBlock, imageFill)
+    engine.block.setEnum(imageBlock, 'contentFill/mode', 'Cover')
+    engine.block.appendChild(page, imageBlock)
+    console.log('Created image block - resource loads on-demand when rendered')
 
     // Preload all resources in the scene before rendering
     // This ensures resources are cached and ready for display
-    console.log('Preloading all resources in the scene...');
-    await engine.block.forceLoadResources([scene]);
-    console.log('All resources preloaded successfully');
+    console.log('Preloading all resources in the scene...')
+    await engine.block.forceLoadResources([scene])
+    console.log('All resources preloaded successfully')
 
     // Preload specific blocks only (useful for optimizing load order)
-    await engine.block.forceLoadResources([imageBlock]);
-    console.log('Image block resources preloaded');
+    await engine.block.forceLoadResources([imageBlock])
+    console.log('Image block resources preloaded')
 
     // Create a second graphic block for video
-    const videoBlock = engine.block.create('graphic');
-    const videoShape = engine.block.createShape('rect');
-    engine.block.setShape(videoBlock, videoShape);
-    engine.block.setPositionX(videoBlock, margin + blockWidth + gap);
-    engine.block.setPositionY(videoBlock, margin);
-    engine.block.setWidth(videoBlock, blockWidth);
-    engine.block.setHeight(videoBlock, blockHeight);
+    const videoBlock = engine.block.create('graphic')
+    const videoShape = engine.block.createShape('rect')
+    engine.block.setShape(videoBlock, videoShape)
+    engine.block.setPositionX(videoBlock, margin + blockWidth + gap)
+    engine.block.setPositionY(videoBlock, margin)
+    engine.block.setWidth(videoBlock, blockWidth)
+    engine.block.setHeight(videoBlock, blockHeight)
 
     // Create a video fill
-    const videoFill = engine.block.createFill('video');
+    const videoFill = engine.block.createFill('video')
     engine.block.setString(
       videoFill,
       'fill/video/fileURI',
       'https://img.ly/static/ubq_video_samples/bbb.mp4'
-    );
-    engine.block.setFill(videoBlock, videoFill);
-    engine.block.setEnum(videoBlock, 'contentFill/mode', 'Cover');
-    engine.block.appendChild(page, videoBlock);
+    )
+    engine.block.setFill(videoBlock, videoFill)
+    engine.block.setEnum(videoBlock, 'contentFill/mode', 'Cover')
+    engine.block.appendChild(page, videoBlock)
 
     // Preload video resource to query its properties
-    console.log('Preloading video resource...');
-    await engine.block.forceLoadAVResource(videoFill);
-    console.log('Video resource preloaded');
+    console.log('Preloading video resource...')
+    await engine.block.forceLoadAVResource(videoFill)
+    console.log('Video resource preloaded')
 
     // Now we can query video properties
-    const videoDuration = engine.block.getAVResourceTotalDuration(videoFill);
-    const videoWidth = engine.block.getVideoWidth(videoFill);
-    const videoHeight = engine.block.getVideoHeight(videoFill);
+    const videoDuration = engine.block.getAVResourceTotalDuration(videoFill)
+    const videoWidth = engine.block.getVideoWidth(videoFill)
+    const videoHeight = engine.block.getVideoHeight(videoFill)
     console.log(
       `Video properties - Duration: ${videoDuration}s, Size: ${videoWidth}x${videoHeight}`
-    );
+    )
 
     // Find all transient resources that need persistence before export
     // Transient resources include buffers and blobs that won't survive serialization
-    const transientResources = engine.editor.findAllTransientResources();
-    console.log(`Found ${transientResources.length} transient resources`);
+    const transientResources = engine.editor.findAllTransientResources()
+    console.log(`Found ${transientResources.length} transient resources`)
     for (const resource of transientResources) {
       console.log(
         `Transient: URL=${resource.URL}, Size=${resource.size} bytes`
-      );
+      )
     }
 
     // Get all media URIs referenced in the scene
     // Useful for pre-fetching or validating resource availability
-    const mediaURIs = engine.editor.findAllMediaURIs();
-    console.log(`Scene contains ${mediaURIs.length} media URIs:`);
+    const mediaURIs = engine.editor.findAllMediaURIs()
+    console.log(`Scene contains ${mediaURIs.length} media URIs:`)
     for (const uri of mediaURIs) {
-      console.log(`  - ${uri}`);
+      console.log(`  - ${uri}`)
     }
 
     // Detect the MIME type of a resource
     // This downloads the resource if not already cached
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_4.jpg';
-    const mimeType = await engine.editor.getMimeType(imageUri);
-    console.log(`MIME type of ${imageUri}: ${mimeType}`);
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_4.jpg'
+    const mimeType = await engine.editor.getMimeType(imageUri)
+    console.log(`MIME type of ${imageUri}: ${mimeType}`)
 
     // Relocate a resource when its URL changes
     // This updates the internal cache mapping without modifying scene data
-    const oldUrl = 'https://example.com/old-location/image.jpg';
-    const newUrl = 'https://cdn.example.com/new-location/image.jpg';
+    const oldUrl = 'https://example.com/old-location/image.jpg'
+    const newUrl = 'https://cdn.example.com/new-location/image.jpg'
 
     // In a real scenario, you would relocate after uploading to a new location:
     // engine.editor.relocateResource(oldUrl, newUrl);
-    console.log(`Resource relocation example: ${oldUrl} -> ${newUrl}`);
-    console.log('Use relocateResource() after uploading to a CDN');
+    console.log(`Resource relocation example: ${oldUrl} -> ${newUrl}`)
+    console.log('Use relocateResource() after uploading to a CDN')
 
     // When saving, use onDisallowedResourceScheme to handle transient resources
     // This callback is called for each resource with a disallowed scheme (like buffer: or blob:)
@@ -252,24 +252,24 @@ class Example implements EditorPlugin {
         // return response.permanentUrl;
 
         // For this example, we'll just log the URL
-        console.log(`Would upload transient resource: ${url}`);
+        console.log(`Would upload transient resource: ${url}`)
         // Return the original URL since we're not actually uploading
-        return url;
+        return url
       }
-    );
-    console.log(`Scene saved to string (${sceneString.length} characters)`);
+    )
+    console.log(`Scene saved to string (${sceneString.length} characters)`)
 
     // Set playback time to show video content in the scene
-    engine.block.setPlaybackTime(page, 2);
+    engine.block.setPlaybackTime(page, 2)
 
-    console.log('Resources guide initialized successfully.');
+    console.log('Resources guide initialized successfully.')
     console.log(
       'Demonstrated: on-demand loading, preloading, transient resources, and relocation.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers on-demand and preloaded resource loading, identifying and persisting transient resources, relocating resources when URLs change, and discovering all media URIs in a scene.
@@ -279,48 +279,48 @@ This guide covers on-demand and preloaded resource loading, identifying and pers
 The engine fetches resources automatically when rendering blocks or preparing exports. This approach requires no extra code but may delay the initial render while resources download.
 
 ```typescript highlight-on-demand-loading
-    // Get the current scene and page
-    const scene = engine.scene.get();
-    if (scene === null) {
-      throw new Error('No scene available');
-    }
+// Get the current scene and page
+const scene = engine.scene.get()
+if (scene === null) {
+  throw new Error('No scene available')
+}
 
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+const pages = engine.block.findByType('page')
+const page = pages[0]
 
-    // Layout configuration: two blocks with equal margins
-    const margin = 30;
-    const gap = 20;
-    const blockWidth = 300;
-    const blockHeight = 200;
+// Layout configuration: two blocks with equal margins
+const margin = 30
+const gap = 20
+const blockWidth = 300
+const blockHeight = 200
 
-    // Set page dimensions to hug the blocks
-    const pageWidth = margin + blockWidth + gap + blockWidth + margin;
-    const pageHeight = margin + blockHeight + margin;
-    engine.block.setWidth(page, pageWidth);
-    engine.block.setHeight(page, pageHeight);
+// Set page dimensions to hug the blocks
+const pageWidth = margin + blockWidth + gap + blockWidth + margin
+const pageHeight = margin + blockHeight + margin
+engine.block.setWidth(page, pageWidth)
+engine.block.setHeight(page, pageHeight)
 
-    // Create a graphic block with an image fill
-    // Resources are loaded on-demand when the engine renders the block
-    const imageBlock = engine.block.create('graphic');
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
-    engine.block.setPositionX(imageBlock, margin);
-    engine.block.setPositionY(imageBlock, margin);
-    engine.block.setWidth(imageBlock, blockWidth);
-    engine.block.setHeight(imageBlock, blockHeight);
+// Create a graphic block with an image fill
+// Resources are loaded on-demand when the engine renders the block
+const imageBlock = engine.block.create('graphic')
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(imageBlock, rectShape)
+engine.block.setPositionX(imageBlock, margin)
+engine.block.setPositionY(imageBlock, margin)
+engine.block.setWidth(imageBlock, blockWidth)
+engine.block.setHeight(imageBlock, blockHeight)
 
-    // Create an image fill - the image loads when the block is rendered
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://img.ly/static/ubq_samples/sample_4.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
-    engine.block.setEnum(imageBlock, 'contentFill/mode', 'Cover');
-    engine.block.appendChild(page, imageBlock);
-    console.log('Created image block - resource loads on-demand when rendered');
+// Create an image fill - the image loads when the block is rendered
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://img.ly/static/ubq_samples/sample_4.jpg'
+)
+engine.block.setFill(imageBlock, imageFill)
+engine.block.setEnum(imageBlock, 'contentFill/mode', 'Cover')
+engine.block.appendChild(page, imageBlock)
+console.log('Created image block - resource loads on-demand when rendered')
 ```
 
 When you create a block with an image fill, the image doesn't load immediately. The engine fetches it when the block first renders on the canvas.
@@ -330,15 +330,15 @@ When you create a block with an image fill, the image doesn't load immediately. 
 Load resources before they're needed with `forceLoadResources()`. Pass block IDs to load resources for those blocks and their children. Preloading eliminates render delays and is useful when you want the scene fully ready before displaying it.
 
 ```typescript highlight-preload-resources
-    // Preload all resources in the scene before rendering
-    // This ensures resources are cached and ready for display
-    console.log('Preloading all resources in the scene...');
-    await engine.block.forceLoadResources([scene]);
-    console.log('All resources preloaded successfully');
+// Preload all resources in the scene before rendering
+// This ensures resources are cached and ready for display
+console.log('Preloading all resources in the scene...')
+await engine.block.forceLoadResources([scene])
+console.log('All resources preloaded successfully')
 
-    // Preload specific blocks only (useful for optimizing load order)
-    await engine.block.forceLoadResources([imageBlock]);
-    console.log('Image block resources preloaded');
+// Preload specific blocks only (useful for optimizing load order)
+await engine.block.forceLoadResources([imageBlock])
+console.log('Image block resources preloaded')
 ```
 
 Pass the scene to preload all resources in the entire design, or pass specific blocks to load only what you need.
@@ -348,38 +348,38 @@ Pass the scene to preload all resources in the entire design, or pass specific b
 Audio and video resources require `forceLoadAVResource()` for full metadata access. The engine needs to download and parse media files before you can query properties like duration or dimensions.
 
 ```typescript highlight-preload-av
-    // Create a second graphic block for video
-    const videoBlock = engine.block.create('graphic');
-    const videoShape = engine.block.createShape('rect');
-    engine.block.setShape(videoBlock, videoShape);
-    engine.block.setPositionX(videoBlock, margin + blockWidth + gap);
-    engine.block.setPositionY(videoBlock, margin);
-    engine.block.setWidth(videoBlock, blockWidth);
-    engine.block.setHeight(videoBlock, blockHeight);
+// Create a second graphic block for video
+const videoBlock = engine.block.create('graphic')
+const videoShape = engine.block.createShape('rect')
+engine.block.setShape(videoBlock, videoShape)
+engine.block.setPositionX(videoBlock, margin + blockWidth + gap)
+engine.block.setPositionY(videoBlock, margin)
+engine.block.setWidth(videoBlock, blockWidth)
+engine.block.setHeight(videoBlock, blockHeight)
 
-    // Create a video fill
-    const videoFill = engine.block.createFill('video');
-    engine.block.setString(
-      videoFill,
-      'fill/video/fileURI',
-      'https://img.ly/static/ubq_video_samples/bbb.mp4'
-    );
-    engine.block.setFill(videoBlock, videoFill);
-    engine.block.setEnum(videoBlock, 'contentFill/mode', 'Cover');
-    engine.block.appendChild(page, videoBlock);
+// Create a video fill
+const videoFill = engine.block.createFill('video')
+engine.block.setString(
+  videoFill,
+  'fill/video/fileURI',
+  'https://img.ly/static/ubq_video_samples/bbb.mp4'
+)
+engine.block.setFill(videoBlock, videoFill)
+engine.block.setEnum(videoBlock, 'contentFill/mode', 'Cover')
+engine.block.appendChild(page, videoBlock)
 
-    // Preload video resource to query its properties
-    console.log('Preloading video resource...');
-    await engine.block.forceLoadAVResource(videoFill);
-    console.log('Video resource preloaded');
+// Preload video resource to query its properties
+console.log('Preloading video resource...')
+await engine.block.forceLoadAVResource(videoFill)
+console.log('Video resource preloaded')
 
-    // Now we can query video properties
-    const videoDuration = engine.block.getAVResourceTotalDuration(videoFill);
-    const videoWidth = engine.block.getVideoWidth(videoFill);
-    const videoHeight = engine.block.getVideoHeight(videoFill);
-    console.log(
-      `Video properties - Duration: ${videoDuration}s, Size: ${videoWidth}x${videoHeight}`
-    );
+// Now we can query video properties
+const videoDuration = engine.block.getAVResourceTotalDuration(videoFill)
+const videoWidth = engine.block.getVideoWidth(videoFill)
+const videoHeight = engine.block.getVideoHeight(videoFill)
+console.log(
+  `Video properties - Duration: ${videoDuration}s, Size: ${videoWidth}x${videoHeight}`
+)
 ```
 
 Without preloading, properties like `getAVResourceTotalDuration()` or `getVideoWidth()` may return zero or incomplete values.
@@ -391,12 +391,12 @@ Transient resources are temporary data stored in buffers or blobs that won't sur
 ```typescript highlight-find-transient
 // Find all transient resources that need persistence before export
 // Transient resources include buffers and blobs that won't survive serialization
-const transientResources = engine.editor.findAllTransientResources();
-console.log(`Found ${transientResources.length} transient resources`);
+const transientResources = engine.editor.findAllTransientResources()
+console.log(`Found ${transientResources.length} transient resources`)
 for (const resource of transientResources) {
   console.log(
     `Transient: URL=${resource.URL}, Size=${resource.size} bytes`
-  );
+  )
 }
 ```
 
@@ -409,10 +409,10 @@ Get all media file URIs referenced in a scene with `findAllMediaURIs()`. This re
 ```typescript highlight-find-media-uris
 // Get all media URIs referenced in the scene
 // Useful for pre-fetching or validating resource availability
-const mediaURIs = engine.editor.findAllMediaURIs();
-console.log(`Scene contains ${mediaURIs.length} media URIs:`);
+const mediaURIs = engine.editor.findAllMediaURIs()
+console.log(`Scene contains ${mediaURIs.length} media URIs:`)
 for (const uri of mediaURIs) {
-  console.log(`  - ${uri}`);
+  console.log(`  - ${uri}`)
 }
 ```
 
@@ -425,9 +425,9 @@ Determine a resource's content type with `getMimeType()`. The engine downloads t
 ```typescript highlight-detect-mime-type
 // Detect the MIME type of a resource
 // This downloads the resource if not already cached
-const imageUri = 'https://img.ly/static/ubq_samples/sample_4.jpg';
-const mimeType = await engine.editor.getMimeType(imageUri);
-console.log(`MIME type of ${imageUri}: ${mimeType}`);
+const imageUri = 'https://img.ly/static/ubq_samples/sample_4.jpg'
+const mimeType = await engine.editor.getMimeType(imageUri)
+console.log(`MIME type of ${imageUri}: ${mimeType}`)
 ```
 
 Common return values include `image/jpeg`, `image/png`, `video/mp4`, and `audio/mpeg`. This is useful when you need to verify resource types or make format-dependent decisions.
@@ -437,15 +437,15 @@ Common return values include `image/jpeg`, `image/png`, `video/mp4`, and `audio/
 Update URL mappings when resources move with `relocateResource()`. This modifies the internal cache without changing scene data.
 
 ```typescript highlight-relocate-resource
-    // Relocate a resource when its URL changes
-    // This updates the internal cache mapping without modifying scene data
-    const oldUrl = 'https://example.com/old-location/image.jpg';
-    const newUrl = 'https://cdn.example.com/new-location/image.jpg';
+// Relocate a resource when its URL changes
+// This updates the internal cache mapping without modifying scene data
+const oldUrl = 'https://example.com/old-location/image.jpg'
+const newUrl = 'https://cdn.example.com/new-location/image.jpg'
 
-    // In a real scenario, you would relocate after uploading to a new location:
-    // engine.editor.relocateResource(oldUrl, newUrl);
-    console.log(`Resource relocation example: ${oldUrl} -> ${newUrl}`);
-    console.log('Use relocateResource() after uploading to a CDN');
+// In a real scenario, you would relocate after uploading to a new location:
+// engine.editor.relocateResource(oldUrl, newUrl);
+console.log(`Resource relocation example: ${oldUrl} -> ${newUrl}`)
+console.log('Use relocateResource() after uploading to a CDN')
 ```
 
 Use relocation after uploading resources to a CDN or when migrating assets between storage locations. The scene continues to reference the original URL, but the engine fetches from the new location.
@@ -455,23 +455,23 @@ Use relocation after uploading resources to a CDN or when migrating assets betwe
 Handle transient resources during save with the `onDisallowedResourceScheme` callback in `saveToString()`. The callback receives each resource URL with a disallowed scheme (like `buffer:` or `blob:`) and returns the permanent URL after uploading.
 
 ```typescript highlight-persist-transient
-    // When saving, use onDisallowedResourceScheme to handle transient resources
-    // This callback is called for each resource with a disallowed scheme (like buffer: or blob:)
-    const sceneString = await engine.block.saveToString(
-      [scene],
-      ['http', 'https'], // Only allow http and https URLs
-      async (url: string) => {
-        // In a real app, upload the resource and return the permanent URL
-        // const response = await uploadToCDN(url);
-        // return response.permanentUrl;
+// When saving, use onDisallowedResourceScheme to handle transient resources
+// This callback is called for each resource with a disallowed scheme (like buffer: or blob:)
+const sceneString = await engine.block.saveToString(
+  [scene],
+  ['http', 'https'], // Only allow http and https URLs
+  async (url: string) => {
+    // In a real app, upload the resource and return the permanent URL
+    // const response = await uploadToCDN(url);
+    // return response.permanentUrl;
 
-        // For this example, we'll just log the URL
-        console.log(`Would upload transient resource: ${url}`);
-        // Return the original URL since we're not actually uploading
-        return url;
-      }
-    );
-    console.log(`Scene saved to string (${sceneString.length} characters)`);
+    // For this example, we'll just log the URL
+    console.log(`Would upload transient resource: ${url}`)
+    // Return the original URL since we're not actually uploading
+    return url
+  }
+)
+console.log(`Scene saved to string (${sceneString.length} characters)`)
 ```
 
 This pattern lets you intercept temporary resources, upload them to permanent storage, and save the scene with stable URLs that will work when reloaded.

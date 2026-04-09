@@ -42,8 +42,8 @@ To flip a video:
 3. Set the boolean to `true`.
 
 ```ts
-engine.block.setFlipHorizontal(videoBlock, true);
-engine.block.setFlipVertical(videoBlock,  true);
+engine.block.setFlipHorizontal(videoBlock, true)
+engine.block.setFlipVertical(videoBlock, true)
 ```
 
 <Picture src={flipVideo} style={{ width: '85%' }} alt="Video flipped horizontally" formats={['webp']} />
@@ -57,8 +57,8 @@ To know if a video has already been flipped:
 3. Specify the block ID.
 
 ```ts
-const flippedH = engine.block.getFlipHorizontal(videoBlock);
-const flippedV = engine.block.getFlipVertical(videoBlock);
+const flippedH = engine.block.getFlipHorizontal(videoBlock)
+const flippedV = engine.block.getFlipVertical(videoBlock)
 ```
 
 The response is a boolean stating whether this specific block has already been flipped or not.
@@ -76,8 +76,8 @@ To simplify the process of rotating multiple blocks, instead of rotating each bl
 For example, to flip three clips together:
 
 ```ts
-const groupId = await engine.block.group([clipId1, clipId2, clipId3]);
-engine.block.setFlipVertical(groupId, true);
+const groupId = await engine.block.group([clipId1, clipId2, clipId3])
+engine.block.setFlipVertical(groupId, true)
 ```
 
 <Picture src={flipGroup} style={{ width: '85%' }} alt="Grouped video flipped horizontally" formats={['webp']} />
@@ -105,7 +105,7 @@ To reset a clip to its default orientation:
 For example, to reset a horizontal flip, use the following code:
 
 ```ts
-engine.block.setFlipHorizontal(videoBlock, false);
+engine.block.setFlipHorizontal(videoBlock, false)
 ```
 
 ### Switch Flip on or Off
@@ -125,8 +125,8 @@ To “toggle” the flip in your code:
 For example:
 
 ```ts
-const isFlipped = await engine.block.getFlipHorizontal(videoBlock);
-engine.block.setFlipHorizontal(videoBlock, !isFlipped);
+const isFlipped = await engine.block.getFlipHorizontal(videoBlock)
+engine.block.setFlipHorizontal(videoBlock, !isFlipped)
 ```
 
 In the preceding code, the two actions are possible depending on the value stored in `isFlipped`:
@@ -150,7 +150,7 @@ To deactivate flipping, use `setScopeEnabled` with:
 - The boolean set to `false`
 
 ```ts
-engine.block.setScopeEnabled(videoBlock, "layer/flip", false);
+engine.block.setScopeEnabled(videoBlock, 'layer/flip', false)
 ```
 
 ## Troubleshooting

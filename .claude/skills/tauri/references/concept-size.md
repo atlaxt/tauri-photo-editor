@@ -18,11 +18,11 @@ Add or adjust **src-tauri/Cargo.toml** `[profile.release]`:
 
 ```toml
 [profile.release]
-codegen-units = 1   # Better optimization (slower compile).
-lto = true          # Link-time optimization.
-opt-level = "s"     # Optimize for size; use "3" for speed.
-panic = "abort"     # No unwinding; smaller binary.
-strip = true        # Remove debug symbols.
+codegen-units = 1 # Better optimization (slower compile).
+lto = true # Link-time optimization.
+opt-level = "s" # Optimize for size; use "3" for speed.
+panic = "abort" # No unwinding; smaller binary.
+strip = true # Remove debug symbols.
 ```
 
 - **opt-level "s"**: Prefer size over speed; use **"3"** if you care more about performance.

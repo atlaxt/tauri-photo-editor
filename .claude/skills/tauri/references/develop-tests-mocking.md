@@ -12,13 +12,14 @@ When testing the **frontend** (e.g. with Vitest or Jest), you often need to fake
 Intercept **invoke** calls so tests don’t hit the real backend:
 
 ```javascript
-import { mockIPC } from '@tauri-apps/api/mocks';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke } from '@tauri-apps/api/core'
+import { mockIPC } from '@tauri-apps/api/mocks'
 
 mockIPC((cmd, args) => {
-  if (cmd === 'add') return (args.a ?? 0) + (args.b ?? 0);
-  return null;
-});
+  if (cmd === 'add')
+    return (args.a ?? 0) + (args.b ?? 0)
+  return null
+})
 
 // Now invoke('add', { a: 1, b: 2 }) resolves to 3 in tests.
 ```
@@ -38,12 +39,13 @@ Provide fake window labels and optional window objects so code that uses `getCur
 Some Tauri APIs (e.g. isolation, crypto) expect **window.crypto.getRandomValues**. In jsdom, you may need to polyfill:
 
 ```javascript
-import { randomFillSync } from 'crypto';
+import { randomFillSync } from 'node:crypto'
+
 beforeAll(() => {
   Object.defineProperty(window, 'crypto', {
-    value: { getRandomValues: (buffer) => randomFillSync(buffer) },
-  });
-});
+    value: { getRandomValues: buffer => randomFillSync(buffer) },
+  })
+})
 ```
 
 ## Key Points

@@ -20,54 +20,54 @@ Peer dependencies: `vue ^3.5.0` and `zod ^4.0.0`.
 ### Create a Catalog
 
 ```typescript
-import { defineCatalog } from "@json-render/core";
-import { schema } from "@json-render/vue/schema";
-import { z } from "zod";
+import { defineCatalog } from '@json-render/core'
+import { schema } from '@json-render/vue/schema'
+import { z } from 'zod'
 
 export const catalog = defineCatalog(schema, {
   components: {
     Card: {
       props: z.object({ title: z.string(), description: z.string().nullable() }),
-      description: "A card container",
+      description: 'A card container',
     },
     Button: {
       props: z.object({ label: z.string(), action: z.string() }),
-      description: "A clickable button",
+      description: 'A clickable button',
     },
   },
   actions: {},
-});
+})
 ```
 
 ### Define Registry with h() Render Functions
 
 ```typescript
-import { h } from "vue";
-import { defineRegistry } from "@json-render/vue";
-import { catalog } from "./catalog";
+import { defineRegistry } from '@json-render/vue'
+import { h } from 'vue'
+import { catalog } from './catalog'
 
 export const { registry } = defineRegistry(catalog, {
   components: {
     Card: ({ props, children }) =>
-      h("div", { class: "card" }, [
-        h("h3", null, props.title),
-        props.description ? h("p", null, props.description) : null,
+      h('div', { class: 'card' }, [
+        h('h3', null, props.title),
+        props.description ? h('p', null, props.description) : null,
         children,
       ]),
     Button: ({ props, emit }) =>
-      h("button", { onClick: () => emit("press") }, props.label),
+      h('button', { onClick: () => emit('press') }, props.label),
   },
-});
+})
 ```
 
 ### Render Specs
 
 ```vue
 <script setup lang="ts">
-import { StateProvider, ActionProvider, Renderer } from "@json-render/vue";
-import { registry } from "./registry";
+import { ActionProvider, Renderer, StateProvider } from '@json-render/vue'
+import { registry } from './registry'
 
-const spec = { root: "card-1", elements: { /* ... */ } };
+const spec = { root: 'card-1', elements: { /* ... */ } }
 </script>
 
 <template>
@@ -107,9 +107,10 @@ Note: `useStateStore().state` returns a `ShallowRef<StateModel>` — use `state.
 Pass a `StateStore` to `StateProvider` to wire json-render to Pinia, VueUse, or any state management:
 
 ```typescript
-import { createStateStore, type StateStore } from "@json-render/vue";
+import type { StateStore } from '@json-render/vue'
+import { createStateStore } from '@json-render/vue'
 
-const store = createStateStore({ count: 0 });
+const store = createStateStore({ count: 0 })
 ```
 
 ```vue
@@ -155,10 +156,11 @@ Components use `emit(event)` to fire events, or `on(event)` for metadata (`shoul
 For catalog-agnostic reusable components:
 
 ```typescript
-import type { BaseComponentProps } from "@json-render/vue";
+import type { BaseComponentProps } from '@json-render/vue'
 
-const Card = ({ props, children }: BaseComponentProps<{ title?: string }>) =>
-  h("div", null, [props.title, children]);
+function Card({ props, children }: BaseComponentProps<{ title?: string }>) {
+  return h('div', null, [props.title, children])
+}
 ```
 
 ## Key Exports

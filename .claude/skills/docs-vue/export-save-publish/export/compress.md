@@ -23,7 +23,7 @@ Compression reduces file sizes during export while maintaining visual quality. W
 Image compression reduces file sizes while maintaining acceptable visual quality. CE.SDK supports format-specific compression controls: lossless compression for PNG, lossy quality settings for JPEG, and both modes for WebP. The example includes a navigation bar dropdown menu with export options for comparing different formats and compression levels.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-compress-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Compress Guide
@@ -56,33 +56,34 @@ import packageJson from './package.json';
  * - Navigation bar dropdown with export options
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Load a video template scene for demonstration
     await cesdk.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.video.template/templates/milli-surf-school.scene'
-    );
+    )
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
-    if (page == null) throw new Error('No page found');
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
+    if (page == null)
+      throw new Error('No page found')
 
     // Helper function to download blob
     const downloadBlob = (blob: Blob, filename: string) => {
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
-      URL.revokeObjectURL(url);
-    };
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = filename
+      anchor.click()
+      URL.revokeObjectURL(url)
+    }
 
     // PNG uses lossless compression - level 0-9
     // Higher levels = smaller files, slower encoding
@@ -91,25 +92,25 @@ class Example implements EditorPlugin {
       const blob = await engine.block.export(page, {
         mimeType: 'image/png',
         pngCompressionLevel: 9
-      });
-      downloadBlob(blob, 'export-png-level9.png');
+      })
+      downloadBlob(blob, 'export-png-level9.png')
       cesdk.ui.showNotification({
         message: `PNG Level 9: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     const exportPngLevel5 = async () => {
       const blob = await engine.block.export(page, {
         mimeType: 'image/png',
         pngCompressionLevel: 5
-      });
-      downloadBlob(blob, 'export-png-level5.png');
+      })
+      downloadBlob(blob, 'export-png-level5.png')
       cesdk.ui.showNotification({
         message: `PNG Level 5: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // JPEG uses lossy compression - quality 0-1
     // Lower values = smaller files, more artifacts
@@ -117,25 +118,25 @@ class Example implements EditorPlugin {
       const blob = await engine.block.export(page, {
         mimeType: 'image/jpeg',
         jpegQuality: 0.9
-      });
-      downloadBlob(blob, 'export-jpeg-90.jpg');
+      })
+      downloadBlob(blob, 'export-jpeg-90.jpg')
       cesdk.ui.showNotification({
         message: `JPEG 90%: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     const exportJpeg60 = async () => {
       const blob = await engine.block.export(page, {
         mimeType: 'image/jpeg',
         jpegQuality: 0.6
-      });
-      downloadBlob(blob, 'export-jpeg-60.jpg');
+      })
+      downloadBlob(blob, 'export-jpeg-60.jpg')
       cesdk.ui.showNotification({
         message: `JPEG 60%: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // WebP supports both lossless (1.0) and lossy (<1.0) modes
     // Typically 20-30% smaller than JPEG at equivalent quality
@@ -143,25 +144,25 @@ class Example implements EditorPlugin {
       const blob = await engine.block.export(page, {
         mimeType: 'image/webp',
         webpQuality: 0.9
-      });
-      downloadBlob(blob, 'export-webp-90.webp');
+      })
+      downloadBlob(blob, 'export-webp-90.webp')
       cesdk.ui.showNotification({
         message: `WebP 90%: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     const exportWebp60 = async () => {
       const blob = await engine.block.export(page, {
         mimeType: 'image/webp',
         webpQuality: 0.6
-      });
-      downloadBlob(blob, 'export-webp-60.webp');
+      })
+      downloadBlob(blob, 'export-webp-60.webp')
       cesdk.ui.showNotification({
         message: `WebP 60%: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Combine compression with dimension scaling
     // Useful for creating thumbnails or social media previews
@@ -171,13 +172,13 @@ class Example implements EditorPlugin {
         pngCompressionLevel: 6,
         targetWidth: 1200,
         targetHeight: 630
-      });
-      downloadBlob(blob, 'export-scaled-1200x630.png');
+      })
+      downloadBlob(blob, 'export-scaled-1200x630.png')
       cesdk.ui.showNotification({
         message: `Scaled 1200×630: ${(blob.size / 1024).toFixed(0)} KB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Video export with web-optimized bitrate (720p, 2 Mbps)
     const exportVideoWeb = async () => {
@@ -188,13 +189,13 @@ class Example implements EditorPlugin {
         framerate: 30,
         targetWidth: 1280,
         targetHeight: 720
-      });
-      downloadBlob(blob, 'export-web-720p.mp4');
+      })
+      downloadBlob(blob, 'export-web-720p.mp4')
       cesdk.ui.showNotification({
         message: `Video 720p: ${(blob.size / (1024 * 1024)).toFixed(1)} MB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Video export with HD bitrate (1080p, 8 Mbps)
     const exportVideoHD = async () => {
@@ -205,13 +206,13 @@ class Example implements EditorPlugin {
         framerate: 30,
         targetWidth: 1920,
         targetHeight: 1080
-      });
-      downloadBlob(blob, 'export-hd-1080p.mp4');
+      })
+      downloadBlob(blob, 'export-hd-1080p.mp4')
       cesdk.ui.showNotification({
         message: `Video 1080p: ${(blob.size / (1024 * 1024)).toFixed(1)} MB`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Configure navigation bar with export dropdown
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
@@ -293,14 +294,13 @@ class Example implements EditorPlugin {
           }
         ]
       }
-    ]);
+    ])
 
-    // eslint-disable-next-line no-console
-    console.log('Compression guide initialized. Use the dropdown menu to export in different formats.');
+    console.log('Compression guide initialized. Use the dropdown menu to export in different formats.')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting with compression settings, configuring quality levels, controlling output dimensions, and video compression options.
@@ -328,17 +328,17 @@ PNG uses lossless compression controlled by `pngCompressionLevel` (0-9). Higher 
 // PNG uses lossless compression - level 0-9
 // Higher levels = smaller files, slower encoding
 // Quality is identical at all levels
-const exportPngLevel9 = async () => {
+async function exportPngLevel9() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/png',
     pngCompressionLevel: 9
-  });
-  downloadBlob(blob, 'export-png-level9.png');
+  })
+  downloadBlob(blob, 'export-png-level9.png')
   cesdk.ui.showNotification({
     message: `PNG Level 9: ${(blob.size / 1024).toFixed(0)} KB`,
     type: 'success'
-  });
-};
+  })
+}
 ```
 
 Use level 5-6 for balanced results, or level 9 when file size is critical and encoding time is acceptable.
@@ -350,17 +350,17 @@ JPEG uses lossy compression controlled by `jpegQuality` (0-1). Lower values prod
 ```typescript highlight=highlight-jpeg-quality
 // JPEG uses lossy compression - quality 0-1
 // Lower values = smaller files, more artifacts
-const exportJpeg90 = async () => {
+async function exportJpeg90() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/jpeg',
     jpegQuality: 0.9
-  });
-  downloadBlob(blob, 'export-jpeg-90.jpg');
+  })
+  downloadBlob(blob, 'export-jpeg-90.jpg')
   cesdk.ui.showNotification({
     message: `JPEG 90%: ${(blob.size / 1024).toFixed(0)} KB`,
     type: 'success'
-  });
-};
+  })
+}
 ```
 
 Quality 0.8 provides a good balance for web delivery. Use 0.9+ for archival or print workflows.
@@ -372,17 +372,17 @@ WebP supports both lossless and lossy modes via `webpQuality` (0-1). At 1.0, Web
 ```typescript highlight=highlight-webp-quality
 // WebP supports both lossless (1.0) and lossy (<1.0) modes
 // Typically 20-30% smaller than JPEG at equivalent quality
-const exportWebp90 = async () => {
+async function exportWebp90() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/webp',
     webpQuality: 0.9
-  });
-  downloadBlob(blob, 'export-webp-90.webp');
+  })
+  downloadBlob(blob, 'export-webp-90.webp')
   cesdk.ui.showNotification({
     message: `WebP 90%: ${(blob.size / 1024).toFixed(0)} KB`,
     type: 'success'
-  });
-};
+  })
+}
 ```
 
 WebP typically produces 20-30% smaller files than JPEG at equivalent quality, with optional transparency support.
@@ -394,19 +394,19 @@ Use `targetWidth` and `targetHeight` together to export at specific dimensions. 
 ```typescript highlight=highlight-target-size
 // Combine compression with dimension scaling
 // Useful for creating thumbnails or social media previews
-const exportScaled = async () => {
+async function exportScaled() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/png',
     pngCompressionLevel: 6,
     targetWidth: 1200,
     targetHeight: 630
-  });
-  downloadBlob(blob, 'export-scaled-1200x630.png');
+  })
+  downloadBlob(blob, 'export-scaled-1200x630.png')
   cesdk.ui.showNotification({
     message: `Scaled 1200×630: ${(blob.size / 1024).toFixed(0)} KB`,
     type: 'success'
-  });
-};
+  })
+}
 ```
 
 Combining dimension scaling with compression produces smaller files suitable for specific platforms like social media thumbnails.
@@ -496,7 +496,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
       }
     ]
   }
-]);
+])
 ```
 
 Each menu item triggers an export with specific compression options and displays the resulting file size via a notification.
@@ -513,39 +513,39 @@ To compress video, use the `VideoExportOptions` structure in the export workflow
 The example includes video export options in the dropdown menu. CE.SDK automatically displays a progress modal during video encoding.
 
 ```typescript highlight=highlight-video-export
-    // Video export with web-optimized bitrate (720p, 2 Mbps)
-    const exportVideoWeb = async () => {
-      const blob = await engine.block.exportVideo(page, {
-        mimeType: 'video/mp4',
-        videoBitrate: 2_000_000,
-        audioBitrate: 128_000,
-        framerate: 30,
-        targetWidth: 1280,
-        targetHeight: 720
-      });
-      downloadBlob(blob, 'export-web-720p.mp4');
-      cesdk.ui.showNotification({
-        message: `Video 720p: ${(blob.size / (1024 * 1024)).toFixed(1)} MB`,
-        type: 'success'
-      });
-    };
+// Video export with web-optimized bitrate (720p, 2 Mbps)
+async function exportVideoWeb() {
+  const blob = await engine.block.exportVideo(page, {
+    mimeType: 'video/mp4',
+    videoBitrate: 2_000_000,
+    audioBitrate: 128_000,
+    framerate: 30,
+    targetWidth: 1280,
+    targetHeight: 720
+  })
+  downloadBlob(blob, 'export-web-720p.mp4')
+  cesdk.ui.showNotification({
+    message: `Video 720p: ${(blob.size / (1024 * 1024)).toFixed(1)} MB`,
+    type: 'success'
+  })
+}
 
-    // Video export with HD bitrate (1080p, 8 Mbps)
-    const exportVideoHD = async () => {
-      const blob = await engine.block.exportVideo(page, {
-        mimeType: 'video/mp4',
-        videoBitrate: 8_000_000,
-        audioBitrate: 192_000,
-        framerate: 30,
-        targetWidth: 1920,
-        targetHeight: 1080
-      });
-      downloadBlob(blob, 'export-hd-1080p.mp4');
-      cesdk.ui.showNotification({
-        message: `Video 1080p: ${(blob.size / (1024 * 1024)).toFixed(1)} MB`,
-        type: 'success'
-      });
-    };
+// Video export with HD bitrate (1080p, 8 Mbps)
+async function exportVideoHD() {
+  const blob = await engine.block.exportVideo(page, {
+    mimeType: 'video/mp4',
+    videoBitrate: 8_000_000,
+    audioBitrate: 192_000,
+    framerate: 30,
+    targetWidth: 1920,
+    targetHeight: 1080
+  })
+  downloadBlob(blob, 'export-hd-1080p.mp4')
+  cesdk.ui.showNotification({
+    message: `Video 1080p: ${(blob.size / (1024 * 1024)).toFixed(1)} MB`,
+    type: 'success'
+  })
+}
 ```
 
 ### Choose Bitrate Values
@@ -577,9 +577,9 @@ Higher compression produces smaller files but has trade-offs:
 The EditorAPI provides options to check available export limits before encoding:
 
 ```typescript
-const maxSize = engine.editor.getMaxExportSize();
-const availableMemory = engine.editor.getAvailableMemory();
-console.log("Max export size:", maxSize, "Memory:", availableMemory);
+const maxSize = engine.editor.getMaxExportSize()
+const availableMemory = engine.editor.getAvailableMemory()
+console.log('Max export size:', maxSize, 'Memory:', availableMemory)
 ```
 
 ## Real-World Compression Comparison (1080×1080)

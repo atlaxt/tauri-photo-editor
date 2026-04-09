@@ -23,7 +23,7 @@ Add outlines around shapes, text, and graphics to enhance visual definition and 
 Strokes add visual outlines that define block boundaries. You can customize their color, width, line style (solid, dashed, dotted), position relative to the block edge, and corner treatment. CE.SDK provides both built-in UI controls and programmatic APIs for stroke management.
 
 ```typescript file=@cesdk_web_examples/guides-outlines-stroke-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,24 +39,24 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = 'guides-outlines-stroke-browser';
-  version = '1.0.0';
+  name = 'guides-outlines-stroke-browser'
+  version = '1.0.0'
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -67,86 +67,86 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0]!;
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]!
 
     // Create a graphic block with a rectangle shape
-    const block = engine.block.create('graphic');
-    engine.block.setShape(block, engine.block.createShape('rect'));
-    engine.block.appendChild(page, block);
+    const block = engine.block.create('graphic')
+    engine.block.setShape(block, engine.block.createShape('rect'))
+    engine.block.appendChild(page, block)
 
     // Position and size the block
-    engine.block.setPositionX(block, 200);
-    engine.block.setPositionY(block, 150);
-    engine.block.setWidth(block, 400);
-    engine.block.setHeight(block, 300);
+    engine.block.setPositionX(block, 200)
+    engine.block.setPositionY(block, 150)
+    engine.block.setWidth(block, 400)
+    engine.block.setHeight(block, 300)
 
     // Add a fill so the shape is visible
-    const solidFill = engine.block.createFill('color');
-    engine.block.setFill(block, solidFill);
+    const solidFill = engine.block.createFill('color')
+    engine.block.setFill(block, solidFill)
     engine.block.setColor(solidFill, 'fill/color/value', {
       r: 0.95,
       g: 0.95,
       b: 0.95,
       a: 1.0
-    });
+    })
 
     // Check if block supports strokes
-    const canHaveStroke = engine.block.supportsStroke(block);
-    console.log('Block supports stroke:', canHaveStroke);
+    const canHaveStroke = engine.block.supportsStroke(block)
+    console.log('Block supports stroke:', canHaveStroke)
 
     if (canHaveStroke) {
       // Enable stroke on the block
-      engine.block.setStrokeEnabled(block, true);
-      const strokeIsEnabled = engine.block.isStrokeEnabled(block);
-      console.log('Stroke enabled:', strokeIsEnabled);
+      engine.block.setStrokeEnabled(block, true)
+      const strokeIsEnabled = engine.block.isStrokeEnabled(block)
+      console.log('Stroke enabled:', strokeIsEnabled)
 
       // Set stroke color to blue
-      engine.block.setStrokeColor(block, { r: 0.0, g: 0.4, b: 0.9, a: 1.0 });
-      const strokeColor = engine.block.getStrokeColor(block);
-      console.log('Stroke color:', strokeColor);
+      engine.block.setStrokeColor(block, { r: 0.0, g: 0.4, b: 0.9, a: 1.0 })
+      const strokeColor = engine.block.getStrokeColor(block)
+      console.log('Stroke color:', strokeColor)
 
       // Set stroke width
-      engine.block.setStrokeWidth(block, 8);
-      const strokeWidth = engine.block.getStrokeWidth(block);
-      console.log('Stroke width:', strokeWidth);
+      engine.block.setStrokeWidth(block, 8)
+      const strokeWidth = engine.block.getStrokeWidth(block)
+      console.log('Stroke width:', strokeWidth)
 
       // Apply a dashed stroke style
-      engine.block.setStrokeStyle(block, 'Dashed');
-      const strokeStyle = engine.block.getStrokeStyle(block);
-      console.log('Stroke style:', strokeStyle);
+      engine.block.setStrokeStyle(block, 'Dashed')
+      const strokeStyle = engine.block.getStrokeStyle(block)
+      console.log('Stroke style:', strokeStyle)
 
       // Set stroke position to outer
-      engine.block.setStrokePosition(block, 'Outer');
-      const strokePosition = engine.block.getStrokePosition(block);
-      console.log('Stroke position:', strokePosition);
+      engine.block.setStrokePosition(block, 'Outer')
+      const strokePosition = engine.block.getStrokePosition(block)
+      console.log('Stroke position:', strokePosition)
 
       // Set corner geometry to round
-      engine.block.setStrokeCornerGeometry(block, 'Round');
-      const strokeCornerGeometry = engine.block.getStrokeCornerGeometry(block);
-      console.log('Stroke corner geometry:', strokeCornerGeometry);
+      engine.block.setStrokeCornerGeometry(block, 'Round')
+      const strokeCornerGeometry = engine.block.getStrokeCornerGeometry(block)
+      console.log('Stroke corner geometry:', strokeCornerGeometry)
     }
 
     // Select the block to show it in the inspector
-    engine.block.select(block);
+    engine.block.select(block)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use the stroke inspector panel for interactive editing and how to apply and manage strokes programmatically using the block API.
@@ -169,8 +169,8 @@ Before applying strokes programmatically, verify the block supports them using `
 
 ```typescript highlight=highlight-check-support
 // Check if block supports strokes
-const canHaveStroke = engine.block.supportsStroke(block);
-console.log('Block supports stroke:', canHaveStroke);
+const canHaveStroke = engine.block.supportsStroke(block)
+console.log('Block supports stroke:', canHaveStroke)
 ```
 
 ## Enabling Strokes
@@ -179,9 +179,9 @@ Enable strokes on a block using `setStrokeEnabled()`. You can check the current 
 
 ```typescript highlight=highlight-enable-stroke
 // Enable stroke on the block
-engine.block.setStrokeEnabled(block, true);
-const strokeIsEnabled = engine.block.isStrokeEnabled(block);
-console.log('Stroke enabled:', strokeIsEnabled);
+engine.block.setStrokeEnabled(block, true)
+const strokeIsEnabled = engine.block.isStrokeEnabled(block)
+console.log('Stroke enabled:', strokeIsEnabled)
 ```
 
 ## Setting Stroke Color
@@ -190,9 +190,9 @@ Control stroke color using `setStrokeColor()` with an RGBA color object. Color v
 
 ```typescript highlight=highlight-stroke-color
 // Set stroke color to blue
-engine.block.setStrokeColor(block, { r: 0.0, g: 0.4, b: 0.9, a: 1.0 });
-const strokeColor = engine.block.getStrokeColor(block);
-console.log('Stroke color:', strokeColor);
+engine.block.setStrokeColor(block, { r: 0.0, g: 0.4, b: 0.9, a: 1.0 })
+const strokeColor = engine.block.getStrokeColor(block)
+console.log('Stroke color:', strokeColor)
 ```
 
 ## Setting Stroke Width
@@ -201,9 +201,9 @@ Set stroke thickness in design units using `setStrokeWidth()`. Larger values cre
 
 ```typescript highlight=highlight-stroke-width
 // Set stroke width
-engine.block.setStrokeWidth(block, 8);
-const strokeWidth = engine.block.getStrokeWidth(block);
-console.log('Stroke width:', strokeWidth);
+engine.block.setStrokeWidth(block, 8)
+const strokeWidth = engine.block.getStrokeWidth(block)
+console.log('Stroke width:', strokeWidth)
 ```
 
 ## Stroke Styles
@@ -219,9 +219,9 @@ Control the line pattern using `setStrokeStyle()`. Available styles include:
 
 ```typescript highlight=highlight-stroke-style
 // Apply a dashed stroke style
-engine.block.setStrokeStyle(block, 'Dashed');
-const strokeStyle = engine.block.getStrokeStyle(block);
-console.log('Stroke style:', strokeStyle);
+engine.block.setStrokeStyle(block, 'Dashed')
+const strokeStyle = engine.block.getStrokeStyle(block)
+console.log('Stroke style:', strokeStyle)
 ```
 
 ## Stroke Position
@@ -236,9 +236,9 @@ Position affects how strokes interact with adjacent elements and overall layout 
 
 ```typescript highlight=highlight-stroke-position
 // Set stroke position to outer
-engine.block.setStrokePosition(block, 'Outer');
-const strokePosition = engine.block.getStrokePosition(block);
-console.log('Stroke position:', strokePosition);
+engine.block.setStrokePosition(block, 'Outer')
+const strokePosition = engine.block.getStrokePosition(block)
+console.log('Stroke position:', strokePosition)
 ```
 
 ## Stroke Corner Geometry
@@ -251,9 +251,9 @@ Control how stroke corners are rendered using `setStrokeCornerGeometry()`. This 
 
 ```typescript highlight=highlight-stroke-corner
 // Set corner geometry to round
-engine.block.setStrokeCornerGeometry(block, 'Round');
-const strokeCornerGeometry = engine.block.getStrokeCornerGeometry(block);
-console.log('Stroke corner geometry:', strokeCornerGeometry);
+engine.block.setStrokeCornerGeometry(block, 'Round')
+const strokeCornerGeometry = engine.block.getStrokeCornerGeometry(block)
+console.log('Stroke corner geometry:', strokeCornerGeometry)
 ```
 
 ## Troubleshooting

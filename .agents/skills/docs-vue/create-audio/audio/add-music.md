@@ -24,7 +24,7 @@ block system for rich multimedia experiences.
 Audio blocks are standalone time-based blocks that play alongside video content, independent of video fills. You can add music from the built-in asset library or from custom URLs, position tracks in the composition, configure volume levels, and layer multiple audio tracks for complex soundscapes.
 
 ```typescript file=@cesdk_web_examples/guides-create-audio-add-music-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Add Music Guide
@@ -57,26 +57,26 @@ import packageJson from './package.json';
  * - Managing audio blocks
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -86,9 +86,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -102,71 +102,71 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.scene.getCurrentPage();
+    const engine = cesdk.engine
+    const page = engine.scene.getCurrentPage()
     if (!page) {
-      throw new Error('No page found in scene');
+      throw new Error('No page found in scene')
     }
 
     // Set page duration for timeline
-    engine.block.setDuration(page, 30);
+    engine.block.setDuration(page, 30)
 
     // Enable audio and timeline features for the UI
-    cesdk.feature.enable('ly.img.video.timeline');
-    cesdk.feature.enable('ly.img.video.audio');
-    cesdk.feature.enable('ly.img.video.controls.playback');
+    cesdk.feature.enable('ly.img.video.timeline')
+    cesdk.feature.enable('ly.img.video.audio')
+    cesdk.feature.enable('ly.img.video.controls.playback')
 
     // Create an audio block for background music
-    const audioBlock = engine.block.create('audio');
+    const audioBlock = engine.block.create('audio')
 
     // Set the audio source file
-    const audioUri =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a';
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
+    const audioUri
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a'
+    engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
 
     // Append audio to the page (makes it part of the timeline)
-    engine.block.appendChild(page, audioBlock);
+    engine.block.appendChild(page, audioBlock)
 
     // Wait for audio to load to get duration
-    await engine.block.forceLoadAVResource(audioBlock);
+    await engine.block.forceLoadAVResource(audioBlock)
 
     // Get the total duration of the audio file
-    const totalDuration = engine.block.getAVResourceTotalDuration(audioBlock);
-    console.log('Audio total duration:', totalDuration, 'seconds');
+    const totalDuration = engine.block.getAVResourceTotalDuration(audioBlock)
+    console.log('Audio total duration:', totalDuration, 'seconds')
 
     // Set when the audio starts on the timeline (0 = beginning)
-    engine.block.setTimeOffset(audioBlock, 0);
+    engine.block.setTimeOffset(audioBlock, 0)
 
     // Set how long the audio plays (use full duration or page duration)
-    const playbackDuration = Math.min(totalDuration, 30);
-    engine.block.setDuration(audioBlock, playbackDuration);
+    const playbackDuration = Math.min(totalDuration, 30)
+    engine.block.setDuration(audioBlock, playbackDuration)
 
     // Set the audio volume (0.0 = mute, 1.0 = full volume)
-    engine.block.setVolume(audioBlock, 0.8);
+    engine.block.setVolume(audioBlock, 0.8)
 
     // Get current volume
-    const currentVolume = engine.block.getVolume(audioBlock);
-    console.log('Audio volume:', currentVolume);
+    const currentVolume = engine.block.getVolume(audioBlock)
+    console.log('Audio volume:', currentVolume)
 
     // Query available audio tracks from the asset library
     const audioAssets = await engine.asset.findAssets('ly.img.audio', {
       page: 0,
       perPage: 10
-    });
+    })
 
-    console.log('Available audio assets:', audioAssets.assets.length);
+    console.log('Available audio assets:', audioAssets.assets.length)
 
     // Log metadata for each audio asset
     audioAssets.assets.forEach((asset) => {
@@ -175,45 +175,45 @@ class Example implements EditorPlugin {
         label: asset.label,
         duration: asset.meta?.duration,
         uri: asset.meta?.uri
-      });
-    });
+      })
+    })
 
     // Find all audio blocks in the scene
-    const allAudioBlocks = engine.block.findByType('audio');
-    console.log('Total audio blocks:', allAudioBlocks.length);
+    const allAudioBlocks = engine.block.findByType('audio')
+    console.log('Total audio blocks:', allAudioBlocks.length)
 
     // Get information about each audio block
     allAudioBlocks.forEach((block, index) => {
-      const uri = engine.block.getString(block, 'audio/fileURI');
-      const timeOffset = engine.block.getTimeOffset(block);
-      const duration = engine.block.getDuration(block);
-      const volume = engine.block.getVolume(block);
+      const uri = engine.block.getString(block, 'audio/fileURI')
+      const timeOffset = engine.block.getTimeOffset(block)
+      const duration = engine.block.getDuration(block)
+      const volume = engine.block.getVolume(block)
 
       console.log(`Audio block ${index + 1}:`, {
         uri: uri.split('/').pop(), // Just filename
         timeOffset: `${timeOffset}s`,
         duration: `${duration}s`,
         volume: `${(volume * 100).toFixed(0)}%`
-      });
-    });
+      })
+    })
 
     // Example: Remove the second audio block if it exists
     if (allAudioBlocks.length > 1) {
-      const blockToRemove = allAudioBlocks[1];
+      const blockToRemove = allAudioBlocks[1]
 
       // Destroy the block to remove it and free resources
-      engine.block.destroy(blockToRemove);
+      engine.block.destroy(blockToRemove)
 
-      console.log('Removed second audio block');
+      console.log('Removed second audio block')
     }
 
     console.log(
       'Add Music guide initialized. Open the timeline to see audio tracks.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to add music using the built-in audio UI and how to create and configure audio blocks programmatically using the Block API.
@@ -226,9 +226,9 @@ Audio blocks require timeline support. Enable the audio and timeline features to
 
 ```typescript highlight-enable-audio-features
 // Enable audio and timeline features for the UI
-cesdk.feature.enable('ly.img.video.timeline');
-cesdk.feature.enable('ly.img.video.audio');
-cesdk.feature.enable('ly.img.video.controls.playback');
+cesdk.feature.enable('ly.img.video.timeline')
+cesdk.feature.enable('ly.img.video.audio')
+cesdk.feature.enable('ly.img.video.controls.playback')
 ```
 
 These features control:
@@ -255,16 +255,16 @@ With audio features enabled, users can add music through the interface:
 We create audio blocks using `engine.block.create('audio')` and set the source file using the `audio/fileURI` property. The audio block must be appended to a page to become part of the composition.
 
 ```typescript highlight-create-audio-block
-    // Create an audio block for background music
-    const audioBlock = engine.block.create('audio');
+// Create an audio block for background music
+const audioBlock = engine.block.create('audio')
 
-    // Set the audio source file
-    const audioUri =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a';
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
+// Set the audio source file
+const audioUri
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a'
+engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
 
-    // Append audio to the page (makes it part of the timeline)
-    engine.block.appendChild(page, audioBlock);
+// Append audio to the page (makes it part of the timeline)
+engine.block.appendChild(page, audioBlock)
 ```
 
 Audio blocks support common formats including M4A, MP3, and WAV. The source URI can point to any accessible URL or local file.
@@ -274,19 +274,19 @@ Audio blocks support common formats including M4A, MP3, and WAV. The source URI 
 Audio blocks have time-based properties that control when and how long they play. We use `setTimeOffset()` to set the start time and `setDuration()` to control playback length.
 
 ```typescript highlight-configure-timeline
-    // Wait for audio to load to get duration
-    await engine.block.forceLoadAVResource(audioBlock);
+// Wait for audio to load to get duration
+await engine.block.forceLoadAVResource(audioBlock)
 
-    // Get the total duration of the audio file
-    const totalDuration = engine.block.getAVResourceTotalDuration(audioBlock);
-    console.log('Audio total duration:', totalDuration, 'seconds');
+// Get the total duration of the audio file
+const totalDuration = engine.block.getAVResourceTotalDuration(audioBlock)
+console.log('Audio total duration:', totalDuration, 'seconds')
 
-    // Set when the audio starts on the timeline (0 = beginning)
-    engine.block.setTimeOffset(audioBlock, 0);
+// Set when the audio starts on the timeline (0 = beginning)
+engine.block.setTimeOffset(audioBlock, 0)
 
-    // Set how long the audio plays (use full duration or page duration)
-    const playbackDuration = Math.min(totalDuration, 30);
-    engine.block.setDuration(audioBlock, playbackDuration);
+// Set how long the audio plays (use full duration or page duration)
+const playbackDuration = Math.min(totalDuration, 30)
+engine.block.setDuration(audioBlock, playbackDuration)
 ```
 
 The `forceLoadAVResource()` method ensures the audio file is loaded before we access its duration. This is important when you need to know the total length of the audio file for timing calculations.
@@ -296,12 +296,12 @@ The `forceLoadAVResource()` method ensures the audio file is loaded before we ac
 Volume is set using `setVolume()` with values from 0.0 (mute) to 1.0 (full volume). This volume level is applied during export and affects the final rendered output.
 
 ```typescript highlight-configure-volume
-    // Set the audio volume (0.0 = mute, 1.0 = full volume)
-    engine.block.setVolume(audioBlock, 0.8);
+// Set the audio volume (0.0 = mute, 1.0 = full volume)
+engine.block.setVolume(audioBlock, 0.8)
 
-    // Get current volume
-    const currentVolume = engine.block.getVolume(audioBlock);
-    console.log('Audio volume:', currentVolume);
+// Get current volume
+const currentVolume = engine.block.getVolume(audioBlock)
+console.log('Audio volume:', currentVolume)
 ```
 
 ## Working with Audio Assets
@@ -311,23 +311,23 @@ Volume is set using `setVolume()` with values from 0.0 (mute) to 1.0 (full volum
 CE.SDK provides a demo audio library that you can query using the Asset API. This allows you to build custom audio selection interfaces or programmatically add tracks based on metadata.
 
 ```typescript highlight-query-audio-assets
-    // Query available audio tracks from the asset library
-    const audioAssets = await engine.asset.findAssets('ly.img.audio', {
-      page: 0,
-      perPage: 10
-    });
+// Query available audio tracks from the asset library
+const audioAssets = await engine.asset.findAssets('ly.img.audio', {
+  page: 0,
+  perPage: 10
+})
 
-    console.log('Available audio assets:', audioAssets.assets.length);
+console.log('Available audio assets:', audioAssets.assets.length)
 
-    // Log metadata for each audio asset
-    audioAssets.assets.forEach((asset) => {
-      console.log('Audio asset:', {
-        id: asset.id,
-        label: asset.label,
-        duration: asset.meta?.duration,
-        uri: asset.meta?.uri
-      });
-    });
+// Log metadata for each audio asset
+audioAssets.assets.forEach((asset) => {
+  console.log('Audio asset:', {
+    id: asset.id,
+    label: asset.label,
+    duration: asset.meta?.duration,
+    uri: asset.meta?.uri
+  })
+})
 ```
 
 Each asset includes metadata such as duration, file URI, and thumbnail URL, which you can use to display track information or make programmatic selections.
@@ -339,24 +339,24 @@ Each asset includes metadata such as duration, file URI, and thumbnail URL, whic
 Use `findByType('audio')` to retrieve all audio blocks in the scene. This is useful for building audio management interfaces or batch operations.
 
 ```typescript highlight-list-audio-blocks
-    // Find all audio blocks in the scene
-    const allAudioBlocks = engine.block.findByType('audio');
-    console.log('Total audio blocks:', allAudioBlocks.length);
+// Find all audio blocks in the scene
+const allAudioBlocks = engine.block.findByType('audio')
+console.log('Total audio blocks:', allAudioBlocks.length)
 
-    // Get information about each audio block
-    allAudioBlocks.forEach((block, index) => {
-      const uri = engine.block.getString(block, 'audio/fileURI');
-      const timeOffset = engine.block.getTimeOffset(block);
-      const duration = engine.block.getDuration(block);
-      const volume = engine.block.getVolume(block);
+// Get information about each audio block
+allAudioBlocks.forEach((block, index) => {
+  const uri = engine.block.getString(block, 'audio/fileURI')
+  const timeOffset = engine.block.getTimeOffset(block)
+  const duration = engine.block.getDuration(block)
+  const volume = engine.block.getVolume(block)
 
-      console.log(`Audio block ${index + 1}:`, {
-        uri: uri.split('/').pop(), // Just filename
-        timeOffset: `${timeOffset}s`,
-        duration: `${duration}s`,
-        volume: `${(volume * 100).toFixed(0)}%`
-      });
-    });
+  console.log(`Audio block ${index + 1}:`, {
+    uri: uri.split('/').pop(), // Just filename
+    timeOffset: `${timeOffset}s`,
+    duration: `${duration}s`,
+    volume: `${(volume * 100).toFixed(0)}%`
+  })
+})
 ```
 
 ### Remove Audio
@@ -364,15 +364,15 @@ Use `findByType('audio')` to retrieve all audio blocks in the scene. This is use
 To remove an audio block, call `destroy()` which removes it from the scene and frees its resources.
 
 ```typescript highlight-remove-audio
-    // Example: Remove the second audio block if it exists
-    if (allAudioBlocks.length > 1) {
-      const blockToRemove = allAudioBlocks[1];
+// Example: Remove the second audio block if it exists
+if (allAudioBlocks.length > 1) {
+  const blockToRemove = allAudioBlocks[1]
 
-      // Destroy the block to remove it and free resources
-      engine.block.destroy(blockToRemove);
+  // Destroy the block to remove it and free resources
+  engine.block.destroy(blockToRemove)
 
-      console.log('Removed second audio block');
-    }
+  console.log('Removed second audio block')
+}
 ```
 
 Always destroy blocks that are no longer needed to prevent memory leaks, especially when working with multiple audio files.

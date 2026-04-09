@@ -30,7 +30,7 @@ rm imgly-assets.zip
 Then configure CE.SDK to use your self-hosted assets:
 
 ```javascript
-import CreativeEditorSDK from '@cesdk/cesdk-js';
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -45,31 +45,31 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource,
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
 
 const config = {
   license: 'YOUR_CESDK_LICENSE_KEY',
   baseURL: `https://cdn.yourdomain.com/cesdk/${CreativeEditorSDK.version}/`,
-};
+}
 
 CreativeEditorSDK.create(container, config).then(async (cesdk) => {
-  const assetBaseURL = `https://cdn.yourdomain.com/cesdk/${CreativeEditorSDK.version}/`;
+  const assetBaseURL = `https://cdn.yourdomain.com/cesdk/${CreativeEditorSDK.version}/`
 
   // Add default asset source plugins
-  await cesdk.addPlugin(new BlurAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new ColorPaletteAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new CropPresetsAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new EffectsAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new FiltersAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new PagePresetsAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new StickerAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new TextAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new TextComponentAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new TypefaceAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new VectorShapeAssetSource({ baseURL: assetBaseURL }));
+  await cesdk.addPlugin(new BlurAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new ColorPaletteAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new CropPresetsAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new EffectsAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new FiltersAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new PagePresetsAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new StickerAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new TextAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new TextComponentAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new TypefaceAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new VectorShapeAssetSource({ baseURL: assetBaseURL }))
 
   // Add demo and upload sources
-  await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+  await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
   await cesdk.addPlugin(
     new DemoAssetSources({
       include: [
@@ -80,8 +80,8 @@ CreativeEditorSDK.create(container, config).then(async (cesdk) => {
         'ly.img.image.*'
       ]
     })
-  );
-});
+  )
+})
 ```
 
 > **Note:** **Versioned paths recommended**: Using version-specific paths like
@@ -174,18 +174,18 @@ Browser configuration involves three settings: `baseURL`, `core.baseURL`, and th
 Pass configuration to `CreativeEditorSDK.create()`:
 
 ```javascript
-import CreativeEditorSDK from '@cesdk/cesdk-js';
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 
 const config = {
   baseURL: `https://cdn.yourdomain.com/cesdk/${CreativeEditorSDK.version}/`,
   core: {
     baseURL: 'core/',
   },
-};
+}
 
-CreativeEditorSDK.create(container, config).then(cesdk => {
+CreativeEditorSDK.create(container, config).then((cesdk) => {
   // Editor initialized with self-hosted assets
-});
+})
 ```
 
 **`baseURL`** — Base path for all engine assets. Can be an absolute URL or a relative path. Relative paths resolve against `window.location.href`. Defaults to the IMG.LY CDN.
@@ -211,26 +211,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource,
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
 
 CreativeEditorSDK.create(container, config).then(async (cesdk) => {
-  const assetBaseURL = `https://cdn.yourdomain.com/cesdk/${CreativeEditorSDK.version}/`;
+  const assetBaseURL = `https://cdn.yourdomain.com/cesdk/${CreativeEditorSDK.version}/`
 
   // Point default assets to your server
-  await cesdk.addPlugin(new BlurAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new ColorPaletteAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new CropPresetsAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new EffectsAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new FiltersAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new PagePresetsAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new StickerAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new TextAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new TextComponentAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new TypefaceAssetSource({ baseURL: assetBaseURL }));
-  await cesdk.addPlugin(new VectorShapeAssetSource({ baseURL: assetBaseURL }));
+  await cesdk.addPlugin(new BlurAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new ColorPaletteAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new CropPresetsAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new EffectsAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new FiltersAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new PagePresetsAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new StickerAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new TextAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new TextComponentAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new TypefaceAssetSource({ baseURL: assetBaseURL }))
+  await cesdk.addPlugin(new VectorShapeAssetSource({ baseURL: assetBaseURL }))
 
   // Optional: Add demo assets for development
-  await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+  await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
   await cesdk.addPlugin(
     new DemoAssetSources({
       baseURL: assetBaseURL,
@@ -242,8 +242,8 @@ CreativeEditorSDK.create(container, config).then(async (cesdk) => {
         'ly.img.image.*'
       ]
     })
-  );
-});
+  )
+})
 ```
 
 The `baseURL` for asset sources must be an absolute URL. The engine looks up asset definitions at `{baseURL}/{sourceId}/content.json` and references files like `{baseURL}/{sourceId}/images/example.png`.
@@ -267,17 +267,17 @@ If you only need a subset of default assets, simply omit the plugins you don't n
 
 ```javascript
 // Only add the plugins you need
-await cesdk.addPlugin(new BlurAssetSource());
-await cesdk.addPlugin(new ColorPaletteAssetSource());
-await cesdk.addPlugin(new CropPresetsAssetSource());
-await cesdk.addPlugin(new EffectsAssetSource());
-await cesdk.addPlugin(new FiltersAssetSource());
-await cesdk.addPlugin(new PagePresetsAssetSource());
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
 // StickerAssetSource omitted
-await cesdk.addPlugin(new TextAssetSource());
-await cesdk.addPlugin(new TextComponentAssetSource());
-await cesdk.addPlugin(new TypefaceAssetSource());
-await cesdk.addPlugin(new VectorShapeAssetSource());
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 ```
 
 This reduces initial load time by not fetching unused asset definitions.

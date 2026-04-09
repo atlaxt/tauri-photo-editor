@@ -14,17 +14,17 @@ CE.SDK uses a **Skia-based rendering engine** with limited SVG support. Complex 
 **Converting SVGs to PNG:**
 
 ```javascript
-import sharp from 'sharp';
+import sharp from 'sharp'
 
 await sharp('input.svg')
   .resize(800, 940)
   .png({ compressionLevel: 6 })
-  .toFile('output.png');
+  .toFile('output.png')
 
 // Verify alpha channel is preserved
-const meta = await sharp('output.png').metadata();
-console.log(meta.hasAlpha); // true
-console.log(meta.channels); // 4
+const meta = await sharp('output.png').metadata()
+console.log(meta.hasAlpha) // true
+console.log(meta.channels) // 4
 ```
 
 ---
@@ -46,13 +46,13 @@ For assets served from your app's `public/` directory, prepend the app origin:
 ```typescript
 function resolveLocalUri(uri: string): string {
   if (uri.startsWith('/')) {
-    return `${window.location.origin}${uri}`;
+    return `${window.location.origin}${uri}`
   }
-  return uri;
+  return uri
 }
 
 // Usage
-const absoluteUri = resolveLocalUri('/mockups/tshirt_white_front.png');
+const absoluteUri = resolveLocalUri('/mockups/tshirt_white_front.png')
 // → 'http://localhost:5173/mockups/tshirt_white_front.png'
 ```
 
@@ -69,18 +69,18 @@ CE.SDK supports two ways to set an image on a fill block:
 Provides image dimensions alongside the URI, enabling better layout and cropping:
 
 ```typescript
-const fill = engine.block.getFill(block);
+const fill = engine.block.getFill(block)
 engine.block.setSourceSet(fill, 'fill/image/sourceSet', [
   { uri: 'https://example.com/mockup.png', width: 800, height: 940 }
-]);
+])
 ```
 
 The `Source` type from `@cesdk/engine`:
 ```typescript
 interface Source {
-  uri: string;
-  width: number;
-  height: number;
+  uri: string
+  width: number
+  height: number
 }
 ```
 
@@ -89,7 +89,7 @@ interface Source {
 Sets only the URI — the engine must load the image to determine dimensions:
 
 ```typescript
-engine.block.setString(fill, 'fill/image/imageFileURI', 'https://example.com/mockup.png');
+engine.block.setString(fill, 'fill/image/imageFileURI', 'https://example.com/mockup.png')
 ```
 
 Use `setSourceSet` when you know the image dimensions (which you usually do for mockups and templates).
@@ -110,13 +110,13 @@ CE.SDK supports several fill types:
 
 ```typescript
 // Image fill
-const imageFill = engine.block.createFill('image');
-engine.block.setFill(block, imageFill);
-engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', sources);
+const imageFill = engine.block.createFill('image')
+engine.block.setFill(block, imageFill)
+engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', sources)
 
 // Color fill (e.g. transparent page background)
-const colorFill = engine.block.getFill(page); // pages have a default fill
-engine.block.setColor(colorFill, 'fill/color/value', { r: 0, g: 0, b: 0, a: 0 });
+const colorFill = engine.block.getFill(page) // pages have a default fill
+engine.block.setColor(colorFill, 'fill/color/value', { r: 0, g: 0, b: 0, a: 0 })
 ```
 
 ---
@@ -127,12 +127,12 @@ For products with multiple color variants (t-shirt colors, case colors, etc.), u
 
 ```typescript
 // Product configuration
-const mockupUri = '/mockups/tshirt_{{color}}_front.png';
+const mockupUri = '/mockups/tshirt_{{color}}_front.png'
 
 // At runtime, replace with the selected color
 const resolvedUri = resolveLocalUri(
   mockupUri.replace('{{color}}', selectedColor.id)
-);
+)
 // → 'http://localhost:5173/mockups/tshirt_black_front.png'
 ```
 
@@ -158,10 +158,10 @@ For smooth color switching, pre-create a mockup block for every area × color co
 ```typescript
 for (const area of product.areas) {
   for (const color of product.colors) {
-    const block = createMockupBlock(engine, scene);
-    engine.block.setName(block, `Mockup-${area.id}-${color.id}`);
-    configureMockupBlock(engine, block, area, color);
-    engine.block.setVisible(block, false); // hidden until selected
+    const block = createMockupBlock(engine, scene)
+    engine.block.setName(block, `Mockup-${area.id}-${color.id}`)
+    configureMockupBlock(engine, block, area, color)
+    engine.block.setVisible(block, false) // hidden until selected
   }
 }
 ```

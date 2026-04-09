@@ -23,7 +23,7 @@ Configure source sets for images and videos so CE.SDK automatically selects the 
 Source sets allow you to provide multiple versions of the same asset at different resolutions. CE.SDK automatically selects the most appropriate source based on the current drawing size in screen pixels. This improves performance by loading smaller images for mobile previews while ensuring high-quality assets are used for final exports.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-source-sets-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,31 +40,31 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -74,9 +74,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -90,52 +90,52 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0]!;
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]!
 
     // ===== Section 1: Setting a Source Set on an Image Fill =====
     // Create a graphic block with an image fill
-    const imageBlock = engine.block.create('graphic');
-    engine.block.setShape(imageBlock, engine.block.createShape('rect'));
+    const imageBlock = engine.block.create('graphic')
+    engine.block.setShape(imageBlock, engine.block.createShape('rect'))
 
     // Create an image fill and configure source set with multiple resolutions
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', [
       // Placeholder images display their dimensions, making it easy to see which source is selected
       { uri: 'https://placehold.co/256x256/png', width: 256, height: 256 },
       { uri: 'https://placehold.co/512x512/png', width: 512, height: 512 },
       { uri: 'https://placehold.co/1024x1024/png', width: 1024, height: 1024 }
-    ]);
-    engine.block.setFill(imageBlock, imageFill);
+    ])
+    engine.block.setFill(imageBlock, imageFill)
 
     // Position and size the block
-    engine.block.setWidth(imageBlock, 300);
-    engine.block.setHeight(imageBlock, 300);
-    engine.block.setPositionX(imageBlock, 50);
-    engine.block.setPositionY(imageBlock, 50);
-    engine.block.appendChild(page, imageBlock);
+    engine.block.setWidth(imageBlock, 300)
+    engine.block.setHeight(imageBlock, 300)
+    engine.block.setPositionX(imageBlock, 50)
+    engine.block.setPositionY(imageBlock, 50)
+    engine.block.appendChild(page, imageBlock)
 
     // ===== Section 2: Querying and Modifying Source Sets =====
     // Query the existing source set
     const sourceSet = engine.block.getSourceSet(
       imageFill,
       'fill/image/sourceSet'
-    );
-    console.log('Current source set:', sourceSet);
+    )
+    console.log('Current source set:', sourceSet)
 
     // Add a new high-resolution source dynamically
     // The dimensions are determined automatically from the image
@@ -143,14 +143,14 @@ class Example implements EditorPlugin {
       imageFill,
       'fill/image/sourceSet',
       'https://placehold.co/2048x2048/png'
-    );
+    )
 
     // Verify the source was added
     const updatedSourceSet = engine.block.getSourceSet(
       imageFill,
       'fill/image/sourceSet'
-    );
-    console.log('Updated source set with 2048px source:', updatedSourceSet);
+    )
+    console.log('Updated source set with 2048px source:', updatedSourceSet)
 
     // ===== Section 3: Using Source Sets in Asset Definitions =====
     // Define an asset with a source set in its payload
@@ -180,54 +180,54 @@ class Example implements EditorPlugin {
           }
         ]
       }
-    };
+    }
 
     // Register the asset with a local source
-    await engine.asset.addLocalSource('my-images');
-    engine.asset.addAssetToSource('my-images', assetDefinition);
+    await engine.asset.addLocalSource('my-images')
+    engine.asset.addAssetToSource('my-images', assetDefinition)
 
     // Find the asset from the source for applying
     const findResult = await engine.asset.findAssets('my-images', {
       page: 0,
       perPage: 1
-    });
-    const assetResult = findResult.assets[0];
+    })
+    const assetResult = findResult.assets[0]
 
     // Apply the asset - the source set is automatically configured
-    const assetBlock = await engine.asset.defaultApplyAsset(assetResult);
+    const assetBlock = await engine.asset.defaultApplyAsset(assetResult)
     if (assetBlock === undefined) {
-      throw new Error('Failed to apply asset');
+      throw new Error('Failed to apply asset')
     }
 
     // Verify the source set was applied to the block's fill
-    const assetFill = engine.block.getFill(assetBlock);
+    const assetFill = engine.block.getFill(assetBlock)
     const assetSourceSet = engine.block.getSourceSet(
       assetFill,
       'fill/image/sourceSet'
-    );
-    console.log('Asset source set applied:', assetSourceSet);
+    )
+    console.log('Asset source set applied:', assetSourceSet)
 
     // Position the asset block
-    engine.block.setWidth(assetBlock, 300);
-    engine.block.setHeight(assetBlock, 300);
-    engine.block.setPositionX(assetBlock, 400);
-    engine.block.setPositionY(assetBlock, 50);
+    engine.block.setWidth(assetBlock, 300)
+    engine.block.setHeight(assetBlock, 300)
+    engine.block.setPositionX(assetBlock, 400)
+    engine.block.setPositionY(assetBlock, 50)
 
     // ===== Section 4: Video Source Sets =====
     // Create a graphic block with a video fill
-    const videoBlock = engine.block.create('graphic');
-    engine.block.setShape(videoBlock, engine.block.createShape('rect'));
+    const videoBlock = engine.block.create('graphic')
+    engine.block.setShape(videoBlock, engine.block.createShape('rect'))
 
     // Create a video fill and configure source set
-    const videoFill = engine.block.createFill('video');
+    const videoFill = engine.block.createFill('video')
     engine.block.setSourceSet(videoFill, 'fill/video/sourceSet', [
       {
         uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4',
         width: 1920,
         height: 1080
       }
-    ]);
-    engine.block.setFill(videoBlock, videoFill);
+    ])
+    engine.block.setFill(videoBlock, videoFill)
 
     // Add a higher resolution source dynamically
     // Note: In production, this would be a different resolution file
@@ -235,26 +235,26 @@ class Example implements EditorPlugin {
       videoFill,
       'fill/video/sourceSet',
       'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4'
-    );
+    )
 
     // Position and size the video block
-    engine.block.setWidth(videoBlock, 400);
-    engine.block.setHeight(videoBlock, 225);
-    engine.block.setPositionX(videoBlock, 50);
-    engine.block.setPositionY(videoBlock, 400);
-    engine.block.appendChild(page, videoBlock);
+    engine.block.setWidth(videoBlock, 400)
+    engine.block.setHeight(videoBlock, 225)
+    engine.block.setPositionX(videoBlock, 50)
+    engine.block.setPositionY(videoBlock, 400)
+    engine.block.appendChild(page, videoBlock)
 
     // Set video duration for timeline
-    engine.block.setDuration(videoBlock, 5);
+    engine.block.setDuration(videoBlock, 5)
 
     // ===== Section 5: Video Preview Quality Settings =====
     // Force low-quality video preview during editing for better performance
     // Export will still use the highest quality source available
-    engine.editor.setSettingBool('features/forceLowQualityVideoPreview', true);
+    engine.editor.setSettingBool('features/forceLowQualityVideoPreview', true)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to configure source sets programmatically, define them in asset definitions, and optimize video preview performance.
@@ -272,26 +272,26 @@ We configure source sets for image fills using `engine.block.setSourceSet()`. Ea
 > **Caution:** CE.SDK provides two ways to set image content: the `fill/image/imageFileURI` property for a single image, or source sets for multiple resolutions. Use one or the other—setting both on the same fill leads to undefined behavior.
 
 ```typescript highlight=highlight-set-source-set
-    // Create a graphic block with an image fill
-    const imageBlock = engine.block.create('graphic');
-    engine.block.setShape(imageBlock, engine.block.createShape('rect'));
+// Create a graphic block with an image fill
+const imageBlock = engine.block.create('graphic')
+engine.block.setShape(imageBlock, engine.block.createShape('rect'))
 
-    // Create an image fill and configure source set with multiple resolutions
-    const imageFill = engine.block.createFill('image');
-    engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', [
-      // Placeholder images display their dimensions, making it easy to see which source is selected
-      { uri: 'https://placehold.co/256x256/png', width: 256, height: 256 },
-      { uri: 'https://placehold.co/512x512/png', width: 512, height: 512 },
-      { uri: 'https://placehold.co/1024x1024/png', width: 1024, height: 1024 }
-    ]);
-    engine.block.setFill(imageBlock, imageFill);
+// Create an image fill and configure source set with multiple resolutions
+const imageFill = engine.block.createFill('image')
+engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', [
+  // Placeholder images display their dimensions, making it easy to see which source is selected
+  { uri: 'https://placehold.co/256x256/png', width: 256, height: 256 },
+  { uri: 'https://placehold.co/512x512/png', width: 512, height: 512 },
+  { uri: 'https://placehold.co/1024x1024/png', width: 1024, height: 1024 }
+])
+engine.block.setFill(imageBlock, imageFill)
 
-    // Position and size the block
-    engine.block.setWidth(imageBlock, 300);
-    engine.block.setHeight(imageBlock, 300);
-    engine.block.setPositionX(imageBlock, 50);
-    engine.block.setPositionY(imageBlock, 50);
-    engine.block.appendChild(page, imageBlock);
+// Position and size the block
+engine.block.setWidth(imageBlock, 300)
+engine.block.setHeight(imageBlock, 300)
+engine.block.setPositionX(imageBlock, 50)
+engine.block.setPositionY(imageBlock, 50)
+engine.block.appendChild(page, imageBlock)
 ```
 
 > **Note:** Placeholder images that display their dimensions show which source the engine selects as you zoom in and out on the canvas.
@@ -301,27 +301,27 @@ We configure source sets for image fills using `engine.block.setSourceSet()`. Ea
 You can retrieve existing source sets with `engine.block.getSourceSet()`. To add sources dynamically, use `engine.block.addImageFileURIToSourceSet()`, which loads the image to determine dimensions automatically.
 
 ```typescript highlight=highlight-query-source-set
-    // Query the existing source set
-    const sourceSet = engine.block.getSourceSet(
-      imageFill,
-      'fill/image/sourceSet'
-    );
-    console.log('Current source set:', sourceSet);
+// Query the existing source set
+const sourceSet = engine.block.getSourceSet(
+  imageFill,
+  'fill/image/sourceSet'
+)
+console.log('Current source set:', sourceSet)
 
-    // Add a new high-resolution source dynamically
-    // The dimensions are determined automatically from the image
-    await engine.block.addImageFileURIToSourceSet(
-      imageFill,
-      'fill/image/sourceSet',
-      'https://placehold.co/2048x2048/png'
-    );
+// Add a new high-resolution source dynamically
+// The dimensions are determined automatically from the image
+await engine.block.addImageFileURIToSourceSet(
+  imageFill,
+  'fill/image/sourceSet',
+  'https://placehold.co/2048x2048/png'
+)
 
-    // Verify the source was added
-    const updatedSourceSet = engine.block.getSourceSet(
-      imageFill,
-      'fill/image/sourceSet'
-    );
-    console.log('Updated source set with 2048px source:', updatedSourceSet);
+// Verify the source was added
+const updatedSourceSet = engine.block.getSourceSet(
+  imageFill,
+  'fill/image/sourceSet'
+)
+console.log('Updated source set with 2048px source:', updatedSourceSet)
 ```
 
 ## Using Source Sets in Asset Definitions
@@ -329,65 +329,65 @@ You can retrieve existing source sets with `engine.block.getSourceSet()`. To add
 When defining assets for the asset library, you can include source sets in the `payload.sourceSet` field. When the asset is applied with `engine.asset.defaultApplyAsset()`, the source set is automatically configured on the resulting block's fill.
 
 ```typescript highlight=highlight-asset-source-set
-    // Define an asset with a source set in its payload
-    const assetDefinition = {
-      id: 'multi-resolution-image',
-      label: { en: 'Multi-Resolution Image' },
-      meta: {
-        kind: 'image',
-        fillType: '//ly.img.ubq/fill/image'
+// Define an asset with a source set in its payload
+const assetDefinition = {
+  id: 'multi-resolution-image',
+  label: { en: 'Multi-Resolution Image' },
+  meta: {
+    kind: 'image',
+    fillType: '//ly.img.ubq/fill/image'
+  },
+  payload: {
+    sourceSet: [
+      {
+        uri: 'https://placehold.co/256x256/4a90d9/white/png?text=256',
+        width: 256,
+        height: 256
       },
-      payload: {
-        sourceSet: [
-          {
-            uri: 'https://placehold.co/256x256/4a90d9/white/png?text=256',
-            width: 256,
-            height: 256
-          },
-          {
-            uri: 'https://placehold.co/512x512/4a90d9/white/png?text=512',
-            width: 512,
-            height: 512
-          },
-          {
-            uri: 'https://placehold.co/1024x1024/4a90d9/white/png?text=1024',
-            width: 1024,
-            height: 1024
-          }
-        ]
+      {
+        uri: 'https://placehold.co/512x512/4a90d9/white/png?text=512',
+        width: 512,
+        height: 512
+      },
+      {
+        uri: 'https://placehold.co/1024x1024/4a90d9/white/png?text=1024',
+        width: 1024,
+        height: 1024
       }
-    };
+    ]
+  }
+}
 
-    // Register the asset with a local source
-    await engine.asset.addLocalSource('my-images');
-    engine.asset.addAssetToSource('my-images', assetDefinition);
+// Register the asset with a local source
+await engine.asset.addLocalSource('my-images')
+engine.asset.addAssetToSource('my-images', assetDefinition)
 
-    // Find the asset from the source for applying
-    const findResult = await engine.asset.findAssets('my-images', {
-      page: 0,
-      perPage: 1
-    });
-    const assetResult = findResult.assets[0];
+// Find the asset from the source for applying
+const findResult = await engine.asset.findAssets('my-images', {
+  page: 0,
+  perPage: 1
+})
+const assetResult = findResult.assets[0]
 
-    // Apply the asset - the source set is automatically configured
-    const assetBlock = await engine.asset.defaultApplyAsset(assetResult);
-    if (assetBlock === undefined) {
-      throw new Error('Failed to apply asset');
-    }
+// Apply the asset - the source set is automatically configured
+const assetBlock = await engine.asset.defaultApplyAsset(assetResult)
+if (assetBlock === undefined) {
+  throw new Error('Failed to apply asset')
+}
 
-    // Verify the source set was applied to the block's fill
-    const assetFill = engine.block.getFill(assetBlock);
-    const assetSourceSet = engine.block.getSourceSet(
-      assetFill,
-      'fill/image/sourceSet'
-    );
-    console.log('Asset source set applied:', assetSourceSet);
+// Verify the source set was applied to the block's fill
+const assetFill = engine.block.getFill(assetBlock)
+const assetSourceSet = engine.block.getSourceSet(
+  assetFill,
+  'fill/image/sourceSet'
+)
+console.log('Asset source set applied:', assetSourceSet)
 
-    // Position the asset block
-    engine.block.setWidth(assetBlock, 300);
-    engine.block.setHeight(assetBlock, 300);
-    engine.block.setPositionX(assetBlock, 400);
-    engine.block.setPositionY(assetBlock, 50);
+// Position the asset block
+engine.block.setWidth(assetBlock, 300)
+engine.block.setHeight(assetBlock, 300)
+engine.block.setPositionX(assetBlock, 400)
+engine.block.setPositionY(assetBlock, 50)
 ```
 
 ## Video Source Sets
@@ -395,38 +395,38 @@ When defining assets for the asset library, you can include source sets in the `
 Source sets work with video fills using the `fill/video/sourceSet` property. The engine selects the appropriate video source based on the current drawing size. Use `engine.block.addVideoFileURIToSourceSet()` to add video sources dynamically.
 
 ```typescript highlight=highlight-video-source-set
-    // Create a graphic block with a video fill
-    const videoBlock = engine.block.create('graphic');
-    engine.block.setShape(videoBlock, engine.block.createShape('rect'));
+// Create a graphic block with a video fill
+const videoBlock = engine.block.create('graphic')
+engine.block.setShape(videoBlock, engine.block.createShape('rect'))
 
-    // Create a video fill and configure source set
-    const videoFill = engine.block.createFill('video');
-    engine.block.setSourceSet(videoFill, 'fill/video/sourceSet', [
-      {
-        uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4',
-        width: 1920,
-        height: 1080
-      }
-    ]);
-    engine.block.setFill(videoBlock, videoFill);
+// Create a video fill and configure source set
+const videoFill = engine.block.createFill('video')
+engine.block.setSourceSet(videoFill, 'fill/video/sourceSet', [
+  {
+    uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4',
+    width: 1920,
+    height: 1080
+  }
+])
+engine.block.setFill(videoBlock, videoFill)
 
-    // Add a higher resolution source dynamically
-    // Note: In production, this would be a different resolution file
-    await engine.block.addVideoFileURIToSourceSet(
-      videoFill,
-      'fill/video/sourceSet',
-      'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4'
-    );
+// Add a higher resolution source dynamically
+// Note: In production, this would be a different resolution file
+await engine.block.addVideoFileURIToSourceSet(
+  videoFill,
+  'fill/video/sourceSet',
+  'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4'
+)
 
-    // Position and size the video block
-    engine.block.setWidth(videoBlock, 400);
-    engine.block.setHeight(videoBlock, 225);
-    engine.block.setPositionX(videoBlock, 50);
-    engine.block.setPositionY(videoBlock, 400);
-    engine.block.appendChild(page, videoBlock);
+// Position and size the video block
+engine.block.setWidth(videoBlock, 400)
+engine.block.setHeight(videoBlock, 225)
+engine.block.setPositionX(videoBlock, 50)
+engine.block.setPositionY(videoBlock, 400)
+engine.block.appendChild(page, videoBlock)
 
-    // Set video duration for timeline
-    engine.block.setDuration(videoBlock, 5);
+// Set video duration for timeline
+engine.block.setDuration(videoBlock, 5)
 ```
 
 ## Video Preview Quality Settings
@@ -436,7 +436,7 @@ For performance optimization during editing, you can force the engine to use the
 ```typescript highlight=highlight-video-preview-settings
 // Force low-quality video preview during editing for better performance
 // Export will still use the highest quality source available
-engine.editor.setSettingBool('features/forceLowQualityVideoPreview', true);
+engine.editor.setSettingBool('features/forceLowQualityVideoPreview', true)
 ```
 
 The `features/forceLowQualityVideoPreview` setting forces previews to use the smallest source during editing. By default, this is disabled, and the engine uses the source closest to the current drawing size.

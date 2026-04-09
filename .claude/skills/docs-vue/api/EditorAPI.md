@@ -20,9 +20,9 @@ onStateChanged(callback: () => void): (() => void)
 Subscribe to undo/redo history changes.
 ```javascript
 const unsubscribe = engine.editor.onHistoryUpdated(() => {
-  const canUndo = engine.editor.canUndo();
-  const canRedo = engine.editor.canRedo();
-  console.log("History updated", {canUndo, canRedo});
+  const canUndo = engine.editor.canUndo()
+  const canRedo = engine.editor.canRedo()
+  console.log('History updated', { canUndo, canRedo })
 })
 ```
 
@@ -70,9 +70,9 @@ onRoleChanged(callback: (role: RoleString) => void): (() => void)
 Set the editor's current edit mode.
 Edit modes represent different tools or interaction states within the editor. Common ones, are "Crop" while the crop tool is shown or "Text" when inline-editing text.
 ```javascript
-engine.editor.setEditMode('Crop');
+engine.editor.setEditMode('Crop')
 // With a base mode
-engine.editor.setEditMode('CustomMode', 'Crop');
+engine.editor.setEditMode('CustomMode', 'Crop')
 ```
 
 ```typescript
@@ -285,7 +285,7 @@ getSelectedVectorNodeMirrorMode(): number
 Create a new undo/redo history stack.
 Multiple histories can exist, but only one can be active at a time.
 ```javascript
-const newHistory = engine.editor.createHistory();
+const newHistory = engine.editor.createHistory()
 ```
 
 ```typescript
@@ -298,7 +298,7 @@ createHistory(): HistoryId
 
 Destroy a history stack and free its resources.
 ```javascript
-engine.editor.destroyHistory(oldHistory);
+engine.editor.destroyHistory(oldHistory)
 ```
 
 ```typescript
@@ -313,7 +313,7 @@ destroyHistory(history: HistoryId): void
 Set a history as the active undo/redo stack.
 All other histories lose their active state. Undo/redo operations only apply to the active history.
 ```javascript
-engine.editor.setActiveHistory(newHistory);
+engine.editor.setActiveHistory(newHistory)
 ```
 
 ```typescript
@@ -328,7 +328,7 @@ setActiveHistory(history: HistoryId): void
 Get the currently active history handle.
 Creates a new history if none exists.
 ```javascript
-const oldHistory = engine.editor.getActiveHistory();
+const oldHistory = engine.editor.getActiveHistory()
 ```
 
 ```typescript
@@ -342,7 +342,7 @@ getActiveHistory(): HistoryId
 Add a new history state to the undo stack.
 Only adds a state if undoable changes were made since the last undo step.
 ```javascript
-  engine.editor.addUndoStep();
+engine.editor.addUndoStep()
 ```
 
 ```typescript
@@ -354,7 +354,7 @@ addUndoStep(): void
 Remove the last history state from the undo stack.
 Removes the most recent undo step if available.
 ```javascript
-  engine.editor.removeUndoStep();
+engine.editor.removeUndoStep()
 ```
 
 ```typescript
@@ -365,7 +365,7 @@ removeUndoStep(): void
 
 Undo one step in the active history if an undo step is available.
 ```javascript
-engine.editor.undo();
+engine.editor.undo()
 ```
 
 ```typescript
@@ -376,7 +376,7 @@ undo(): void
 
 Redo one step in the active history if a redo step is available.
 ```javascript
-engine.editor.redo();
+engine.editor.redo()
 ```
 
 ```typescript
@@ -388,7 +388,7 @@ redo(): void
 Check if an undo step is available.
 ```javascript
 if (engine.editor.canUndo()) {
-  engine.editor.undo();
+  engine.editor.undo()
 }
 ```
 
@@ -403,7 +403,7 @@ canUndo(): boolean
 Check if a redo step is available.
 ```javascript
 if (engine.editor.canRedo()) {
-  engine.editor.redo();
+  engine.editor.redo()
 }
 ```
 
@@ -636,11 +636,11 @@ The given function must return an absolute path with a scheme and cannot be asyn
 // Replace all .jpg files with the IMG.LY logo
 engine.editor.setURIResolver((uri) => {
   if (uri.endsWith('.jpg')) {
-    return 'https://img.ly/static/ubq_samples/imgly_logo.jpg';
+    return 'https://img.ly/static/ubq_samples/imgly_logo.jpg'
   }
   // Make use of the default URI resolution behavior.
-  return engine.editor.defaultURIResolver(uri);
-});
+  return engine.editor.defaultURIResolver(uri)
+})
 ```
 
 ```typescript
@@ -672,7 +672,7 @@ setURIResolverAsync(resolver: AsyncURIResolver | null): void
 This is the default implementation for the URI resolver.
 It resolves the given path relative to the `basePath` setting.
 ```javascript
-engine.editor.defaultURIResolver(uri);
+engine.editor.defaultURIResolver(uri)
 ```
 
 ```typescript
@@ -928,9 +928,9 @@ convertColorToColorSpace(color: Color, colorSpace: 'sRGB'): RGBAColor
 
 Create a resizable buffer for arbitrary data.
 ```javascript
-const buffer = engine.editor.createBuffer();
+const buffer = engine.editor.createBuffer()
 // Reference the buffer resource from the audio block
-engine.block.setString(audioBlock, 'audio/fileURI', buffer);
+engine.block.setString(audioBlock, 'audio/fileURI', buffer)
 ```
 
 ```typescript
@@ -943,7 +943,7 @@ createBuffer(): string
 
 Destroy a buffer and free its resources.
 ```javascript
-engine.editor.destroyBuffer(buffer);
+engine.editor.destroyBuffer(buffer)
 ```
 
 ```typescript
@@ -958,12 +958,12 @@ destroyBuffer(uri: string): void
 Set the data of a buffer at a given offset.
 ```javascript
 // Generate 10 seconds of stereo 48 kHz audio data
-const samples = new Float32Array(10 * 2 * 48000);
+const samples = new Float32Array(10 * 2 * 48000)
 for (let i = 0; i < samples.length; i += 2) {
-  samples[i] = samples[i + 1] = Math.sin((440 * i * Math.PI) / 48000);
+  samples[i] = samples[i + 1] = Math.sin((440 * i * Math.PI) / 48000)
 }
 // Assign the audio data to the buffer
-engine.editor.setBufferData(buffer, 0, new Uint8Array(samples.buffer));
+engine.editor.setBufferData(buffer, 0, new Uint8Array(samples.buffer))
 ```
 
 ```typescript
@@ -980,10 +980,10 @@ setBufferData(uri: string, offset: number, data: Uint8Array): void
 Get the data of a buffer at a given offset.
 ```javascript
 engine.editor.findAllTransientResources().forEach((resource) => {
-  const bufferURI = resource.URL;
-  const length = engine.editor.getBufferLength(buffer);
-  const data = engine.editor.getBufferData(buffer, 0, length);
-  const blob = new Blob([data]);
+  const bufferURI = resource.URL
+  const length = engine.editor.getBufferLength(buffer)
+  const data = engine.editor.getBufferData(buffer, 0, length)
+  const blob = new Blob([data])
 })
 ```
 
@@ -1003,8 +1003,8 @@ getBufferData(uri: string, offset: number, length: number): Uint8Array
 Set the length of a buffer.
 ```javascript
 // Reduce the buffer to half its length
-const currentLength = engine.editor.getBufferLength(buffer);
-engine.editor.setBufferLength(buffer, currentLength / 2);
+const currentLength = engine.editor.getBufferLength(buffer)
+engine.editor.setBufferLength(buffer, currentLength / 2)
 ```
 
 ```typescript
@@ -1019,7 +1019,7 @@ setBufferLength(uri: string, length: number): void
 
 Get the length of a buffer.
 ```javascript
-const length = engine.editor.getBufferLength(buffer);
+const length = engine.editor.getBufferLength(buffer)
 ```
 
 ```typescript
@@ -1051,11 +1051,11 @@ Gets the font metrics for a given font file URI.
 If the font is not yet loaded, it will be fetched asynchronously.
 The returned metrics are in the font's design units coordinate space.
 ```javascript
-const metrics = await engine.editor.getFontMetrics('/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf');
-console.log(metrics.ascender, metrics.descender, metrics.unitsPerEm);
-console.log(metrics.lineGap);
-console.log(metrics.capHeight, metrics.xHeight);
-console.log(metrics.underlineOffset, metrics.underlineSize, metrics.strikeoutOffset, metrics.strikeoutSize);
+const metrics = await engine.editor.getFontMetrics('/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf')
+console.log(metrics.ascender, metrics.descender, metrics.unitsPerEm)
+console.log(metrics.lineGap)
+console.log(metrics.capHeight, metrics.xHeight)
+console.log(metrics.underlineOffset, metrics.underlineSize, metrics.strikeoutOffset, metrics.strikeoutSize)
 ```
 
 ```typescript

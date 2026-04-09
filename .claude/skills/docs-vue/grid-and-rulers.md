@@ -19,7 +19,7 @@ Enable and configure grid overlays, snap-to-grid behavior, and canvas rulers so 
 CE.SDK provides a configurable grid overlay and canvas rulers to help users align design elements. The grid renders evenly spaced lines across the page, and snap-to-grid constrains element movement to grid intersections. Rulers display along the top and left edges of the canvas showing measurement units.
 
 ```typescript file=@cesdk_web_examples/guides-grid-and-rulers-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -35,9 +35,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { AdvancedEditorConfig } from './advanced-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { AdvancedEditorConfig } from './advanced-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Grid & Rulers Guide
@@ -46,24 +46,24 @@ import packageJson from './package.json';
  * and canvas rulers for precise element alignment.
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new AdvancedEditorConfig());
+    await cesdk.addPlugin(new AdvancedEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({ include: ['ly.img.image.upload'] })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -74,31 +74,31 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Show the grid overlay on the canvas
-    engine.editor.setSettingBool('grid/enabled', true);
+    engine.editor.setSettingBool('grid/enabled', true)
 
     // Enable snapping so elements align to grid lines
-    engine.editor.setSettingBool('grid/snapEnabled', true);
+    engine.editor.setSettingBool('grid/snapEnabled', true)
 
     // Set horizontal and vertical grid spacing in design units
-    engine.editor.setSettingFloat('grid/spacingX', 20);
-    engine.editor.setSettingFloat('grid/spacingY', 20);
+    engine.editor.setSettingFloat('grid/spacingX', 20)
+    engine.editor.setSettingFloat('grid/spacingY', 20)
 
     // Set a custom grid color with transparency
     engine.editor.setSettingColor('grid/color', {
@@ -106,7 +106,7 @@ class Example implements EditorPlugin {
       g: 0.4,
       b: 0.8,
       a: 0.3
-    });
+    })
 
     // Rulers are controlled through the editor's UI store.
     // The AdvancedEditorConfig plugin enables the 'ly.img.rulers'
@@ -114,21 +114,21 @@ class Example implements EditorPlugin {
     // Rulers are visible by default when the feature flag is enabled.
 
     // Add a sample block so the grid and rulers are visible in context
-    const page = engine.block.findByType('page')[0];
-    const block = engine.block.create('graphic');
-    engine.block.setShape(block, engine.block.createShape('rect'));
-    engine.block.setFill(block, engine.block.createFill('color'));
-    engine.block.setWidth(block, 200);
-    engine.block.setHeight(block, 150);
-    engine.block.setPositionX(block, 100);
-    engine.block.setPositionY(block, 100);
-    engine.block.appendChild(page, block);
+    const page = engine.block.findByType('page')[0]
+    const block = engine.block.create('graphic')
+    engine.block.setShape(block, engine.block.createShape('rect'))
+    engine.block.setFill(block, engine.block.createFill('color'))
+    engine.block.setWidth(block, 200)
+    engine.block.setHeight(block, 150)
+    engine.block.setPositionX(block, 100)
+    engine.block.setPositionY(block, 100)
+    engine.block.appendChild(page, block)
 
-    console.log('Grid & Rulers guide initialized.');
+    console.log('Grid & Rulers guide initialized.')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Enable the Grid
@@ -137,7 +137,7 @@ Toggle the grid overlay using the `grid/enabled` setting. When enabled, the engi
 
 ```typescript highlight=highlight-enable-grid
 // Show the grid overlay on the canvas
-engine.editor.setSettingBool('grid/enabled', true);
+engine.editor.setSettingBool('grid/enabled', true)
 ```
 
 The grid is a visual aid rendered at the engine level. It does not affect the scene content or export output.
@@ -148,7 +148,7 @@ Snap-to-grid constrains element movement so blocks align to grid lines. Enable i
 
 ```typescript highlight=highlight-snap-to-grid
 // Enable snapping so elements align to grid lines
-engine.editor.setSettingBool('grid/snapEnabled', true);
+engine.editor.setSettingBool('grid/snapEnabled', true)
 ```
 
 When snap-to-grid is active, dragging or resizing a block snaps its edges to the nearest grid line. This works independently of the grid overlay visibility, so you can snap to an invisible grid if needed.
@@ -159,8 +159,8 @@ Set the horizontal and vertical distance between grid lines using `grid/spacingX
 
 ```typescript highlight=highlight-grid-spacing
 // Set horizontal and vertical grid spacing in design units
-engine.editor.setSettingFloat('grid/spacingX', 20);
-engine.editor.setSettingFloat('grid/spacingY', 20);
+engine.editor.setSettingFloat('grid/spacingX', 20)
+engine.editor.setSettingFloat('grid/spacingY', 20)
 ```
 
 Smaller spacing values produce a finer grid. The default spacing is 32 design units in both directions.
@@ -176,7 +176,7 @@ engine.editor.setSettingColor('grid/color', {
   g: 0.4,
   b: 0.8,
   a: 0.3
-});
+})
 ```
 
 ## Enable Rulers

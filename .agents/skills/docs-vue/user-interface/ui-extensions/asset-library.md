@@ -24,13 +24,12 @@ CE.SDK's asset library lets users browse and add media to designs. You can exten
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ui-extensions-asset-library-browser/browser.ts reference-only
 import type {
-  EditorPlugin,
-  EditorPluginContext,
   AssetQueryData,
+  AssetResult,
   AssetsQueryResult,
-  AssetResult
-} from '@cesdk/cesdk-js';
-import { createApi, OrderBy } from 'unsplash-js';
+  EditorPlugin,
+  EditorPluginContext
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -45,25 +44,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { createApi, OrderBy } from 'unsplash-js'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 // Create Unsplash API client with proxy URL
 // For production, use your own Unsplash proxy with your API key
 const unsplashApi = createApi({
   apiUrl: 'https://api.img.ly/unsplashProxy'
-});
+})
 
 // Transform Unsplash photo to CE.SDK AssetResult format
 function transformToAssetResult(photo: {
-  id: string;
-  description: string | null;
-  alt_description: string | null;
-  width: number;
-  height: number;
-  urls: { regular: string; small: string };
-  user: { name: string; links: { html: string } };
+  id: string
+  description: string | null
+  alt_description: string | null
+  width: number
+  height: number
+  urls: { regular: string, small: string }
+  user: { name: string, links: { html: string } }
 }): AssetResult {
   return {
     id: photo.id,
@@ -87,15 +87,15 @@ function transformToAssetResult(photo: {
       source: 'CE.SDK Demo',
       medium: 'referral'
     }
-  };
+  }
 }
 
 // Fetch photos from Unsplash API
 async function fetchUnsplashPhotos(
   queryData: AssetQueryData
-): Promise<{ photos: AssetResult[]; total: number }> {
+): Promise<{ photos: AssetResult[], total: number }> {
   // Unsplash uses 1-indexed pages, CE.SDK uses 0-indexed
-  const page = queryData.page + 1;
+  const page = queryData.page + 1
 
   if (queryData.query) {
     // Search endpoint for query-based searches
@@ -103,53 +103,54 @@ async function fetchUnsplashPhotos(
       query: queryData.query,
       page,
       perPage: queryData.perPage
-    });
+    })
 
     if (response.type === 'error') {
-      throw new Error('Failed to search Unsplash photos');
+      throw new Error('Failed to search Unsplash photos')
     }
 
-    const results = response.response.results;
+    const results = response.response.results
     return {
       photos: results.map(transformToAssetResult),
       total: response.response.total
-    };
-  } else {
+    }
+  }
+  else {
     // List endpoint for browsing popular photos
     const response = await unsplashApi.photos.list({
       orderBy: OrderBy.POPULAR,
       page,
       perPage: queryData.perPage
-    });
+    })
 
     if (response.type === 'error') {
-      throw new Error('Failed to list Unsplash photos');
+      throw new Error('Failed to list Unsplash photos')
     }
 
-    const results = response.response.results;
+    const results = response.response.results
     return {
       photos: results.map(transformToAssetResult),
       // For list endpoint, estimate total as large number since it's paginated
       total: 10000
-    };
+    }
   }
 }
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -160,51 +161,52 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a design scene to work with
-    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } });
+    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } })
 
     // Create an Unsplash asset source with remote API fetching
     engine.asset.addSource({
       id: 'unsplash-images',
       async findAssets(queryData: AssetQueryData): Promise<AssetsQueryResult> {
         try {
-          const { photos, total } = await fetchUnsplashPhotos(queryData);
+          const { photos, total } = await fetchUnsplashPhotos(queryData)
 
           // Calculate if there are more pages
-          const startIndex = queryData.page * queryData.perPage;
-          const hasNextPage = startIndex + photos.length < total;
+          const startIndex = queryData.page * queryData.perPage
+          const hasNextPage = startIndex + photos.length < total
 
           return {
             assets: photos,
             currentPage: queryData.page,
             nextPage: hasNextPage ? queryData.page + 1 : undefined,
             total
-          };
-        } catch (error) {
-          console.error('Failed to fetch Unsplash photos:', error);
+          }
+        }
+        catch (error) {
+          console.error('Failed to fetch Unsplash photos:', error)
           return {
             assets: [],
             currentPage: queryData.page,
             nextPage: undefined,
             total: 0
-          };
+          }
         }
       },
       // Provide available groups for filtering
       async getGroups(): Promise<string[]> {
-        return ['nature', 'architecture', 'people', 'animals'];
+        return ['nature', 'architecture', 'people', 'animals']
       },
       // Unsplash credits and license
       credits: {
@@ -215,14 +217,14 @@ class Example implements EditorPlugin {
         name: 'Unsplash License',
         url: 'https://unsplash.com/license'
       }
-    });
+    })
 
     // Create a local asset source for user uploads
     engine.asset.addLocalSource('user-uploads', [
       'image/jpeg',
       'image/png',
       'image/webp'
-    ]);
+    ])
 
     // Add a custom asset library panel to display Unsplash images
     cesdk.ui.addAssetLibraryEntry({
@@ -238,7 +240,7 @@ class Example implements EditorPlugin {
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       })
-    });
+    })
 
     // Add an asset library panel for user uploads
     cesdk.ui.addAssetLibraryEntry({
@@ -255,7 +257,7 @@ class Example implements EditorPlugin {
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       })
-    });
+    })
 
     // Set dock to show both Unsplash and Uploads panels
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -273,48 +275,48 @@ class Example implements EditorPlugin {
         label: 'Uploads',
         entries: ['uploads-panel']
       }
-    ]);
+    ])
 
     // Register middleware to handle asset application
     engine.asset.registerApplyMiddleware(
       async (sourceId, assetResult, apply, context) => {
         // Log asset application for debugging
-        console.log(`Applying asset from source: ${sourceId}`);
-        console.log('Asset:', assetResult.label);
+        console.log(`Applying asset from source: ${sourceId}`)
+        console.log('Asset:', assetResult.label)
 
         // For Unsplash, you would typically track the download here
         // using the download_location URL to comply with Unsplash guidelines
 
         // Call the original apply function to create the block
-        const blockId = await apply(sourceId, assetResult);
+        const blockId = await apply(sourceId, assetResult)
 
-        return blockId;
+        return blockId
       }
-    );
+    )
 
     // Query available asset sources
-    const allSources = engine.asset.findAllSources();
-    console.log('All asset sources:', allSources);
+    const allSources = engine.asset.findAllSources()
+    console.log('All asset sources:', allSources)
 
     // Get metadata from the Unsplash source
-    const credits = engine.asset.getCredits('unsplash-images');
-    console.log('Source credits:', credits);
+    const credits = engine.asset.getCredits('unsplash-images')
+    console.log('Source credits:', credits)
 
-    const license = engine.asset.getLicense('unsplash-images');
-    console.log('Source license:', license);
+    const license = engine.asset.getLicense('unsplash-images')
+    console.log('Source license:', license)
 
     // Query and manage asset library entries
-    const allEntries = cesdk.ui.findAllAssetLibraryEntries();
-    console.log('All asset library entries:', allEntries);
+    const allEntries = cesdk.ui.findAllAssetLibraryEntries()
+    console.log('All asset library entries:', allEntries)
 
     // Get the Unsplash panel entry
-    const unsplashEntry = cesdk.ui.getAssetLibraryEntry('unsplash-panel');
-    console.log('Unsplash entry:', unsplashEntry);
+    const unsplashEntry = cesdk.ui.getAssetLibraryEntry('unsplash-panel')
+    console.log('Unsplash entry:', unsplashEntry)
 
     // Update the panel configuration
     cesdk.ui.updateAssetLibraryEntry('unsplash-panel', {
       gridColumns: 4
-    });
+    })
 
     // Open the Unsplash asset library panel on startup
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
@@ -322,11 +324,11 @@ class Example implements EditorPlugin {
         entries: ['unsplash-panel'],
         title: 'Unsplash'
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating custom asset sources, enabling user uploads, organizing assets with groups, and displaying content in the asset library UI.
@@ -336,47 +338,48 @@ This guide covers creating custom asset sources, enabling user uploads, organizi
 We register a source with `engine.asset.addSource()`, providing a unique ID and a `findAssets` function. This function receives query parameters and returns paginated asset results with metadata.
 
 ```typescript highlight-unsplash-asset-source
-    // Create an Unsplash asset source with remote API fetching
-    engine.asset.addSource({
-      id: 'unsplash-images',
-      async findAssets(queryData: AssetQueryData): Promise<AssetsQueryResult> {
-        try {
-          const { photos, total } = await fetchUnsplashPhotos(queryData);
+// Create an Unsplash asset source with remote API fetching
+engine.asset.addSource({
+  id: 'unsplash-images',
+  async findAssets(queryData: AssetQueryData): Promise<AssetsQueryResult> {
+    try {
+      const { photos, total } = await fetchUnsplashPhotos(queryData)
 
-          // Calculate if there are more pages
-          const startIndex = queryData.page * queryData.perPage;
-          const hasNextPage = startIndex + photos.length < total;
+      // Calculate if there are more pages
+      const startIndex = queryData.page * queryData.perPage
+      const hasNextPage = startIndex + photos.length < total
 
-          return {
-            assets: photos,
-            currentPage: queryData.page,
-            nextPage: hasNextPage ? queryData.page + 1 : undefined,
-            total
-          };
-        } catch (error) {
-          console.error('Failed to fetch Unsplash photos:', error);
-          return {
-            assets: [],
-            currentPage: queryData.page,
-            nextPage: undefined,
-            total: 0
-          };
-        }
-      },
-      // Provide available groups for filtering
-      async getGroups(): Promise<string[]> {
-        return ['nature', 'architecture', 'people', 'animals'];
-      },
-      // Unsplash credits and license
-      credits: {
-        name: 'Unsplash',
-        url: 'https://unsplash.com'
-      },
-      license: {
-        name: 'Unsplash License',
-        url: 'https://unsplash.com/license'
+      return {
+        assets: photos,
+        currentPage: queryData.page,
+        nextPage: hasNextPage ? queryData.page + 1 : undefined,
+        total
       }
-    });
+    }
+    catch (error) {
+      console.error('Failed to fetch Unsplash photos:', error)
+      return {
+        assets: [],
+        currentPage: queryData.page,
+        nextPage: undefined,
+        total: 0
+      }
+    }
+  },
+  // Provide available groups for filtering
+  async getGroups(): Promise<string[]> {
+    return ['nature', 'architecture', 'people', 'animals']
+  },
+  // Unsplash credits and license
+  credits: {
+    name: 'Unsplash',
+    url: 'https://unsplash.com'
+  },
+  license: {
+    name: 'Unsplash License',
+    url: 'https://unsplash.com/license'
+  }
+})
 ```
 
 The source configuration includes:
@@ -398,7 +401,7 @@ engine.asset.addLocalSource('user-uploads', [
   'image/jpeg',
   'image/png',
   'image/webp'
-]);
+])
 ```
 
 When creating the source, specify supported MIME types to restrict which file types can be added. This is useful for user uploads or runtime-generated content.
@@ -423,56 +426,56 @@ Implement `getGroups()` to provide the complete list of available categories. Th
 Asset library entries define how a panel looks and what it displays. Each entry connects one or more asset sources to a visual presentation with grid layouts, card styling, and interaction behaviors.
 
 ```typescript highlight-asset-library-panel
-    // Add a custom asset library panel to display Unsplash images
-    cesdk.ui.addAssetLibraryEntry({
-      id: 'unsplash-panel',
-      sourceIds: ['unsplash-images'],
-      title: 'Unsplash Images',
-      icon: 'ly.img.image',
-      gridColumns: 3,
-      gridItemHeight: 'square',
-      cardLabel: (asset: AssetResult) => asset.label || '',
-      cardStyle: (asset: AssetResult) => ({
-        backgroundImage: `url(${asset.meta?.thumbUri})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      })
-    });
+// Add a custom asset library panel to display Unsplash images
+cesdk.ui.addAssetLibraryEntry({
+  id: 'unsplash-panel',
+  sourceIds: ['unsplash-images'],
+  title: 'Unsplash Images',
+  icon: 'ly.img.image',
+  gridColumns: 3,
+  gridItemHeight: 'square',
+  cardLabel: (asset: AssetResult) => asset.label || '',
+  cardStyle: (asset: AssetResult) => ({
+    backgroundImage: `url(${asset.meta?.thumbUri})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  })
+})
 
-    // Add an asset library panel for user uploads
-    cesdk.ui.addAssetLibraryEntry({
-      id: 'uploads-panel',
-      sourceIds: ['user-uploads'],
-      title: 'My Uploads',
-      icon: 'ly.img.upload',
-      gridColumns: 3,
-      gridItemHeight: 'square',
-      canAdd: true,
-      cardLabel: (asset: AssetResult) => asset.label || '',
-      cardStyle: (asset: AssetResult) => ({
-        backgroundImage: `url(${asset.meta?.thumbUri})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      })
-    });
+// Add an asset library panel for user uploads
+cesdk.ui.addAssetLibraryEntry({
+  id: 'uploads-panel',
+  sourceIds: ['user-uploads'],
+  title: 'My Uploads',
+  icon: 'ly.img.upload',
+  gridColumns: 3,
+  gridItemHeight: 'square',
+  canAdd: true,
+  cardLabel: (asset: AssetResult) => asset.label || '',
+  cardStyle: (asset: AssetResult) => ({
+    backgroundImage: `url(${asset.meta?.thumbUri})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  })
+})
 
-    // Set dock to show both Unsplash and Uploads panels
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
-      {
-        id: 'ly.img.assetLibrary.dock',
-        key: 'unsplash-images',
-        icon: '@imgly/Image',
-        label: 'Unsplash',
-        entries: ['unsplash-panel']
-      },
-      {
-        id: 'ly.img.assetLibrary.dock',
-        key: 'user-uploads',
-        icon: '@imgly/Upload',
-        label: 'Uploads',
-        entries: ['uploads-panel']
-      }
-    ]);
+// Set dock to show both Unsplash and Uploads panels
+cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
+  {
+    id: 'ly.img.assetLibrary.dock',
+    key: 'unsplash-images',
+    icon: '@imgly/Image',
+    label: 'Unsplash',
+    entries: ['unsplash-panel']
+  },
+  {
+    id: 'ly.img.assetLibrary.dock',
+    key: 'user-uploads',
+    icon: '@imgly/Upload',
+    label: 'Uploads',
+    entries: ['uploads-panel']
+  }
+])
 ```
 
 The panel configuration includes:
@@ -503,7 +506,7 @@ cesdk.ui.addAssetLibraryEntry({
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   })
-});
+})
 ```
 
 Setting `canAdd: true` displays an upload button in the panel. When users click it, they can add new assets to the local source.
@@ -515,22 +518,22 @@ Use `setComponentOrder` to control which panels appear in the dock and their ord
 Register middleware with `engine.asset.registerApplyMiddleware()` to intercept all asset applications regardless of source. Middleware can modify data, track usage, or implement custom placement logic.
 
 ```typescript highlight-apply-middleware
-    // Register middleware to handle asset application
-    engine.asset.registerApplyMiddleware(
-      async (sourceId, assetResult, apply, context) => {
-        // Log asset application for debugging
-        console.log(`Applying asset from source: ${sourceId}`);
-        console.log('Asset:', assetResult.label);
+// Register middleware to handle asset application
+engine.asset.registerApplyMiddleware(
+  async (sourceId, assetResult, apply, context) => {
+    // Log asset application for debugging
+    console.log(`Applying asset from source: ${sourceId}`)
+    console.log('Asset:', assetResult.label)
 
-        // For Unsplash, you would typically track the download here
-        // using the download_location URL to comply with Unsplash guidelines
+    // For Unsplash, you would typically track the download here
+    // using the download_location URL to comply with Unsplash guidelines
 
-        // Call the original apply function to create the block
-        const blockId = await apply(sourceId, assetResult);
+    // Call the original apply function to create the block
+    const blockId = await apply(sourceId, assetResult)
 
-        return blockId;
-      }
-    );
+    return blockId
+  }
+)
 ```
 
 The middleware receives the source ID, asset result, original apply function, and application context. Call the original apply function and optionally modify the created block afterward.
@@ -540,16 +543,16 @@ The middleware receives the source ID, asset result, original apply function, an
 Inspect registered sources and retrieve their metadata for debugging or displaying attribution.
 
 ```typescript highlight-query-sources
-    // Query available asset sources
-    const allSources = engine.asset.findAllSources();
-    console.log('All asset sources:', allSources);
+// Query available asset sources
+const allSources = engine.asset.findAllSources()
+console.log('All asset sources:', allSources)
 
-    // Get metadata from the Unsplash source
-    const credits = engine.asset.getCredits('unsplash-images');
-    console.log('Source credits:', credits);
+// Get metadata from the Unsplash source
+const credits = engine.asset.getCredits('unsplash-images')
+console.log('Source credits:', credits)
 
-    const license = engine.asset.getLicense('unsplash-images');
-    console.log('Source license:', license);
+const license = engine.asset.getLicense('unsplash-images')
+console.log('Source license:', license)
 ```
 
 The `getCredits` and `getLicense` methods return the attribution information provided when registering the source.
@@ -559,18 +562,18 @@ The `getCredits` and `getLicense` methods return the attribution information pro
 List, retrieve, and update asset library entries to adjust the UI dynamically.
 
 ```typescript highlight-manage-library-entries
-    // Query and manage asset library entries
-    const allEntries = cesdk.ui.findAllAssetLibraryEntries();
-    console.log('All asset library entries:', allEntries);
+// Query and manage asset library entries
+const allEntries = cesdk.ui.findAllAssetLibraryEntries()
+console.log('All asset library entries:', allEntries)
 
-    // Get the Unsplash panel entry
-    const unsplashEntry = cesdk.ui.getAssetLibraryEntry('unsplash-panel');
-    console.log('Unsplash entry:', unsplashEntry);
+// Get the Unsplash panel entry
+const unsplashEntry = cesdk.ui.getAssetLibraryEntry('unsplash-panel')
+console.log('Unsplash entry:', unsplashEntry)
 
-    // Update the panel configuration
-    cesdk.ui.updateAssetLibraryEntry('unsplash-panel', {
-      gridColumns: 4
-    });
+// Update the panel configuration
+cesdk.ui.updateAssetLibraryEntry('unsplash-panel', {
+  gridColumns: 4
+})
 ```
 
 These methods let you modify panel configuration at runtime, such as changing the grid layout based on screen size or user preferences.
@@ -586,7 +589,7 @@ This example demonstrates fetching images from Unsplash using the `unsplash-js` 
 // For production, use your own Unsplash proxy with your API key
 const unsplashApi = createApi({
   apiUrl: 'https://api.img.ly/unsplashProxy'
-});
+})
 ```
 
 The `createApi` function accepts an `apiUrl` parameter pointing to a proxy server. The proxy handles authentication and avoids CORS issues.
@@ -598,13 +601,13 @@ Transform external API responses into the `AssetResult` structure that CE.SDK ex
 ```typescript highlight-transform-photo
 // Transform Unsplash photo to CE.SDK AssetResult format
 function transformToAssetResult(photo: {
-  id: string;
-  description: string | null;
-  alt_description: string | null;
-  width: number;
-  height: number;
-  urls: { regular: string; small: string };
-  user: { name: string; links: { html: string } };
+  id: string
+  description: string | null
+  alt_description: string | null
+  width: number
+  height: number
+  urls: { regular: string, small: string }
+  user: { name: string, links: { html: string } }
 }): AssetResult {
   return {
     id: photo.id,
@@ -628,7 +631,7 @@ function transformToAssetResult(photo: {
       source: 'CE.SDK Demo',
       medium: 'referral'
     }
-  };
+  }
 }
 ```
 
@@ -644,9 +647,9 @@ Map the external fields to CE.SDK properties:
 // Fetch photos from Unsplash API
 async function fetchUnsplashPhotos(
   queryData: AssetQueryData
-): Promise<{ photos: AssetResult[]; total: number }> {
+): Promise<{ photos: AssetResult[], total: number }> {
   // Unsplash uses 1-indexed pages, CE.SDK uses 0-indexed
-  const page = queryData.page + 1;
+  const page = queryData.page + 1
 
   if (queryData.query) {
     // Search endpoint for query-based searches
@@ -654,35 +657,36 @@ async function fetchUnsplashPhotos(
       query: queryData.query,
       page,
       perPage: queryData.perPage
-    });
+    })
 
     if (response.type === 'error') {
-      throw new Error('Failed to search Unsplash photos');
+      throw new Error('Failed to search Unsplash photos')
     }
 
-    const results = response.response.results;
+    const results = response.response.results
     return {
       photos: results.map(transformToAssetResult),
       total: response.response.total
-    };
-  } else {
+    }
+  }
+  else {
     // List endpoint for browsing popular photos
     const response = await unsplashApi.photos.list({
       orderBy: OrderBy.POPULAR,
       page,
       perPage: queryData.perPage
-    });
+    })
 
     if (response.type === 'error') {
-      throw new Error('Failed to list Unsplash photos');
+      throw new Error('Failed to list Unsplash photos')
     }
 
-    const results = response.response.results;
+    const results = response.response.results
     return {
       photos: results.map(transformToAssetResult),
       // For list endpoint, estimate total as large number since it's paginated
       total: 10000
-    };
+    }
   }
 }
 ```

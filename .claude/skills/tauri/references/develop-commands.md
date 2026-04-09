@@ -30,8 +30,9 @@ pub fn run() {
 Frontend:
 
 ```js
-import { invoke } from '@tauri-apps/api/core';
-const result = await invoke('my_custom_command', { msg: 'Hello' });
+import { invoke } from '@tauri-apps/api/core'
+
+const result = await invoke('my_custom_command', { msg: 'Hello' })
 ```
 
 - **Names**: Must be unique across the app. In `lib.rs` commands cannot be `pub` (macro limitation); in other modules use `pub fn` and register as `module::command_name`.

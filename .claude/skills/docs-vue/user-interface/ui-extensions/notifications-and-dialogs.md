@@ -24,7 +24,7 @@ experience using CE.SDK's UI API.
 Notifications and dialogs are essential for communicating with users during the editing experience. Notifications appear as temporary, non-blocking messages at the edge of the editor for status updates and feedback. Dialogs are modal overlays that interrupt the workflow to present information or collect user decisions. Both are created and controlled through the `cesdk.ui` API.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ui-extensions-notifications-and-dialogs-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,25 +40,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,22 +69,22 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Register a notifications dropdown in the navigation bar
     cesdk.ui.registerComponent(
@@ -94,9 +94,9 @@ class Example implements EditorPlugin {
         builder.Button('simple-notification', {
           label: 'Simple',
           onClick: () => {
-            cesdk.ui.showNotification('Welcome to CE.SDK!');
+            cesdk.ui.showNotification('Welcome to CE.SDK!')
           }
-        });
+        })
 
         // Display notifications with different types
         builder.Button('info-notification', {
@@ -105,9 +105,9 @@ class Example implements EditorPlugin {
             cesdk.ui.showNotification({
               message: 'This is an info notification',
               type: 'info'
-            });
+            })
           }
-        });
+        })
 
         builder.Button('success-notification', {
           label: 'Success',
@@ -115,9 +115,9 @@ class Example implements EditorPlugin {
             cesdk.ui.showNotification({
               message: 'Operation completed successfully',
               type: 'success'
-            });
+            })
           }
-        });
+        })
 
         builder.Button('warning-notification', {
           label: 'Warning',
@@ -125,9 +125,9 @@ class Example implements EditorPlugin {
             cesdk.ui.showNotification({
               message: 'Please check your input',
               type: 'warning'
-            });
+            })
           }
-        });
+        })
 
         builder.Button('error-notification', {
           label: 'Error',
@@ -135,9 +135,9 @@ class Example implements EditorPlugin {
             cesdk.ui.showNotification({
               message: 'Something went wrong',
               type: 'error'
-            });
+            })
           }
-        });
+        })
 
         // Add an action button to a notification
         builder.Button('action-notification', {
@@ -150,13 +150,13 @@ class Example implements EditorPlugin {
               action: {
                 label: 'View',
                 onClick: ({ id }) => {
-                  console.log('Action clicked on notification:', id);
-                  cesdk.ui.dismissNotification(id);
+                  console.log('Action clicked on notification:', id)
+                  cesdk.ui.dismissNotification(id)
                 }
               }
-            });
+            })
           }
-        });
+        })
 
         // Create a loading notification that updates to success
         builder.Button('loading-notification', {
@@ -166,7 +166,7 @@ class Example implements EditorPlugin {
               message: 'Processing your request...',
               type: 'loading',
               duration: 'infinite'
-            });
+            })
 
             // Simulate async operation completing
             setTimeout(() => {
@@ -174,10 +174,10 @@ class Example implements EditorPlugin {
                 type: 'success',
                 message: 'Processing complete!',
                 duration: 'medium'
-              });
-            }, 2000);
+              })
+            }, 2000)
           }
-        });
+        })
 
         // Show a notification that can be dismissed
         builder.Button('dismiss-notification', {
@@ -187,13 +187,13 @@ class Example implements EditorPlugin {
               message: 'This will be dismissed in 2 seconds',
               type: 'info',
               duration: 'infinite'
-            });
+            })
 
             setTimeout(() => {
-              cesdk.ui.dismissNotification(notificationId);
-            }, 2000);
+              cesdk.ui.dismissNotification(notificationId)
+            }, 2000)
           }
-        });
+        })
 
         // Handle notification dismiss events
         builder.Button('ondismiss-notification', {
@@ -204,13 +204,13 @@ class Example implements EditorPlugin {
               type: 'info',
               duration: 'long',
               onDismiss: () => {
-                console.log('Notification was dismissed');
+                console.log('Notification was dismissed')
               }
-            });
+            })
           }
-        });
+        })
       }
-    );
+    )
 
     // Register a dialogs dropdown in the navigation bar
     cesdk.ui.registerComponent(
@@ -220,9 +220,9 @@ class Example implements EditorPlugin {
         builder.Button('simple-dialog', {
           label: 'Simple',
           onClick: () => {
-            cesdk.ui.showDialog('This is a simple dialog message');
+            cesdk.ui.showDialog('This is a simple dialog message')
           }
-        });
+        })
 
         // Show a dialog and close it programmatically
         builder.Button('close-dialog', {
@@ -230,12 +230,12 @@ class Example implements EditorPlugin {
           onClick: () => {
             const dialogId = cesdk.ui.showDialog(
               'This dialog will close in 2 seconds'
-            );
+            )
             setTimeout(() => {
-              cesdk.ui.closeDialog(dialogId);
-            }, 2000);
+              cesdk.ui.closeDialog(dialogId)
+            }, 2000)
           }
-        });
+        })
 
         // Display a warning dialog with actions
         builder.Button('warning-dialog', {
@@ -253,16 +253,16 @@ class Example implements EditorPlugin {
                   label: 'Save',
                   color: 'accent',
                   onClick: ({ id }) => {
-                    console.log('Save clicked');
-                    cesdk.ui.closeDialog(id);
+                    console.log('Save clicked')
+                    cesdk.ui.closeDialog(id)
                   }
                 },
                 {
-                  label: "Don't Save",
+                  label: 'Don\'t Save',
                   variant: 'plain',
                   onClick: ({ id }) => {
-                    console.log('Discard clicked');
-                    cesdk.ui.closeDialog(id);
+                    console.log('Discard clicked')
+                    cesdk.ui.closeDialog(id)
                   }
                 }
               ],
@@ -270,9 +270,9 @@ class Example implements EditorPlugin {
                 label: 'Cancel',
                 onClick: ({ id }) => cesdk.ui.closeDialog(id)
               }
-            });
+            })
           }
-        });
+        })
 
         // Create a loading dialog with progress indicator
         builder.Button('progress-dialog', {
@@ -286,22 +286,22 @@ class Example implements EditorPlugin {
               },
               progress: 'indeterminate',
               clickOutsideToClose: false
-            });
+            })
 
             // Simulate progress updates
-            let progress = 0;
+            let progress = 0
             const progressInterval = setInterval(() => {
-              progress += 20;
+              progress += 20
               cesdk.ui.updateDialog(progressDialogId, {
                 progress: { value: progress, max: 100 },
                 content: {
                   title: 'Exporting',
                   message: `Processing... ${progress}%`
                 }
-              });
+              })
 
               if (progress >= 100) {
-                clearInterval(progressInterval);
+                clearInterval(progressInterval)
                 cesdk.ui.updateDialog(progressDialogId, {
                   type: 'success',
                   content: {
@@ -317,11 +317,11 @@ class Example implements EditorPlugin {
                     }
                   ],
                   clickOutsideToClose: true
-                });
+                })
               }
-            }, 500);
+            }, 500)
           }
-        });
+        })
 
         // Dialog with multi-paragraph content and large size
         builder.Button('content-dialog', {
@@ -344,9 +344,9 @@ class Example implements EditorPlugin {
                   onClick: ({ id }) => cesdk.ui.closeDialog(id)
                 }
               ]
-            });
+            })
           }
-        });
+        })
 
         // Handle dialog close events
         builder.Button('onclose-dialog', {
@@ -356,13 +356,13 @@ class Example implements EditorPlugin {
               type: 'info',
               content: 'Close this dialog to see the callback',
               onClose: () => {
-                console.log('Dialog was closed');
+                console.log('Dialog was closed')
               }
-            });
+            })
           }
-        });
+        })
       }
-    );
+    )
 
     // Add the demo dropdowns to the navigation bar
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
@@ -371,11 +371,11 @@ class Example implements EditorPlugin {
       'ly.img.navigationBar.position.right',
       'ly.img.notifications.demo.navigationBar',
       'ly.img.dialogs.demo.navigationBar'
-    ]);
+    ])
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Displaying Notifications
@@ -387,7 +387,7 @@ Notifications provide non-blocking feedback without interrupting the user's work
 Use `cesdk.ui.showNotification()` to display a notification. Pass a string for a simple message or a configuration object for full control. The method returns a unique ID for managing the notification.
 
 ```typescript highlight-show-notification
-cesdk.ui.showNotification('Welcome to CE.SDK!');
+cesdk.ui.showNotification('Welcome to CE.SDK!')
 ```
 
 ### Notification Types
@@ -404,7 +404,7 @@ Configure the visual appearance with the `type` property. Available types convey
 cesdk.ui.showNotification({
   message: 'This is an info notification',
   type: 'info'
-});
+})
 ```
 
 ### Notification Duration
@@ -429,11 +429,11 @@ cesdk.ui.showNotification({
   action: {
     label: 'View',
     onClick: ({ id }) => {
-      console.log('Action clicked on notification:', id);
-      cesdk.ui.dismissNotification(id);
+      console.log('Action clicked on notification:', id)
+      cesdk.ui.dismissNotification(id)
     }
   }
-});
+})
 ```
 
 ### Loading Notifications
@@ -445,7 +445,7 @@ const loadingId = cesdk.ui.showNotification({
   message: 'Processing your request...',
   type: 'loading',
   duration: 'infinite'
-});
+})
 ```
 
 ### Updating Notifications
@@ -457,7 +457,7 @@ cesdk.ui.updateNotification(loadingId, {
   type: 'success',
   message: 'Processing complete!',
   duration: 'medium'
-});
+})
 ```
 
 ### Dismissing Notifications
@@ -465,15 +465,15 @@ cesdk.ui.updateNotification(loadingId, {
 Use `cesdk.ui.dismissNotification()` with the notification ID to remove it programmatically. This is useful for canceling loading notifications when operations complete or when you need to clear notifications based on user actions.
 
 ```typescript highlight-dismiss-notification
-            const notificationId = cesdk.ui.showNotification({
-              message: 'This will be dismissed in 2 seconds',
-              type: 'info',
-              duration: 'infinite'
-            });
+const notificationId = cesdk.ui.showNotification({
+  message: 'This will be dismissed in 2 seconds',
+  type: 'info',
+  duration: 'infinite'
+})
 
-            setTimeout(() => {
-              cesdk.ui.dismissNotification(notificationId);
-            }, 2000);
+setTimeout(() => {
+  cesdk.ui.dismissNotification(notificationId)
+}, 2000)
 ```
 
 ### Handling Dismiss Callbacks
@@ -486,9 +486,9 @@ cesdk.ui.showNotification({
   type: 'info',
   duration: 'long',
   onDismiss: () => {
-    console.log('Notification was dismissed');
+    console.log('Notification was dismissed')
   }
-});
+})
 ```
 
 ## Displaying Dialogs
@@ -500,7 +500,7 @@ Dialogs present modal content requiring user attention or decisions. They overla
 Use `cesdk.ui.showDialog()` to display a dialog. Pass a string for a simple message or a configuration object for full control. The method returns a unique ID for managing the dialog.
 
 ```typescript highlight-show-dialog
-cesdk.ui.showDialog('This is a simple dialog message');
+cesdk.ui.showDialog('This is a simple dialog message')
 ```
 
 ### Closing Dialogs
@@ -510,10 +510,10 @@ Use `cesdk.ui.closeDialog()` with the dialog ID to close it programmatically.
 ```typescript highlight-close-dialog
 const dialogId = cesdk.ui.showDialog(
   'This dialog will close in 2 seconds'
-);
+)
 setTimeout(() => {
-  cesdk.ui.closeDialog(dialogId);
-}, 2000);
+  cesdk.ui.closeDialog(dialogId)
+}, 2000)
 ```
 
 ### Dialog Types and Actions
@@ -533,16 +533,16 @@ cesdk.ui.showDialog({
       label: 'Save',
       color: 'accent',
       onClick: ({ id }) => {
-        console.log('Save clicked');
-        cesdk.ui.closeDialog(id);
+        console.log('Save clicked')
+        cesdk.ui.closeDialog(id)
       }
     },
     {
-      label: "Don't Save",
+      label: 'Don\'t Save',
       variant: 'plain',
       onClick: ({ id }) => {
-        console.log('Discard clicked');
-        cesdk.ui.closeDialog(id);
+        console.log('Discard clicked')
+        cesdk.ui.closeDialog(id)
       }
     }
   ],
@@ -550,7 +550,7 @@ cesdk.ui.showDialog({
     label: 'Cancel',
     onClick: ({ id }) => cesdk.ui.closeDialog(id)
   }
-});
+})
 ```
 
 Each action object includes:
@@ -577,7 +577,7 @@ const progressDialogId = cesdk.ui.showDialog({
   },
   progress: 'indeterminate',
   clickOutsideToClose: false
-});
+})
 ```
 
 ### Updating Dialogs
@@ -591,7 +591,7 @@ cesdk.ui.updateDialog(progressDialogId, {
     title: 'Exporting',
     message: `Processing... ${progress}%`
   }
-});
+})
 ```
 
 ### Dialog Content
@@ -616,7 +616,7 @@ cesdk.ui.showDialog({
       onClick: ({ id }) => cesdk.ui.closeDialog(id)
     }
   ]
-});
+})
 ```
 
 ### Handling Close Callbacks
@@ -628,9 +628,9 @@ cesdk.ui.showDialog({
   type: 'info',
   content: 'Close this dialog to see the callback',
   onClose: () => {
-    console.log('Dialog was closed');
+    console.log('Dialog was closed')
   }
-});
+})
 ```
 
 ### Click Outside Behavior

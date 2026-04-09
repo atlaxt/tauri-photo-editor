@@ -23,7 +23,7 @@ Export designs to PNG format with lossless quality and optional transparency sup
 PNG is a lossless image format that preserves image quality and supports transparency. It's ideal for designs requiring pixel-perfect fidelity, logos, graphics with transparent backgrounds, and any content where quality cannot be compromised.
 
 ```typescript file=@cesdk_web_examples/guides-conversion-to-png-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,26 +38,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,32 +68,33 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage();
-    if (!page) throw new Error('No page found');
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    )
+    const page = engine.scene.getCurrentPage()
+    if (!page)
+      throw new Error('No page found')
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Export programmatically using the engine API
     const exportProgrammatically = async () => {
       const blob = await engine.block.export(page, {
         mimeType: 'image/png'
-      });
-      await cesdk.utils.downloadFile(blob, 'image/png');
-    };
+      })
+      await cesdk.utils.downloadFile(blob, 'image/png')
+    }
 
     // Export with compression level (0-9)
     // Higher values produce smaller files but take longer
@@ -101,9 +102,9 @@ class Example implements EditorPlugin {
       const blob = await engine.block.export(page, {
         mimeType: 'image/png',
         pngCompressionLevel: 9
-      });
-      await cesdk.utils.downloadFile(blob, 'image/png');
-    };
+      })
+      await cesdk.utils.downloadFile(blob, 'image/png')
+    }
 
     // Export with target dimensions
     // The block scales to fill the target while maintaining aspect ratio
@@ -112,31 +113,31 @@ class Example implements EditorPlugin {
         mimeType: 'image/png',
         targetWidth: 1920,
         targetHeight: 1080
-      });
-      await cesdk.utils.downloadFile(blob, 'image/png');
-    };
+      })
+      await cesdk.utils.downloadFile(blob, 'image/png')
+    }
 
     // Trigger the built-in export action
     const triggerExportAction = async () => {
       await cesdk.actions.run('exportDesign', {
         mimeType: 'image/png'
-      });
-    };
+      })
+    }
 
     // Override the default export action to customize behavior
     cesdk.actions.register('exportDesign', async (options) => {
       // Use the utils API to export with a loading dialog
-      const { blobs, options: exportOptions } =
-        await cesdk.utils.export(options);
+      const { blobs, options: exportOptions }
+        = await cesdk.utils.export(options)
 
       // Custom logic: log the export details
       console.log(
         `Exported ${blobs.length} file(s) as ${exportOptions.mimeType}`
-      );
+      )
 
       // Download the exported file
-      await cesdk.utils.downloadFile(blobs[0], exportOptions.mimeType);
-    });
+      await cesdk.utils.downloadFile(blobs[0], exportOptions.mimeType)
+    })
 
     // Add export dropdown to navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -171,11 +172,11 @@ class Example implements EditorPlugin {
           onClick: exportWithDimensions
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to export designs to PNG, configure export options, and integrate with the built-in export action.
@@ -186,12 +187,12 @@ Use `engine.block.export()` to export a design block to PNG. The method returns 
 
 ```typescript highlight=highlight-export-programmatic
 // Export programmatically using the engine API
-const exportProgrammatically = async () => {
+async function exportProgrammatically() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/png'
-  });
-  await cesdk.utils.downloadFile(blob, 'image/png');
-};
+  })
+  await cesdk.utils.downloadFile(blob, 'image/png')
+}
 ```
 
 ## Compression Level
@@ -201,13 +202,13 @@ Control the file size versus export speed tradeoff using `pngCompressionLevel`. 
 ```typescript highlight=highlight-options-compression
 // Export with compression level (0-9)
 // Higher values produce smaller files but take longer
-const exportWithCompression = async () => {
+async function exportWithCompression() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/png',
     pngCompressionLevel: 9
-  });
-  await cesdk.utils.downloadFile(blob, 'image/png');
-};
+  })
+  await cesdk.utils.downloadFile(blob, 'image/png')
+}
 ```
 
 The default compression level is 5, providing a good balance between file size and export speed.
@@ -219,14 +220,14 @@ Resize the output by setting `targetWidth` and `targetHeight`. The block scales 
 ```typescript highlight=highlight-options-dimensions
 // Export with target dimensions
 // The block scales to fill the target while maintaining aspect ratio
-const exportWithDimensions = async () => {
+async function exportWithDimensions() {
   const blob = await engine.block.export(page, {
     mimeType: 'image/png',
     targetWidth: 1920,
     targetHeight: 1080
-  });
-  await cesdk.utils.downloadFile(blob, 'image/png');
-};
+  })
+  await cesdk.utils.downloadFile(blob, 'image/png')
+}
 ```
 
 ## Trigger the Export Action
@@ -235,11 +236,11 @@ The built-in `exportDesign` action triggers the default export workflow with a l
 
 ```typescript highlight=highlight-export-action
 // Trigger the built-in export action
-const triggerExportAction = async () => {
+async function triggerExportAction() {
   await cesdk.actions.run('exportDesign', {
     mimeType: 'image/png'
-  });
-};
+  })
+}
 ```
 
 ## Override the Export Action
@@ -247,20 +248,20 @@ const triggerExportAction = async () => {
 Register a custom handler for the `exportDesign` action to customize behavior. This allows you to add custom logic such as uploading to a server or processing the exported file.
 
 ```typescript highlight=highlight-override-action
-    // Override the default export action to customize behavior
-    cesdk.actions.register('exportDesign', async (options) => {
-      // Use the utils API to export with a loading dialog
-      const { blobs, options: exportOptions } =
-        await cesdk.utils.export(options);
+// Override the default export action to customize behavior
+cesdk.actions.register('exportDesign', async (options) => {
+  // Use the utils API to export with a loading dialog
+  const { blobs, options: exportOptions }
+    = await cesdk.utils.export(options)
 
-      // Custom logic: log the export details
-      console.log(
-        `Exported ${blobs.length} file(s) as ${exportOptions.mimeType}`
-      );
+  // Custom logic: log the export details
+  console.log(
+    `Exported ${blobs.length} file(s) as ${exportOptions.mimeType}`
+  )
 
-      // Download the exported file
-      await cesdk.utils.downloadFile(blobs[0], exportOptions.mimeType);
-    });
+  // Download the exported file
+  await cesdk.utils.downloadFile(blobs[0], exportOptions.mimeType)
+})
 ```
 
 The `cesdk.utils.export()` method handles the export with a loading dialog, while `cesdk.utils.downloadFile()` triggers the browser download.

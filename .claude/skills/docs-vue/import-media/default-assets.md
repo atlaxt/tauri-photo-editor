@@ -5,9 +5,9 @@
 ---
 
 ```typescript file=@cesdk_web_examples/guides-import-media-default-assets-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Using Default Assets Guide
@@ -17,140 +17,140 @@ import packageJson from './package.json';
  * a star shape, sticker, and image.
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk, engine }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Versioned CDN URLs using the SDK package (recommended)
     // For production, self-host these assets - see the Serve Assets guide
-    const PACKAGE_BASE = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets`;
-    const DEFAULT_ASSETS_URL = `${PACKAGE_BASE}/v4/`;
-    const DEMO_ASSETS_URL = `${PACKAGE_BASE}/demo/v3/`;
+    const PACKAGE_BASE = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets`
+    const DEFAULT_ASSETS_URL = `${PACKAGE_BASE}/v4/`
+    const DEMO_ASSETS_URL = `${PACKAGE_BASE}/demo/v3/`
 
     // Load default asset sources (core editor components)
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.sticker/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.vector.shape/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.color.palette/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.filter/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.effect/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.blur/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.typeface/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.crop.presets/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEFAULT_ASSETS_URL}ly.img.page.presets/content.json`
-    );
+    )
 
     // Load demo asset sources (sample content for testing)
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEMO_ASSETS_URL}ly.img.image/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEMO_ASSETS_URL}ly.img.video/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEMO_ASSETS_URL}ly.img.audio/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEMO_ASSETS_URL}ly.img.templates/content.json`
-    );
+    )
     await engine.asset.addLocalAssetSourceFromJSONURI(
       `${DEMO_ASSETS_URL}ly.img.text.components/content.json`
-    );
+    )
 
     // Update asset library entries to show the loaded sources in the UI
     cesdk.ui.updateAssetLibraryEntry('ly.img.sticker', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.sticker'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.vector.shape', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.vector.shape'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.color.palette', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.color.palette'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.filter', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.filter'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.effect', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.effect'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.blur', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.blur'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.typeface', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.typeface'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.crop.presets', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.crop.presets'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.page.presets', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.page.presets'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.image'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.video', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.video'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.audio'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.templates', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.templates'])
       ]
-    });
+    })
     cesdk.ui.updateAssetLibraryEntry('ly.img.text.components', {
       sourceIds: ({ currentIds }) => [
         ...new Set([...currentIds, 'ly.img.text.components'])
       ]
-    });
+    })
 
     // Create the design scene
     await cesdk.actions.run('scene.create', {
@@ -158,15 +158,16 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Get the page to add content to
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
-    if (page == null) return;
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
+    if (page == null)
+      return
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Define the three assets to add: star shape, sticker, and image
     const assetsToAdd = [
@@ -182,36 +183,36 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.image',
         assetId: 'ly.img.cesdk.images.samples/sample.1'
       }
-    ];
+    ]
 
     // Calculate layout for 3 centered blocks
-    const blockSize = Math.min(pageWidth, pageHeight) * 0.2;
-    const spacing = blockSize * 0.3;
-    const totalWidth =
-      assetsToAdd.length * blockSize + (assetsToAdd.length - 1) * spacing;
-    const startX = (pageWidth - totalWidth) / 2;
-    const centerY = (pageHeight - blockSize) / 2;
+    const blockSize = Math.min(pageWidth, pageHeight) * 0.2
+    const spacing = blockSize * 0.3
+    const totalWidth
+      = assetsToAdd.length * blockSize + (assetsToAdd.length - 1) * spacing
+    const startX = (pageWidth - totalWidth) / 2
+    const centerY = (pageHeight - blockSize) / 2
 
     // Create and position each block
     for (let i = 0; i < assetsToAdd.length; i++) {
-      const { sourceId, assetId } = assetsToAdd[i];
-      const asset = await engine.asset.fetchAsset(sourceId, assetId);
+      const { sourceId, assetId } = assetsToAdd[i]
+      const asset = await engine.asset.fetchAsset(sourceId, assetId)
 
       if (asset != null) {
-        const block = await engine.asset.apply(sourceId, asset);
+        const block = await engine.asset.apply(sourceId, asset)
 
         if (block != null) {
-          engine.block.setWidth(block, blockSize);
-          engine.block.setHeight(block, blockSize);
-          engine.block.setPositionX(block, startX + i * (blockSize + spacing));
-          engine.block.setPositionY(block, centerY);
+          engine.block.setWidth(block, blockSize)
+          engine.block.setHeight(block, blockSize)
+          engine.block.setPositionX(block, startX + i * (blockSize + spacing))
+          engine.block.setPositionY(block, centerY)
         }
       }
     }
 
     // Clear selection for cleaner visual
     for (const block of engine.block.findAllSelected()) {
-      engine.block.setSelected(block, false);
+      engine.block.setSelected(block, false)
     }
 
     // Open the Elements panel to showcase all loaded asset sources
@@ -219,11 +220,11 @@ class Example implements EditorPlugin {
       payload: {
         entries: ['ly.img.image', 'ly.img.vector.shape', 'ly.img.sticker']
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 Load all asset sources from IMG.LY's CDN to populate your CE.SDK editor with shapes, stickers, filters, effects, fonts, images, and other media using the Asset API.
@@ -279,10 +280,10 @@ IMG.LY provides two categories of asset sources hosted on the IMG.LY CDN for dev
 Use `addLocalAssetSourceFromJSONURI()` to load an asset source directly from a JSON URL:
 
 ```typescript
-const baseURL = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets/v4/`;
+const baseURL = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets/v4/`
 await engine.asset.addLocalAssetSourceFromJSONURI(
   `${baseURL}ly.img.vector.shape/content.json`
-);
+)
 ```
 
 ## Versioned CDN URLs
@@ -292,9 +293,9 @@ Use the SDK version to construct versioned CDN URLs. This ensures assets are com
 ```typescript highlight-cdn-urls
 // Versioned CDN URLs using the SDK package (recommended)
 // For production, self-host these assets - see the Serve Assets guide
-const PACKAGE_BASE = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets`;
-const DEFAULT_ASSETS_URL = `${PACKAGE_BASE}/v4/`;
-const DEMO_ASSETS_URL = `${PACKAGE_BASE}/demo/v3/`;
+const PACKAGE_BASE = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets`
+const DEFAULT_ASSETS_URL = `${PACKAGE_BASE}/v4/`
+const DEMO_ASSETS_URL = `${PACKAGE_BASE}/demo/v3/`
 ```
 
 ## Loading Default Asset Sources
@@ -305,7 +306,7 @@ Load a default asset source from the CDN. Repeat this pattern for each source yo
 // Load default asset sources (core editor components)
 await engine.asset.addLocalAssetSourceFromJSONURI(
   `${DEFAULT_ASSETS_URL}ly.img.sticker/content.json`
-);
+)
 ```
 
 ## Loading Demo Asset Sources
@@ -316,7 +317,7 @@ Load a demo asset source from the CDN. Repeat this pattern for each source you n
 // Load demo asset sources (sample content for testing)
 await engine.asset.addLocalAssetSourceFromJSONURI(
   `${DEMO_ASSETS_URL}ly.img.image/content.json`
-);
+)
 ```
 
 ## Updating the Asset Library
@@ -329,7 +330,7 @@ cesdk.ui.updateAssetLibraryEntry('ly.img.sticker', {
   sourceIds: ({ currentIds }) => [
     ...new Set([...currentIds, 'ly.img.sticker'])
   ]
-});
+})
 ```
 
 ## Filtering Assets with Matcher
@@ -337,19 +338,19 @@ cesdk.ui.updateAssetLibraryEntry('ly.img.sticker', {
 Use the `matcher` option to load only specific assets from a source:
 
 ```typescript
-const baseURL = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets/v4/`;
+const baseURL = `https://cdn.img.ly/packages/imgly/cesdk-js/${cesdk.version}/assets/v4/`
 
 // Load only star and arrow shapes
 await engine.asset.addLocalAssetSourceFromJSONURI(
   `${baseURL}ly.img.vector.shape/content.json`,
   { matcher: ['*star*', '*arrow*'] }
-);
+)
 
 // Load only emoji stickers
 await engine.asset.addLocalAssetSourceFromJSONURI(
   `${baseURL}ly.img.sticker/content.json`,
   { matcher: ['*emoji*'] }
-);
+)
 ```
 
 An asset is included if it matches ANY pattern in the array. Patterns support `*` wildcards.

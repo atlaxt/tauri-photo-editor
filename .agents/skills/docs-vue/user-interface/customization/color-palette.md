@@ -39,7 +39,7 @@ cesdk.i18n.setTranslations({
     'libraries.brandNeutralColors.label': 'Neutrals',
     'libraries.accentColors.label': 'Accent Colors',
   },
-});
+})
 ```
 
 The translation keys follow the pattern `libraries.{sourceId}.label`, where `sourceId` matches the asset source identifier we'll create.
@@ -54,7 +54,7 @@ We create the primary brand color library with the main brand color and its vari
 
 ```typescript
 // Create Brand Primary color library
-cesdk.engine.asset.addLocalSource('brandPrimaryColors');
+cesdk.engine.asset.addLocalSource('brandPrimaryColors')
 
 // Add brand primary colors
 cesdk.engine.asset.addAssetToSource('brandPrimaryColors', {
@@ -69,7 +69,7 @@ cesdk.engine.asset.addAssetToSource('brandPrimaryColors', {
       b: 0.8,
     },
   },
-});
+})
 
 cesdk.engine.asset.addAssetToSource('brandPrimaryColors', {
   id: 'brand-blue-dark',
@@ -83,7 +83,7 @@ cesdk.engine.asset.addAssetToSource('brandPrimaryColors', {
       b: 0.5,
     },
   },
-});
+})
 
 cesdk.engine.asset.addAssetToSource('brandPrimaryColors', {
   id: 'brand-blue-light',
@@ -97,7 +97,7 @@ cesdk.engine.asset.addAssetToSource('brandPrimaryColors', {
       b: 0.9,
     },
   },
-});
+})
 ```
 
 Each color asset includes:
@@ -113,7 +113,7 @@ Next, we add secondary brand colors that complement the primary palette:
 
 ```typescript
 // Create Brand Secondary color library
-cesdk.engine.asset.addLocalSource('brandSecondaryColors');
+cesdk.engine.asset.addLocalSource('brandSecondaryColors')
 
 cesdk.engine.asset.addAssetToSource('brandSecondaryColors', {
   id: 'brand-orange',
@@ -127,7 +127,7 @@ cesdk.engine.asset.addAssetToSource('brandSecondaryColors', {
       b: 0.0,
     },
   },
-});
+})
 
 cesdk.engine.asset.addAssetToSource('brandSecondaryColors', {
   id: 'brand-orange-dark',
@@ -141,7 +141,7 @@ cesdk.engine.asset.addAssetToSource('brandSecondaryColors', {
       b: 0.0,
     },
   },
-});
+})
 ```
 
 ### Neutral Colors
@@ -150,7 +150,7 @@ We include a set of neutral colors for backgrounds, borders, and text:
 
 ```typescript
 // Create Brand Neutral colors library
-cesdk.engine.asset.addLocalSource('brandNeutralColors');
+cesdk.engine.asset.addLocalSource('brandNeutralColors')
 
 cesdk.engine.asset.addAssetToSource('brandNeutralColors', {
   id: 'neutral-black',
@@ -164,7 +164,7 @@ cesdk.engine.asset.addAssetToSource('brandNeutralColors', {
       b: 0.0,
     },
   },
-});
+})
 
 cesdk.engine.asset.addAssetToSource('brandNeutralColors', {
   id: 'neutral-gray',
@@ -178,7 +178,7 @@ cesdk.engine.asset.addAssetToSource('brandNeutralColors', {
       b: 0.5,
     },
   },
-});
+})
 
 cesdk.engine.asset.addAssetToSource('brandNeutralColors', {
   id: 'neutral-white',
@@ -192,7 +192,7 @@ cesdk.engine.asset.addAssetToSource('brandNeutralColors', {
       b: 1.0,
     },
   },
-});
+})
 ```
 
 ### Accent Colors
@@ -201,7 +201,7 @@ We add accent colors for special use cases:
 
 ```typescript
 // Create Accent Colors library
-cesdk.engine.asset.addLocalSource('accentColors');
+cesdk.engine.asset.addLocalSource('accentColors')
 
 cesdk.engine.asset.addAssetToSource('accentColors', {
   id: 'accent-green',
@@ -215,7 +215,7 @@ cesdk.engine.asset.addAssetToSource('accentColors', {
       b: 0.3,
     },
   },
-});
+})
 
 cesdk.engine.asset.addAssetToSource('accentColors', {
   id: 'accent-gold',
@@ -229,7 +229,7 @@ cesdk.engine.asset.addAssetToSource('accentColors', {
       b: 0.13,
     },
   },
-});
+})
 ```
 
 ## Configure the Color Picker
@@ -248,7 +248,7 @@ cesdk.ui.updateAssetLibraryEntry('ly.img.colors', {
     // Note: 'ly.img.color.palette' is intentionally omitted
     // to replace the default palette completely
   ],
-});
+})
 ```
 
 The `sourceIds` array determines both which libraries appear and their order in the UI. By omitting `ly.img.color.palette`, we completely replace the default palette with our custom colors.
@@ -259,13 +259,13 @@ Use the `colorPicker/colorMode` setting to lock the color picker to a specific c
 
 ```typescript
 // Restrict to RGB colors only
-cesdk.engine.editor.setSetting('colorPicker/colorMode', 'RGB');
+cesdk.engine.editor.setSetting('colorPicker/colorMode', 'RGB')
 
 // Restrict to CMYK colors only
-cesdk.engine.editor.setSetting('colorPicker/colorMode', 'CMYK');
+cesdk.engine.editor.setSetting('colorPicker/colorMode', 'CMYK')
 
 // Allow any color mode (default)
-cesdk.engine.editor.setSetting('colorPicker/colorMode', 'Any');
+cesdk.engine.editor.setSetting('colorPicker/colorMode', 'Any')
 ```
 
 | Setting                 | Values                              | Description                                       |
@@ -333,7 +333,7 @@ cesdk.ui.updateAssetLibraryEntry('ly.img.colors', {
     'ly.img.color.palette', // Include default palette
     'brandNeutralColors',
   ],
-});
+})
 ```
 
 The position in the array determines where the default palette appears relative to your custom libraries.
@@ -346,10 +346,10 @@ You can load colors from an external API or configuration file:
 
 ```typescript
 async function loadBrandColors(apiUrl: string) {
-  const response = await fetch(apiUrl);
-  const brandColors = await response.json();
+  const response = await fetch(apiUrl)
+  const brandColors = await response.json()
 
-  cesdk.engine.asset.addLocalSource('dynamicBrandColors');
+  cesdk.engine.asset.addLocalSource('dynamicBrandColors')
 
   brandColors.forEach((color: any) => {
     cesdk.engine.asset.addAssetToSource('dynamicBrandColors', {
@@ -364,12 +364,12 @@ async function loadBrandColors(apiUrl: string) {
           b: color.b,
         },
       },
-    });
-  });
+    })
+  })
 
   cesdk.ui.updateAssetLibraryEntry('ly.img.colors', {
     sourceIds: ['dynamicBrandColors'],
-  });
+  })
 }
 ```
 
@@ -383,11 +383,11 @@ function setupUserPalette(userRole: string) {
     designer: ['fullBrandPalette', 'extendedColors'],
     marketer: ['limitedBrandPalette', 'templateColors'],
     viewer: ['basicColors'],
-  };
+  }
 
   cesdk.ui.updateAssetLibraryEntry('ly.img.colors', {
     sourceIds: paletteMap[userRole] || ['basicColors'],
-  });
+  })
 }
 ```
 

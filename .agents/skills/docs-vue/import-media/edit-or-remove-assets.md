@@ -23,7 +23,7 @@ Manage assets in local asset sources by updating metadata, removing individual a
 Assets in local sources can be modified or removed after they have been added. CE.SDK provides two levels of removal: individual assets within a source and entire asset sources. This guide covers how to query, update, and remove assets programmatically, as well as how to notify the UI when changes occur.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-edit-or-remove-assets-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,28 +69,28 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Section 1: Create a Local Asset Source =====
     // Create a local asset source to manage images
-    engine.asset.addLocalSource('my-uploads');
+    engine.asset.addLocalSource('my-uploads')
 
     // Add some sample assets to the source
     engine.asset.addAssetToSource('my-uploads', {
@@ -102,7 +102,7 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('my-uploads', {
       id: 'image-2',
@@ -113,7 +113,7 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_2.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('my-uploads', {
       id: 'image-3',
@@ -124,7 +124,7 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_3.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     // ===== Section 2: Find Assets in a Source =====
     // Query assets from the source to find specific assets
@@ -132,16 +132,16 @@ class Example implements EditorPlugin {
       query: 'nature',
       page: 0,
       perPage: 100
-    });
+    })
 
-    console.log('Found assets:', result.assets.length);
-    const assetToModify = result.assets.find((a) => a.id === 'image-1');
-    console.log('Asset to modify:', assetToModify?.label);
+    console.log('Found assets:', result.assets.length)
+    const assetToModify = result.assets.find(a => a.id === 'image-1')
+    console.log('Asset to modify:', assetToModify?.label)
 
     // ===== Section 3: Update Asset Metadata =====
     // To update an asset's metadata, remove it and add an updated version
     // This pattern ensures the asset library reflects the latest data
-    engine.asset.removeAssetFromSource('my-uploads', 'image-1');
+    engine.asset.removeAssetFromSource('my-uploads', 'image-1')
 
     // Add the updated version with new metadata
     engine.asset.addAssetToSource('my-uploads', {
@@ -153,22 +153,22 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     // ===== Section 4: Remove an Asset from a Source =====
     // Remove a single asset from the source
     // Blocks already using this asset on the canvas remain unaffected
-    engine.asset.removeAssetFromSource('my-uploads', 'image-2');
-    console.log('Removed image-2 from my-uploads');
+    engine.asset.removeAssetFromSource('my-uploads', 'image-2')
+    console.log('Removed image-2 from my-uploads')
 
     // ===== Section 5: Notify UI of Changes =====
     // After modifying assets, notify the UI to refresh
     // This triggers update events for components like the asset library panel
-    engine.asset.assetSourceContentsChanged('my-uploads');
+    engine.asset.assetSourceContentsChanged('my-uploads')
 
     // ===== Section 6: Create a Second Source for Removal Demo =====
     // Create a temporary source to demonstrate source removal
-    engine.asset.addLocalSource('temporary-uploads');
+    engine.asset.addLocalSource('temporary-uploads')
 
     engine.asset.addAssetToSource('temporary-uploads', {
       id: 'temp-1',
@@ -178,37 +178,37 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_4.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     // ===== Section 7: Remove an Entire Asset Source =====
     // Remove a complete asset source and all its assets
     // Any UI panels displaying this source will stop showing content
-    engine.asset.removeSource('temporary-uploads');
-    console.log('Removed temporary-uploads source');
+    engine.asset.removeSource('temporary-uploads')
+    console.log('Removed temporary-uploads source')
 
     // ===== Section 8: Listen to Asset Source Events =====
     // Subscribe to lifecycle events for asset sources
     const unsubscribeAdded = engine.asset.onAssetSourceAdded((sourceId) => {
-      console.log(`Source added: ${sourceId}`);
-    });
+      console.log(`Source added: ${sourceId}`)
+    })
 
     const unsubscribeRemoved = engine.asset.onAssetSourceRemoved((sourceId) => {
-      console.log(`Source removed: ${sourceId}`);
-    });
+      console.log(`Source removed: ${sourceId}`)
+    })
 
     const unsubscribeUpdated = engine.asset.onAssetSourceUpdated((sourceId) => {
-      console.log(`Source updated: ${sourceId}`);
-    });
+      console.log(`Source updated: ${sourceId}`)
+    })
 
     // Demonstrate events by creating and removing a source
-    engine.asset.addLocalSource('event-demo-source');
-    engine.asset.assetSourceContentsChanged('event-demo-source');
-    engine.asset.removeSource('event-demo-source');
+    engine.asset.addLocalSource('event-demo-source')
+    engine.asset.assetSourceContentsChanged('event-demo-source')
+    engine.asset.removeSource('event-demo-source')
 
     // Clean up subscriptions when no longer needed
-    unsubscribeAdded();
-    unsubscribeRemoved();
-    unsubscribeUpdated();
+    unsubscribeAdded()
+    unsubscribeRemoved()
+    unsubscribeUpdated()
 
     // ===== Configure Asset Library Display =====
     // Configure the asset library to show our custom source
@@ -216,18 +216,18 @@ class Example implements EditorPlugin {
       sourceIds: ['my-uploads'],
       gridBackgroundType: 'cover',
       previewBackgroundType: 'contain'
-    });
+    })
 
     // Open the asset library to show the custom uploads
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: {
         entries: ['ly.img.image']
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Setup
@@ -235,41 +235,41 @@ export default Example;
 Initialize CE.SDK and create a local asset source with sample assets. The example creates a design scene and populates a local source with images.
 
 ```typescript highlight=highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      page: {
-        sourceId: 'ly.img.page.presets',
-        assetId: 'ly.img.page.presets.print.iso.a6.landscape'
-      }
-    });
+await cesdk.actions.run('scene.create', {
+  page: {
+    sourceId: 'ly.img.page.presets',
+    assetId: 'ly.img.page.presets.print.iso.a6.landscape'
+  }
+})
 
-    const engine = cesdk.engine;
+const engine = cesdk.engine
 ```
 
 ## Creating a Local Asset Source
@@ -277,42 +277,42 @@ Initialize CE.SDK and create a local asset source with sample assets. The exampl
 Before editing or removing assets, you need a local source with assets. Use `engine.asset.addLocalSource()` to create a source, then `engine.asset.addAssetToSource()` to populate it.
 
 ```typescript highlight=highlight-create-source
-    // Create a local asset source to manage images
-    engine.asset.addLocalSource('my-uploads');
+// Create a local asset source to manage images
+engine.asset.addLocalSource('my-uploads')
 
-    // Add some sample assets to the source
-    engine.asset.addAssetToSource('my-uploads', {
-      id: 'image-1',
-      label: { en: 'Mountain Landscape' },
-      tags: { en: ['nature', 'mountain'] },
-      meta: {
-        uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        blockType: '//ly.img.ubq/graphic'
-      }
-    });
+// Add some sample assets to the source
+engine.asset.addAssetToSource('my-uploads', {
+  id: 'image-1',
+  label: { en: 'Mountain Landscape' },
+  tags: { en: ['nature', 'mountain'] },
+  meta: {
+    uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    blockType: '//ly.img.ubq/graphic'
+  }
+})
 
-    engine.asset.addAssetToSource('my-uploads', {
-      id: 'image-2',
-      label: { en: 'Ocean Waves' },
-      tags: { en: ['nature', 'water'] },
-      meta: {
-        uri: 'https://img.ly/static/ubq_samples/sample_2.jpg',
-        thumbUri: 'https://img.ly/static/ubq_samples/sample_2.jpg',
-        blockType: '//ly.img.ubq/graphic'
-      }
-    });
+engine.asset.addAssetToSource('my-uploads', {
+  id: 'image-2',
+  label: { en: 'Ocean Waves' },
+  tags: { en: ['nature', 'water'] },
+  meta: {
+    uri: 'https://img.ly/static/ubq_samples/sample_2.jpg',
+    thumbUri: 'https://img.ly/static/ubq_samples/sample_2.jpg',
+    blockType: '//ly.img.ubq/graphic'
+  }
+})
 
-    engine.asset.addAssetToSource('my-uploads', {
-      id: 'image-3',
-      label: { en: 'Forest Path' },
-      tags: { en: ['nature', 'forest'] },
-      meta: {
-        uri: 'https://img.ly/static/ubq_samples/sample_3.jpg',
-        thumbUri: 'https://img.ly/static/ubq_samples/sample_3.jpg',
-        blockType: '//ly.img.ubq/graphic'
-      }
-    });
+engine.asset.addAssetToSource('my-uploads', {
+  id: 'image-3',
+  label: { en: 'Forest Path' },
+  tags: { en: ['nature', 'forest'] },
+  meta: {
+    uri: 'https://img.ly/static/ubq_samples/sample_3.jpg',
+    thumbUri: 'https://img.ly/static/ubq_samples/sample_3.jpg',
+    blockType: '//ly.img.ubq/graphic'
+  }
+})
 ```
 
 Each asset has a unique `id`, descriptive `label` and `tags` for searchability, and `meta` properties including the `uri` for the asset file.
@@ -322,16 +322,16 @@ Each asset has a unique `id`, descriptive `label` and `tags` for searchability, 
 Use `engine.asset.findAssets()` to query assets from a source. You can search by query string to match labels and tags, and paginate results for large sources.
 
 ```typescript highlight=highlight-find-assets
-    // Query assets from the source to find specific assets
-    const result = await engine.asset.findAssets('my-uploads', {
-      query: 'nature',
-      page: 0,
-      perPage: 100
-    });
+// Query assets from the source to find specific assets
+const result = await engine.asset.findAssets('my-uploads', {
+  query: 'nature',
+  page: 0,
+  perPage: 100
+})
 
-    console.log('Found assets:', result.assets.length);
-    const assetToModify = result.assets.find((a) => a.id === 'image-1');
-    console.log('Asset to modify:', assetToModify?.label);
+console.log('Found assets:', result.assets.length)
+const assetToModify = result.assets.find(a => a.id === 'image-1')
+console.log('Asset to modify:', assetToModify?.label)
 ```
 
 The `findAssets()` method returns an object containing the `assets` array, `total` count, `currentPage`, and optionally `nextPage` for pagination.
@@ -341,21 +341,21 @@ The `findAssets()` method returns an object containing the `assets` array, `tota
 CE.SDK does not provide a direct update method for assets. To modify an asset's metadata (labels, tags, URIs), remove the existing asset and add an updated version with the same ID.
 
 ```typescript highlight=highlight-update-metadata
-    // To update an asset's metadata, remove it and add an updated version
-    // This pattern ensures the asset library reflects the latest data
-    engine.asset.removeAssetFromSource('my-uploads', 'image-1');
+// To update an asset's metadata, remove it and add an updated version
+// This pattern ensures the asset library reflects the latest data
+engine.asset.removeAssetFromSource('my-uploads', 'image-1')
 
-    // Add the updated version with new metadata
-    engine.asset.addAssetToSource('my-uploads', {
-      id: 'image-1',
-      label: { en: 'Updated Mountain Photo' }, // New label
-      tags: { en: ['nature', 'mountain', 'updated'] }, // New tags
-      meta: {
-        uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        blockType: '//ly.img.ubq/graphic'
-      }
-    });
+// Add the updated version with new metadata
+engine.asset.addAssetToSource('my-uploads', {
+  id: 'image-1',
+  label: { en: 'Updated Mountain Photo' }, // New label
+  tags: { en: ['nature', 'mountain', 'updated'] }, // New tags
+  meta: {
+    uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    blockType: '//ly.img.ubq/graphic'
+  }
+})
 ```
 
 This pattern ensures the asset library reflects the latest metadata. The asset ID remains the same, so any references to the asset continue to work.
@@ -367,8 +367,8 @@ Remove individual assets using `engine.asset.removeAssetFromSource()`. The asset
 ```typescript highlight=highlight-remove-asset
 // Remove a single asset from the source
 // Blocks already using this asset on the canvas remain unaffected
-engine.asset.removeAssetFromSource('my-uploads', 'image-2');
-console.log('Removed image-2 from my-uploads');
+engine.asset.removeAssetFromSource('my-uploads', 'image-2')
+console.log('Removed image-2 from my-uploads')
 ```
 
 Removing an asset only affects the asset library—it does not modify or delete any blocks that were created using that asset.
@@ -380,7 +380,7 @@ After modifying assets in a source, call `engine.asset.assetSourceContentsChange
 ```typescript highlight=highlight-notify-ui
 // After modifying assets, notify the UI to refresh
 // This triggers update events for components like the asset library panel
-engine.asset.assetSourceContentsChanged('my-uploads');
+engine.asset.assetSourceContentsChanged('my-uploads')
 ```
 
 Without this notification, UI components may show stale data until the user navigates away and returns.
@@ -390,18 +390,18 @@ Without this notification, UI components may show stale data until the user navi
 You can create additional sources for temporary or session-specific assets. These sources can be removed entirely when no longer needed.
 
 ```typescript highlight=highlight-create-temp-source
-    // Create a temporary source to demonstrate source removal
-    engine.asset.addLocalSource('temporary-uploads');
+// Create a temporary source to demonstrate source removal
+engine.asset.addLocalSource('temporary-uploads')
 
-    engine.asset.addAssetToSource('temporary-uploads', {
-      id: 'temp-1',
-      label: { en: 'Temporary Image' },
-      meta: {
-        uri: 'https://img.ly/static/ubq_samples/sample_4.jpg',
-        thumbUri: 'https://img.ly/static/ubq_samples/sample_4.jpg',
-        blockType: '//ly.img.ubq/graphic'
-      }
-    });
+engine.asset.addAssetToSource('temporary-uploads', {
+  id: 'temp-1',
+  label: { en: 'Temporary Image' },
+  meta: {
+    uri: 'https://img.ly/static/ubq_samples/sample_4.jpg',
+    thumbUri: 'https://img.ly/static/ubq_samples/sample_4.jpg',
+    blockType: '//ly.img.ubq/graphic'
+  }
+})
 ```
 
 ## Removing an Entire Asset Source
@@ -411,8 +411,8 @@ Remove a complete asset source and all its assets using `engine.asset.removeSour
 ```typescript highlight=highlight-remove-source
 // Remove a complete asset source and all its assets
 // Any UI panels displaying this source will stop showing content
-engine.asset.removeSource('temporary-uploads');
-console.log('Removed temporary-uploads source');
+engine.asset.removeSource('temporary-uploads')
+console.log('Removed temporary-uploads source')
 ```
 
 Use this when cleaning up temporary sources or when a user explicitly deletes an entire category of assets.
@@ -422,28 +422,28 @@ Use this when cleaning up temporary sources or when a user explicitly deletes an
 Subscribe to lifecycle events to react when sources are added, removed, or updated. These events are useful for analytics, cleanup tasks, or syncing with external systems.
 
 ```typescript highlight=highlight-events
-    // Subscribe to lifecycle events for asset sources
-    const unsubscribeAdded = engine.asset.onAssetSourceAdded((sourceId) => {
-      console.log(`Source added: ${sourceId}`);
-    });
+// Subscribe to lifecycle events for asset sources
+const unsubscribeAdded = engine.asset.onAssetSourceAdded((sourceId) => {
+  console.log(`Source added: ${sourceId}`)
+})
 
-    const unsubscribeRemoved = engine.asset.onAssetSourceRemoved((sourceId) => {
-      console.log(`Source removed: ${sourceId}`);
-    });
+const unsubscribeRemoved = engine.asset.onAssetSourceRemoved((sourceId) => {
+  console.log(`Source removed: ${sourceId}`)
+})
 
-    const unsubscribeUpdated = engine.asset.onAssetSourceUpdated((sourceId) => {
-      console.log(`Source updated: ${sourceId}`);
-    });
+const unsubscribeUpdated = engine.asset.onAssetSourceUpdated((sourceId) => {
+  console.log(`Source updated: ${sourceId}`)
+})
 
-    // Demonstrate events by creating and removing a source
-    engine.asset.addLocalSource('event-demo-source');
-    engine.asset.assetSourceContentsChanged('event-demo-source');
-    engine.asset.removeSource('event-demo-source');
+// Demonstrate events by creating and removing a source
+engine.asset.addLocalSource('event-demo-source')
+engine.asset.assetSourceContentsChanged('event-demo-source')
+engine.asset.removeSource('event-demo-source')
 
-    // Clean up subscriptions when no longer needed
-    unsubscribeAdded();
-    unsubscribeRemoved();
-    unsubscribeUpdated();
+// Clean up subscriptions when no longer needed
+unsubscribeAdded()
+unsubscribeRemoved()
+unsubscribeUpdated()
 ```
 
 Each subscription returns an unsubscribe function. Call it when you no longer need to receive events to prevent memory leaks.

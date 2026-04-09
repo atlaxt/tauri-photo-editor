@@ -23,10 +23,8 @@ Position images on the canvas using absolute pixel coordinates or percentage-bas
 Position images on the canvas using coordinates that start at the top-left corner (0, 0). X increases right, Y increases down. Values are relative to the parent block, simplifying nested layouts.
 
 ```typescript file=@cesdk_web_examples/guides-edit-image-transform-move-browser/browser.ts reference-only
-import CreativeEditorSDK, {
-  type EditorPlugin,
-  type EditorPluginContext
-} from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -42,25 +40,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = 'guides-edit-image-transform-move-browser';
+  name = 'guides-edit-image-transform-move-browser'
 
-  version = CreativeEditorSDK.version;
+  version = CreativeEditorSDK.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -71,22 +69,22 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 500, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Demo 1: Movable Image - Can be freely repositioned by user
     const movableImage = await engine.block.addImage(
@@ -94,19 +92,19 @@ class Example implements EditorPlugin {
       {
         size: { width: 200, height: 200 }
       }
-    );
-    engine.block.appendChild(page, movableImage);
-    engine.block.setPositionX(movableImage, 0);
-    engine.block.setPositionY(movableImage, 100);
+    )
+    engine.block.appendChild(page, movableImage)
+    engine.block.setPositionX(movableImage, 0)
+    engine.block.setPositionY(movableImage, 100)
 
-    const text1 = engine.block.create('text');
-    engine.block.setString(text1, 'text/text', 'Movable');
-    engine.block.setFloat(text1, 'text/fontSize', 32);
-    engine.block.setEnum(text1, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(text1, 200);
-    engine.block.setPositionX(text1, 50);
-    engine.block.setPositionY(text1, 360);
-    engine.block.appendChild(page, text1);
+    const text1 = engine.block.create('text')
+    engine.block.setString(text1, 'text/text', 'Movable')
+    engine.block.setFloat(text1, 'text/fontSize', 32)
+    engine.block.setEnum(text1, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(text1, 200)
+    engine.block.setPositionX(text1, 50)
+    engine.block.setPositionY(text1, 360)
+    engine.block.appendChild(page, text1)
 
     // Demo 2: Percentage Positioning - Responsive layout
     const percentImage = await engine.block.addImage(
@@ -114,25 +112,25 @@ class Example implements EditorPlugin {
       {
         size: { width: 200, height: 200 }
       }
-    );
-    engine.block.appendChild(page, percentImage);
+    )
+    engine.block.appendChild(page, percentImage)
 
     // Set position mode to percentage (0.0 to 1.0)
-    engine.block.setPositionXMode(percentImage, 'Percent');
-    engine.block.setPositionYMode(percentImage, 'Percent');
+    engine.block.setPositionXMode(percentImage, 'Percent')
+    engine.block.setPositionYMode(percentImage, 'Percent')
 
     // Position at 37.5% from left (300px), 30% from top (150px)
-    engine.block.setPositionX(percentImage, 0.375);
-    engine.block.setPositionY(percentImage, 0.3);
+    engine.block.setPositionX(percentImage, 0.375)
+    engine.block.setPositionY(percentImage, 0.3)
 
-    const text2 = engine.block.create('text');
-    engine.block.setString(text2, 'text/text', 'Percentage');
-    engine.block.setFloat(text2, 'text/fontSize', 32);
-    engine.block.setEnum(text2, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(text2, 200);
-    engine.block.setPositionX(text2, 300);
-    engine.block.setPositionY(text2, 360);
-    engine.block.appendChild(page, text2);
+    const text2 = engine.block.create('text')
+    engine.block.setString(text2, 'text/text', 'Percentage')
+    engine.block.setFloat(text2, 'text/fontSize', 32)
+    engine.block.setEnum(text2, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(text2, 200)
+    engine.block.setPositionX(text2, 300)
+    engine.block.setPositionY(text2, 360)
+    engine.block.appendChild(page, text2)
 
     // Demo 3: Locked Image - Cannot be moved, rotated, or scaled
     const lockedImage = await engine.block.addImage(
@@ -140,37 +138,37 @@ class Example implements EditorPlugin {
       {
         size: { width: 200, height: 200 }
       }
-    );
-    engine.block.appendChild(page, lockedImage);
-    engine.block.setPositionX(lockedImage, 550);
-    engine.block.setPositionY(lockedImage, 150);
+    )
+    engine.block.appendChild(page, lockedImage)
+    engine.block.setPositionX(lockedImage, 550)
+    engine.block.setPositionY(lockedImage, 150)
 
     // Lock the transform to prevent user interaction
-    engine.block.setBool(lockedImage, 'transformLocked', true);
+    engine.block.setBool(lockedImage, 'transformLocked', true)
 
-    const text3 = engine.block.create('text');
-    engine.block.setString(text3, 'text/text', 'Locked');
-    engine.block.setFloat(text3, 'text/fontSize', 32);
-    engine.block.setEnum(text3, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(text3, 200);
-    engine.block.setPositionX(text3, 550);
-    engine.block.setPositionY(text3, 360);
-    engine.block.appendChild(page, text3);
+    const text3 = engine.block.create('text')
+    engine.block.setString(text3, 'text/text', 'Locked')
+    engine.block.setFloat(text3, 'text/fontSize', 32)
+    engine.block.setEnum(text3, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(text3, 200)
+    engine.block.setPositionX(text3, 550)
+    engine.block.setPositionY(text3, 360)
+    engine.block.appendChild(page, text3)
 
     // Get current position values
-    const currentX = engine.block.getPositionX(movableImage);
-    const currentY = engine.block.getPositionY(movableImage);
-    console.log('Current position:', currentX, currentY);
+    const currentX = engine.block.getPositionX(movableImage)
+    const currentY = engine.block.getPositionY(movableImage)
+    console.log('Current position:', currentX, currentY)
 
     // Move relative to current position
-    const offsetX = engine.block.getPositionX(movableImage);
-    const offsetY = engine.block.getPositionY(movableImage);
-    engine.block.setPositionX(movableImage, offsetX + 50);
-    engine.block.setPositionY(movableImage, offsetY + 50);
+    const offsetX = engine.block.getPositionX(movableImage)
+    const offsetY = engine.block.getPositionY(movableImage)
+    engine.block.setPositionX(movableImage, offsetX + 50)
+    engine.block.setPositionY(movableImage, offsetY + 50)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers positioning images with absolute or percentage coordinates, configuring position modes, and locking transforms to prevent repositioning.
@@ -184,9 +182,9 @@ Coordinates originate at the top-left (0, 0) of the parent container. Use **abso
 Position images using `engine.block.setPositionX()` and `engine.block.setPositionY()` with absolute pixel coordinates:
 
 ```typescript highlight-movable-image
-engine.block.appendChild(page, movableImage);
-engine.block.setPositionX(movableImage, 0);
-engine.block.setPositionY(movableImage, 100);
+engine.block.appendChild(page, movableImage)
+engine.block.setPositionX(movableImage, 0)
+engine.block.setPositionY(movableImage, 100)
 ```
 
 ## Getting Current Position
@@ -195,8 +193,8 @@ Read current position values using `engine.block.getPositionX()` and `engine.blo
 
 ```typescript highlight-get-position
 // Get current position values
-const currentX = engine.block.getPositionX(movableImage);
-const currentY = engine.block.getPositionY(movableImage);
+const currentX = engine.block.getPositionX(movableImage)
+const currentY = engine.block.getPositionY(movableImage)
 ```
 
 ## Configuring Position Modes
@@ -209,8 +207,8 @@ Position images using percentage values (0.0 to 1.0) for responsive layouts. Set
 
 ```typescript highlight-percentage-positioning
 // Set position mode to percentage (0.0 to 1.0)
-engine.block.setPositionXMode(percentImage, 'Percent');
-engine.block.setPositionYMode(percentImage, 'Percent');
+engine.block.setPositionXMode(percentImage, 'Percent')
+engine.block.setPositionYMode(percentImage, 'Percent')
 ```
 
 Percentage positioning adapts automatically when the parent block dimensions change, maintaining relative positions in responsive designs.
@@ -221,10 +219,10 @@ Move images relative to their current position by getting the current coordinate
 
 ```typescript highlight-relative-positioning
 // Move relative to current position
-const offsetX = engine.block.getPositionX(movableImage);
-const offsetY = engine.block.getPositionY(movableImage);
-engine.block.setPositionX(movableImage, offsetX + 50);
-engine.block.setPositionY(movableImage, offsetY + 50);
+const offsetX = engine.block.getPositionX(movableImage)
+const offsetY = engine.block.getPositionY(movableImage)
+engine.block.setPositionX(movableImage, offsetX + 50)
+engine.block.setPositionY(movableImage, offsetY + 50)
 ```
 
 ## Locking Transforms
@@ -233,7 +231,7 @@ Lock transforms to prevent repositioning, rotation, and scaling by setting `tran
 
 ```typescript highlight-locked-image
 // Lock the transform to prevent user interaction
-engine.block.setBool(lockedImage, 'transformLocked', true);
+engine.block.setBool(lockedImage, 'transformLocked', true)
 ```
 
 ## Troubleshooting

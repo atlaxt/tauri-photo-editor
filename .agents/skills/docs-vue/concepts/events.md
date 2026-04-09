@@ -24,7 +24,7 @@ update, and destruction events in your CE.SDK scene.
 Events enable real-time monitoring of block changes in CE.SDK. When blocks are created, modified, or destroyed, the engine delivers these changes through callback subscriptions at the end of each update cycle. This push-based notification system eliminates the need for polling and enables efficient reactive architectures.
 
 ```typescript file=@cesdk_web_examples/guides-concepts-events-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Events Guide
@@ -56,22 +56,22 @@ import packageJson from './package.json';
  * - Proper unsubscription for cleanup
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -82,21 +82,21 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Subscribe to events from all blocks in the scene
     // Pass an empty array to receive events from every block
@@ -104,40 +104,40 @@ class Example implements EditorPlugin {
       for (const event of events) {
         console.log(
           `[All Blocks] ${event.type} event for block ${event.block}`
-        );
+        )
       }
-    });
+    })
 
     // Get the current page to add blocks to
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
 
     // Create a graphic block - this triggers a Created event
-    const graphic = engine.block.create('graphic');
+    const graphic = engine.block.create('graphic')
 
     // Set up the graphic with a shape and fill
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(graphic, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(graphic, rectShape)
 
     // Position and size the graphic
-    engine.block.setPositionX(graphic, 200);
-    engine.block.setPositionY(graphic, 150);
-    engine.block.setWidth(graphic, 400);
-    engine.block.setHeight(graphic, 300);
+    engine.block.setPositionX(graphic, 200)
+    engine.block.setPositionY(graphic, 150)
+    engine.block.setWidth(graphic, 400)
+    engine.block.setHeight(graphic, 300)
 
     // Add an image fill
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(graphic, imageFill);
-    engine.block.setEnum(graphic, 'contentFill/mode', 'Cover');
+    )
+    engine.block.setFill(graphic, imageFill)
+    engine.block.setEnum(graphic, 'contentFill/mode', 'Cover')
 
     // Append to page to make it visible
-    engine.block.appendChild(page, graphic);
-    console.log('Created graphic block:', graphic);
+    engine.block.appendChild(page, graphic)
+    console.log('Created graphic block:', graphic)
 
     // Subscribe to events for specific blocks only
     // This is more efficient when you only care about certain blocks
@@ -145,15 +145,15 @@ class Example implements EditorPlugin {
       for (const event of events) {
         console.log(
           `[Specific Block] ${event.type} event for block ${event.block}`
-        );
+        )
       }
-    });
+    })
 
     // Modify the block - this triggers Updated events
     // Due to deduplication, multiple rapid changes result in one Updated event
-    engine.block.setRotation(graphic, 0.1); // Rotate slightly
-    engine.block.setFloat(graphic, 'opacity', 0.9); // Adjust opacity
-    console.log('Modified graphic block - rotation and opacity changed');
+    engine.block.setRotation(graphic, 0.1) // Rotate slightly
+    engine.block.setFloat(graphic, 'opacity', 0.9) // Adjust opacity
+    console.log('Modified graphic block - rotation and opacity changed')
 
     // Process events by checking the type property
     const unsubscribeProcess = engine.event.subscribe([], (events) => {
@@ -161,26 +161,26 @@ class Example implements EditorPlugin {
         switch (event.type) {
           case 'Created': {
             // Block was just created - safe to use Block API
-            const blockType = engine.block.getType(event.block);
-            console.log(`Block created with type: ${blockType}`);
-            break;
+            const blockType = engine.block.getType(event.block)
+            console.log(`Block created with type: ${blockType}`)
+            break
           }
           case 'Updated': {
             // Block property changed - safe to use Block API
-            console.log(`Block ${event.block} was updated`);
-            break;
+            console.log(`Block ${event.block} was updated`)
+            break
           }
           case 'Destroyed': {
             // Block was destroyed - must check validity before using Block API
-            const isValid = engine.block.isValid(event.block);
+            const isValid = engine.block.isValid(event.block)
             console.log(
               `Block ${event.block} destroyed, still valid: ${isValid}`
-            );
-            break;
+            )
+            break
           }
         }
       }
-    });
+    })
 
     // When handling Destroyed events, always check block validity
     // The block ID is no longer valid after destruction
@@ -190,60 +190,61 @@ class Example implements EditorPlugin {
           // IMPORTANT: Check validity before any Block API calls
           if (engine.block.isValid(event.block)) {
             // Block is still valid (this shouldn't happen for Destroyed events)
-            console.log('Block is unexpectedly still valid');
-          } else {
+            console.log('Block is unexpectedly still valid')
+          }
+          else {
             // Block is invalid - expected for Destroyed events
             // Clean up any references to this block ID
             console.log(
               `Block ${event.block} has been destroyed and is invalid`
-            );
+            )
           }
         }
       }
-    });
+    })
 
     // Create a second block to demonstrate destruction
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(page, textBlock);
-    engine.block.setPositionX(textBlock, 200);
-    engine.block.setPositionY(textBlock, 500);
-    engine.block.setWidth(textBlock, 400);
-    engine.block.setHeight(textBlock, 50);
-    engine.block.setString(textBlock, 'text/text', 'Events Demo');
-    engine.block.setFloat(textBlock, 'text/fontSize', 48);
-    console.log('Created text block:', textBlock);
+    const textBlock = engine.block.create('text')
+    engine.block.appendChild(page, textBlock)
+    engine.block.setPositionX(textBlock, 200)
+    engine.block.setPositionY(textBlock, 500)
+    engine.block.setWidth(textBlock, 400)
+    engine.block.setHeight(textBlock, 50)
+    engine.block.setString(textBlock, 'text/text', 'Events Demo')
+    engine.block.setFloat(textBlock, 'text/fontSize', 48)
+    console.log('Created text block:', textBlock)
 
     // Destroy the text block - this triggers a Destroyed event
-    engine.block.destroy(textBlock);
-    console.log('Destroyed text block');
+    engine.block.destroy(textBlock)
+    console.log('Destroyed text block')
 
     // After destruction, the block ID is no longer valid
-    const isTextBlockValid = engine.block.isValid(textBlock);
-    console.log('Text block still valid after destroy:', isTextBlockValid); // false
+    const isTextBlockValid = engine.block.isValid(textBlock)
+    console.log('Text block still valid after destroy:', isTextBlockValid) // false
 
     // Clean up subscriptions when no longer needed
     // This prevents memory leaks and reduces engine overhead
-    unsubscribeAll();
-    unsubscribeSpecific();
-    unsubscribeProcess();
-    unsubscribeDestroyed();
-    console.log('Unsubscribed from all event listeners');
+    unsubscribeAll()
+    unsubscribeSpecific()
+    unsubscribeProcess()
+    unsubscribeDestroyed()
+    console.log('Unsubscribed from all event listeners')
 
     // Re-subscribe with a single listener for the demo UI
     engine.event.subscribe([], (events) => {
       for (const event of events) {
-        console.log(`Event: ${event.type} - Block: ${event.block}`);
+        console.log(`Event: ${event.type} - Block: ${event.block}`)
       }
-    });
+    })
 
-    console.log('Events guide initialized successfully.');
+    console.log('Events guide initialized successfully.')
     console.log(
       'Demonstrated: subscribing, event types, processing, and cleanup.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers subscribing to block lifecycle events, processing the three event types (`Created`, `Updated`, `Destroyed`), filtering events to specific blocks, understanding batching and deduplication behavior, and properly cleaning up subscriptions.
@@ -269,9 +270,9 @@ const unsubscribeAll = engine.event.subscribe([], (events) => {
   for (const event of events) {
     console.log(
       `[All Blocks] ${event.type} event for block ${event.block}`
-    );
+    )
   }
-});
+})
 ```
 
 The callback receives an array of events at the end of each engine update cycle. The function returns an unsubscribe function you should store for cleanup.
@@ -287,9 +288,9 @@ const unsubscribeSpecific = engine.event.subscribe([graphic], (events) => {
   for (const event of events) {
     console.log(
       `[Specific Block] ${event.type} event for block ${event.block}`
-    );
+    )
   }
-});
+})
 ```
 
 This reduces overhead since the engine only needs to prepare events for the blocks you're tracking.
@@ -299,32 +300,32 @@ This reduces overhead since the engine only needs to prepare events for the bloc
 When you create a block, the engine fires a `Created` event. You can safely use Block API methods on the block ID since the block is valid:
 
 ```typescript highlight-event-created
-    // Create a graphic block - this triggers a Created event
-    const graphic = engine.block.create('graphic');
+// Create a graphic block - this triggers a Created event
+const graphic = engine.block.create('graphic')
 
-    // Set up the graphic with a shape and fill
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(graphic, rectShape);
+// Set up the graphic with a shape and fill
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(graphic, rectShape)
 
-    // Position and size the graphic
-    engine.block.setPositionX(graphic, 200);
-    engine.block.setPositionY(graphic, 150);
-    engine.block.setWidth(graphic, 400);
-    engine.block.setHeight(graphic, 300);
+// Position and size the graphic
+engine.block.setPositionX(graphic, 200)
+engine.block.setPositionY(graphic, 150)
+engine.block.setWidth(graphic, 400)
+engine.block.setHeight(graphic, 300)
 
-    // Add an image fill
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(graphic, imageFill);
-    engine.block.setEnum(graphic, 'contentFill/mode', 'Cover');
+// Add an image fill
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://img.ly/static/ubq_samples/sample_1.jpg'
+)
+engine.block.setFill(graphic, imageFill)
+engine.block.setEnum(graphic, 'contentFill/mode', 'Cover')
 
-    // Append to page to make it visible
-    engine.block.appendChild(page, graphic);
-    console.log('Created graphic block:', graphic);
+// Append to page to make it visible
+engine.block.appendChild(page, graphic)
+console.log('Created graphic block:', graphic)
 ```
 
 Use `Created` events to initialize tracking, update UI state, or set up additional subscriptions for the new block.
@@ -336,9 +337,9 @@ Modifying any property of a block triggers an `Updated` event. Due to deduplicat
 ```typescript highlight-event-updated
 // Modify the block - this triggers Updated events
 // Due to deduplication, multiple rapid changes result in one Updated event
-engine.block.setRotation(graphic, 0.1); // Rotate slightly
-engine.block.setFloat(graphic, 'opacity', 0.9); // Adjust opacity
-console.log('Modified graphic block - rotation and opacity changed');
+engine.block.setRotation(graphic, 0.1) // Rotate slightly
+engine.block.setFloat(graphic, 'opacity', 0.9) // Adjust opacity
+console.log('Modified graphic block - rotation and opacity changed')
 ```
 
 Multiple rapid changes to the same block result in a single `Updated` event, making event handling efficient even during complex operations.
@@ -354,26 +355,26 @@ const unsubscribeProcess = engine.event.subscribe([], (events) => {
     switch (event.type) {
       case 'Created': {
         // Block was just created - safe to use Block API
-        const blockType = engine.block.getType(event.block);
-        console.log(`Block created with type: ${blockType}`);
-        break;
+        const blockType = engine.block.getType(event.block)
+        console.log(`Block created with type: ${blockType}`)
+        break
       }
       case 'Updated': {
         // Block property changed - safe to use Block API
-        console.log(`Block ${event.block} was updated`);
-        break;
+        console.log(`Block ${event.block} was updated`)
+        break
       }
       case 'Destroyed': {
         // Block was destroyed - must check validity before using Block API
-        const isValid = engine.block.isValid(event.block);
+        const isValid = engine.block.isValid(event.block)
         console.log(
           `Block ${event.block} destroyed, still valid: ${isValid}`
-        );
-        break;
+        )
+        break
       }
     }
   }
-});
+})
 ```
 
 ## Handling `Destroyed` Events Safely
@@ -389,29 +390,30 @@ const unsubscribeDestroyed = engine.event.subscribe([], (events) => {
       // IMPORTANT: Check validity before any Block API calls
       if (engine.block.isValid(event.block)) {
         // Block is still valid (this shouldn't happen for Destroyed events)
-        console.log('Block is unexpectedly still valid');
-      } else {
+        console.log('Block is unexpectedly still valid')
+      }
+      else {
         // Block is invalid - expected for Destroyed events
         // Clean up any references to this block ID
         console.log(
           `Block ${event.block} has been destroyed and is invalid`
-        );
+        )
       }
     }
   }
-});
+})
 ```
 
 After verifying the block is invalid, you can safely clean up any local references. The destroy operation itself triggers the `Destroyed` event:
 
 ```typescript highlight-event-destroyed
-    // Destroy the text block - this triggers a Destroyed event
-    engine.block.destroy(textBlock);
-    console.log('Destroyed text block');
+// Destroy the text block - this triggers a Destroyed event
+engine.block.destroy(textBlock)
+console.log('Destroyed text block')
 
-    // After destruction, the block ID is no longer valid
-    const isTextBlockValid = engine.block.isValid(textBlock);
-    console.log('Text block still valid after destroy:', isTextBlockValid); // false
+// After destruction, the block ID is no longer valid
+const isTextBlockValid = engine.block.isValid(textBlock)
+console.log('Text block still valid after destroy:', isTextBlockValid) // false
 ```
 
 Use `isValid()` to clean up any references to destroyed blocks in your application state.
@@ -423,11 +425,11 @@ The `subscribe()` method returns an unsubscribe function. Call it when you no lo
 ```typescript highlight-unsubscribe
 // Clean up subscriptions when no longer needed
 // This prevents memory leaks and reduces engine overhead
-unsubscribeAll();
-unsubscribeSpecific();
-unsubscribeProcess();
-unsubscribeDestroyed();
-console.log('Unsubscribed from all event listeners');
+unsubscribeAll()
+unsubscribeSpecific()
+unsubscribeProcess()
+unsubscribeDestroyed()
+console.log('Unsubscribed from all event listeners')
 ```
 
 Always unsubscribe when your component unmounts, the editor closes, or you no longer need to track changes. Keeping unnecessary subscriptions active forces the engine to prepare event lists for each subscriber at every update.

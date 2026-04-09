@@ -23,7 +23,7 @@ Organize design elements in CE.SDK using a hierarchical layer stack to control s
 Design elements in CE.SDK are organized in a hierarchical parent-child structure. Children of a block are rendered in order, with the last child appearing on top. This layer stack model gives you precise control over how elements overlap and interact visually.
 
 ```typescript file=@cesdk_web_examples/guides-create-composition-layer-management-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Layer Management Guide
@@ -54,21 +54,21 @@ import packageJson from './package.json';
  * - Duplicating and removing blocks
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -79,160 +79,160 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0]!;
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]!
 
     // Create a colored rectangle
-    const redRect = engine.block.create('graphic');
-    engine.block.setShape(redRect, engine.block.createShape('rect'));
-    const redFill = engine.block.createFill('color');
-    engine.block.setFill(redRect, redFill);
+    const redRect = engine.block.create('graphic')
+    engine.block.setShape(redRect, engine.block.createShape('rect'))
+    const redFill = engine.block.createFill('color')
+    engine.block.setFill(redRect, redFill)
     engine.block.setColor(redFill, 'fill/color/value', {
       r: 0.9,
       g: 0.2,
       b: 0.2,
       a: 1
-    });
-    engine.block.setWidth(redRect, 180);
-    engine.block.setHeight(redRect, 180);
-    engine.block.setPositionX(redRect, 220);
-    engine.block.setPositionY(redRect, 120);
+    })
+    engine.block.setWidth(redRect, 180)
+    engine.block.setHeight(redRect, 180)
+    engine.block.setPositionX(redRect, 220)
+    engine.block.setPositionY(redRect, 120)
 
     // Create additional rectangles to demonstrate layer ordering
-    const greenRect = engine.block.create('graphic');
-    engine.block.setShape(greenRect, engine.block.createShape('rect'));
-    const greenFill = engine.block.createFill('color');
-    engine.block.setFill(greenRect, greenFill);
+    const greenRect = engine.block.create('graphic')
+    engine.block.setShape(greenRect, engine.block.createShape('rect'))
+    const greenFill = engine.block.createFill('color')
+    engine.block.setFill(greenRect, greenFill)
     engine.block.setColor(greenFill, 'fill/color/value', {
       r: 0.2,
       g: 0.8,
       b: 0.2,
       a: 1
-    });
-    engine.block.setWidth(greenRect, 180);
-    engine.block.setHeight(greenRect, 180);
-    engine.block.setPositionX(greenRect, 280);
-    engine.block.setPositionY(greenRect, 180);
+    })
+    engine.block.setWidth(greenRect, 180)
+    engine.block.setHeight(greenRect, 180)
+    engine.block.setPositionX(greenRect, 280)
+    engine.block.setPositionY(greenRect, 180)
 
-    const blueRect = engine.block.create('graphic');
-    engine.block.setShape(blueRect, engine.block.createShape('rect'));
-    const blueFill = engine.block.createFill('color');
-    engine.block.setFill(blueRect, blueFill);
+    const blueRect = engine.block.create('graphic')
+    engine.block.setShape(blueRect, engine.block.createShape('rect'))
+    const blueFill = engine.block.createFill('color')
+    engine.block.setFill(blueRect, blueFill)
     engine.block.setColor(blueFill, 'fill/color/value', {
       r: 0.2,
       g: 0.4,
       b: 0.9,
       a: 1
-    });
-    engine.block.setWidth(blueRect, 180);
-    engine.block.setHeight(blueRect, 180);
-    engine.block.setPositionX(blueRect, 340);
-    engine.block.setPositionY(blueRect, 240);
+    })
+    engine.block.setWidth(blueRect, 180)
+    engine.block.setHeight(blueRect, 180)
+    engine.block.setPositionX(blueRect, 340)
+    engine.block.setPositionY(blueRect, 240)
 
     // Add blocks to the page - last appended is on top
-    engine.block.appendChild(page, redRect);
-    engine.block.appendChild(page, greenRect);
-    engine.block.appendChild(page, blueRect);
+    engine.block.appendChild(page, redRect)
+    engine.block.appendChild(page, greenRect)
+    engine.block.appendChild(page, blueRect)
 
     // Get the parent of a block
-    const parent = engine.block.getParent(redRect);
-    console.log('Parent of red rectangle:', parent);
+    const parent = engine.block.getParent(redRect)
+    console.log('Parent of red rectangle:', parent)
 
     // Get all children of the page
-    const children = engine.block.getChildren(page);
-    console.log('Page children (in render order):', children);
+    const children = engine.block.getChildren(page)
+    console.log('Page children (in render order):', children)
 
     // Insert a new block at a specific position (index 0 = back)
-    const yellowRect = engine.block.create('graphic');
-    engine.block.setShape(yellowRect, engine.block.createShape('rect'));
-    const yellowFill = engine.block.createFill('color');
-    engine.block.setFill(yellowRect, yellowFill);
+    const yellowRect = engine.block.create('graphic')
+    engine.block.setShape(yellowRect, engine.block.createShape('rect'))
+    const yellowFill = engine.block.createFill('color')
+    engine.block.setFill(yellowRect, yellowFill)
     engine.block.setColor(yellowFill, 'fill/color/value', {
       r: 0.95,
       g: 0.85,
       b: 0.2,
       a: 1
-    });
-    engine.block.setWidth(yellowRect, 180);
-    engine.block.setHeight(yellowRect, 180);
-    engine.block.setPositionX(yellowRect, 160);
-    engine.block.setPositionY(yellowRect, 60);
-    engine.block.insertChild(page, yellowRect, 0);
+    })
+    engine.block.setWidth(yellowRect, 180)
+    engine.block.setHeight(yellowRect, 180)
+    engine.block.setPositionX(yellowRect, 160)
+    engine.block.setPositionY(yellowRect, 60)
+    engine.block.insertChild(page, yellowRect, 0)
 
     // Bring the red rectangle to the front
-    engine.block.bringToFront(redRect);
-    console.log('Red rectangle brought to front');
+    engine.block.bringToFront(redRect)
+    console.log('Red rectangle brought to front')
 
     // Send the blue rectangle to the back
-    engine.block.sendToBack(blueRect);
-    console.log('Blue rectangle sent to back');
+    engine.block.sendToBack(blueRect)
+    console.log('Blue rectangle sent to back')
 
     // Move the green rectangle forward one layer
-    engine.block.bringForward(greenRect);
-    console.log('Green rectangle moved forward');
+    engine.block.bringForward(greenRect)
+    console.log('Green rectangle moved forward')
 
     // Move the yellow rectangle backward one layer
-    engine.block.sendBackward(yellowRect);
-    console.log('Yellow rectangle moved backward');
+    engine.block.sendBackward(yellowRect)
+    console.log('Yellow rectangle moved backward')
 
     // Check and toggle visibility
-    const isVisible = engine.block.isVisible(blueRect);
-    console.log('Blue rectangle visible:', isVisible);
+    const isVisible = engine.block.isVisible(blueRect)
+    console.log('Blue rectangle visible:', isVisible)
 
     // Hide the blue rectangle temporarily
-    engine.block.setVisible(blueRect, false);
-    console.log('Blue rectangle hidden');
+    engine.block.setVisible(blueRect, false)
+    console.log('Blue rectangle hidden')
 
     // Show it again for the final composition
-    engine.block.setVisible(blueRect, true);
-    console.log('Blue rectangle shown again');
+    engine.block.setVisible(blueRect, true)
+    console.log('Blue rectangle shown again')
 
     // Duplicate a block
-    const duplicateGreen = engine.block.duplicate(greenRect);
-    engine.block.setPositionX(duplicateGreen, 400);
-    engine.block.setPositionY(duplicateGreen, 300);
+    const duplicateGreen = engine.block.duplicate(greenRect)
+    engine.block.setPositionX(duplicateGreen, 400)
+    engine.block.setPositionY(duplicateGreen, 300)
     // Change the duplicate's color to purple
-    const purpleFill = engine.block.createFill('color');
-    engine.block.setFill(duplicateGreen, purpleFill);
+    const purpleFill = engine.block.createFill('color')
+    engine.block.setFill(duplicateGreen, purpleFill)
     engine.block.setColor(purpleFill, 'fill/color/value', {
       r: 0.6,
       g: 0.2,
       b: 0.8,
       a: 1
-    });
-    console.log('Green rectangle duplicated');
+    })
+    console.log('Green rectangle duplicated')
 
     // Check if a block is valid before operations
-    const isValidBefore = engine.block.isValid(yellowRect);
-    console.log('Yellow rectangle valid before destroy:', isValidBefore);
+    const isValidBefore = engine.block.isValid(yellowRect)
+    console.log('Yellow rectangle valid before destroy:', isValidBefore)
 
     // Remove a block from the scene
-    engine.block.destroy(yellowRect);
-    console.log('Yellow rectangle destroyed');
+    engine.block.destroy(yellowRect)
+    console.log('Yellow rectangle destroyed')
 
     // Check validity after destruction
-    const isValidAfter = engine.block.isValid(yellowRect);
-    console.log('Yellow rectangle valid after destroy:', isValidAfter);
+    const isValidAfter = engine.block.isValid(yellowRect)
+    console.log('Yellow rectangle valid after destroy:', isValidAfter)
 
-    engine.scene.zoomToBlock(page, 40, 40, 40, 40);
+    engine.scene.zoomToBlock(page, 40, 40, 40, 40)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to navigate the block hierarchy, reorder elements in the layer stack, toggle visibility, and manage block lifecycles through duplication and deletion.
@@ -243,20 +243,20 @@ To demonstrate layer ordering, we create colored rectangles that overlap on the 
 
 ```typescript highlight=highlight-create-block
 // Create a colored rectangle
-const redRect = engine.block.create('graphic');
-engine.block.setShape(redRect, engine.block.createShape('rect'));
-const redFill = engine.block.createFill('color');
-engine.block.setFill(redRect, redFill);
+const redRect = engine.block.create('graphic')
+engine.block.setShape(redRect, engine.block.createShape('rect'))
+const redFill = engine.block.createFill('color')
+engine.block.setFill(redRect, redFill)
 engine.block.setColor(redFill, 'fill/color/value', {
   r: 0.9,
   g: 0.2,
   b: 0.2,
   a: 1
-});
-engine.block.setWidth(redRect, 180);
-engine.block.setHeight(redRect, 180);
-engine.block.setPositionX(redRect, 220);
-engine.block.setPositionY(redRect, 120);
+})
+engine.block.setWidth(redRect, 180)
+engine.block.setHeight(redRect, 180)
+engine.block.setPositionX(redRect, 220)
+engine.block.setPositionY(redRect, 120)
 ```
 
 ## Navigating the Block Hierarchy
@@ -269,8 +269,8 @@ We retrieve the parent of any block using `engine.block.getParent()`. This retur
 
 ```typescript highlight=highlight-get-parent
 // Get the parent of a block
-const parent = engine.block.getParent(redRect);
-console.log('Parent of red rectangle:', parent);
+const parent = engine.block.getParent(redRect)
+console.log('Parent of red rectangle:', parent)
 ```
 
 Knowing a block's parent helps you understand where it sits in the hierarchy and enables operations like reparenting or finding sibling blocks.
@@ -281,8 +281,8 @@ We get all direct children of a block using `engine.block.getChildren()`. Childr
 
 ```typescript highlight=highlight-get-children
 // Get all children of the page
-const children = engine.block.getChildren(page);
-console.log('Page children (in render order):', children);
+const children = engine.block.getChildren(page)
+console.log('Page children (in render order):', children)
 ```
 
 This method is useful for iterating through all elements on a page or within a group.
@@ -297,9 +297,9 @@ We add a block as the last child of a parent using `engine.block.appendChild()`.
 
 ```typescript highlight=highlight-append-child
 // Add blocks to the page - last appended is on top
-engine.block.appendChild(page, redRect);
-engine.block.appendChild(page, greenRect);
-engine.block.appendChild(page, blueRect);
+engine.block.appendChild(page, redRect)
+engine.block.appendChild(page, greenRect)
+engine.block.appendChild(page, blueRect)
 ```
 
 When you append multiple blocks in sequence, each new block appears in front of the previous ones.
@@ -310,21 +310,21 @@ We insert a block at a specific index in the layer stack using `engine.block.ins
 
 ```typescript highlight=highlight-insert-child
 // Insert a new block at a specific position (index 0 = back)
-const yellowRect = engine.block.create('graphic');
-engine.block.setShape(yellowRect, engine.block.createShape('rect'));
-const yellowFill = engine.block.createFill('color');
-engine.block.setFill(yellowRect, yellowFill);
+const yellowRect = engine.block.create('graphic')
+engine.block.setShape(yellowRect, engine.block.createShape('rect'))
+const yellowFill = engine.block.createFill('color')
+engine.block.setFill(yellowRect, yellowFill)
 engine.block.setColor(yellowFill, 'fill/color/value', {
   r: 0.95,
   g: 0.85,
   b: 0.2,
   a: 1
-});
-engine.block.setWidth(yellowRect, 180);
-engine.block.setHeight(yellowRect, 180);
-engine.block.setPositionX(yellowRect, 160);
-engine.block.setPositionY(yellowRect, 60);
-engine.block.insertChild(page, yellowRect, 0);
+})
+engine.block.setWidth(yellowRect, 180)
+engine.block.setHeight(yellowRect, 180)
+engine.block.setPositionX(yellowRect, 160)
+engine.block.setPositionY(yellowRect, 60)
+engine.block.insertChild(page, yellowRect, 0)
 ```
 
 This gives you precise control over where new elements appear in the stacking order.
@@ -343,8 +343,8 @@ We move an element to the top of its siblings using `engine.block.bringToFront()
 
 ```typescript highlight=highlight-bring-to-front
 // Bring the red rectangle to the front
-engine.block.bringToFront(redRect);
-console.log('Red rectangle brought to front');
+engine.block.bringToFront(redRect)
+console.log('Red rectangle brought to front')
 ```
 
 ### Send to Back
@@ -353,8 +353,8 @@ We move an element behind all its siblings using `engine.block.sendToBack()`. Th
 
 ```typescript highlight=highlight-send-to-back
 // Send the blue rectangle to the back
-engine.block.sendToBack(blueRect);
-console.log('Blue rectangle sent to back');
+engine.block.sendToBack(blueRect)
+console.log('Blue rectangle sent to back')
 ```
 
 ### Move Forward One Layer
@@ -363,8 +363,8 @@ We move an element one position forward using `engine.block.bringForward()`. Thi
 
 ```typescript highlight=highlight-bring-forward
 // Move the green rectangle forward one layer
-engine.block.bringForward(greenRect);
-console.log('Green rectangle moved forward');
+engine.block.bringForward(greenRect)
+console.log('Green rectangle moved forward')
 ```
 
 ### Move Backward One Layer
@@ -373,8 +373,8 @@ We move an element one position backward using `engine.block.sendBackward()`. Th
 
 ```typescript highlight=highlight-send-backward
 // Move the yellow rectangle backward one layer
-engine.block.sendBackward(yellowRect);
-console.log('Yellow rectangle moved backward');
+engine.block.sendBackward(yellowRect)
+console.log('Yellow rectangle moved backward')
 ```
 
 These incremental operations are useful for fine-tuning the layer order without jumping to extremes.
@@ -388,17 +388,17 @@ Visibility allows you to temporarily hide elements without removing them from th
 We query the current visibility state using `engine.block.isVisible()` and change it using `engine.block.setVisible()`.
 
 ```typescript highlight=highlight-visibility
-    // Check and toggle visibility
-    const isVisible = engine.block.isVisible(blueRect);
-    console.log('Blue rectangle visible:', isVisible);
+// Check and toggle visibility
+const isVisible = engine.block.isVisible(blueRect)
+console.log('Blue rectangle visible:', isVisible)
 
-    // Hide the blue rectangle temporarily
-    engine.block.setVisible(blueRect, false);
-    console.log('Blue rectangle hidden');
+// Hide the blue rectangle temporarily
+engine.block.setVisible(blueRect, false)
+console.log('Blue rectangle hidden')
 
-    // Show it again for the final composition
-    engine.block.setVisible(blueRect, true);
-    console.log('Blue rectangle shown again');
+// Show it again for the final composition
+engine.block.setVisible(blueRect, true)
+console.log('Blue rectangle shown again')
 ```
 
 Visibility is useful for creating before/after comparisons, hiding elements during editing, or implementing show/hide functionality in your application.
@@ -413,19 +413,19 @@ We create a copy of a block and all its children using `engine.block.duplicate()
 
 ```typescript highlight=highlight-duplicate
 // Duplicate a block
-const duplicateGreen = engine.block.duplicate(greenRect);
-engine.block.setPositionX(duplicateGreen, 400);
-engine.block.setPositionY(duplicateGreen, 300);
+const duplicateGreen = engine.block.duplicate(greenRect)
+engine.block.setPositionX(duplicateGreen, 400)
+engine.block.setPositionY(duplicateGreen, 300)
 // Change the duplicate's color to purple
-const purpleFill = engine.block.createFill('color');
-engine.block.setFill(duplicateGreen, purpleFill);
+const purpleFill = engine.block.createFill('color')
+engine.block.setFill(duplicateGreen, purpleFill)
 engine.block.setColor(purpleFill, 'fill/color/value', {
   r: 0.6,
   g: 0.2,
   b: 0.8,
   a: 1
-});
-console.log('Green rectangle duplicated');
+})
+console.log('Green rectangle duplicated')
 ```
 
 The duplicated block is positioned at the same location as the original. You typically want to reposition it to make it visible as a separate element.
@@ -436,8 +436,8 @@ Before performing operations on a block, we can verify it still exists using `en
 
 ```typescript highlight=highlight-is-valid
 // Check if a block is valid before operations
-const isValidBefore = engine.block.isValid(yellowRect);
-console.log('Yellow rectangle valid before destroy:', isValidBefore);
+const isValidBefore = engine.block.isValid(yellowRect)
+console.log('Yellow rectangle valid before destroy:', isValidBefore)
 ```
 
 ### Removing Blocks
@@ -445,13 +445,13 @@ console.log('Yellow rectangle valid before destroy:', isValidBefore);
 We permanently remove a block and all its children from the scene using `engine.block.destroy()`. This operation cannot be undone programmatically.
 
 ```typescript highlight=highlight-destroy
-    // Remove a block from the scene
-    engine.block.destroy(yellowRect);
-    console.log('Yellow rectangle destroyed');
+// Remove a block from the scene
+engine.block.destroy(yellowRect)
+console.log('Yellow rectangle destroyed')
 
-    // Check validity after destruction
-    const isValidAfter = engine.block.isValid(yellowRect);
-    console.log('Yellow rectangle valid after destroy:', isValidAfter);
+// Check validity after destruction
+const isValidAfter = engine.block.isValid(yellowRect)
+console.log('Yellow rectangle valid after destroy:', isValidAfter)
 ```
 
 After destruction, any references to the block become invalid. Attempting to use an invalid block ID will result in errors.
@@ -461,7 +461,7 @@ After destruction, any references to the block become invalid. Attempting to use
 After making layer changes, we zoom to fit the page in the viewport so the composition is clearly visible.
 
 ```typescript highlight=highlight-zoom
-engine.scene.zoomToBlock(page, 40, 40, 40, 40);
+engine.scene.zoomToBlock(page, 40, 40, 40, 40)
 ```
 
 ## Troubleshooting

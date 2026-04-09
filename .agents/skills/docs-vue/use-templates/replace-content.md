@@ -23,7 +23,7 @@ Dynamically replace content within templates using CE.SDK's placeholder and vari
 Template content replacement enables dynamic designs by swapping placeholder content programmatically. Templates contain blocks marked as placeholders that can be located by name or discovered in bulk for batch processing. Text replacement uses the variable system with `{{variableName}}` syntax, while images are updated by modifying fill properties.
 
 ```typescript file=@cesdk_web_examples/guides-use-templates-replace-content-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Replace Content Guide
@@ -53,22 +53,22 @@ import packageJson from './package.json';
  * - Building data-driven template workflows
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -79,132 +79,132 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create a text block with a name for later retrieval
-    const headerText = engine.block.create('text');
-    engine.block.setName(headerText, 'header-text');
-    engine.block.replaceText(headerText, 'Welcome, {{userName}}!');
-    engine.block.setTextFontSize(headerText, 96);
-    engine.block.setWidthMode(headerText, 'Auto');
-    engine.block.setHeightMode(headerText, 'Auto');
-    engine.block.appendChild(page, headerText);
-    engine.block.setPositionX(headerText, 50);
-    engine.block.setPositionY(headerText, 30);
+    const headerText = engine.block.create('text')
+    engine.block.setName(headerText, 'header-text')
+    engine.block.replaceText(headerText, 'Welcome, {{userName}}!')
+    engine.block.setTextFontSize(headerText, 96)
+    engine.block.setWidthMode(headerText, 'Auto')
+    engine.block.setHeightMode(headerText, 'Auto')
+    engine.block.appendChild(page, headerText)
+    engine.block.setPositionX(headerText, 50)
+    engine.block.setPositionY(headerText, 30)
 
     // Find the block by its name
-    const [foundHeader] = engine.block.findByName('header-text');
-    console.log('Found header block:', foundHeader);
+    const [foundHeader] = engine.block.findByName('header-text')
+    console.log('Found header block:', foundHeader)
 
     // Enable placeholder behavior on blocks
-    engine.block.setPlaceholderEnabled(headerText, true);
+    engine.block.setPlaceholderEnabled(headerText, true)
 
     // Create an image placeholder
     const imageBlock = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_1.jpg',
       { size: { width: 300, height: 200 } }
-    );
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 50);
-    engine.block.setPositionY(imageBlock, 120);
-    engine.block.setName(imageBlock, 'product-image');
-    engine.block.setPlaceholderEnabled(imageBlock, true);
+    )
+    engine.block.appendChild(page, imageBlock)
+    engine.block.setPositionX(imageBlock, 50)
+    engine.block.setPositionY(imageBlock, 120)
+    engine.block.setName(imageBlock, 'product-image')
+    engine.block.setPlaceholderEnabled(imageBlock, true)
 
     // Find all placeholder blocks in the scene
-    const placeholders = engine.block.findAllPlaceholders();
-    console.log('Found placeholders:', placeholders.length);
+    const placeholders = engine.block.findAllPlaceholders()
+    console.log('Found placeholders:', placeholders.length)
 
     // Check if a block supports placeholder behavior
-    const supportsPlaceholder =
-      engine.block.supportsPlaceholderBehavior(imageBlock);
-    console.log('Supports placeholder behavior:', supportsPlaceholder);
+    const supportsPlaceholder
+      = engine.block.supportsPlaceholderBehavior(imageBlock)
+    console.log('Supports placeholder behavior:', supportsPlaceholder)
 
     // Check if placeholder is enabled
-    const isPlaceholderEnabled = engine.block.isPlaceholderEnabled(imageBlock);
-    console.log('Placeholder enabled:', isPlaceholderEnabled);
+    const isPlaceholderEnabled = engine.block.isPlaceholderEnabled(imageBlock)
+    console.log('Placeholder enabled:', isPlaceholderEnabled)
 
     // Set text variables to replace {{variableName}} placeholders
-    engine.variable.setString('userName', 'Alex');
+    engine.variable.setString('userName', 'Alex')
 
     // The text block now displays "Welcome, Alex!"
-    console.log('Variable set, text updated automatically');
+    console.log('Variable set, text updated automatically')
 
     // List all variables in the scene
-    const allVariables = engine.variable.findAll();
-    console.log('All variables:', allVariables);
+    const allVariables = engine.variable.findAll()
+    console.log('All variables:', allVariables)
 
     // Get a variable value
-    const userName = engine.variable.getString('userName');
-    console.log('Current userName:', userName);
+    const userName = engine.variable.getString('userName')
+    console.log('Current userName:', userName)
 
     // Update the variable
-    engine.variable.setString('userName', 'Jordan');
+    engine.variable.setString('userName', 'Jordan')
 
     // Replace image content by updating the fill's image URI
-    const [productImage] = engine.block.findByName('product-image');
-    const fill = engine.block.getFill(productImage);
+    const [productImage] = engine.block.findByName('product-image')
+    const fill = engine.block.getFill(productImage)
     engine.block.setString(
       fill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_2.jpg'
-    );
-    console.log('Image replaced');
+    )
+    console.log('Image replaced')
 
     // Create another text block for direct replacement
-    const subtitleText = engine.block.create('text');
-    engine.block.setName(subtitleText, 'subtitle');
-    engine.block.replaceText(subtitleText, 'Original subtitle text');
-    engine.block.setTextFontSize(subtitleText, 48);
-    engine.block.setWidthMode(subtitleText, 'Auto');
-    engine.block.setHeightMode(subtitleText, 'Auto');
-    engine.block.appendChild(page, subtitleText);
-    engine.block.setPositionX(subtitleText, 50);
-    engine.block.setPositionY(subtitleText, 350);
+    const subtitleText = engine.block.create('text')
+    engine.block.setName(subtitleText, 'subtitle')
+    engine.block.replaceText(subtitleText, 'Original subtitle text')
+    engine.block.setTextFontSize(subtitleText, 48)
+    engine.block.setWidthMode(subtitleText, 'Auto')
+    engine.block.setHeightMode(subtitleText, 'Auto')
+    engine.block.appendChild(page, subtitleText)
+    engine.block.setPositionX(subtitleText, 50)
+    engine.block.setPositionY(subtitleText, 350)
 
     // Replace text directly without using variables
-    const [subtitle] = engine.block.findByName('subtitle');
-    engine.block.replaceText(subtitle, 'Updated subtitle content');
-    console.log('Text replaced directly');
+    const [subtitle] = engine.block.findByName('subtitle')
+    engine.block.replaceText(subtitle, 'Updated subtitle content')
+    console.log('Text replaced directly')
 
     // Demonstrate data-driven template workflow pattern
     const dataRecords = [
       { name: 'Alice', title: 'Designer' },
       { name: 'Bob', title: 'Developer' }
-    ];
+    ]
 
     // Process each record (in practice, you'd export between iterations)
     for (const record of dataRecords) {
-      engine.variable.setString('userName', record.name);
-      console.log(`Processed record for: ${record.name}`);
+      engine.variable.setString('userName', record.name)
+      console.log(`Processed record for: ${record.name}`)
       // In a real workflow, you would export here:
       // const blob = await engine.block.export(page, { mimeType: 'image/png' });
     }
 
     // Select the header text to show in the UI
-    engine.block.select(headerText);
+    engine.block.select(headerText)
 
     console.log(
       'Replace content guide initialized. The template demonstrates text variables, image replacement, and placeholder APIs.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to find placeholder blocks, replace text using variables, swap image content, and build data-driven template workflows.
@@ -214,20 +214,20 @@ This guide covers how to find placeholder blocks, replace text using variables, 
 Locate replaceable content using block discovery APIs. Use `engine.block.findByName()` to find specific blocks when you know the placeholder name.
 
 ```typescript highlight=highlight-find-by-name
-    // Create a text block with a name for later retrieval
-    const headerText = engine.block.create('text');
-    engine.block.setName(headerText, 'header-text');
-    engine.block.replaceText(headerText, 'Welcome, {{userName}}!');
-    engine.block.setTextFontSize(headerText, 96);
-    engine.block.setWidthMode(headerText, 'Auto');
-    engine.block.setHeightMode(headerText, 'Auto');
-    engine.block.appendChild(page, headerText);
-    engine.block.setPositionX(headerText, 50);
-    engine.block.setPositionY(headerText, 30);
+// Create a text block with a name for later retrieval
+const headerText = engine.block.create('text')
+engine.block.setName(headerText, 'header-text')
+engine.block.replaceText(headerText, 'Welcome, {{userName}}!')
+engine.block.setTextFontSize(headerText, 96)
+engine.block.setWidthMode(headerText, 'Auto')
+engine.block.setHeightMode(headerText, 'Auto')
+engine.block.appendChild(page, headerText)
+engine.block.setPositionX(headerText, 50)
+engine.block.setPositionY(headerText, 30)
 
-    // Find the block by its name
-    const [foundHeader] = engine.block.findByName('header-text');
-    console.log('Found header block:', foundHeader);
+// Find the block by its name
+const [foundHeader] = engine.block.findByName('header-text')
+console.log('Found header block:', foundHeader)
 ```
 
 ### Discover All Placeholders
@@ -235,23 +235,23 @@ Locate replaceable content using block discovery APIs. Use `engine.block.findByN
 Use `engine.block.findAllPlaceholders()` to discover all placeholder blocks in a template for iterating through them programmatically.
 
 ```typescript highlight=highlight-find-all-placeholders
-    // Enable placeholder behavior on blocks
-    engine.block.setPlaceholderEnabled(headerText, true);
+// Enable placeholder behavior on blocks
+engine.block.setPlaceholderEnabled(headerText, true)
 
-    // Create an image placeholder
-    const imageBlock = await engine.block.addImage(
-      'https://img.ly/static/ubq_samples/sample_1.jpg',
-      { size: { width: 300, height: 200 } }
-    );
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 50);
-    engine.block.setPositionY(imageBlock, 120);
-    engine.block.setName(imageBlock, 'product-image');
-    engine.block.setPlaceholderEnabled(imageBlock, true);
+// Create an image placeholder
+const imageBlock = await engine.block.addImage(
+  'https://img.ly/static/ubq_samples/sample_1.jpg',
+  { size: { width: 300, height: 200 } }
+)
+engine.block.appendChild(page, imageBlock)
+engine.block.setPositionX(imageBlock, 50)
+engine.block.setPositionY(imageBlock, 120)
+engine.block.setName(imageBlock, 'product-image')
+engine.block.setPlaceholderEnabled(imageBlock, true)
 
-    // Find all placeholder blocks in the scene
-    const placeholders = engine.block.findAllPlaceholders();
-    console.log('Found placeholders:', placeholders.length);
+// Find all placeholder blocks in the scene
+const placeholders = engine.block.findAllPlaceholders()
+console.log('Found placeholders:', placeholders.length)
 ```
 
 ### Query Placeholder State
@@ -259,14 +259,14 @@ Use `engine.block.findAllPlaceholders()` to discover all placeholder blocks in a
 Verify blocks support replacement with `engine.block.isPlaceholderEnabled()` and `engine.block.supportsPlaceholderBehavior()` before attempting content updates.
 
 ```typescript highlight=highlight-query-placeholder-state
-    // Check if a block supports placeholder behavior
-    const supportsPlaceholder =
-      engine.block.supportsPlaceholderBehavior(imageBlock);
-    console.log('Supports placeholder behavior:', supportsPlaceholder);
+// Check if a block supports placeholder behavior
+const supportsPlaceholder
+  = engine.block.supportsPlaceholderBehavior(imageBlock)
+console.log('Supports placeholder behavior:', supportsPlaceholder)
 
-    // Check if placeholder is enabled
-    const isPlaceholderEnabled = engine.block.isPlaceholderEnabled(imageBlock);
-    console.log('Placeholder enabled:', isPlaceholderEnabled);
+// Check if placeholder is enabled
+const isPlaceholderEnabled = engine.block.isPlaceholderEnabled(imageBlock)
+console.log('Placeholder enabled:', isPlaceholderEnabled)
 ```
 
 ## Text Variable Replacement
@@ -274,11 +274,11 @@ Verify blocks support replacement with `engine.block.isPlaceholderEnabled()` and
 Replace text content dynamically using CE.SDK's variable system. Text blocks containing `{{variableName}}` syntax automatically update when you set variable values with `engine.variable.setString()`.
 
 ```typescript highlight=highlight-text-variables
-    // Set text variables to replace {{variableName}} placeholders
-    engine.variable.setString('userName', 'Alex');
+// Set text variables to replace {{variableName}} placeholders
+engine.variable.setString('userName', 'Alex')
 
-    // The text block now displays "Welcome, Alex!"
-    console.log('Variable set, text updated automatically');
+// The text block now displays "Welcome, Alex!"
+console.log('Variable set, text updated automatically')
 ```
 
 ### Managing Variables
@@ -286,16 +286,16 @@ Replace text content dynamically using CE.SDK's variable system. Text blocks con
 List all variables with `engine.variable.findAll()`, retrieve current values using `engine.variable.getString()`, and update variables as needed.
 
 ```typescript highlight=highlight-manage-variables
-    // List all variables in the scene
-    const allVariables = engine.variable.findAll();
-    console.log('All variables:', allVariables);
+// List all variables in the scene
+const allVariables = engine.variable.findAll()
+console.log('All variables:', allVariables)
 
-    // Get a variable value
-    const userName = engine.variable.getString('userName');
-    console.log('Current userName:', userName);
+// Get a variable value
+const userName = engine.variable.getString('userName')
+console.log('Current userName:', userName)
 
-    // Update the variable
-    engine.variable.setString('userName', 'Jordan');
+// Update the variable
+engine.variable.setString('userName', 'Jordan')
 ```
 
 ## Replacing Image Content
@@ -304,14 +304,14 @@ Update image placeholders by modifying the fill's image URI. First get the fill 
 
 ```typescript highlight=highlight-replace-image
 // Replace image content by updating the fill's image URI
-const [productImage] = engine.block.findByName('product-image');
-const fill = engine.block.getFill(productImage);
+const [productImage] = engine.block.findByName('product-image')
+const fill = engine.block.getFill(productImage)
 engine.block.setString(
   fill,
   'fill/image/imageFileURI',
   'https://img.ly/static/ubq_samples/sample_2.jpg'
-);
-console.log('Image replaced');
+)
+console.log('Image replaced')
 ```
 
 ## Direct Text Replacement
@@ -319,21 +319,21 @@ console.log('Image replaced');
 Replace text content directly without variables using `engine.block.replaceText()`. This method replaces all text in a block when you need precise control without the variable system.
 
 ```typescript highlight=highlight-direct-text-replacement
-    // Create another text block for direct replacement
-    const subtitleText = engine.block.create('text');
-    engine.block.setName(subtitleText, 'subtitle');
-    engine.block.replaceText(subtitleText, 'Original subtitle text');
-    engine.block.setTextFontSize(subtitleText, 48);
-    engine.block.setWidthMode(subtitleText, 'Auto');
-    engine.block.setHeightMode(subtitleText, 'Auto');
-    engine.block.appendChild(page, subtitleText);
-    engine.block.setPositionX(subtitleText, 50);
-    engine.block.setPositionY(subtitleText, 350);
+// Create another text block for direct replacement
+const subtitleText = engine.block.create('text')
+engine.block.setName(subtitleText, 'subtitle')
+engine.block.replaceText(subtitleText, 'Original subtitle text')
+engine.block.setTextFontSize(subtitleText, 48)
+engine.block.setWidthMode(subtitleText, 'Auto')
+engine.block.setHeightMode(subtitleText, 'Auto')
+engine.block.appendChild(page, subtitleText)
+engine.block.setPositionX(subtitleText, 50)
+engine.block.setPositionY(subtitleText, 350)
 
-    // Replace text directly without using variables
-    const [subtitle] = engine.block.findByName('subtitle');
-    engine.block.replaceText(subtitle, 'Updated subtitle content');
-    console.log('Text replaced directly');
+// Replace text directly without using variables
+const [subtitle] = engine.block.findByName('subtitle')
+engine.block.replaceText(subtitle, 'Updated subtitle content')
+console.log('Text replaced directly')
 ```
 
 ## Data-Driven Template Workflows
@@ -341,19 +341,19 @@ Replace text content directly without variables using `engine.block.replaceText(
 Build automated template population by iterating through data records. Load the template once, then loop through your data, updating variables and placeholders for each record before exporting.
 
 ```typescript highlight=highlight-data-driven
-    // Demonstrate data-driven template workflow pattern
-    const dataRecords = [
-      { name: 'Alice', title: 'Designer' },
-      { name: 'Bob', title: 'Developer' }
-    ];
+// Demonstrate data-driven template workflow pattern
+const dataRecords = [
+  { name: 'Alice', title: 'Designer' },
+  { name: 'Bob', title: 'Developer' }
+]
 
-    // Process each record (in practice, you'd export between iterations)
-    for (const record of dataRecords) {
-      engine.variable.setString('userName', record.name);
-      console.log(`Processed record for: ${record.name}`);
-      // In a real workflow, you would export here:
-      // const blob = await engine.block.export(page, { mimeType: 'image/png' });
-    }
+// Process each record (in practice, you'd export between iterations)
+for (const record of dataRecords) {
+  engine.variable.setString('userName', record.name)
+  console.log(`Processed record for: ${record.name}`)
+  // In a real workflow, you would export here:
+  // const blob = await engine.block.export(page, { mimeType: 'image/png' });
+}
 ```
 
 ## Troubleshooting

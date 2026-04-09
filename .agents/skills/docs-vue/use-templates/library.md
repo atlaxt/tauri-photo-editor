@@ -23,7 +23,7 @@ Configure and populate the Template Library in CE.SDK so users can browse and se
 Templates in CE.SDK are pre-designed scenes stored as assets within asset sources. They contain complete scene definitions that users can load and customize. The Template Library provides a centralized way to organize, browse, and access these templates through both the built-in UI and programmatic APIs.
 
 ```typescript file=@cesdk_web_examples/guides-use-templates-library-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Template Library
@@ -53,23 +53,23 @@ import packageJson from './package.json';
  * 4. Managing template sources
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a design scene to work with    await cesdk.addPlugin(new DesignEditorConfig());
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -80,30 +80,31 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } });
+    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } })
 
     // Create a custom template source with an apply callback
     // The callback handles what happens when a user clicks a template
     engine.asset.addLocalSource('my.custom.templates', undefined, async (asset) => {
-      const sceneUri = asset.meta?.uri;
-      const scene = engine.scene.get();
-      if (!sceneUri || scene == null) return undefined;
+      const sceneUri = asset.meta?.uri
+      const scene = engine.scene.get()
+      if (!sceneUri || scene == null)
+        return undefined
 
-      const sceneUrl = new URL(sceneUri, window.location.href);
-      await engine.scene.applyTemplateFromURL(sceneUrl.href);
+      const sceneUrl = new URL(sceneUri, window.location.href)
+      await engine.scene.applyTemplateFromURL(sceneUrl.href)
 
-      return scene;
-    });
+      return scene
+    })
 
     // Add template assets to the source
     // Each asset needs meta.uri pointing to a .scene file
@@ -117,7 +118,7 @@ class Example implements EditorPlugin {
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_postcard_1.jpg',
         uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/templates/cesdk_postcard_1.scene'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('my.custom.templates', {
       id: 'postcard-2',
@@ -129,7 +130,7 @@ class Example implements EditorPlugin {
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_postcard_2.jpg',
         uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/templates/cesdk_postcard_2.scene'
       }
-    });
+    })
 
     // Create an asset library entry for the custom templates
     cesdk.ui.addAssetLibraryEntry({
@@ -139,7 +140,7 @@ class Example implements EditorPlugin {
       icon: '@imgly/Template',
       gridColumns: 2,
       gridItemHeight: 'square'
-    });
+    })
 
     // Configure the dock to show ONLY the custom template library
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -150,25 +151,25 @@ class Example implements EditorPlugin {
         label: 'Custom Templates',
         entries: ['custom-templates-entry']
       }
-    ]);
+    ])
 
     // Open the custom templates panel on startup (same as clicking dock button)
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: {
         entries: ['custom-templates-entry']
       }
-    });
+    })
 
     // Query templates with filtering options
     const queryResult = await engine.asset.findAssets('my.custom.templates', {
       page: 0,
       perPage: 20,
       groups: ['cards']
-    });
+    })
     console.log(
       'Templates in "cards" group:',
-      queryResult.assets.map((t) => t.id)
-    );
+      queryResult.assets.map(t => t.id)
+    )
 
     // Query all templates from custom source
     const allCustomTemplates = await engine.asset.findAssets(
@@ -177,40 +178,40 @@ class Example implements EditorPlugin {
         page: 0,
         perPage: 100
       }
-    );
-    console.log('Total custom templates:', allCustomTemplates.total);
+    )
+    console.log('Total custom templates:', allCustomTemplates.total)
 
     // List all registered asset sources
-    const allSources = engine.asset.findAllSources();
+    const allSources = engine.asset.findAllSources()
     const templateSources = allSources.filter(
-      (id) => id.includes('template') || id === 'my.custom.templates'
-    );
-    console.log('Template sources:', templateSources);
+      id => id.includes('template') || id === 'my.custom.templates'
+    )
+    console.log('Template sources:', templateSources)
 
     // Get available groups from a source
-    const groups = await engine.asset.getGroups('my.custom.templates');
-    console.log('Available groups:', groups);
+    const groups = await engine.asset.getGroups('my.custom.templates')
+    console.log('Available groups:', groups)
 
     // Subscribe to source changes
     const unsubscribeAdd = engine.asset.onAssetSourceAdded((sourceId) => {
-      console.log('Asset source added:', sourceId);
-    });
+      console.log('Asset source added:', sourceId)
+    })
 
     const unsubscribeRemove = engine.asset.onAssetSourceRemoved((sourceId) => {
-      console.log('Asset source removed:', sourceId);
-    });
+      console.log('Asset source removed:', sourceId)
+    })
 
     // Clean up subscriptions when done (for demonstration)
     setTimeout(() => {
-      unsubscribeAdd();
-      unsubscribeRemove();
-    }, 10000);
+      unsubscribeAdd()
+      unsubscribeRemove()
+    }, 10000)
 
-    console.log('Template Library example loaded successfully!');
+    console.log('Template Library example loaded successfully!')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create custom template sources, handle template application, query templates programmatically, and manage template sources.
@@ -220,34 +221,34 @@ This guide covers how to create custom template sources, handle template applica
 Before creating custom template sources, load the default asset sources to ensure fonts and other base assets are available. Then create a design scene to work with.
 
 ```typescript highlight=highlight-setup
-    // Create a design scene to work with    await cesdk.addPlugin(new DesignEditorConfig());
+// Create a design scene to work with    await cesdk.addPlugin(new DesignEditorConfig());
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } });
+await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } })
 ```
 
 ## Using the Built-in Template UI
@@ -268,44 +269,45 @@ The template panel automatically displays templates from all registered template
 You can create custom template sources to provide your own branded templates. We use `engine.asset.addLocalSource()` to create a source with an apply callback, then `engine.asset.addAssetToSource()` to add template assets.
 
 ```typescript highlight=highlight-custom-source
-    // Create a custom template source with an apply callback
-    // The callback handles what happens when a user clicks a template
-    engine.asset.addLocalSource('my.custom.templates', undefined, async (asset) => {
-      const sceneUri = asset.meta?.uri;
-      const scene = engine.scene.get();
-      if (!sceneUri || scene == null) return undefined;
+// Create a custom template source with an apply callback
+// The callback handles what happens when a user clicks a template
+engine.asset.addLocalSource('my.custom.templates', undefined, async (asset) => {
+  const sceneUri = asset.meta?.uri
+  const scene = engine.scene.get()
+  if (!sceneUri || scene == null)
+    return undefined
 
-      const sceneUrl = new URL(sceneUri, window.location.href);
-      await engine.scene.applyTemplateFromURL(sceneUrl.href);
+  const sceneUrl = new URL(sceneUri, window.location.href)
+  await engine.scene.applyTemplateFromURL(sceneUrl.href)
 
-      return scene;
-    });
+  return scene
+})
 
-    // Add template assets to the source
-    // Each asset needs meta.uri pointing to a .scene file
-    engine.asset.addAssetToSource('my.custom.templates', {
-      id: 'postcard-1',
-      label: { en: 'Postcard Design' },
-      tags: { en: ['postcard', 'card'] },
-      groups: ['cards'],
-      meta: {
-        thumbUri:
+// Add template assets to the source
+// Each asset needs meta.uri pointing to a .scene file
+engine.asset.addAssetToSource('my.custom.templates', {
+  id: 'postcard-1',
+  label: { en: 'Postcard Design' },
+  tags: { en: ['postcard', 'card'] },
+  groups: ['cards'],
+  meta: {
+    thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_postcard_1.jpg',
-        uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/templates/cesdk_postcard_1.scene'
-      }
-    });
+    uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/templates/cesdk_postcard_1.scene'
+  }
+})
 
-    engine.asset.addAssetToSource('my.custom.templates', {
-      id: 'postcard-2',
-      label: { en: 'Business Card' },
-      tags: { en: ['business', 'card'] },
-      groups: ['business'],
-      meta: {
-        thumbUri:
+engine.asset.addAssetToSource('my.custom.templates', {
+  id: 'postcard-2',
+  label: { en: 'Business Card' },
+  tags: { en: ['business', 'card'] },
+  groups: ['business'],
+  meta: {
+    thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.template/thumbnails/cesdk_postcard_2.jpg',
-        uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/templates/cesdk_postcard_2.scene'
-      }
-    });
+    uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/templates/cesdk_postcard_2.scene'
+  }
+})
 ```
 
 The `addLocalSource()` method creates the source and registers a callback that handles template application when users click a template. The callback:
@@ -331,7 +333,7 @@ For production use, you can load templates from a hosted JSON file using `engine
 ```typescript
 const sourceId = await engine.asset.addLocalAssetSourceFromJSONURI(
   'https://cdn.example.com/templates/content.json'
-);
+)
 ```
 
 ## Querying Templates Programmatically
@@ -339,26 +341,26 @@ const sourceId = await engine.asset.addLocalAssetSourceFromJSONURI(
 We use `engine.asset.findAssets()` to search and retrieve templates from a source. You can query by groups, tags, or search text to find specific templates.
 
 ```typescript highlight=highlight-query-templates
-    // Query templates with filtering options
-    const queryResult = await engine.asset.findAssets('my.custom.templates', {
-      page: 0,
-      perPage: 20,
-      groups: ['cards']
-    });
-    console.log(
-      'Templates in "cards" group:',
-      queryResult.assets.map((t) => t.id)
-    );
+// Query templates with filtering options
+const queryResult = await engine.asset.findAssets('my.custom.templates', {
+  page: 0,
+  perPage: 20,
+  groups: ['cards']
+})
+console.log(
+  'Templates in "cards" group:',
+  queryResult.assets.map(t => t.id)
+)
 
-    // Query all templates from custom source
-    const allCustomTemplates = await engine.asset.findAssets(
-      'my.custom.templates',
-      {
-        page: 0,
-        perPage: 100
-      }
-    );
-    console.log('Total custom templates:', allCustomTemplates.total);
+// Query all templates from custom source
+const allCustomTemplates = await engine.asset.findAssets(
+  'my.custom.templates',
+  {
+    page: 0,
+    perPage: 100
+  }
+)
+console.log('Total custom templates:', allCustomTemplates.total)
 ```
 
 The query options include:
@@ -380,31 +382,31 @@ The result object contains:
 CE.SDK provides APIs to manage the lifecycle of template sources, including listing, monitoring, and removing sources.
 
 ```typescript highlight=highlight-manage-sources
-    // List all registered asset sources
-    const allSources = engine.asset.findAllSources();
-    const templateSources = allSources.filter(
-      (id) => id.includes('template') || id === 'my.custom.templates'
-    );
-    console.log('Template sources:', templateSources);
+// List all registered asset sources
+const allSources = engine.asset.findAllSources()
+const templateSources = allSources.filter(
+  id => id.includes('template') || id === 'my.custom.templates'
+)
+console.log('Template sources:', templateSources)
 
-    // Get available groups from a source
-    const groups = await engine.asset.getGroups('my.custom.templates');
-    console.log('Available groups:', groups);
+// Get available groups from a source
+const groups = await engine.asset.getGroups('my.custom.templates')
+console.log('Available groups:', groups)
 
-    // Subscribe to source changes
-    const unsubscribeAdd = engine.asset.onAssetSourceAdded((sourceId) => {
-      console.log('Asset source added:', sourceId);
-    });
+// Subscribe to source changes
+const unsubscribeAdd = engine.asset.onAssetSourceAdded((sourceId) => {
+  console.log('Asset source added:', sourceId)
+})
 
-    const unsubscribeRemove = engine.asset.onAssetSourceRemoved((sourceId) => {
-      console.log('Asset source removed:', sourceId);
-    });
+const unsubscribeRemove = engine.asset.onAssetSourceRemoved((sourceId) => {
+  console.log('Asset source removed:', sourceId)
+})
 
-    // Clean up subscriptions when done (for demonstration)
-    setTimeout(() => {
-      unsubscribeAdd();
-      unsubscribeRemove();
-    }, 10000);
+// Clean up subscriptions when done (for demonstration)
+setTimeout(() => {
+  unsubscribeAdd()
+  unsubscribeRemove()
+}, 10000)
 ```
 
 Key management methods:

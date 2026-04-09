@@ -23,7 +23,7 @@ This guide shows how to programmatically edit shapes using the Block API, coveri
 The `graphic` block in CE.SDK allows you to modify and replace its shape. CE.SDK supports many different types of shapes, such as rectangles, lines, ellipses, polygons, stars, and custom vector paths.
 
 ```typescript file=@cesdk_web_examples/guides-stickers-and-shapes-edit-shapes-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,61 +68,61 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 100, height: 100, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
-    const graphic = engine.block.create('graphic');
-    const imageFill = engine.block.createFill('image');
+    const graphic = engine.block.create('graphic')
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(graphic, imageFill);
-    engine.block.setWidth(graphic, 100);
-    engine.block.setHeight(graphic, 100);
-    engine.block.appendChild(page, graphic);
-    engine.block.setPositionX(graphic, 0);
-    engine.block.setPositionY(graphic, 0);
+    )
+    engine.block.setFill(graphic, imageFill)
+    engine.block.setWidth(graphic, 100)
+    engine.block.setHeight(graphic, 100)
+    engine.block.appendChild(page, graphic)
+    engine.block.setPositionX(graphic, 0)
+    engine.block.setPositionY(graphic, 0)
 
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
-    engine.block.supportsShape(graphic); // Returns true
-    const text = engine.block.create('text');
-    engine.block.supportsShape(text); // Returns false
+    engine.block.supportsShape(graphic) // Returns true
+    const text = engine.block.create('text')
+    engine.block.supportsShape(text) // Returns false
 
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(graphic, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(graphic, rectShape)
 
-    const shape = engine.block.getShape(graphic);
-    const shapeType = engine.block.getType(shape);
+    const shape = engine.block.getShape(graphic)
+    const shapeType = engine.block.getType(shape)
 
-    const starShape = engine.block.createShape('star');
-    engine.block.destroy(engine.block.getShape(graphic));
-    engine.block.setShape(graphic, starShape);
+    const starShape = engine.block.createShape('star')
+    engine.block.destroy(engine.block.getShape(graphic))
+    engine.block.setShape(graphic, starShape)
     /* The following line would also destroy the currently attached starShape */
     // engine.block.destroy(graphic);
 
-    const allShapeProperties = engine.block.findAllProperties(starShape);
-    engine.block.setInt(starShape, 'shape/star/points', 5);
+    const allShapeProperties = engine.block.findAllProperties(starShape)
+    engine.block.setInt(starShape, 'shape/star/points', 5)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 Similarly to blocks, each shape object has a numeric ID which can be used to query and modify its properties.
@@ -132,15 +132,15 @@ Similarly to blocks, each shape object has a numeric ID which can be used to que
 To query whether a block supports shapes, use the `engine.block.supportsShape(id)` API. Currently, only the `graphic` design block supports shape objects. To query the shape of a design block, first create a shape and set it, then call `engine.block.getShape(id)`. You can pass the returned result into other APIs to query more information about the shape, such as its type via `engine.block.getType(id)`.
 
 ```typescript highlight-accessShapes
-    engine.block.supportsShape(graphic); // Returns true
-    const text = engine.block.create('text');
-    engine.block.supportsShape(text); // Returns false
+engine.block.supportsShape(graphic) // Returns true
+const text = engine.block.create('text')
+engine.block.supportsShape(text) // Returns false
 
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(graphic, rectShape);
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(graphic, rectShape)
 
-    const shape = engine.block.getShape(graphic);
-    const shapeType = engine.block.getType(shape);
+const shape = engine.block.getShape(graphic)
+const shapeType = engine.block.getType(shape)
 ```
 
 ## Replacing Shapes
@@ -148,9 +148,9 @@ To query whether a block supports shapes, use the `engine.block.supportsShape(id
 When replacing a shape, remember to destroy the previous shape object if you don't intend to use it further. Shape objects that are not attached to a design block will never be automatically destroyed.
 
 ```typescript highlight-replaceShape
-const starShape = engine.block.createShape('star');
-engine.block.destroy(engine.block.getShape(graphic));
-engine.block.setShape(graphic, starShape);
+const starShape = engine.block.createShape('star')
+engine.block.destroy(engine.block.getShape(graphic))
+engine.block.setShape(graphic, starShape)
 /* The following line would also destroy the currently attached starShape */
 // engine.block.destroy(graphic);
 ```
@@ -162,7 +162,7 @@ Destroying a design block will also destroy its attached shape block (shown in t
 Just like design blocks, shapes with different types have different properties that you can query and modify via the API. Use `engine.block.findAllProperties(id)` to get a list of all properties of a given shape.
 
 ```typescript highlight-getProperties
-const allShapeProperties = engine.block.findAllProperties(starShape);
+const allShapeProperties = engine.block.findAllProperties(starShape)
 ```
 
 For the star shape in this example, the call returns an array including properties like `"shape/star/innerDiameter"` and `"shape/star/points"`.
@@ -170,7 +170,7 @@ For the star shape in this example, the call returns an array including properti
 Once we know the property keys of a shape, we can use the same APIs as for design blocks to modify those properties. For example, we can use `engine.block.setInt()` to change the number of points of the star to five.
 
 ```typescript highlight-modifyProperties
-engine.block.setInt(starShape, 'shape/star/points', 5);
+engine.block.setInt(starShape, 'shape/star/points', 5)
 ```
 
 ## Troubleshooting

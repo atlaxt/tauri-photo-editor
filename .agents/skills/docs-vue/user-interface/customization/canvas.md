@@ -23,7 +23,7 @@ The canvas bar is the floating toolbar that appears above or below the canvas. T
 For general component manipulation (reordering, inserting, removing), see the [Component Order API Reference](./user-interface/customization/reference/component-order-api.md).
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-canvas-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,41 +68,41 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Hide the canvas bar
-    cesdk.feature.disable('ly.img.canvas.bar');
+    cesdk.feature.disable('ly.img.canvas.bar')
 
     // Show the canvas bar (default)
-    cesdk.feature.enable('ly.img.canvas.bar');
+    cesdk.feature.enable('ly.img.canvas.bar')
 
     // Configure the top position with settings and add page
     cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, [
       'ly.img.settings.canvasBar',
       'ly.img.separator',
       'ly.img.page.add.canvasBar'
-    ]);
+    ])
 
     // Configure the bottom position independently
     cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'bottom' }, [
       'ly.img.spacer',
       'ly.img.page.add.canvasBar'
-    ]);
+    ])
 
     // Set a text formatting toolbar for Text edit mode at the top position
     cesdk.ui.setComponentOrder(
@@ -113,7 +113,7 @@ class Example implements EditorPlugin {
         'ly.img.separator',
         'ly.img.settings.canvasBar'
       ]
-    );
+    )
 
     // Use spacers and separators to control layout
     cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'bottom' }, [
@@ -122,24 +122,24 @@ class Example implements EditorPlugin {
       'ly.img.spacer',
       'ly.img.page.add.canvasBar',
       'ly.img.spacer'
-    ]);
+    ])
 
     // Retrieve and log the current canvas bar order for each position
     const topOrder = cesdk.ui.getComponentOrder({
       in: 'ly.img.canvas.bar',
       at: 'top'
-    });
-    console.log('Current top canvas bar order:', topOrder);
+    })
+    console.log('Current top canvas bar order:', topOrder)
 
     const bottomOrder = cesdk.ui.getComponentOrder({
       in: 'ly.img.canvas.bar',
       at: 'bottom'
-    });
-    console.log('Current bottom canvas bar order:', bottomOrder);
+    })
+    console.log('Current bottom canvas bar order:', bottomOrder)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers showing and hiding the canvas bar, configuring the dual-position system, setting edit mode-specific layouts, using layout helper components, and viewing the default component order.
@@ -149,11 +149,11 @@ This guide covers showing and hiding the canvas bar, configuring the dual-positi
 Use the Feature API to control canvas bar visibility:
 
 ```typescript highlight=highlight-show-hide
-    // Hide the canvas bar
-    cesdk.feature.disable('ly.img.canvas.bar');
+// Hide the canvas bar
+cesdk.feature.disable('ly.img.canvas.bar')
 
-    // Show the canvas bar (default)
-    cesdk.feature.enable('ly.img.canvas.bar');
+// Show the canvas bar (default)
+cesdk.feature.enable('ly.img.canvas.bar')
 ```
 
 For more on the Feature API, see [Show/Hide Components](./user-interface/customization/quick-start/show-hide-components.md).
@@ -163,18 +163,18 @@ For more on the Feature API, see [Show/Hide Components](./user-interface/customi
 Unlike other UI areas, the canvas bar has two independent positions: `'top'` and `'bottom'`. All Component Order API calls require the `at` option to specify which position to configure.
 
 ```typescript highlight=highlight-position-system
-    // Configure the top position with settings and add page
-    cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, [
-      'ly.img.settings.canvasBar',
-      'ly.img.separator',
-      'ly.img.page.add.canvasBar'
-    ]);
+// Configure the top position with settings and add page
+cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, [
+  'ly.img.settings.canvasBar',
+  'ly.img.separator',
+  'ly.img.page.add.canvasBar'
+])
 
-    // Configure the bottom position independently
-    cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'bottom' }, [
-      'ly.img.spacer',
-      'ly.img.page.add.canvasBar'
-    ]);
+// Configure the bottom position independently
+cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'bottom' }, [
+  'ly.img.spacer',
+  'ly.img.page.add.canvasBar'
+])
 ```
 
 Each position maintains its own component order. Changes to the top position do not affect the bottom position and vice versa.
@@ -193,7 +193,7 @@ cesdk.ui.setComponentOrder(
     'ly.img.separator',
     'ly.img.settings.canvasBar'
   ]
-);
+)
 ```
 
 Available edit modes: `'Transform'` (default), `'Text'`, `'Crop'`, `'Trim'`, or any custom value. Edit modes without specific configurations fall back to the Transform mode order. See the [Component Order API Reference](./user-interface/customization/reference/component-order-api.md) for details on the `when` context.
@@ -210,7 +210,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'bottom' }, [
   'ly.img.spacer',
   'ly.img.page.add.canvasBar',
   'ly.img.spacer'
-]);
+])
 ```
 
 | Component ID | Description |
@@ -225,18 +225,18 @@ Multiple spacers share available space proportionally, allowing you to center or
 Retrieve the current canvas bar order with `getComponentOrder` to inspect the default layout. The `at` option is required. For detailed descriptions of each component ID, see the [Component Reference](./user-interface/customization/reference/component-reference.md).
 
 ```typescript highlight=highlight-default-order
-    // Retrieve and log the current canvas bar order for each position
-    const topOrder = cesdk.ui.getComponentOrder({
-      in: 'ly.img.canvas.bar',
-      at: 'top'
-    });
-    console.log('Current top canvas bar order:', topOrder);
+// Retrieve and log the current canvas bar order for each position
+const topOrder = cesdk.ui.getComponentOrder({
+  in: 'ly.img.canvas.bar',
+  at: 'top'
+})
+console.log('Current top canvas bar order:', topOrder)
 
-    const bottomOrder = cesdk.ui.getComponentOrder({
-      in: 'ly.img.canvas.bar',
-      at: 'bottom'
-    });
-    console.log('Current bottom canvas bar order:', bottomOrder);
+const bottomOrder = cesdk.ui.getComponentOrder({
+  in: 'ly.img.canvas.bar',
+  at: 'bottom'
+})
+console.log('Current bottom canvas bar order:', bottomOrder)
 ```
 
 ### Top Position

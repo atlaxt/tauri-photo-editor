@@ -31,8 +31,8 @@ import type {
   AssetsQueryResult,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import { createApi } from 'unsplash-js';
+} from '@cesdk/cesdk-js'
+import type { Basic as UnsplashPhoto } from 'unsplash-js/dist/methods/photos/types'
 
 import {
   BlurAssetSource,
@@ -48,11 +48,11 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import type { Basic as UnsplashPhoto } from 'unsplash-js/dist/methods/photos/types';
-import packageJson from './package.json';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import { createApi } from 'unsplash-js'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
 
 /**
  * CE.SDK Plugin: Custom Asset Source with Unsplash
@@ -66,22 +66,22 @@ import { calculateGridLayout } from './utils';
  * - Creating local asset sources
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -92,54 +92,54 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 1600, height: 1200, unit: 'Pixel' }
-    });
+    })
 
-    const [page] = engine.block.findByType('page');
+    const [page] = engine.block.findByType('page')
 
     // Calculate grid layout for displaying images
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const layout = calculateGridLayout(pageWidth, pageHeight, 4);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const layout = calculateGridLayout(pageWidth, pageHeight, 4)
 
     // Create Unsplash API client with proxy URL
     // The proxy securely handles API authentication without exposing keys in the frontend
-    const unsplashProxyUrl = import.meta.env.VITE_UNSPLASH_PROXY_URL;
+    const unsplashProxyUrl = import.meta.env.VITE_UNSPLASH_PROXY_URL
 
     if (!unsplashProxyUrl) {
       throw new Error(
         'VITE_UNSPLASH_PROXY_URL environment variable is required'
-      );
+      )
     }
 
     const unsplashApi = createApi({
       apiUrl: unsplashProxyUrl
-    });
+    })
 
     const EMPTY_RESULT: AssetsQueryResult<AssetResult> = {
       assets: [],
       total: 0,
       currentPage: 0,
       nextPage: undefined
-    };
+    }
 
     // Main asset query function for Unsplash
     const findUnsplashAssets = async (
       queryData: AssetQueryData
     ): Promise<AssetsQueryResult<AssetResult>> => {
       // Unsplash page indices are 1-based
-      const unsplashPage = queryData.page + 1;
+      const unsplashPage = queryData.page + 1
 
       if (queryData.query) {
         // Search for images with a query string
@@ -147,10 +147,10 @@ class Example implements EditorPlugin {
           query: queryData.query,
           page: unsplashPage,
           perPage: queryData.perPage
-        });
+        })
 
         if (response.type === 'success') {
-          const { results, total, total_pages } = response.response;
+          const { results, total, total_pages } = response.response
 
           return {
             assets: await Promise.all(results.map(translateToAssetResult)),
@@ -158,59 +158,64 @@ class Example implements EditorPlugin {
             currentPage: queryData.page,
             nextPage:
               queryData.page + 1 < total_pages ? queryData.page + 1 : undefined
-          };
-        } else if (response.type === 'error') {
-          throw new Error(response.errors.join('. '));
-        } else {
-          return Promise.resolve(EMPTY_RESULT);
+          }
         }
-      } else {
+        else if (response.type === 'error') {
+          throw new Error(response.errors.join('. '))
+        }
+        else {
+          return Promise.resolve(EMPTY_RESULT)
+        }
+      }
+      else {
         // List popular images when no query is provided
         const response = await (unsplashApi.photos as any).list({
           orderBy: 'popular',
           page: unsplashPage,
           perPage: queryData.perPage
-        });
+        })
 
         if (response.type === 'success') {
-          const { results, total } = response.response;
-          const totalFetched =
-            queryData.page * queryData.perPage + results.length;
-          const nextPage =
-            totalFetched < total ? queryData.page + 1 : undefined;
+          const { results, total } = response.response
+          const totalFetched
+            = queryData.page * queryData.perPage + results.length
+          const nextPage
+            = totalFetched < total ? queryData.page + 1 : undefined
 
           return {
             assets: await Promise.all(results.map(translateToAssetResult)),
             total,
             currentPage: queryData.page,
             nextPage
-          };
-        } else if (response.type === 'error') {
-          throw new Error(response.errors.join('. '));
-        } else {
-          return Promise.resolve(EMPTY_RESULT);
+          }
+        }
+        else if (response.type === 'error') {
+          throw new Error(response.errors.join('. '))
+        }
+        else {
+          return Promise.resolve(EMPTY_RESULT)
         }
       }
-    };
+    }
 
     // Helper function to get Unsplash download URL
     const getUnsplashUrl = async (unsplashResult: UnsplashPhoto) => {
       const trackDownloadResponse = await unsplashApi.photos.trackDownload({
         downloadLocation: unsplashResult.links.download_location
-      });
+      })
 
       if (trackDownloadResponse.type === 'error') {
-        throw new Error(trackDownloadResponse.errors.join('. '));
+        throw new Error(trackDownloadResponse.errors.join('. '))
       }
-      return trackDownloadResponse.response?.url || unsplashResult.urls.regular;
-    };
+      return trackDownloadResponse.response?.url || unsplashResult.urls.regular
+    }
 
     // Translate Unsplash image to CE.SDK asset format
     async function translateToAssetResult(image: any): Promise<AssetResult> {
-      const artistName = image?.user?.name;
-      const artistUrl = image?.user?.links?.html;
-      const description =
-        image.description ?? image.alt_description ?? 'Unsplash Image';
+      const artistName = image?.user?.name
+      const artistUrl = image?.user?.links?.html
+      const description
+        = image.description ?? image.alt_description ?? 'Unsplash Image'
 
       return {
         id: image.id,
@@ -240,7 +245,7 @@ class Example implements EditorPlugin {
           source: 'CE.SDK Demo',
           medium: 'referral'
         }
-      };
+      }
     }
 
     // Define the custom asset source for Unsplash
@@ -255,32 +260,32 @@ class Example implements EditorPlugin {
         name: 'Unsplash license (free)',
         url: 'https://unsplash.com/license'
       }
-    };
+    }
 
     // Add the custom asset source to CE.SDK
-    engine.asset.addSource(customSource);
+    engine.asset.addSource(customSource)
 
     // Query for assets and display them (only if scene was created successfully)
     const result = await engine.asset.findAssets(customSource.id, {
       page: 0,
       perPage: 4
-    });
+    })
 
     // Add images from Unsplash to the scene in a grid layout
     for (let i = 0; i < Math.min(result.assets.length, 4); i++) {
-      const asset = result.assets[i];
-      const position = layout.getPosition(i);
+      const asset = result.assets[i]
+      const position = layout.getPosition(i)
 
-      const block = await engine.asset.apply(customSource.id, asset);
-      engine.block.setPositionX(block, position.x);
-      engine.block.setPositionY(block, position.y);
-      engine.block.setWidth(block, layout.blockWidth);
-      engine.block.setHeight(block, layout.blockHeight);
+      const block = await engine.asset.apply(customSource.id, asset)
+      engine.block.setPositionX(block, position.x)
+      engine.block.setPositionY(block, position.y)
+      engine.block.setWidth(block, layout.blockWidth)
+      engine.block.setHeight(block, layout.blockHeight)
     }
 
     // Create a local asset source for custom assets
-    const localSourceId = 'background-videos';
-    engine.asset.addLocalSource(localSourceId);
+    const localSourceId = 'background-videos'
+    engine.asset.addLocalSource(localSourceId)
 
     // Add a custom video asset to the local source
     engine.asset.addAssetToSource(localSourceId, {
@@ -300,7 +305,7 @@ class Example implements EditorPlugin {
         width: 1920,
         height: 1080
       }
-    } as AssetDefinition);
+    } as AssetDefinition)
 
     // Configure the asset library UI with a dedicated Unsplash dock entry
     // This must be done at the end after all default assets are registered
@@ -310,12 +315,12 @@ class Example implements EditorPlugin {
       previewLength: 6,
       gridColumns: 3,
       gridItemHeight: 'square'
-    });
+    })
 
     // Add Unsplash to the existing Images asset library
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       sourceIds: ({ currentIds }) => [...currentIds, 'unsplash']
-    });
+    })
 
     // Add Unsplash as the first button in the dock with a separator
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -327,11 +332,11 @@ class Example implements EditorPlugin {
       },
       { id: 'ly.img.separator' },
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers setting up the Unsplash API client, implementing search and discovery features, mapping API responses to CE.SDK's asset format, handling attribution requirements, and configuring the asset library UI.
@@ -362,19 +367,19 @@ You must set up your own proxy server to handle Unsplash API authentication. Use
 We initialize the Unsplash API client using the `unsplash-js` library. Instead of directly passing an access key (which would expose it in the frontend), we use a proxy URL that handles authentication server-side.
 
 ```typescript highlight-unsplash-api-creation
-    // Create Unsplash API client with proxy URL
-    // The proxy securely handles API authentication without exposing keys in the frontend
-    const unsplashProxyUrl = import.meta.env.VITE_UNSPLASH_PROXY_URL;
+// Create Unsplash API client with proxy URL
+// The proxy securely handles API authentication without exposing keys in the frontend
+const unsplashProxyUrl = import.meta.env.VITE_UNSPLASH_PROXY_URL
 
-    if (!unsplashProxyUrl) {
-      throw new Error(
-        'VITE_UNSPLASH_PROXY_URL environment variable is required'
-      );
-    }
+if (!unsplashProxyUrl) {
+  throw new Error(
+    'VITE_UNSPLASH_PROXY_URL environment variable is required'
+  )
+}
 
-    const unsplashApi = createApi({
-      apiUrl: unsplashProxyUrl
-    });
+const unsplashApi = createApi({
+  apiUrl: unsplashProxyUrl
+})
 ```
 
 The code reads the proxy URL from the `VITE_UNSPLASH_PROXY_URL` environment variable. If the environment variable is not set, the initialization will fail with an error. This approach keeps your Unsplash API key secure by handling all authentication on the server side, following Unsplash's best practices for client-side applications.
@@ -396,7 +401,7 @@ const customSource: AssetSource = {
     name: 'Unsplash license (free)',
     url: 'https://unsplash.com/license'
   }
-};
+}
 ```
 
 The asset source requires:
@@ -413,64 +418,67 @@ We register the source with CE.SDK using `engine.asset.addSource(customSource)`,
 The `findAssets` callback is the core of our asset source integration. It receives query parameters from CE.SDK and returns formatted asset results.
 
 ```typescript highlight-unsplash-findAssets
-    // Main asset query function for Unsplash
-    const findUnsplashAssets = async (
-      queryData: AssetQueryData
-    ): Promise<AssetsQueryResult<AssetResult>> => {
-      // Unsplash page indices are 1-based
-      const unsplashPage = queryData.page + 1;
+// Main asset query function for Unsplash
+async function findUnsplashAssets(queryData: AssetQueryData): Promise<AssetsQueryResult<AssetResult>> {
+  // Unsplash page indices are 1-based
+  const unsplashPage = queryData.page + 1
 
-      if (queryData.query) {
-        // Search for images with a query string
-        const response = await unsplashApi.search.getPhotos({
-          query: queryData.query,
-          page: unsplashPage,
-          perPage: queryData.perPage
-        });
+  if (queryData.query) {
+    // Search for images with a query string
+    const response = await unsplashApi.search.getPhotos({
+      query: queryData.query,
+      page: unsplashPage,
+      perPage: queryData.perPage
+    })
 
-        if (response.type === 'success') {
-          const { results, total, total_pages } = response.response;
+    if (response.type === 'success') {
+      const { results, total, total_pages } = response.response
 
-          return {
-            assets: await Promise.all(results.map(translateToAssetResult)),
-            total,
-            currentPage: queryData.page,
-            nextPage:
+      return {
+        assets: await Promise.all(results.map(translateToAssetResult)),
+        total,
+        currentPage: queryData.page,
+        nextPage:
               queryData.page + 1 < total_pages ? queryData.page + 1 : undefined
-          };
-        } else if (response.type === 'error') {
-          throw new Error(response.errors.join('. '));
-        } else {
-          return Promise.resolve(EMPTY_RESULT);
-        }
-      } else {
-        // List popular images when no query is provided
-        const response = await (unsplashApi.photos as any).list({
-          orderBy: 'popular',
-          page: unsplashPage,
-          perPage: queryData.perPage
-        });
-
-        if (response.type === 'success') {
-          const { results, total } = response.response;
-          const totalFetched =
-            queryData.page * queryData.perPage + results.length;
-          const nextPage =
-            totalFetched < total ? queryData.page + 1 : undefined;
-
-          return {
-            assets: await Promise.all(results.map(translateToAssetResult)),
-            total,
-            currentPage: queryData.page,
-            nextPage
-          };
-        } else if (response.type === 'error') {
-          throw new Error(response.errors.join('. '));
-        } else {
-          return Promise.resolve(EMPTY_RESULT);
-        }
       }
-    };
+    }
+    else if (response.type === 'error') {
+      throw new Error(response.errors.join('. '))
+    }
+    else {
+      return Promise.resolve(EMPTY_RESULT)
+    }
+  }
+  else {
+    // List popular images when no query is provided
+    const response = await (unsplashApi.photos as any).list({
+      orderBy: 'popular',
+      page: unsplashPage,
+      perPage: queryData.perPage
+    })
+
+    if (response.type === 'success') {
+      const { results, total } = response.response
+      const totalFetched
+        = queryData.page * queryData.perPage + results.length
+      const nextPage
+        = totalFetched < total ? queryData.page + 1 : undefined
+
+      return {
+        assets: await Promise.all(results.map(translateToAssetResult)),
+        total,
+        currentPage: queryData.page,
+        nextPage
+      }
+    }
+    else if (response.type === 'error') {
+      throw new Error(response.errors.join('. '))
+    }
+    else {
+      return Promise.resolve(EMPTY_RESULT)
+    }
+  }
+}
 ```
 
 The `queryData` parameter contains:
@@ -489,7 +497,7 @@ const response = await unsplashApi.search.getPhotos({
   query: queryData.query,
   page: unsplashPage,
   perPage: queryData.perPage
-});
+})
 ```
 
 The search endpoint accepts the query string, page number, and results per page. We convert CE.SDK's 0-indexed pages to Unsplash's 1-indexed system.
@@ -499,15 +507,15 @@ The search endpoint accepts the query string, page number, and results per page.
 After receiving the response, we map Unsplash's data structure to CE.SDK's expected format.
 
 ```typescript highlight-unsplash-result-mapping
-          const { results, total, total_pages } = response.response;
+const { results, total, total_pages } = response.response
 
-          return {
-            assets: await Promise.all(results.map(translateToAssetResult)),
-            total,
-            currentPage: queryData.page,
-            nextPage:
+return {
+  assets: await Promise.all(results.map(translateToAssetResult)),
+  total,
+  currentPage: queryData.page,
+  nextPage:
               queryData.page + 1 < total_pages ? queryData.page + 1 : undefined
-          };
+}
 ```
 
 We return an object with:
@@ -522,31 +530,33 @@ We return an object with:
 When no search query is provided, we display popular images using Unsplash's list endpoint.
 
 ```typescript highlight-unsplash-list
-        // List popular images when no query is provided
-        const response = await (unsplashApi.photos as any).list({
-          orderBy: 'popular',
-          page: unsplashPage,
-          perPage: queryData.perPage
-        });
+// List popular images when no query is provided
+const response = await (unsplashApi.photos as any).list({
+  orderBy: 'popular',
+  page: unsplashPage,
+  perPage: queryData.perPage
+})
 
-        if (response.type === 'success') {
-          const { results, total } = response.response;
-          const totalFetched =
-            queryData.page * queryData.perPage + results.length;
-          const nextPage =
-            totalFetched < total ? queryData.page + 1 : undefined;
+if (response.type === 'success') {
+  const { results, total } = response.response
+  const totalFetched
+    = queryData.page * queryData.perPage + results.length
+  const nextPage
+    = totalFetched < total ? queryData.page + 1 : undefined
 
-          return {
-            assets: await Promise.all(results.map(translateToAssetResult)),
-            total,
-            currentPage: queryData.page,
-            nextPage
-          };
-        } else if (response.type === 'error') {
-          throw new Error(response.errors.join('. '));
-        } else {
-          return Promise.resolve(EMPTY_RESULT);
-        }
+  return {
+    assets: await Promise.all(results.map(translateToAssetResult)),
+    total,
+    currentPage: queryData.page,
+    nextPage
+  }
+}
+else if (response.type === 'error') {
+  throw new Error(response.errors.join('. '))
+}
+else {
+  return Promise.resolve(EMPTY_RESULT)
+}
 ```
 
 The list endpoint returns curated popular images. We calculate pagination manually since the API response structure differs slightly from the search endpoint.
@@ -556,13 +566,13 @@ The list endpoint returns curated popular images. We calculate pagination manual
 When the API returns an error, we throw an exception to notify CE.SDK that the query failed.
 
 ```typescript highlight-unsplash-error
-throw new Error(response.errors.join('. '));
+throw new Error(response.errors.join('. '))
 ```
 
 For cases where returning an empty result is more appropriate than throwing an error, we return an empty `AssetsQueryResult`.
 
 ```typescript highlight-unsplash-empty-fallback
-return Promise.resolve(EMPTY_RESULT);
+return Promise.resolve(EMPTY_RESULT)
 ```
 
 ## Translating Unsplash Data to CE.SDK Format
@@ -570,43 +580,43 @@ return Promise.resolve(EMPTY_RESULT);
 Each Unsplash photo must be converted to match CE.SDK's `AssetResult` interface. This translation ensures CE.SDK can properly display and apply the assets.
 
 ```typescript highlight-translateToAssetResult
-    // Translate Unsplash image to CE.SDK asset format
-    async function translateToAssetResult(image: any): Promise<AssetResult> {
-      const artistName = image?.user?.name;
-      const artistUrl = image?.user?.links?.html;
-      const description =
-        image.description ?? image.alt_description ?? 'Unsplash Image';
+// Translate Unsplash image to CE.SDK asset format
+async function translateToAssetResult(image: any): Promise<AssetResult> {
+  const artistName = image?.user?.name
+  const artistUrl = image?.user?.links?.html
+  const description
+    = image.description ?? image.alt_description ?? 'Unsplash Image'
 
-      return {
-        id: image.id,
-        locale: 'en',
-        label: description,
-        tags: image.tags ? image.tags.map((tag: any) => tag.title) : undefined,
+  return {
+    id: image.id,
+    locale: 'en',
+    label: description,
+    tags: image.tags ? image.tags.map((tag: any) => tag.title) : undefined,
 
-        meta: {
-          uri: await getUnsplashUrl(image),
-          thumbUri: image.urls.thumb,
-          blockType: '//ly.img.ubq/graphic',
-          fillType: '//ly.img.ubq/fill/image',
-          shapeType: '//ly.img.ubq/shape/rect',
-          kind: 'image',
-          width: image.width,
-          height: image.height
-        },
+    meta: {
+      uri: await getUnsplashUrl(image),
+      thumbUri: image.urls.thumb,
+      blockType: '//ly.img.ubq/graphic',
+      fillType: '//ly.img.ubq/fill/image',
+      shapeType: '//ly.img.ubq/shape/rect',
+      kind: 'image',
+      width: image.width,
+      height: image.height
+    },
 
-        credits: artistName
-          ? {
-              name: artistName,
-              url: artistUrl
-            }
-          : undefined,
-
-        utm: {
-          source: 'CE.SDK Demo',
-          medium: 'referral'
+    credits: artistName
+      ? {
+          name: artistName,
+          url: artistUrl
         }
-      };
+      : undefined,
+
+    utm: {
+      source: 'CE.SDK Demo',
+      medium: 'referral'
     }
+  }
+}
 ```
 
 ### Asset Identifier
@@ -757,16 +767,16 @@ Before using an Unsplash image URL, we must call the download tracking endpoint.
 The `getUnsplashUrl` helper function handles tracking:
 
 ```typescript
-const getUnsplashUrl = async (unsplashResult: UnsplashPhoto) => {
+async function getUnsplashUrl(unsplashResult: UnsplashPhoto) {
   const trackDownloadResponse = await unsplashApi.photos.trackDownload({
     downloadLocation: unsplashResult.links.download_location
-  });
+  })
 
   if (trackDownloadResponse.type === 'error') {
-    throw new Error(trackDownloadResponse.errors.join('. '));
+    throw new Error(trackDownloadResponse.errors.join('. '))
   }
-  return trackDownloadResponse.response?.url || unsplashResult.urls.regular;
-};
+  return trackDownloadResponse.response?.url || unsplashResult.urls.regular
+}
 ```
 
 This tracking occurs automatically when we translate each asset in the `translateToAssetResult` function.
@@ -786,12 +796,12 @@ cesdk.ui.addAssetLibraryEntry({
   previewLength: 6,
   gridColumns: 3,
   gridItemHeight: 'square'
-});
+})
 
 // Add Unsplash to the existing Images asset library
 cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
   sourceIds: ({ currentIds }) => [...currentIds, 'unsplash']
-});
+})
 
 // Add Unsplash as the first button in the dock with a separator
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -803,7 +813,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   },
   { id: 'ly.img.separator' },
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-]);
+])
 ```
 
 The `addAssetLibraryEntry()` call registers the Unsplash asset library panel with display settings. The `setComponentOrder()` call creates an explicit dock button component by prepending a new `AssetLibraryDockComponent` to the existing dock order.
@@ -824,23 +834,23 @@ The separator component `{ id: 'ly.img.separator' }` adds a visual divider betwe
 To verify the integration works correctly, query the asset source and apply results to the scene:
 
 ```typescript highlight-test
-    // Query for assets and display them (only if scene was created successfully)
-    const result = await engine.asset.findAssets(customSource.id, {
-      page: 0,
-      perPage: 4
-    });
+// Query for assets and display them (only if scene was created successfully)
+const result = await engine.asset.findAssets(customSource.id, {
+  page: 0,
+  perPage: 4
+})
 
-    // Add images from Unsplash to the scene in a grid layout
-    for (let i = 0; i < Math.min(result.assets.length, 4); i++) {
-      const asset = result.assets[i];
-      const position = layout.getPosition(i);
+// Add images from Unsplash to the scene in a grid layout
+for (let i = 0; i < Math.min(result.assets.length, 4); i++) {
+  const asset = result.assets[i]
+  const position = layout.getPosition(i)
 
-      const block = await engine.asset.apply(customSource.id, asset);
-      engine.block.setPositionX(block, position.x);
-      engine.block.setPositionY(block, position.y);
-      engine.block.setWidth(block, layout.blockWidth);
-      engine.block.setHeight(block, layout.blockHeight);
-    }
+  const block = await engine.asset.apply(customSource.id, asset)
+  engine.block.setPositionX(block, position.x)
+  engine.block.setPositionY(block, position.y)
+  engine.block.setWidth(block, layout.blockWidth)
+  engine.block.setHeight(block, layout.blockHeight)
+}
 ```
 
 We query the Unsplash source, retrieve the first four results, and add them to the scene using `engine.asset.apply()`. Each image is positioned in a grid layout using the `calculateGridLayout` utility.
@@ -865,8 +875,8 @@ Create a local source using `addLocalSource`:
 
 ```typescript highlight-add-local-source
 // Create a local asset source for custom assets
-const localSourceId = 'background-videos';
-engine.asset.addLocalSource(localSourceId);
+const localSourceId = 'background-videos'
+engine.asset.addLocalSource(localSourceId)
 ```
 
 Add assets to the local source with `addAssetToSource`:
@@ -890,7 +900,7 @@ engine.asset.addAssetToSource(localSourceId, {
     width: 1920,
     height: 1080
   }
-} as AssetDefinition);
+} as AssetDefinition)
 ```
 
 Local sources keep track of added assets and return matching items based on search queries. Assets appear in query results in insertion order.

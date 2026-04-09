@@ -23,7 +23,7 @@ Programmatically apply crop presets to enforce specific aspect ratios or dimensi
 The `applyForceCrop` API lets you enforce specific dimensions or aspect ratios on blocks that support cropping. This is useful when building integrations that require content to match specific formats, such as Instagram portrait posts, LinkedIn profile photos, or Facebook shared images. You can control whether the crop UI appears after applying a preset through three different modes.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-force-crop-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,27 +39,27 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -70,32 +70,32 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Add an image to demonstrate force crop
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
-    const imageBlock = await engine.block.addImage(imageUri);
-    engine.block.appendChild(page, imageBlock);
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
+    const imageBlock = await engine.block.addImage(imageUri)
+    engine.block.appendChild(page, imageBlock)
 
     // Position and size the image to fill the page
-    engine.block.setWidth(imageBlock, 800);
-    engine.block.setHeight(imageBlock, 600);
-    engine.block.setPositionX(imageBlock, 0);
-    engine.block.setPositionY(imageBlock, 0);
+    engine.block.setWidth(imageBlock, 800)
+    engine.block.setHeight(imageBlock, 600)
+    engine.block.setPositionX(imageBlock, 0)
+    engine.block.setPositionY(imageBlock, 0)
 
     // Create a custom crop preset with a fixed aspect ratio (4:5 for portrait)
     engine.asset.addAssetToSource('ly.img.crop.presets', {
@@ -109,7 +109,7 @@ class Example implements EditorPlugin {
           designUnit: 'Pixel'
         }
       }
-    });
+    })
 
     // Create a custom crop preset with fixed dimensions
     engine.asset.addAssetToSource('ly.img.crop.presets', {
@@ -123,10 +123,10 @@ class Example implements EditorPlugin {
           designUnit: 'Pixel'
         }
       }
-    });
+    })
 
     // Select the image block to demonstrate force crop
-    engine.block.select(imageBlock);
+    engine.block.select(imageBlock)
 
     // Apply force crop with 'ifNeeded' mode
     // This will only enter crop mode if dimensions differ from target
@@ -134,7 +134,7 @@ class Example implements EditorPlugin {
       sourceId: 'ly.img.crop.presets',
       presetId: 'instagram-portrait',
       mode: 'ifNeeded'
-    });
+    })
 
     // If Needed mode - only enters crop mode when dimensions differ
     // await cesdk.ui.applyForceCrop(imageBlock, {
@@ -157,11 +157,11 @@ class Example implements EditorPlugin {
     //   mode: 'always'
     // });
 
-    console.log('Force crop example loaded successfully!');
+    console.log('Force crop example loaded successfully!')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to apply crop presets programmatically, create custom presets with fixed aspect ratios or dimensions, and control the crop mode behavior.
@@ -177,7 +177,7 @@ await cesdk.ui.applyForceCrop(imageBlock, {
   sourceId: 'ly.img.crop.presets',
   presetId: 'instagram-portrait',
   mode: 'ifNeeded'
-});
+})
 ```
 
 CE.SDK ships with default crop presets in the `ly.img.crop.presets` source. Common ratios like 1:1, 4:3, and 16:9 are available without additional configuration.
@@ -203,7 +203,7 @@ engine.asset.addAssetToSource('ly.img.crop.presets', {
       designUnit: 'Pixel'
     }
   }
-});
+})
 ```
 
 ### Fixed Size Presets
@@ -223,7 +223,7 @@ engine.asset.addAssetToSource('ly.img.crop.presets', {
       designUnit: 'Pixel'
     }
   }
-});
+})
 ```
 
 ## Understanding Crop Modes

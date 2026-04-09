@@ -23,7 +23,7 @@ We add AI image generation to CE.SDK applications for creating visuals from text
 The image generation plugin creates visuals from text descriptions (text-to-image) or transforms existing images (image-to-image). Use models like RecraftV3, Recraft20b, IdeogramV3, GeminiFlash25, and GPT Image with output in raster or vector format.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ai-integration-image-generation-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,29 +39,29 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import AiApps from '@imgly/plugin-ai-apps-web';
-import FalAiImage from '@imgly/plugin-ai-image-generation-web/fal-ai';
-import OpenAiImage from '@imgly/plugin-ai-image-generation-web/open-ai';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import AiApps from '@imgly/plugin-ai-apps-web'
+import FalAiImage from '@imgly/plugin-ai-image-generation-web/fal-ai'
+import OpenAiImage from '@imgly/plugin-ai-image-generation-web/open-ai'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -72,29 +72,29 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Configure the AI image generation plugin
     // NOTE: In production, provide a secure proxy URL that forwards
     // requests to fal.ai or OpenAI API with your API key
-    const proxyUrl = 'https://your-proxy-server.com/api';
+    const proxyUrl = 'https://your-proxy-server.com/api'
 
     // Configure image generation with all available providers using AiApps
     await cesdk.addPlugin(
@@ -125,13 +125,13 @@ class Example implements EditorPlugin {
         // Perfect for testing and development
         dryRun: true
       })
-    );
+    )
 
     // Reorder dock to show AI Apps button prominently
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       'ly.img.ai.apps.dock',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Alternative: Configure with single provider
     /*
@@ -275,11 +275,11 @@ class Example implements EditorPlugin {
     */
 
     // Open the AI Apps panel to make the image generation features visible
-    cesdk.ui.openPanel('ly.img.ai.apps');
+    cesdk.ui.openPanel('ly.img.ai.apps')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers installing the plugin, configuring text-to-image and image-to-image providers, setting up proxy communication, customizing generation parameters, choosing between vector and raster output, configuring artistic styles, and testing with dry-run mode.
@@ -293,9 +293,9 @@ After configuring the plugin, users access image generation through the UI. They
 Import the plugin and provider modules from the image generation package.
 
 ```typescript highlight-install
-import AiApps from '@imgly/plugin-ai-apps-web';
-import FalAiImage from '@imgly/plugin-ai-image-generation-web/fal-ai';
-import OpenAiImage from '@imgly/plugin-ai-image-generation-web/open-ai';
+import AiApps from '@imgly/plugin-ai-apps-web'
+import FalAiImage from '@imgly/plugin-ai-image-generation-web/fal-ai'
+import OpenAiImage from '@imgly/plugin-ai-image-generation-web/open-ai'
 ```
 
 Install `@imgly/plugin-ai-image-generation-web` to access the ImageGeneration plugin and provider modules for fal.ai and OpenAI:
@@ -343,7 +343,7 @@ await cesdk.addPlugin(
     },
     dryRun: true
   })
-);
+)
 ```
 
 We configure RecraftV3 as the text-to-image provider with custom headers and enable dry-run mode for testing without actual API calls.
@@ -384,7 +384,7 @@ await cesdk.addPlugin(
       }) as any,
     },
   })
-);
+)
 ```
 
 For RecraftV3 and Recraft20b, configure `style` (realistic\_image, digital\_illustration, vector\_illustration) and `image_size` (square\_hd, landscape\_4\_3, portrait\_3\_4). For IdeogramV3, control `style_mode` (AUTO, GENERAL, REALISTIC, DESIGN). For GeminiFlash25, set `aspect_ratio` and `output_format`.
@@ -397,7 +397,7 @@ Choose between vector (scalable SVG) and raster (bitmap PNG/JPEG) output via sty
 cesdk.feature.enable(
   'ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.style.image',
   false
-);
+)
 ```
 
 RecraftV3 provides `realistic_image` for raster output, and `digital_illustration` or `vector_illustration` for vector output. Control available styles with the Feature API to restrict output modes.
@@ -420,7 +420,7 @@ await cesdk.addPlugin(
       }) as any,
     },
   })
-);
+)
 ```
 
 Users select styles in the UI or set defaults programmatically to control the visual appearance of generated images.
@@ -459,7 +459,7 @@ await cesdk.addPlugin(
     // Perfect for testing and development
     dryRun: true
   })
-);
+)
 ```
 
 Multiple provider configurations trigger automatic provider and model selection interfaces in the UI, allowing users to choose the best model for their use case.
@@ -469,14 +469,14 @@ Multiple provider configurations trigger automatic provider and model selection 
 Hide or show features using the Feature API. Disable provider selection when using a single provider or restrict specific style groups.
 
 ```typescript highlight-feature-visibility
-    // Hide provider selection when using single provider
-    cesdk.feature.enable('ly.img.plugin-ai-image-generation-web.providerSelect', false);
+// Hide provider selection when using single provider
+cesdk.feature.enable('ly.img.plugin-ai-image-generation-web.providerSelect', false)
 
-    // Disable specific style groups
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.style.vector',
-      false
-    );
+// Disable specific style groups
+cesdk.feature.enable(
+  'ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.style.vector',
+  false
+)
 ```
 
 We disable provider selection to hide the UI when only one provider is configured, and control style group visibility to restrict output modes.
@@ -496,7 +496,7 @@ cesdk.i18n.setTranslations({
     'ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.property.prompt':
       'Beschreiben Sie Ihr Bild',
   },
-});
+})
 ```
 
 Provider-specific keys like `ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.property.prompt` customize individual models, while generic keys like `ly.img.plugin-ai-generation-web.property.prompt` apply broadly.
@@ -506,25 +506,25 @@ Provider-specific keys like `ly.img.plugin-ai-image-generation-web.fal-ai/recraf
 Intercept generation requests and responses with middleware functions. Use built-in middleware for logging or rate limiting, or create custom middleware for error handling.
 
 ```typescript highlight-middleware
-    import {
-      loggingMiddleware,
-      rateLimitMiddleware,
-    } from '@imgly/plugin-ai-generation-web';
+import {
+  loggingMiddleware,
+  rateLimitMiddleware,
+} from '@imgly/plugin-ai-generation-web'
 
-    const logging = loggingMiddleware();
-    const rateLimit = rateLimitMiddleware({
-      maxRequests: 10,
-      timeWindow: 60000, // 1 minute
-    });
+const logging = loggingMiddleware()
+const rateLimit = rateLimitMiddleware({
+  maxRequests: 10,
+  timeWindow: 60000, // 1 minute
+})
 
-    await cesdk.addPlugin(
-      ImageGeneration({
-        providers: {
-          text2image: FalAiImage.RecraftV3({ proxyUrl }) as any,
-        },
-        middleware: [logging, rateLimit],
-      })
-    );
+await cesdk.addPlugin(
+  ImageGeneration({
+    providers: {
+      text2image: FalAiImage.RecraftV3({ proxyUrl }) as any,
+    },
+    middleware: [logging, rateLimit],
+  })
+)
 ```
 
 Middleware receives input, options, and a next callback. Chain multiple middleware functions to process requests before they reach the AI provider.
@@ -544,7 +544,7 @@ await cesdk.addPlugin(
       }) as any,
     },
   })
-);
+)
 ```
 
 Dry-run mode returns simulated responses, allowing development and testing without consuming API credits or requiring valid API keys.
@@ -554,13 +554,13 @@ Dry-run mode returns simulated responses, allowing development and testing witho
 Generated images appear in provider-specific history sources like `fal-ai/recraft-v3.history`, `fal-ai/ideogram/v3.history`, and `open-ai/gpt-image-1/text2image.history`.
 
 ```typescript highlight-accessing-images
-const assets = engine.asset.findAllSources();
+const assets = engine.asset.findAllSources()
 const historySource = assets.find(id =>
   engine.asset.getName(id) === 'fal-ai/recraft-v3.history'
-);
+)
 if (historySource) {
-  const results = await engine.asset.findAssets(historySource);
-  console.log('Generated images:', results);
+  const results = await engine.asset.findAssets(historySource)
+  console.log('Generated images:', results)
 }
 ```
 

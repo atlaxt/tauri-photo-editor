@@ -23,7 +23,7 @@ Export your designs to multiple formats including PNG, JPEG, WebP, PDF, and MP4.
 Whether you're building a design tool, photo editor, or content automation workflow, understanding export options helps you deliver the right output for each use case. This guide covers supported formats, their options, and how to export programmatically or via the UI.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-overview-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,9 +38,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Export Overview Guide
@@ -52,21 +52,21 @@ import packageJson from './package.json';
  * - Downloading exported files to user device
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -77,90 +77,90 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load a template scene from a remote URL
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
+    )
 
     // Get the page
-    const page = engine.scene.getCurrentPage();
+    const page = engine.scene.getCurrentPage()
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Helper function to download blob
     const downloadBlob = (blob: Blob, filename: string) => {
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
-      URL.revokeObjectURL(url);
-    };
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = filename
+      anchor.click()
+      URL.revokeObjectURL(url)
+    }
 
     // Export to PNG with compression
     const exportToPng = async () => {
       const pngBlob = await engine.block.export(page, {
         mimeType: 'image/png',
         pngCompressionLevel: 5 // 0-9, higher = smaller file, slower
-      });
-      downloadBlob(pngBlob, 'design.png');
+      })
+      downloadBlob(pngBlob, 'design.png')
       cesdk.ui.showNotification({
         message: `PNG exported (${(pngBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export to JPEG with quality setting
     const exportToJpeg = async () => {
       const jpegBlob = await engine.block.export(page, {
         mimeType: 'image/jpeg',
         jpegQuality: 0.9 // 0-1, higher = better quality, larger file
-      });
-      downloadBlob(jpegBlob, 'design.jpg');
+      })
+      downloadBlob(jpegBlob, 'design.jpg')
       cesdk.ui.showNotification({
         message: `JPEG exported (${(jpegBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export to WebP with lossless quality
     const exportToWebp = async () => {
       const webpBlob = await engine.block.export(page, {
         mimeType: 'image/webp',
         webpQuality: 1.0 // 1.0 = lossless, smaller files than PNG
-      });
-      downloadBlob(webpBlob, 'design.webp');
+      })
+      downloadBlob(webpBlob, 'design.webp')
       cesdk.ui.showNotification({
         message: `WebP exported (${(webpBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export to PDF
     const exportToPdf = async () => {
       const pdfBlob = await engine.block.export(page, {
         mimeType: 'application/pdf',
         exportPdfWithHighCompatibility: true // Rasterize for broader viewer support
-      });
-      downloadBlob(pdfBlob, 'design.pdf');
+      })
+      downloadBlob(pdfBlob, 'design.pdf')
       cesdk.ui.showNotification({
         message: `PDF exported (${(pdfBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export with target size
     const exportWithTargetSize = async () => {
@@ -168,13 +168,13 @@ class Example implements EditorPlugin {
         mimeType: 'image/png',
         targetWidth: 1920,
         targetHeight: 1080
-      });
-      downloadBlob(blob, 'design-hd.png');
+      })
+      downloadBlob(blob, 'design-hd.png')
       cesdk.ui.showNotification({
         message: `HD export complete (${(blob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export with color mask - removes specified RGB color and creates alpha mask
     const exportWithColorMask = async () => {
@@ -186,14 +186,14 @@ class Example implements EditorPlugin {
         0.0, // maskColorG - green component
         1.0, // maskColorB - blue component (RGB: pure magenta)
         { mimeType: 'image/png' }
-      );
-      downloadBlob(maskedImage, 'design-masked.png');
-      downloadBlob(alphaMask, 'design-alpha-mask.png');
+      )
+      downloadBlob(maskedImage, 'design-masked.png')
+      downloadBlob(alphaMask, 'design-alpha-mask.png')
       cesdk.ui.showNotification({
         message: `Color mask export: image (${(maskedImage.size / 1024).toFixed(1)} KB) + mask (${(alphaMask.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Configure navigation bar with export buttons
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
@@ -248,17 +248,17 @@ class Example implements EditorPlugin {
         variant: 'plain',
         color: 'accent'
       }
-    ]);
+    ])
 
     cesdk.ui.showNotification({
       message: 'Use the export buttons to export in different formats',
       type: 'info',
       duration: 'infinite'
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to export designs in different formats, configure format-specific options, check device limits, and download exports to the user's device.
@@ -288,7 +288,7 @@ PNG export uses lossless compression with a configurable compression level. High
 const pngBlob = await engine.block.export(page, {
   mimeType: 'image/png',
   pngCompressionLevel: 5 // 0-9, higher = smaller file, slower
-});
+})
 ```
 
 The `pngCompressionLevel` ranges from 0 (no compression, fastest) to 9 (maximum compression, slowest). The default is 5, which balances file size and encoding speed.
@@ -301,7 +301,7 @@ JPEG export uses lossy compression controlled by the quality setting. Lower qual
 const jpegBlob = await engine.block.export(page, {
   mimeType: 'image/jpeg',
   jpegQuality: 0.9 // 0-1, higher = better quality, larger file
-});
+})
 ```
 
 The `jpegQuality` ranges from 0 to 1. Values above 0.9 provide excellent quality for most use cases. The default is 0.9.
@@ -316,7 +316,7 @@ WebP provides better compression than PNG or JPEG for web delivery. A quality of
 const webpBlob = await engine.block.export(page, {
   mimeType: 'image/webp',
   webpQuality: 1.0 // 1.0 = lossless, smaller files than PNG
-});
+})
 ```
 
 The `webpQuality` ranges from 0 to 1. At 1.0, WebP uses lossless compression that typically produces smaller files than equivalent PNG exports.
@@ -340,7 +340,7 @@ PDF export preserves vector information and supports print workflows. The high c
 const pdfBlob = await engine.block.export(page, {
   mimeType: 'application/pdf',
   exportPdfWithHighCompatibility: true // Rasterize for broader viewer support
-});
+})
 ```
 
 When `exportPdfWithHighCompatibility` is `true` (the default), images and effects are rasterized according to the scene's DPI setting. Set it to `false` for faster exports, though gradients with transparency may not render correctly in Safari or macOS Preview.
@@ -372,7 +372,7 @@ const [maskedImage, alphaMask] = await engine.block.exportWithColorMask(
   0.0, // maskColorG - green component
   1.0, // maskColorB - blue component (RGB: pure magenta)
   { mimeType: 'image/png' }
-);
+)
 ```
 
 The `exportWithColorMask()` method accepts the block to export, three RGB color components (0.0-1.0 range), and optional export options. RGB values use floating-point notation where 1.0 equals 255 in standard color notation.
@@ -405,14 +405,14 @@ The `exportWithColorMask()` method accepts the same options as image export:
 Video export uses the H.264 codec and outputs MP4 or QuickTime files. Unlike image exports, video exports accept a progress callback to track encoding status.
 
 ```typescript
-const page = engine.scene.getCurrentPage();
+const page = engine.scene.getCurrentPage()
 
 const videoBlob = await engine.block.exportVideo(page, {
   mimeType: 'video/mp4',
   onProgress: (rendered, encoded, total) => {
-    console.log(`Progress: ${Math.round((encoded / total) * 100)}%`);
+    console.log(`Progress: ${Math.round((encoded / total) * 100)}%`)
   }
-});
+})
 ```
 
 ### Video Export Options
@@ -447,14 +447,14 @@ The `h264Profile` determines encoder quality and compatibility:
 Export audio tracks from pages or audio blocks. Supported formats are WAV (uncompressed) and MP4 (AAC encoded).
 
 ```typescript
-const page = engine.scene.getCurrentPage();
+const page = engine.scene.getCurrentPage()
 
 const audioBlob = await engine.block.exportAudio(page, {
   mimeType: 'audio/mp4', // or 'audio/wav'
   onProgress: (rendered, encoded, total) => {
-    console.log(`Progress: ${Math.round((encoded / total) * 100)}%`);
+    console.log(`Progress: ${Math.round((encoded / total) * 100)}%`)
   }
-});
+})
 ```
 
 ### Audio Export Options
@@ -484,7 +484,7 @@ const blob = await engine.block.export(page, {
   mimeType: 'image/png',
   targetWidth: 1920,
   targetHeight: 1080
-});
+})
 ```
 
 If the target aspect ratio differs from the block's aspect ratio, the output fills the target dimensions completely. The output may extend beyond the target size on one axis to preserve correct proportions.
@@ -494,11 +494,11 @@ If the target aspect ratio differs from the block's aspect ratio, the output fil
 Before exporting large designs, check the device's export capabilities. Memory constraints or GPU limitations may prevent exports that exceed certain dimensions.
 
 ```typescript
-const maxExportSize = engine.editor.getMaxExportSize();
-const availableMemory = engine.editor.getAvailableMemory();
+const maxExportSize = engine.editor.getMaxExportSize()
+const availableMemory = engine.editor.getAvailableMemory()
 
-console.log(`Max dimension: ${maxExportSize}px`);
-console.log(`Available memory: ${availableMemory / 1024 / 1024} MB`);
+console.log(`Max dimension: ${maxExportSize}px`)
+console.log(`Available memory: ${availableMemory / 1024 / 1024} MB`)
 ```
 
 `getMaxExportSize()` returns the maximum width or height in pixels. Both dimensions must stay below this limit. `getAvailableMemory()` returns available memory in bytes, helping you assess whether large exports are feasible.
@@ -514,8 +514,8 @@ Export an image:
 ```typescript
 const { blobs, options } = await cesdk.utils.export({
   mimeType: 'image/png'
-});
-await cesdk.utils.downloadFile(blobs[0], options.mimeType);
+})
+await cesdk.utils.downloadFile(blobs[0], options.mimeType)
 ```
 
 Export a PDF:
@@ -523,8 +523,8 @@ Export a PDF:
 ```typescript
 const { blobs, options } = await cesdk.utils.export({
   mimeType: 'application/pdf'
-});
-await cesdk.utils.downloadFile(blobs[0], options.mimeType);
+})
+await cesdk.utils.downloadFile(blobs[0], options.mimeType)
 ```
 
 Export a video:
@@ -532,8 +532,8 @@ Export a video:
 ```typescript
 const { blobs, options } = await cesdk.utils.export({
   mimeType: 'video/mp4'
-});
-await cesdk.utils.downloadFile(blobs[0], options.mimeType);
+})
+await cesdk.utils.downloadFile(blobs[0], options.mimeType)
 ```
 
 ## API Reference

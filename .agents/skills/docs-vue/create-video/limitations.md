@@ -26,7 +26,7 @@ restrictions to help you plan video workflows within platform capabilities.
 Client-side video processing provides significant advantages for privacy and user experience, but it operates within the constraints of the user's device. Understanding these limitations helps you build applications that work reliably across different hardware configurations and browsers.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-limitations-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -43,9 +43,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Video Limitations Guide
@@ -56,27 +56,27 @@ import packageJson from './package.json';
  * - Understanding resolution and duration constraints
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -86,9 +86,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -102,12 +102,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
@@ -115,93 +115,93 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Query the maximum export dimensions supported by this device
-    const maxExportSize = engine.editor.getMaxExportSize();
-    console.log('Maximum export size:', maxExportSize, 'pixels');
+    const maxExportSize = engine.editor.getMaxExportSize()
+    console.log('Maximum export size:', maxExportSize, 'pixels')
     // The maximum export size depends on the GPU texture size limit
     // Typical values: 4096, 8192, or 16384 pixels
 
     // Query current memory consumption
-    const usedMemory = engine.editor.getUsedMemory();
-    const usedMemoryMB = (usedMemory / (1024 * 1024)).toFixed(2);
-    console.log('Memory used:', usedMemoryMB, 'MB');
+    const usedMemory = engine.editor.getUsedMemory()
+    const usedMemoryMB = (usedMemory / (1024 * 1024)).toFixed(2)
+    console.log('Memory used:', usedMemoryMB, 'MB')
 
     // Query available memory for video processing
-    const availableMemory = engine.editor.getAvailableMemory();
-    const availableMemoryMB = (availableMemory / (1024 * 1024)).toFixed(2);
-    console.log('Memory available:', availableMemoryMB, 'MB');
+    const availableMemory = engine.editor.getAvailableMemory()
+    const availableMemoryMB = (availableMemory / (1024 * 1024)).toFixed(2)
+    console.log('Memory available:', availableMemoryMB, 'MB')
     // Browser tabs typically cap around 2GB due to WebAssembly's 32-bit address space
 
     // Calculate memory utilization percentage
-    const totalMemory = usedMemory + availableMemory;
-    const memoryUtilization = ((usedMemory / totalMemory) * 100).toFixed(1);
-    console.log('Memory utilization:', memoryUtilization, '%');
+    const totalMemory = usedMemory + availableMemory
+    const memoryUtilization = ((usedMemory / totalMemory) * 100).toFixed(1)
+    console.log('Memory utilization:', memoryUtilization, '%')
 
     // Check if a specific export size is feasible
-    const desiredWidth = 3840; // 4K UHD
-    const desiredHeight = 2160;
-    const canExport4K =
-      desiredWidth <= maxExportSize && desiredHeight <= maxExportSize;
+    const desiredWidth = 3840 // 4K UHD
+    const desiredHeight = 2160
+    const canExport4K
+      = desiredWidth <= maxExportSize && desiredHeight <= maxExportSize
     console.log(
       'Can export at 4K UHD (3840x2160):',
       canExport4K ? 'Yes' : 'No'
-    );
+    )
 
     // Add a sample video to demonstrate the editor with video content
-    const videoUri = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : engine.scene.get();
+    const videoUri = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : engine.scene.get()
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Create a video block that fills the page
     const videoBlock = await engine.block.addVideo(
       videoUri,
       pageWidth,
       pageHeight
-    );
+    )
 
     // Position the video at the center of the page
-    engine.block.setPositionX(videoBlock, 0);
-    engine.block.setPositionY(videoBlock, 0);
+    engine.block.setPositionX(videoBlock, 0)
+    engine.block.setPositionY(videoBlock, 0)
 
     // Select the video block
-    engine.block.setSelected(videoBlock, true);
+    engine.block.setSelected(videoBlock, true)
 
     // Re-check memory after loading video content
-    const usedAfterLoad = engine.editor.getUsedMemory();
-    const availableAfterLoad = engine.editor.getAvailableMemory();
-    const usedAfterLoadMB = (usedAfterLoad / (1024 * 1024)).toFixed(2);
+    const usedAfterLoad = engine.editor.getUsedMemory()
+    const availableAfterLoad = engine.editor.getAvailableMemory()
+    const usedAfterLoadMB = (usedAfterLoad / (1024 * 1024)).toFixed(2)
     const availableAfterLoadMB = (availableAfterLoad / (1024 * 1024)).toFixed(
       2
-    );
-    console.log('After loading video:');
-    console.log('  Memory used:', usedAfterLoadMB, 'MB');
-    console.log('  Memory available:', availableAfterLoadMB, 'MB');
+    )
+    console.log('After loading video:')
+    console.log('  Memory used:', usedAfterLoadMB, 'MB')
+    console.log('  Memory available:', availableAfterLoadMB, 'MB')
 
     // Log summary of device capabilities
-    console.log('--- Device Capabilities Summary ---');
-    console.log('Max export dimension:', maxExportSize, 'px');
-    console.log('4K UHD support:', canExport4K ? 'Supported' : 'Not supported');
+    console.log('--- Device Capabilities Summary ---')
+    console.log('Max export dimension:', maxExportSize, 'px')
+    console.log('4K UHD support:', canExport4K ? 'Supported' : 'Not supported')
     console.log(
       'Initial memory:',
       usedMemoryMB,
       'MB used /',
       availableMemoryMB,
       'MB available'
-    );
+    )
     console.log(
       'Open the browser console to view detailed limitation information.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Resolution Limits
@@ -214,8 +214,8 @@ Query the maximum export size before initiating exports to avoid failures:
 
 ```typescript highlight-query-max-export-size
 // Query the maximum export dimensions supported by this device
-const maxExportSize = engine.editor.getMaxExportSize();
-console.log('Maximum export size:', maxExportSize, 'pixels');
+const maxExportSize = engine.editor.getMaxExportSize()
+console.log('Maximum export size:', maxExportSize, 'pixels')
 // The maximum export size depends on the GPU texture size limit
 // Typical values: 4096, 8192, or 16384 pixels
 ```
@@ -224,14 +224,14 @@ The maximum export size varies by device GPU capabilities. Typical values range 
 
 ```typescript highlight-check-export-feasibility
 // Check if a specific export size is feasible
-const desiredWidth = 3840; // 4K UHD
-const desiredHeight = 2160;
-const canExport4K =
-  desiredWidth <= maxExportSize && desiredHeight <= maxExportSize;
+const desiredWidth = 3840 // 4K UHD
+const desiredHeight = 2160
+const canExport4K
+  = desiredWidth <= maxExportSize && desiredHeight <= maxExportSize
 console.log(
   'Can export at 4K UHD (3840x2160):',
   canExport4K ? 'Yes' : 'No'
-);
+)
 ```
 
 ## Duration Limits
@@ -324,18 +324,18 @@ Query current memory usage to understand how much has been consumed:
 
 ```typescript highlight-query-memory-usage
 // Query current memory consumption
-const usedMemory = engine.editor.getUsedMemory();
-const usedMemoryMB = (usedMemory / (1024 * 1024)).toFixed(2);
-console.log('Memory used:', usedMemoryMB, 'MB');
+const usedMemory = engine.editor.getUsedMemory()
+const usedMemoryMB = (usedMemory / (1024 * 1024)).toFixed(2)
+console.log('Memory used:', usedMemoryMB, 'MB')
 ```
 
 Check how much memory remains available for additional resources:
 
 ```typescript highlight-query-available-memory
 // Query available memory for video processing
-const availableMemory = engine.editor.getAvailableMemory();
-const availableMemoryMB = (availableMemory / (1024 * 1024)).toFixed(2);
-console.log('Memory available:', availableMemoryMB, 'MB');
+const availableMemory = engine.editor.getAvailableMemory()
+const availableMemoryMB = (availableMemory / (1024 * 1024)).toFixed(2)
+console.log('Memory available:', availableMemoryMB, 'MB')
 // Browser tabs typically cap around 2GB due to WebAssembly's 32-bit address space
 ```
 
@@ -345,15 +345,15 @@ Query memory APIs before loading additional video files to avoid out-of-memory c
 
 ```typescript highlight-monitor-memory-after-load
 // Re-check memory after loading video content
-const usedAfterLoad = engine.editor.getUsedMemory();
-const availableAfterLoad = engine.editor.getAvailableMemory();
-const usedAfterLoadMB = (usedAfterLoad / (1024 * 1024)).toFixed(2);
+const usedAfterLoad = engine.editor.getUsedMemory()
+const availableAfterLoad = engine.editor.getAvailableMemory()
+const usedAfterLoadMB = (usedAfterLoad / (1024 * 1024)).toFixed(2)
 const availableAfterLoadMB = (availableAfterLoad / (1024 * 1024)).toFixed(
   2
-);
-console.log('After loading video:');
-console.log('  Memory used:', usedAfterLoadMB, 'MB');
-console.log('  Memory available:', availableAfterLoadMB, 'MB');
+)
+console.log('After loading video:')
+console.log('  Memory used:', usedAfterLoadMB, 'MB')
+console.log('  Memory available:', availableAfterLoadMB, 'MB')
 ```
 
 ## Export Size Limitations

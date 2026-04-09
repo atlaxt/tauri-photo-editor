@@ -8,10 +8,10 @@ Always set `contentFill/mode` on the block that owns the fill, not on the fill i
 
 ```ts
 // WRONG — this property does not exist on the fill
-engine.block.setEnum(fill, 'fill/image/contentFillMode', 'Cover');
+engine.block.setEnum(fill, 'fill/image/contentFillMode', 'Cover')
 
 // CORRECT — set on the graphic block
-engine.block.setEnum(block, 'contentFill/mode', 'Cover');
+engine.block.setEnum(block, 'contentFill/mode', 'Cover')
 ```
 
 ## Common Values

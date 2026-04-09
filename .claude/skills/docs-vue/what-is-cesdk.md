@@ -147,15 +147,15 @@ CE.SDK’s APIs are categorized into several groups, reflecting different aspect
 [Scene API:](./concepts/scenes.md)- **Creating and Loading Scenes**:
 
 ```javascript
-engine.scene.create();
-engine.scene.loadFromURL(url);
+engine.scene.create()
+engine.scene.loadFromURL(url)
 ```
 
 - **Zoom Control**:
 
   ```javascript
-  engine.scene.setZoomLevel(1.0);
-  engine.scene.zoomToBlock(blockId);
+  engine.scene.setZoomLevel(1.0)
+  engine.scene.zoomToBlock(blockId)
   ```
 
 ````
@@ -169,8 +169,8 @@ const block = engine.block.create('shapes/rectangle');
 - **Setting Properties**:
 
   ```javascript
-  engine.block.setColor(blockId, 'fill/color', { r: 1, g: 0, b: 0, a: 1 });
-  engine.block.setString(blockId, 'text/content', 'Hello World');
+  engine.block.setColor(blockId, 'fill/color', { r: 1, g: 0, b: 0, a: 1 })
+  engine.block.setString(blockId, 'text/content', 'Hello World')
   ```
 
 ````
@@ -180,7 +180,7 @@ const block = engine.block.create('shapes/rectangle');
   ```javascript
   const color = engine.block.getColor(blockId, 'fill/color');
   const text = engine.block.getString(blockId, 'text/content');
-  
+
 ````
 
 [Variable API:](./create-templates/add-dynamic-content/text-variables.md)
@@ -190,8 +190,8 @@ design variations.
 - **Managing Variables**:
 
   ```javascript
-  engine.variable.setString('myVariable', 'value');
-  const value = engine.variable.getString('myVariable');
+  engine.variable.setString('myVariable', 'value')
+  const value = engine.variable.getString('myVariable')
   ```
 
 ````
@@ -207,8 +207,8 @@ engine.asset.add('image', 'https://example.com/image.png');
 ```javascript
 // Subscribe to scene changes
 engine.scene.onActiveChanged(() => {
-  const newActiveScene = engine.scene.get();
-});
+  const newActiveScene = engine.scene.get()
+})
 ```
 
 ## Customizing the Vue.js Creative Editor
@@ -223,7 +223,7 @@ CE.SDK provides extensive customization options to tailor the UI to various use 
   const config = {
     baseURL: `https://cdn.img.ly/packages/imgly/cesdk-js/${CreativeEditorSDK.version}/assets`,
     // license: 'YOUR_CESDK_LICENSE_KEY',
-  };
+  }
   ```
 
 ````
@@ -247,7 +247,7 @@ CE.SDK provides extensive customization options to tailor the UI to various use 
       },
     });
   });
-  
+
 ````
 
 - [Custom Asset Sources](./import-media/concepts.md): Serve custom image or SVG
@@ -258,10 +258,10 @@ CE.SDK provides extensive customization options to tailor the UI to various use 
 - **Theme:** Select from predefined themes like 'dark', 'light', or 'system'.
 
   ```javascript
-  CreativeEditorSDK.create('#cesdk_container', config).then(async cesdk => {
+  CreativeEditorSDK.create('#cesdk_container', config).then(async (cesdk) => {
     // Set theme using the UI API
-    cesdk.ui.setTheme('dark'); // 'light' | 'system'
-  });
+    cesdk.ui.setTheme('dark') // 'light' | 'system'
+  })
   ```
 
 ````
@@ -277,7 +277,7 @@ CE.SDK provides extensive customization options to tailor the UI to various use 
       },
     },
   };
-  
+
 ````
 
 ## Advanced Customizations

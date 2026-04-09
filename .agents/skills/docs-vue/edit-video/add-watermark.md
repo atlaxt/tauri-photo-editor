@@ -23,7 +23,7 @@ Add text and image watermarks to video content for copyright protection, brandin
 Video watermarks in CE.SDK are design blocks positioned over video content. **Text watermarks** display copyright notices, URLs, or branding text, while **image watermarks** show logos or graphics. Both watermark types need their time-based properties configured to remain visible throughout video playback. The key difference from static image watermarking is setting the watermark's `duration` to match the video duration.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-add-watermark-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Add Watermark to Video Guide
@@ -56,145 +56,145 @@ import packageJson from './package.json';
  * - Configuring opacity and blend modes
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Enable video editing features in CE.SDK
-    cesdk.feature.enable('ly.img.video');
-    cesdk.feature.enable('ly.img.timeline');
-    cesdk.feature.enable('ly.img.playback');
+    cesdk.feature.enable('ly.img.video')
+    cesdk.feature.enable('ly.img.timeline')
+    cesdk.feature.enable('ly.img.playback')
     // Create a video scene from a sample video
-    const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
-    await cesdk.engine.scene.createFromVideo(videoUrl);
+    const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
+    await cesdk.engine.scene.createFromVideo(videoUrl)
 
-    const engine = cesdk.engine;
-    const page = engine.scene.getCurrentPage()!;
+    const engine = cesdk.engine
+    const page = engine.scene.getCurrentPage()!
 
     // Get page dimensions for watermark positioning
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Get the page duration (set automatically from the video)
-    const videoDuration = engine.block.getDuration(page);
-    // eslint-disable-next-line no-console
-    console.log('Video duration from page:', videoDuration);
+    const videoDuration = engine.block.getDuration(page)
+
+    console.log('Video duration from page:', videoDuration)
 
     // ===== TEXT WATERMARK =====
 
     // Create a text watermark for copyright notice
-    const textWatermark = engine.block.create('text');
+    const textWatermark = engine.block.create('text')
 
     // Use Auto sizing so the text block grows to fit its content
-    engine.block.setWidthMode(textWatermark, 'Auto');
-    engine.block.setHeightMode(textWatermark, 'Auto');
+    engine.block.setWidthMode(textWatermark, 'Auto')
+    engine.block.setHeightMode(textWatermark, 'Auto')
 
     // Set the watermark text content using replaceText
-    engine.block.replaceText(textWatermark, 'All rights reserved © 2025');
+    engine.block.replaceText(textWatermark, 'All rights reserved © 2025')
 
     // Position in bottom-left corner with padding
-    const textPadding = 20;
-    engine.block.setPositionX(textWatermark, textPadding);
-    engine.block.setPositionY(textWatermark, pageHeight - textPadding - 20);
+    const textPadding = 20
+    engine.block.setPositionX(textWatermark, textPadding)
+    engine.block.setPositionY(textWatermark, pageHeight - textPadding - 20)
 
     // Style the text watermark with a subtle font size
-    engine.block.setFloat(textWatermark, 'text/fontSize', 4);
-    engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 }); // White text
+    engine.block.setFloat(textWatermark, 'text/fontSize', 4)
+    engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 }) // White text
 
     // Set text alignment to left
-    engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left');
+    engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left')
 
     // Set watermark opacity for subtle appearance
-    engine.block.setOpacity(textWatermark, 0.7);
+    engine.block.setOpacity(textWatermark, 0.7)
 
     // Add drop shadow for visibility across different backgrounds
-    engine.block.setDropShadowEnabled(textWatermark, true);
-    engine.block.setDropShadowColor(textWatermark, { r: 0, g: 0, b: 0, a: 0.8 });
-    engine.block.setDropShadowOffsetX(textWatermark, 2);
-    engine.block.setDropShadowOffsetY(textWatermark, 2);
-    engine.block.setDropShadowBlurRadiusX(textWatermark, 4);
-    engine.block.setDropShadowBlurRadiusY(textWatermark, 4);
+    engine.block.setDropShadowEnabled(textWatermark, true)
+    engine.block.setDropShadowColor(textWatermark, { r: 0, g: 0, b: 0, a: 0.8 })
+    engine.block.setDropShadowOffsetX(textWatermark, 2)
+    engine.block.setDropShadowOffsetY(textWatermark, 2)
+    engine.block.setDropShadowBlurRadiusX(textWatermark, 4)
+    engine.block.setDropShadowBlurRadiusY(textWatermark, 4)
 
     // Set the text watermark duration to match the video
-    engine.block.setDuration(textWatermark, videoDuration);
-    engine.block.setTimeOffset(textWatermark, 0);
+    engine.block.setDuration(textWatermark, videoDuration)
+    engine.block.setTimeOffset(textWatermark, 0)
 
     // Add the text watermark to the page
-    engine.block.appendChild(page, textWatermark);
+    engine.block.appendChild(page, textWatermark)
 
     // ===== IMAGE WATERMARK (LOGO) =====
 
     // Create a graphic block for the logo watermark
-    const logoWatermark = engine.block.create('graphic');
+    const logoWatermark = engine.block.create('graphic')
 
     // Create a rectangular shape for the logo
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(logoWatermark, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(logoWatermark, rectShape)
 
     // Create an image fill with the logo
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/imgly_logo.jpg'
-    );
-    engine.block.setFill(logoWatermark, imageFill);
+    )
+    engine.block.setFill(logoWatermark, imageFill)
 
     // Set content fill mode to contain so the logo fits within bounds
-    engine.block.setContentFillMode(logoWatermark, 'Contain');
+    engine.block.setContentFillMode(logoWatermark, 'Contain')
 
     // Size and position the logo in the top-right corner
-    const logoSize = 80;
-    const logoPadding = 20;
-    engine.block.setWidth(logoWatermark, logoSize);
-    engine.block.setHeight(logoWatermark, logoSize);
-    engine.block.setPositionX(logoWatermark, pageWidth - logoSize - logoPadding);
-    engine.block.setPositionY(logoWatermark, logoPadding);
+    const logoSize = 80
+    const logoPadding = 20
+    engine.block.setWidth(logoWatermark, logoSize)
+    engine.block.setHeight(logoWatermark, logoSize)
+    engine.block.setPositionX(logoWatermark, pageWidth - logoSize - logoPadding)
+    engine.block.setPositionY(logoWatermark, logoPadding)
 
     // Set opacity for the logo watermark
-    engine.block.setOpacity(logoWatermark, 0.6);
+    engine.block.setOpacity(logoWatermark, 0.6)
 
     // Set blend mode for better integration with video content
-    engine.block.setBlendMode(logoWatermark, 'Normal');
+    engine.block.setBlendMode(logoWatermark, 'Normal')
 
     // Set the logo watermark duration to match the video
-    engine.block.setDuration(logoWatermark, videoDuration);
-    engine.block.setTimeOffset(logoWatermark, 0);
+    engine.block.setDuration(logoWatermark, videoDuration)
+    engine.block.setTimeOffset(logoWatermark, 0)
 
     // Add the logo watermark to the page
-    engine.block.appendChild(page, logoWatermark);
+    engine.block.appendChild(page, logoWatermark)
 
     // Select the page to show the timeline
-    engine.block.setSelected(page, true);
+    engine.block.setSelected(page, true)
 
     // Zoom to fit the page and enable auto-fit for responsive resizing
     await engine.scene.zoomToBlock(page, {
       padding: { left: 40, top: 40, right: 40, bottom: 40 }
-    });
-    engine.scene.enableZoomAutoFit(page, 'Horizontal', 40, 40);
+    })
+    engine.scene.enableZoomAutoFit(page, 'Horizontal', 40, 40)
 
     // Start playback automatically
     try {
-      engine.block.setPlaying(page, true);
-      // eslint-disable-next-line no-console
+      engine.block.setPlaying(page, true)
+
       console.log(
         'Video watermark guide initialized. Playback started with text and logo watermarks visible.'
-      );
-    } catch (error) {
-      // eslint-disable-next-line no-console
+      )
+    }
+    catch (error) {
       console.log(
         'Video watermark guide initialized. Click play button to start playback.'
-      );
+      )
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create text and image watermarks programmatically, position them on the canvas, style them for visibility, and configure their duration to span the entire video.
@@ -205,9 +205,9 @@ Before adding watermarks, we configure CE.SDK for video editing. Timeline featur
 
 ```typescript highlight-setup
 // Enable video editing features in CE.SDK
-cesdk.feature.enable('ly.img.video');
-cesdk.feature.enable('ly.img.timeline');
-cesdk.feature.enable('ly.img.playback');
+cesdk.feature.enable('ly.img.video')
+cesdk.feature.enable('ly.img.timeline')
+cesdk.feature.enable('ly.img.playback')
 ```
 
 We enable three features: `ly.img.video` for video support, `ly.img.timeline` for the timeline UI panel, and `ly.img.playback` for the playback UI controls.
@@ -218,8 +218,8 @@ We create a scene from a video URL. This automatically sets up the page dimensio
 
 ```typescript highlight-create-video-scene
 // Create a video scene from a sample video
-const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
-await cesdk.engine.scene.createFromVideo(videoUrl);
+const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
+await cesdk.engine.scene.createFromVideo(videoUrl)
 ```
 
 The `createFromVideo` method loads the video, creates a scene, and sets the page dimensions to match the video's aspect ratio. The video becomes a fill block in the composition with its duration already set.
@@ -229,20 +229,20 @@ The `createFromVideo` method loads the video, creates a scene, and sets the page
 Text watermarks display copyright notices, branding text, or URLs. We create a text block and position it on the canvas.
 
 ```typescript highlight-create-text-watermark
-    // Create a text watermark for copyright notice
-    const textWatermark = engine.block.create('text');
+// Create a text watermark for copyright notice
+const textWatermark = engine.block.create('text')
 
-    // Use Auto sizing so the text block grows to fit its content
-    engine.block.setWidthMode(textWatermark, 'Auto');
-    engine.block.setHeightMode(textWatermark, 'Auto');
+// Use Auto sizing so the text block grows to fit its content
+engine.block.setWidthMode(textWatermark, 'Auto')
+engine.block.setHeightMode(textWatermark, 'Auto')
 
-    // Set the watermark text content using replaceText
-    engine.block.replaceText(textWatermark, 'All rights reserved © 2025');
+// Set the watermark text content using replaceText
+engine.block.replaceText(textWatermark, 'All rights reserved © 2025')
 
-    // Position in bottom-left corner with padding
-    const textPadding = 20;
-    engine.block.setPositionX(textWatermark, textPadding);
-    engine.block.setPositionY(textWatermark, pageHeight - textPadding - 20);
+// Position in bottom-left corner with padding
+const textPadding = 20
+engine.block.setPositionX(textWatermark, textPadding)
+engine.block.setPositionY(textWatermark, pageHeight - textPadding - 20)
 ```
 
 We create a text block with `block.create('text')` and configure it with auto-sizing using `setWidthMode('Auto')` and `setHeightMode('Auto')`. This lets the text block grow to fit its content. We set the text content using `replaceText()` and position the watermark in the bottom-left corner with padding from the edges.
@@ -252,15 +252,15 @@ We create a text block with `block.create('text')` and configure it with auto-si
 Style the text for readability across different video backgrounds.
 
 ```typescript highlight-style-text-watermark
-    // Style the text watermark with a subtle font size
-    engine.block.setFloat(textWatermark, 'text/fontSize', 4);
-    engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 }); // White text
+// Style the text watermark with a subtle font size
+engine.block.setFloat(textWatermark, 'text/fontSize', 4)
+engine.block.setTextColor(textWatermark, { r: 1, g: 1, b: 1, a: 1 }) // White text
 
-    // Set text alignment to left
-    engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left');
+// Set text alignment to left
+engine.block.setEnum(textWatermark, 'text/horizontalAlignment', 'Left')
 
-    // Set watermark opacity for subtle appearance
-    engine.block.setOpacity(textWatermark, 0.7);
+// Set watermark opacity for subtle appearance
+engine.block.setOpacity(textWatermark, 0.7)
 ```
 
 We set the font size using `setFloat()` with the `'text/fontSize'` property for a subtle watermark appearance. White text color ensures visibility, left alignment positions the text naturally, and 70% opacity creates a semi-transparent appearance that's visible but not distracting.
@@ -271,12 +271,12 @@ Drop shadows ensure text remains readable over both light and dark video backgro
 
 ```typescript highlight-text-drop-shadow
 // Add drop shadow for visibility across different backgrounds
-engine.block.setDropShadowEnabled(textWatermark, true);
-engine.block.setDropShadowColor(textWatermark, { r: 0, g: 0, b: 0, a: 0.8 });
-engine.block.setDropShadowOffsetX(textWatermark, 2);
-engine.block.setDropShadowOffsetY(textWatermark, 2);
-engine.block.setDropShadowBlurRadiusX(textWatermark, 4);
-engine.block.setDropShadowBlurRadiusY(textWatermark, 4);
+engine.block.setDropShadowEnabled(textWatermark, true)
+engine.block.setDropShadowColor(textWatermark, { r: 0, g: 0, b: 0, a: 0.8 })
+engine.block.setDropShadowOffsetX(textWatermark, 2)
+engine.block.setDropShadowOffsetY(textWatermark, 2)
+engine.block.setDropShadowBlurRadiusX(textWatermark, 4)
+engine.block.setDropShadowBlurRadiusY(textWatermark, 4)
 ```
 
 We enable the drop shadow and configure its appearance. The black shadow color with 80% opacity provides contrast. Offset values (2px in each direction) separate the shadow from the text, while blur radius values (4px) create a soft shadow edge.
@@ -286,12 +286,12 @@ We enable the drop shadow and configure its appearance. The black shadow color w
 The watermark must persist throughout video playback. We set its duration to match the video duration.
 
 ```typescript highlight-text-timeline
-    // Set the text watermark duration to match the video
-    engine.block.setDuration(textWatermark, videoDuration);
-    engine.block.setTimeOffset(textWatermark, 0);
+// Set the text watermark duration to match the video
+engine.block.setDuration(textWatermark, videoDuration)
+engine.block.setTimeOffset(textWatermark, 0)
 
-    // Add the text watermark to the page
-    engine.block.appendChild(page, textWatermark);
+// Add the text watermark to the page
+engine.block.appendChild(page, textWatermark)
 ```
 
 `setDuration` controls how long the block appears in the composition. `setTimeOffset` of 0 ensures it starts at the beginning. We then append the watermark to the page, placing it above the video content.
@@ -301,24 +301,24 @@ The watermark must persist throughout video playback. We set its duration to mat
 Image watermarks display logos or graphics. We create a graphic block with an image fill.
 
 ```typescript highlight-create-image-watermark
-    // Create a graphic block for the logo watermark
-    const logoWatermark = engine.block.create('graphic');
+// Create a graphic block for the logo watermark
+const logoWatermark = engine.block.create('graphic')
 
-    // Create a rectangular shape for the logo
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(logoWatermark, rectShape);
+// Create a rectangular shape for the logo
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(logoWatermark, rectShape)
 
-    // Create an image fill with the logo
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://img.ly/static/ubq_samples/imgly_logo.jpg'
-    );
-    engine.block.setFill(logoWatermark, imageFill);
+// Create an image fill with the logo
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://img.ly/static/ubq_samples/imgly_logo.jpg'
+)
+engine.block.setFill(logoWatermark, imageFill)
 
-    // Set content fill mode to contain so the logo fits within bounds
-    engine.block.setContentFillMode(logoWatermark, 'Contain');
+// Set content fill mode to contain so the logo fits within bounds
+engine.block.setContentFillMode(logoWatermark, 'Contain')
 ```
 
 We create a graphic block, assign it a rectangular shape, and fill it with an image. The `fill/image/imageFileURI` property specifies the logo URL. We set the content fill mode to 'Contain' so the logo fits within its bounds without cropping. This pattern—graphic block with shape and fill—is standard for displaying images in CE.SDK.
@@ -329,12 +329,12 @@ Position the logo in a corner that doesn't obstruct video content.
 
 ```typescript highlight-position-image-watermark
 // Size and position the logo in the top-right corner
-const logoSize = 80;
-const logoPadding = 20;
-engine.block.setWidth(logoWatermark, logoSize);
-engine.block.setHeight(logoWatermark, logoSize);
-engine.block.setPositionX(logoWatermark, pageWidth - logoSize - logoPadding);
-engine.block.setPositionY(logoWatermark, logoPadding);
+const logoSize = 80
+const logoPadding = 20
+engine.block.setWidth(logoWatermark, logoSize)
+engine.block.setHeight(logoWatermark, logoSize)
+engine.block.setPositionX(logoWatermark, pageWidth - logoSize - logoPadding)
+engine.block.setPositionY(logoWatermark, logoPadding)
 ```
 
 We size the logo at 80x80 pixels—large enough to be recognizable but not dominating. Position values place it in the top-right corner with 20px padding from the edges.
@@ -344,11 +344,11 @@ We size the logo at 80x80 pixels—large enough to be recognizable but not domin
 Control how the watermark integrates with the video.
 
 ```typescript highlight-image-opacity-blend
-    // Set opacity for the logo watermark
-    engine.block.setOpacity(logoWatermark, 0.6);
+// Set opacity for the logo watermark
+engine.block.setOpacity(logoWatermark, 0.6)
 
-    // Set blend mode for better integration with video content
-    engine.block.setBlendMode(logoWatermark, 'Normal');
+// Set blend mode for better integration with video content
+engine.block.setBlendMode(logoWatermark, 'Normal')
 ```
 
 We set 60% opacity for a subtle but visible watermark. The blend mode 'Normal' displays the logo as-is. Other modes like 'Multiply' or 'Screen' create different visual effects depending on the logo and video content.
@@ -358,12 +358,12 @@ We set 60% opacity for a subtle but visible watermark. The blend mode 'Normal' d
 Like text watermarks, image watermarks need duration configuration.
 
 ```typescript highlight-image-timeline
-    // Set the logo watermark duration to match the video
-    engine.block.setDuration(logoWatermark, videoDuration);
-    engine.block.setTimeOffset(logoWatermark, 0);
+// Set the logo watermark duration to match the video
+engine.block.setDuration(logoWatermark, videoDuration)
+engine.block.setTimeOffset(logoWatermark, 0)
 
-    // Add the logo watermark to the page
-    engine.block.appendChild(page, logoWatermark);
+// Add the logo watermark to the page
+engine.block.appendChild(page, logoWatermark)
 ```
 
 We set the same duration and time offset as the text watermark so both appear throughout the video. The `appendChild` call adds the logo to the page above existing content.

@@ -66,7 +66,7 @@ Initialize CE.SDK and add a custom export button to the navigation bar:
 
 ```typescript
 // Initialize CE.SDK
-const cesdk = await CreativeEditorSDK.create('#cesdk-container', config);
+const cesdk = await CreativeEditorSDK.create('#cesdk-container', config)
 
 // Add custom export button to navigation bar
 cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -78,11 +78,11 @@ cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, 
       label: 'Export Print-Ready PDF',
       iconName: '@imgly/Download',
       onClick: async () => {
-        await exportPrintReadyPDF();
+        await exportPrintReadyPDF()
       },
     },
   ],
-});
+})
 ```
 
 **CE.SDK concepts explained:**
@@ -107,15 +107,15 @@ Now implement the export logic to get the PDF from CE.SDK's engine:
 
 ```typescript
 // Get current scene ID
-const scene = cesdk.engine.scene.get();
+const scene = cesdk.engine.scene.get()
 
 // Get all pages in the scene
-const pages = cesdk.engine.block.findByType('page');
+const pages = cesdk.engine.block.findByType('page')
 
 // Export first page as PDF
 const pdfBlob = await cesdk.engine.block.export(pages[0], {
   mimeType: 'application/pdf',
-});
+})
 ```
 
 **CE.SDK export methods in detail:**
@@ -142,7 +142,7 @@ Use the plugin to convert CE.SDK's RGB PDF to CMYK PDF/X-3 format:
 const printReadyPDF = await convertToPDFX3(pdfBlob, {
   outputProfile: 'fogra39', // European printing standard
   title: 'Print-Ready Export',
-});
+})
 ```
 
 **How this integrates with CE.SDK:**
@@ -177,12 +177,12 @@ Trigger the browser download for the converted PDF:
 
 ```typescript
 // Download the print-ready PDF
-const url = URL.createObjectURL(printReadyPDF);
-const link = document.createElement('a');
-link.href = url;
-link.download = 'design-print-ready.pdf';
-link.click();
-URL.revokeObjectURL(url);
+const url = URL.createObjectURL(printReadyPDF)
+const link = document.createElement('a')
+link.href = url
+link.download = 'design-print-ready.pdf'
+link.click()
+URL.revokeObjectURL(url)
 ```
 
 **Browser download pattern explained:**
@@ -207,9 +207,7 @@ This pattern works in all modern browsers without requiring server endpoints.
 Here's the full integration combining all steps:
 
 ```typescript file=@cesdk_web_examples/plugins-print-ready-pdf-browser/src/index.ts reference-only
-import CreativeEditorSDK from '@cesdk/cesdk-js';
-// @ts-expect-error - Plugin types will be available in future release
-import { convertToPDFX3 } from '@imgly/plugin-print-ready-pdfs-web';
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   CaptionPresetsAssetSource,
@@ -223,9 +221,11 @@ import {
   TextAssetSource,
   TypefaceAssetSource,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
+// @ts-expect-error - Plugin types will be available in future release
+import { convertToPDFX3 } from '@imgly/plugin-print-ready-pdfs-web'
 
-let cesdk: CreativeEditorSDK;
+let cesdk: CreativeEditorSDK
 
 const config = {
   // By default, CE.SDK runs with a watermark.
@@ -237,11 +237,11 @@ const config = {
   ...((import.meta as any).env?.CESDK_USE_LOCAL && {
     baseURL: import.meta.env.VITE_CESDK_ASSETS_BASE_URL
   })
-};
+}
 
 async function init() {
   // Initialize CE.SDK
-  cesdk = await CreativeEditorSDK.create('#cesdk-container', config);
+  cesdk = await CreativeEditorSDK.create('#cesdk-container', config)
 
   cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
     id: 'ly.img.actions.navigationBar',
@@ -252,79 +252,80 @@ async function init() {
         label: 'Export Print-Ready PDF',
         iconName: '@imgly/Download',
         onClick: async () => {
-          await exportPrintReadyPDF();
+          await exportPrintReadyPDF()
         }
       }
     ]
-  });
+  })
 
   // Load default scene
-  await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } });
-  await cesdk.addPlugin(new BlurAssetSource());
-  await cesdk.addPlugin(new CaptionPresetsAssetSource());
-  await cesdk.addPlugin(new ColorPaletteAssetSource());
-  await cesdk.addPlugin(new CropPresetsAssetSource());
-  await cesdk.addPlugin(new EffectsAssetSource());
-  await cesdk.addPlugin(new FiltersAssetSource());
-  await cesdk.addPlugin(new PagePresetsAssetSource());
-  await cesdk.addPlugin(new StickerAssetSource());
-  await cesdk.addPlugin(new TextAssetSource());
-  await cesdk.addPlugin(new TypefaceAssetSource());
-  await cesdk.addPlugin(new VectorShapeAssetSource());
-  await cesdk.addPlugin(new DemoAssetSources());
+  await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } })
+  await cesdk.addPlugin(new BlurAssetSource())
+  await cesdk.addPlugin(new CaptionPresetsAssetSource())
+  await cesdk.addPlugin(new ColorPaletteAssetSource())
+  await cesdk.addPlugin(new CropPresetsAssetSource())
+  await cesdk.addPlugin(new EffectsAssetSource())
+  await cesdk.addPlugin(new FiltersAssetSource())
+  await cesdk.addPlugin(new PagePresetsAssetSource())
+  await cesdk.addPlugin(new StickerAssetSource())
+  await cesdk.addPlugin(new TextAssetSource())
+  await cesdk.addPlugin(new TypefaceAssetSource())
+  await cesdk.addPlugin(new VectorShapeAssetSource())
+  await cesdk.addPlugin(new DemoAssetSources())
 }
 
 async function exportPrintReadyPDF() {
   try {
     // Check if CE.SDK is initialized
     if (!cesdk) {
-      throw new Error('CE.SDK not initialized');
+      throw new Error('CE.SDK not initialized')
     }
 
     // Get current scene ID
-    const scene = cesdk.engine.scene.get();
+    const scene = cesdk.engine.scene.get()
 
     if (scene == null) {
-      throw new Error('No scene loaded');
+      throw new Error('No scene loaded')
     }
 
     // Get all pages in the scene
-    const pages = cesdk.engine.block.findByType('page');
+    const pages = cesdk.engine.block.findByType('page')
 
     if (pages.length === 0) {
-      throw new Error('No pages found in scene');
+      throw new Error('No pages found in scene')
     }
 
     // Export first page as PDF
     const pdfBlob = await cesdk.engine.block.export(pages[0], {
       mimeType: 'application/pdf'
-    });
+    })
 
     // Convert to print-ready PDF/X-3 format
     const printReadyPDF = await convertToPDFX3(pdfBlob, {
       outputProfile: 'fogra39', // European printing standard
       title: 'Print-Ready Export'
-    });
+    })
 
     // Download the print-ready PDF
-    const url = URL.createObjectURL(printReadyPDF);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'design-print-ready.pdf';
-    link.click();
-    URL.revokeObjectURL(url);
+    const url = URL.createObjectURL(printReadyPDF)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'design-print-ready.pdf'
+    link.click()
+    URL.revokeObjectURL(url)
 
-    console.log('Print-ready PDF exported successfully!');
-  } catch (error) {
-    console.error('Export failed:', error);
-    alert('Failed to export print-ready PDF. Please try again.');
+    console.log('Print-ready PDF exported successfully!')
+  }
+  catch (error) {
+    console.error('Export failed:', error)
+    alert('Failed to export print-ready PDF. Please try again.')
   }
 }
 
 // Initialize when page loads
 init().catch((error) => {
-  console.error('Failed to initialize CE.SDK:', error);
-});
+  console.error('Failed to initialize CE.SDK:', error)
+})
 ```
 
 This implementation adds a complete print-ready PDF export workflow to CE.SDK with just a few lines of code.
@@ -364,7 +365,7 @@ const printReadyPDF = await convertToPDFX3(pdfBlob, {
   outputProfile: 'fogra39',
   title: 'Visual Fidelity Preserved',
   flattenTransparency: false, // Preserves appearance but may not be strictly PDF/X-3 compliant
-});
+})
 ```
 
 ### Trade-offs
@@ -390,15 +391,15 @@ Use printer-specific ICC profiles:
 
 ```typescript
 // Load custom ICC profile from your server
-const customProfile = await fetch('/path/to/custom.icc').then(r => r.blob());
+const customProfile = await fetch('/path/to/custom.icc').then(r => r.blob())
 
 const printReadyPDF = await convertToPDFX3(pdfBlob, {
   outputProfile: 'custom',
-  customProfile: customProfile,
+  customProfile,
   title: 'Custom Profile Export',
   outputConditionIdentifier: 'Custom_CMYK_Profile',
   outputCondition: 'Custom profile for specialized printing',
-});
+})
 ```
 
 This allows you to meet specific print vendor requirements that may not be covered by standard profiles.
@@ -412,9 +413,9 @@ This allows you to meet specific print vendor requirements that may not be cover
 **Solution:** Ensure CE.SDK export returns a Blob:
 
 ```typescript
-const blob = await cesdk.engine.block.export(sceneId, 'application/pdf');
-console.log(blob instanceof Blob); // Should be true
-console.log(blob.size); // Should be > 0
+const blob = await cesdk.engine.block.export(sceneId, 'application/pdf')
+console.log(blob instanceof Blob) // Should be true
+console.log(blob.size) // Should be > 0
 ```
 
 If `blob.size === 0`, the CE.SDK export failed. Check for scene errors.
@@ -472,7 +473,7 @@ cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, 
       },
     },
   ],
-});
+})
 ```
 
 Check browser console for configuration errors. Ensure the button is added after CE.SDK initialization completes.

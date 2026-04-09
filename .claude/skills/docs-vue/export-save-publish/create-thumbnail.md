@@ -23,8 +23,8 @@ Generate thumbnail preview images from CE.SDK scenes by exporting with target di
 Thumbnails provide visual previews of designs without loading the full editor. Use `engine.block.export()` with `targetWidth` and `targetHeight` options to scale content while maintaining aspect ratio. Supported formats include PNG, JPEG, and WebP.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-create-thumbnail-browser/browser.ts reference-only
-import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type CreativeEditorSDK from '@cesdk/cesdk-js'
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,34 +69,35 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage();
-    if (!page) throw new Error('No page found');
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    )
+    const page = engine.scene.getCurrentPage()
+    if (!page)
+      throw new Error('No page found')
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Setup thumbnail export functionality
-    await this.setupThumbnailActions(cesdk, page);
+    await this.setupThumbnailActions(cesdk, page)
   }
 
   private async setupThumbnailActions(
     cesdk: CreativeEditorSDK,
     page: number
   ): Promise<void> {
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Add thumbnail export buttons to navigation bar
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -113,12 +114,12 @@ class Example implements EditorPlugin {
               targetWidth: 150,
               targetHeight: 150,
               jpegQuality: 0.8
-            });
+            })
 
-            await cesdk.utils.downloadFile(blob, 'image/jpeg');
+            await cesdk.utils.downloadFile(blob, 'image/jpeg')
             console.log(
               `✓ Small thumbnail: ${(blob.size / 1024).toFixed(1)} KB`
-            );
+            )
           }
         },
         {
@@ -132,12 +133,12 @@ class Example implements EditorPlugin {
               targetWidth: 400,
               targetHeight: 300,
               jpegQuality: 0.85
-            });
+            })
 
-            await cesdk.utils.downloadFile(blob, 'image/jpeg');
+            await cesdk.utils.downloadFile(blob, 'image/jpeg')
             console.log(
               `✓ Medium thumbnail: ${(blob.size / 1024).toFixed(1)} KB`
-            );
+            )
           }
         },
         {
@@ -151,10 +152,10 @@ class Example implements EditorPlugin {
               targetWidth: 400,
               targetHeight: 300,
               pngCompressionLevel: 6
-            });
+            })
 
-            await cesdk.utils.downloadFile(blob, 'image/png');
-            console.log(`✓ PNG thumbnail: ${(blob.size / 1024).toFixed(1)} KB`);
+            await cesdk.utils.downloadFile(blob, 'image/png')
+            console.log(`✓ PNG thumbnail: ${(blob.size / 1024).toFixed(1)} KB`)
           }
         },
         {
@@ -168,20 +169,20 @@ class Example implements EditorPlugin {
               targetWidth: 400,
               targetHeight: 300,
               webpQuality: 0.8
-            });
+            })
 
-            await cesdk.utils.downloadFile(blob, 'image/webp');
+            await cesdk.utils.downloadFile(blob, 'image/webp')
             console.log(
               `✓ WebP thumbnail: ${(blob.size / 1024).toFixed(1)} KB`
-            );
+            )
           }
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting thumbnails at specific dimensions, choosing formats, optimizing quality and file size, and generating multiple thumbnail sizes.
@@ -196,7 +197,7 @@ const blob = await engine.block.export(page, {
   targetWidth: 150,
   targetHeight: 150,
   jpegQuality: 0.8
-});
+})
 ```
 
 The block renders large enough to fill the target size while maintaining aspect ratio. If aspect ratios differ, the output extends beyond the target on one axis.
@@ -219,7 +220,7 @@ const blob = await engine.block.export(page, {
   targetWidth: 400,
   targetHeight: 300,
   jpegQuality: 0.85
-});
+})
 ```
 
 ### PNG Thumbnails
@@ -232,7 +233,7 @@ const blob = await engine.block.export(page, {
   targetWidth: 400,
   targetHeight: 300,
   pngCompressionLevel: 6
-});
+})
 ```
 
 ### WebP Thumbnails
@@ -245,7 +246,7 @@ const blob = await engine.block.export(page, {
   targetWidth: 400,
   targetHeight: 300,
   webpQuality: 0.8
-});
+})
 ```
 
 ## Common Thumbnail Sizes

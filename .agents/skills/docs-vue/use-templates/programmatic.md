@@ -23,7 +23,7 @@ Automate template workflows with CE.SDK's engine APIs for batch processing, pers
 Templates are scenes with predefined structures that support dynamic content through variables. This guide shows you how to work with templates programmatically using CE.SDK's engine APIs—without requiring user interface interactions.
 
 ```typescript file=@cesdk_web_examples/guides-use-templates-programmatic-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Use Templates Programmatically
@@ -53,20 +53,20 @@ import packageJson from './package.json';
  * 4. Saving and exporting templates
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -77,137 +77,137 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } });
+    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } })
 
-    const engine = cesdk.engine;
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const engine = cesdk.engine
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Set page background
-    const pageFill = engine.block.getFill(page);
+    const pageFill = engine.block.getFill(page)
     engine.block.setColor(pageFill, 'fill/color/value', {
       r: 0.95,
       g: 0.95,
       b: 0.95,
       a: 1.0
-    });
+    })
 
     // Create a greeting card template from scratch
     // This template will have placeholders for customization
 
     // Set up text variables FIRST so they're available when text is created
-    engine.variable.setString('recipientName', 'Alice');
-    engine.variable.setString('customMessage', 'Wishing you a wonderful day!');
+    engine.variable.setString('recipientName', 'Alice')
+    engine.variable.setString('customMessage', 'Wishing you a wonderful day!')
 
     // Add a title text block with variable placeholder
-    const titleBlock = engine.block.create('text');
-    engine.block.setName(titleBlock, 'title');
-    engine.block.appendChild(page, titleBlock);
-    engine.block.setPositionX(titleBlock, 50);
-    engine.block.setPositionY(titleBlock, 50);
-    engine.block.setWidth(titleBlock, 700);
-    engine.block.setHeight(titleBlock, 80);
+    const titleBlock = engine.block.create('text')
+    engine.block.setName(titleBlock, 'title')
+    engine.block.appendChild(page, titleBlock)
+    engine.block.setPositionX(titleBlock, 50)
+    engine.block.setPositionY(titleBlock, 50)
+    engine.block.setWidth(titleBlock, 700)
+    engine.block.setHeight(titleBlock, 80)
 
     // Set text with variable syntax for dynamic replacement
-    engine.block.replaceText(titleBlock, 'Hello, {{recipientName}}!');
+    engine.block.replaceText(titleBlock, 'Hello, {{recipientName}}!')
     engine.block.setTextColor(titleBlock, {
       r: 0.2,
       g: 0.2,
       b: 0.2,
       a: 1.0
-    });
+    })
 
     // Set font size and weight for better visibility
-    engine.block.setFloat(titleBlock, 'text/fontSize', 48);
+    engine.block.setFloat(titleBlock, 'text/fontSize', 48)
 
     // Add a message text block with variable
-    const messageBlock = engine.block.create('text');
-    engine.block.setName(messageBlock, 'message');
-    engine.block.appendChild(page, messageBlock);
-    engine.block.setPositionX(messageBlock, 50);
-    engine.block.setPositionY(messageBlock, 140);
-    engine.block.setWidth(messageBlock, 700);
-    engine.block.setHeight(messageBlock, 120);
+    const messageBlock = engine.block.create('text')
+    engine.block.setName(messageBlock, 'message')
+    engine.block.appendChild(page, messageBlock)
+    engine.block.setPositionX(messageBlock, 50)
+    engine.block.setPositionY(messageBlock, 140)
+    engine.block.setWidth(messageBlock, 700)
+    engine.block.setHeight(messageBlock, 120)
 
-    engine.block.replaceText(messageBlock, '{{customMessage}}');
+    engine.block.replaceText(messageBlock, '{{customMessage}}')
     engine.block.setTextColor(messageBlock, {
       r: 0.3,
       g: 0.3,
       b: 0.3,
       a: 1.0
-    });
+    })
 
-    engine.block.setFloat(messageBlock, 'text/fontSize', 28);
+    engine.block.setFloat(messageBlock, 'text/fontSize', 28)
 
     // Variables have already been set earlier in the template creation
     // You can retrieve variable values at any time
-    const recipientName = engine.variable.getString('recipientName');
-    console.log('Current recipient:', recipientName);
+    const recipientName = engine.variable.getString('recipientName')
+    console.log('Current recipient:', recipientName)
 
     // List all variables in the scene
-    const allVariables = engine.variable.findAll();
-    console.log('All variables:', allVariables);
+    const allVariables = engine.variable.findAll()
+    console.log('All variables:', allVariables)
 
     // Demonstrate populating the template with different data
     // In a real application, you would iterate through data records
 
     // Example: Update variables to populate template with new data
     setTimeout(() => {
-      engine.variable.setString('recipientName', 'Bob');
+      engine.variable.setString('recipientName', 'Bob')
       engine.variable.setString(
         'customMessage',
         'Congratulations on your achievement!'
-      );
-      console.log('Variables updated to new values');
-    }, 2000);
+      )
+      console.log('Variables updated to new values')
+    }, 2000)
 
     // Demonstrate saving and exporting the template
     setTimeout(async () => {
       // Save the entire scene to a string for later reuse
-      const sceneString = await engine.scene.saveToString();
-      console.log('Template saved, length:', sceneString.length);
+      const sceneString = await engine.scene.saveToString()
+      console.log('Template saved, length:', sceneString.length)
 
       // You can export the current view as an image
       const blob = await engine.block.export(page, 'image/png', {
         targetWidth: 800,
         targetHeight: 600
-      });
-      console.log('Exported as PNG, size:', blob.size, 'bytes');
+      })
+      console.log('Exported as PNG, size:', blob.size, 'bytes')
 
       // Create a download link for the export (demonstration purposes)
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'greeting-card.png';
-      console.log('Export ready for download');
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'greeting-card.png'
+      console.log('Export ready for download')
       // Uncomment to trigger automatic download:
       // link.click();
-    }, 4000);
+    }, 4000)
 
     // Switch to adopter mode to demonstrate placeholder functionality
-    engine.editor.setRole('Adopter');
+    engine.editor.setRole('Adopter')
 
-    console.log('Template created successfully!');
-    console.log('The template includes:');
-    console.log('- Text variables: recipientName, customMessage');
-    console.log('- Automatic variable updates will occur every 2 seconds');
+    console.log('Template created successfully!')
+    console.log('The template includes:')
+    console.log('- Text variables: recipientName, customMessage')
+    console.log('- Automatic variable updates will occur every 2 seconds')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating templates from scratch, configuring text variables, populating templates with data, implementing batch processing workflows, and exporting personalized designs.
@@ -217,50 +217,50 @@ This guide covers creating templates from scratch, configuring text variables, p
 We start by initializing CE.SDK and creating a design scene. This provides the foundation for programmatic template operations.
 
 ```typescript highlight=highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } });
+await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } })
 
-    const engine = cesdk.engine;
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
-    if (!page) {
-      throw new Error('No page found');
-    }
+const engine = cesdk.engine
+const pages = engine.block.findByType('page')
+const page = pages[0]
+if (!page) {
+  throw new Error('No page found')
+}
 
-    // Set page background
-    const pageFill = engine.block.getFill(page);
-    engine.block.setColor(pageFill, 'fill/color/value', {
-      r: 0.95,
-      g: 0.95,
-      b: 0.95,
-      a: 1.0
-    });
+// Set page background
+const pageFill = engine.block.getFill(page)
+engine.block.setColor(pageFill, 'fill/color/value', {
+  r: 0.95,
+  g: 0.95,
+  b: 0.95,
+  a: 1.0
+})
 ```
 
 We create a page with specific dimensions and set a light gray background. This serves as the canvas for our template structure.
@@ -270,52 +270,52 @@ We create a page with specific dimensions and set a light gray background. This 
 We build templates programmatically by creating and arranging blocks with `engine.block.create()` and `engine.block.appendChild()`.
 
 ```typescript highlight=highlight-create-template
-    // Create a greeting card template from scratch
-    // This template will have placeholders for customization
+// Create a greeting card template from scratch
+// This template will have placeholders for customization
 
-    // Set up text variables FIRST so they're available when text is created
-    engine.variable.setString('recipientName', 'Alice');
-    engine.variable.setString('customMessage', 'Wishing you a wonderful day!');
+// Set up text variables FIRST so they're available when text is created
+engine.variable.setString('recipientName', 'Alice')
+engine.variable.setString('customMessage', 'Wishing you a wonderful day!')
 
-    // Add a title text block with variable placeholder
-    const titleBlock = engine.block.create('text');
-    engine.block.setName(titleBlock, 'title');
-    engine.block.appendChild(page, titleBlock);
-    engine.block.setPositionX(titleBlock, 50);
-    engine.block.setPositionY(titleBlock, 50);
-    engine.block.setWidth(titleBlock, 700);
-    engine.block.setHeight(titleBlock, 80);
+// Add a title text block with variable placeholder
+const titleBlock = engine.block.create('text')
+engine.block.setName(titleBlock, 'title')
+engine.block.appendChild(page, titleBlock)
+engine.block.setPositionX(titleBlock, 50)
+engine.block.setPositionY(titleBlock, 50)
+engine.block.setWidth(titleBlock, 700)
+engine.block.setHeight(titleBlock, 80)
 
-    // Set text with variable syntax for dynamic replacement
-    engine.block.replaceText(titleBlock, 'Hello, {{recipientName}}!');
-    engine.block.setTextColor(titleBlock, {
-      r: 0.2,
-      g: 0.2,
-      b: 0.2,
-      a: 1.0
-    });
+// Set text with variable syntax for dynamic replacement
+engine.block.replaceText(titleBlock, 'Hello, {{recipientName}}!')
+engine.block.setTextColor(titleBlock, {
+  r: 0.2,
+  g: 0.2,
+  b: 0.2,
+  a: 1.0
+})
 
-    // Set font size and weight for better visibility
-    engine.block.setFloat(titleBlock, 'text/fontSize', 48);
+// Set font size and weight for better visibility
+engine.block.setFloat(titleBlock, 'text/fontSize', 48)
 
-    // Add a message text block with variable
-    const messageBlock = engine.block.create('text');
-    engine.block.setName(messageBlock, 'message');
-    engine.block.appendChild(page, messageBlock);
-    engine.block.setPositionX(messageBlock, 50);
-    engine.block.setPositionY(messageBlock, 140);
-    engine.block.setWidth(messageBlock, 700);
-    engine.block.setHeight(messageBlock, 120);
+// Add a message text block with variable
+const messageBlock = engine.block.create('text')
+engine.block.setName(messageBlock, 'message')
+engine.block.appendChild(page, messageBlock)
+engine.block.setPositionX(messageBlock, 50)
+engine.block.setPositionY(messageBlock, 140)
+engine.block.setWidth(messageBlock, 700)
+engine.block.setHeight(messageBlock, 120)
 
-    engine.block.replaceText(messageBlock, '{{customMessage}}');
-    engine.block.setTextColor(messageBlock, {
-      r: 0.3,
-      g: 0.3,
-      b: 0.3,
-      a: 1.0
-    });
+engine.block.replaceText(messageBlock, '{{customMessage}}')
+engine.block.setTextColor(messageBlock, {
+  r: 0.3,
+  g: 0.3,
+  b: 0.3,
+  a: 1.0
+})
 
-    engine.block.setFloat(messageBlock, 'text/fontSize', 28);
+engine.block.setFloat(messageBlock, 'text/fontSize', 28)
 ```
 
 We create a greeting card template with two text blocks. The title block contains `{{recipientName}}` and the message block contains `{{customMessage}}`—these double-brace syntax markers define where variables will be replaced. We position each block precisely and configure text properties like font size and color.
@@ -325,14 +325,14 @@ We create a greeting card template with two text blocks. The title block contain
 Variables enable text replacement throughout templates. We set variable values with `engine.variable.setString()`, which automatically updates any text containing `{{variableName}}` syntax.
 
 ```typescript highlight=highlight-manage-variables
-    // Variables have already been set earlier in the template creation
-    // You can retrieve variable values at any time
-    const recipientName = engine.variable.getString('recipientName');
-    console.log('Current recipient:', recipientName);
+// Variables have already been set earlier in the template creation
+// You can retrieve variable values at any time
+const recipientName = engine.variable.getString('recipientName')
+console.log('Current recipient:', recipientName)
 
-    // List all variables in the scene
-    const allVariables = engine.variable.findAll();
-    console.log('All variables:', allVariables);
+// List all variables in the scene
+const allVariables = engine.variable.findAll()
+console.log('All variables:', allVariables)
 ```
 
 We initialize variables for `recipientName` and `customMessage`. The `engine.variable.getString()` method retrieves current values, and `engine.variable.findAll()` lists all variables in the scene. Variables persist with the scene and automatically update text content whenever changed.
@@ -342,18 +342,18 @@ We initialize variables for `recipientName` and `customMessage`. The `engine.var
 We populate templates by updating variables with new data. This enables data-driven design generation.
 
 ```typescript highlight=highlight-populate-content
-    // Demonstrate populating the template with different data
-    // In a real application, you would iterate through data records
+// Demonstrate populating the template with different data
+// In a real application, you would iterate through data records
 
-    // Example: Update variables to populate template with new data
-    setTimeout(() => {
-      engine.variable.setString('recipientName', 'Bob');
-      engine.variable.setString(
-        'customMessage',
-        'Congratulations on your achievement!'
-      );
-      console.log('Variables updated to new values');
-    }, 2000);
+// Example: Update variables to populate template with new data
+setTimeout(() => {
+  engine.variable.setString('recipientName', 'Bob')
+  engine.variable.setString(
+    'customMessage',
+    'Congratulations on your achievement!'
+  )
+  console.log('Variables updated to new values')
+}, 2000)
 ```
 
 We update variables to change text content using `engine.variable.setString()`. When variables are updated, all text blocks containing those variable references automatically display the new values. This approach enables efficient template population without manually finding and updating individual blocks.
@@ -363,28 +363,28 @@ We update variables to change text content using `engine.variable.setString()`. 
 Templates can be serialized for storage and reuse. We use `engine.scene.saveToString()` to create portable template files.
 
 ```typescript highlight=highlight-save-export
-    // Demonstrate saving and exporting the template
-    setTimeout(async () => {
-      // Save the entire scene to a string for later reuse
-      const sceneString = await engine.scene.saveToString();
-      console.log('Template saved, length:', sceneString.length);
+// Demonstrate saving and exporting the template
+setTimeout(async () => {
+  // Save the entire scene to a string for later reuse
+  const sceneString = await engine.scene.saveToString()
+  console.log('Template saved, length:', sceneString.length)
 
-      // You can export the current view as an image
-      const blob = await engine.block.export(page, 'image/png', {
-        targetWidth: 800,
-        targetHeight: 600
-      });
-      console.log('Exported as PNG, size:', blob.size, 'bytes');
+  // You can export the current view as an image
+  const blob = await engine.block.export(page, 'image/png', {
+    targetWidth: 800,
+    targetHeight: 600
+  })
+  console.log('Exported as PNG, size:', blob.size, 'bytes')
 
-      // Create a download link for the export (demonstration purposes)
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'greeting-card.png';
-      console.log('Export ready for download');
-      // Uncomment to trigger automatic download:
-      // link.click();
-    }, 4000);
+  // Create a download link for the export (demonstration purposes)
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'greeting-card.png'
+  console.log('Export ready for download')
+  // Uncomment to trigger automatic download:
+  // link.click();
+}, 4000)
 ```
 
 The `saveToString()` method returns a base64-encoded string containing the complete scene, including all blocks, properties, and variable definitions. This string can be stored in databases, file systems, or transmitted over networks.
@@ -396,15 +396,15 @@ For generating final outputs, `engine.block.export()` renders blocks to images. 
 Batch processing combines template creation, data population, and export operations. A common pattern loads a template once, then iterates through data records:
 
 ```typescript
-const templateString = await engine.scene.saveToString();
+const templateString = await engine.scene.saveToString()
 
 for (const record of dataRecords) {
-  await engine.scene.loadFromString(templateString);
-  engine.variable.setString('name', record.name);
-  engine.variable.setString('title', record.title);
+  await engine.scene.loadFromString(templateString)
+  engine.variable.setString('name', record.name)
+  engine.variable.setString('title', record.title)
 
-  const page = engine.block.findByType('page')[0];
-  const blob = await engine.block.export(page, 'image/png');
+  const page = engine.block.findByType('page')[0]
+  const blob = await engine.block.export(page, 'image/png')
   // Process or save the blob
 }
 ```
@@ -418,7 +418,7 @@ Templates can be loaded from various sources. Use `engine.scene.loadFromURL()` t
 ```typescript
 await engine.scene.loadFromURL(
   'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-);
+)
 ```
 
 For templates with embedded assets, `engine.scene.loadFromArchiveURL()` loads the complete package including all resources.
@@ -430,10 +430,10 @@ The `engine.scene.applyTemplateFromString()` and `engine.scene.applyTemplateFrom
 Variables integrate with text blocks automatically. When you set a variable value, CE.SDK updates all text containing that variable immediately:
 
 ```typescript
-engine.variable.setString('userName', 'Alice');
+engine.variable.setString('userName', 'Alice')
 // All text with {{userName}} now displays 'Alice'
 
-engine.variable.setString('userName', 'Bob');
+engine.variable.setString('userName', 'Bob')
 // Same text now displays 'Bob'
 ```
 

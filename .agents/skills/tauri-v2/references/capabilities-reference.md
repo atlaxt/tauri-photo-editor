@@ -35,15 +35,15 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "$schema": "../gen/schemas/desktop-schema.json",
-    "identifier": "capability-name",
-    "description": "What this capability allows",
-    "windows": ["main", "settings"],
-    "webviews": [],
-    "permissions": [
-        "core:default",
-        "plugin-name:permission-name"
-    ]
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "capability-name",
+  "description": "What this capability allows",
+  "windows": ["main", "settings"],
+  "webviews": [],
+  "permissions": [
+    "core:default",
+    "plugin-name:permission-name"
+  ]
 }
 ```
 
@@ -53,11 +53,11 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "core:default",
-        "core:window:default",
-        "core:event:default"
-    ]
+  "permissions": [
+    "core:default",
+    "core:window:default",
+    "core:event:default"
+  ]
 }
 ```
 
@@ -88,30 +88,30 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "fs:default",
-        "fs:allow-read-dir",
-        "fs:allow-read-file",
-        "fs:allow-write-file",
-        "fs:allow-create-dir",
-        "fs:allow-remove-file",
-        "fs:allow-rename"
-    ]
+  "permissions": [
+    "fs:default",
+    "fs:allow-read-dir",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-create-dir",
+    "fs:allow-remove-file",
+    "fs:allow-rename"
+  ]
 }
 ```
 
 **With Scopes:**
 ```json
 {
-    "permissions": [
-        {
-            "identifier": "fs:allow-read-file",
-            "allow": [
-                { "path": "$APPDATA/*" },
-                { "path": "$HOME/Documents/*" }
-            ]
-        }
-    ]
+  "permissions": [
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [
+        { "path": "$APPDATA/*" },
+        { "path": "$HOME/Documents/*" }
+      ]
+    }
+  ]
 }
 ```
 
@@ -119,14 +119,14 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "dialog:default",
-        "dialog:allow-open",
-        "dialog:allow-save",
-        "dialog:allow-message",
-        "dialog:allow-ask",
-        "dialog:allow-confirm"
-    ]
+  "permissions": [
+    "dialog:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-message",
+    "dialog:allow-ask",
+    "dialog:allow-confirm"
+  ]
 }
 ```
 
@@ -134,26 +134,26 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "shell:default",
-        "shell:allow-open",
-        "shell:allow-execute"
-    ]
+  "permissions": [
+    "shell:default",
+    "shell:allow-open",
+    "shell:allow-execute"
+  ]
 }
 ```
 
 **Scoped Execute:**
 ```json
 {
-    "permissions": [
-        {
-            "identifier": "shell:allow-execute",
-            "allow": [
-                { "name": "git", "args": true },
-                { "name": "npm", "args": ["install", "run"] }
-            ]
-        }
-    ]
+  "permissions": [
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        { "name": "git", "args": true },
+        { "name": "npm", "args": ["install", "run"] }
+      ]
+    }
+  ]
 }
 ```
 
@@ -161,24 +161,24 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "http:default"
-    ]
+  "permissions": [
+    "http:default"
+  ]
 }
 ```
 
 **With URL Scopes:**
 ```json
 {
-    "permissions": [
-        {
-            "identifier": "http:default",
-            "allow": [
-                { "url": "https://api.example.com/*" },
-                { "url": "https://*.myapp.com/*" }
-            ]
-        }
-    ]
+  "permissions": [
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://api.example.com/*" },
+        { "url": "https://*.myapp.com/*" }
+      ]
+    }
+  ]
 }
 ```
 
@@ -186,14 +186,14 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "store:default",
-        "store:allow-get",
-        "store:allow-set",
-        "store:allow-delete",
-        "store:allow-keys",
-        "store:allow-clear"
-    ]
+  "permissions": [
+    "store:default",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-delete",
+    "store:allow-keys",
+    "store:allow-clear"
+  ]
 }
 ```
 
@@ -201,11 +201,11 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "clipboard-manager:default",
-        "clipboard-manager:allow-read",
-        "clipboard-manager:allow-write"
-    ]
+  "permissions": [
+    "clipboard-manager:default",
+    "clipboard-manager:allow-read",
+    "clipboard-manager:allow-write"
+  ]
 }
 ```
 
@@ -213,11 +213,11 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "notification:default",
-        "notification:allow-send",
-        "notification:allow-request-permission"
-    ]
+  "permissions": [
+    "notification:default",
+    "notification:allow-send",
+    "notification:allow-request-permission"
+  ]
 }
 ```
 
@@ -225,11 +225,11 @@ Location: `src-tauri/capabilities/`
 
 ```json
 {
-    "permissions": [
-        "global-shortcut:default",
-        "global-shortcut:allow-register",
-        "global-shortcut:allow-unregister"
-    ]
+  "permissions": [
+    "global-shortcut:default",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister"
+  ]
 }
 ```
 
@@ -240,10 +240,10 @@ Permission sets allow grouping multiple permissions into a single reusable ident
 ```json
 {
   "permissions": [
-    "fs:default",          // Permission set: includes common fs operations
-    "fs:allow-read-file",  // Individual permission: specific operation
+    "fs:default", // Permission set: includes common fs operations
+    "fs:allow-read-file", // Individual permission: specific operation
     {
-      "identifier": "fs:allow-read-file",  // Permission with scope
+      "identifier": "fs:allow-read-file", // Permission with scope
       "allow": [{ "path": "$APPDATA/*" }]
     }
   ]
@@ -254,17 +254,17 @@ Permission sets allow grouping multiple permissions into a single reusable ident
 
 ```json
 {
-    "identifier": "desktop-only",
-    "platforms": ["linux", "macos", "windows"],
-    "permissions": ["global-shortcut:default"]
+  "identifier": "desktop-only",
+  "platforms": ["linux", "macos", "windows"],
+  "permissions": ["global-shortcut:default"]
 }
 ```
 
 ```json
 {
-    "identifier": "mobile-only",
-    "platforms": ["iOS", "android"],
-    "permissions": ["biometric:default", "haptics:default"]
+  "identifier": "mobile-only",
+  "platforms": ["iOS", "android"],
+  "permissions": ["biometric:default", "haptics:default"]
 }
 ```
 
@@ -275,8 +275,8 @@ Capabilities are applied to specific windows and webviews by their labels. A win
 ```json
 {
   "identifier": "main-window-cap",
-  "windows": ["main"],        // Target by window label
-  "webviews": [],             // Or target specific webviews
+  "windows": ["main"], // Target by window label
+  "webviews": [], // Or target specific webviews
   "permissions": ["core:default", "fs:default"]
 }
 ```
@@ -287,11 +287,11 @@ Allow Tauri commands from remote URLs:
 
 ```json
 {
-    "identifier": "remote-access",
-    "remote": {
-        "urls": ["https://*.myapp.com"]
-    },
-    "permissions": ["http:default"]
+  "identifier": "remote-access",
+  "remote": {
+    "urls": ["https://*.myapp.com"]
+  },
+  "permissions": ["http:default"]
 }
 ```
 
@@ -304,7 +304,11 @@ Create custom permissions in `src-tauri/permissions/`:
 [[permission]]
 identifier = "allow-home-documents"
 description = "Allow access to home documents"
-commands.allow = ["read_file", "write_file"]
+
+commands.allow = [
+  "read_file",
+  "write_file"
+]
 
 [[scope.allow]]
 path = "$HOME/Documents/**"
@@ -313,7 +317,7 @@ path = "$HOME/Documents/**"
 Reference in capability:
 ```json
 {
-    "permissions": ["custom:allow-home-documents"]
+  "permissions": ["custom:allow-home-documents"]
 }
 ```
 
@@ -337,9 +341,9 @@ Plugin installed but **NOT** in capabilities = silent permission denied at runti
 
 ```json
 {
-    "identifier": "minimal",
-    "windows": ["main"],
-    "permissions": ["core:default"]
+  "identifier": "minimal",
+  "windows": ["main"],
+  "permissions": ["core:default"]
 }
 ```
 
@@ -347,14 +351,14 @@ Plugin installed but **NOT** in capabilities = silent permission denied at runti
 
 ```json
 {
-    "identifier": "file-manager",
-    "windows": ["main"],
-    "permissions": [
-        "core:default",
-        "fs:default",
-        "dialog:allow-open",
-        "dialog:allow-save"
-    ]
+  "identifier": "file-manager",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "fs:default",
+    "dialog:allow-open",
+    "dialog:allow-save"
+  ]
 }
 ```
 
@@ -362,13 +366,13 @@ Plugin installed but **NOT** in capabilities = silent permission denied at runti
 
 ```json
 {
-    "identifier": "web-app",
-    "windows": ["main"],
-    "permissions": [
-        "core:default",
-        "http:default",
-        "shell:allow-open"
-    ]
+  "identifier": "web-app",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "http:default",
+    "shell:allow-open"
+  ]
 }
 ```
 
@@ -376,19 +380,19 @@ Plugin installed but **NOT** in capabilities = silent permission denied at runti
 
 ```json
 {
-    "identifier": "full-desktop",
-    "windows": ["main"],
-    "permissions": [
-        "core:default",
-        "core:window:default",
-        "core:event:default",
-        "fs:default",
-        "dialog:default",
-        "shell:default",
-        "clipboard-manager:default",
-        "notification:default",
-        "global-shortcut:default",
-        "store:default"
-    ]
+  "identifier": "full-desktop",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:default",
+    "core:event:default",
+    "fs:default",
+    "dialog:default",
+    "shell:default",
+    "clipboard-manager:default",
+    "notification:default",
+    "global-shortcut:default",
+    "store:default"
+  ]
 }
 ```

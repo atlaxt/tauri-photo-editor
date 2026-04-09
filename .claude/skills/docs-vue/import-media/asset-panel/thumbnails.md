@@ -23,7 +23,7 @@ Learn how to configure thumbnail images for assets in CE.SDK's asset library.
 Thumbnails provide visual previews of assets in the asset library, improving the user experience when browsing images, videos, audio files, and other media. We recommend using **512px width for thumbUri** to ensure quality across platforms.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-asset-library-thumbnails-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,31 +40,31 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -74,9 +74,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -90,25 +90,25 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Section 1: Basic Thumbnails =====
     // Add a local asset source with basic thumbnails
-    engine.asset.addLocalSource('custom-images');
+    engine.asset.addLocalSource('custom-images')
 
     // Add an image with 512px width thumbnail (recommended size)
     engine.asset.addAssetToSource('custom-images', {
@@ -119,7 +119,7 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg', // 512px recommended
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     // Additional images for the asset library (not shown in highlight)
     engine.asset.addAssetToSource('custom-images', {
@@ -130,7 +130,7 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_2.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('custom-images', {
       id: 'sample-3',
@@ -140,11 +140,11 @@ class Example implements EditorPlugin {
         thumbUri: 'https://img.ly/static/ubq_samples/sample_3.jpg',
         blockType: '//ly.img.ubq/graphic'
       }
-    });
+    })
 
     // ===== Section 2: Preview URIs for Audio =====
     // Add audio assets with preview URIs for playback in the asset library
-    engine.asset.addLocalSource('custom-audio');
+    engine.asset.addLocalSource('custom-audio')
 
     // Audio with full URIs and preview clips
     engine.asset.addAssetToSource('custom-audio', {
@@ -160,7 +160,7 @@ class Example implements EditorPlugin {
         blockType: '//ly.img.ubq/audio',
         duration: '212.531995'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('custom-audio', {
       id: 'far-from-home',
@@ -175,7 +175,7 @@ class Example implements EditorPlugin {
         blockType: '//ly.img.ubq/audio',
         duration: '98.716009'
       }
-    });
+    })
 
     engine.asset.addAssetToSource('custom-audio', {
       id: 'elsewhere',
@@ -190,7 +190,7 @@ class Example implements EditorPlugin {
         blockType: '//ly.img.ubq/audio',
         duration: '121.2'
       }
-    });
+    })
 
     // ===== Section 3: Custom Asset Source with Thumbnail Mapping =====
     // Create a custom asset source that maps external API responses to CE.SDK format
@@ -227,11 +227,11 @@ class Example implements EditorPlugin {
             }
           ],
           total: 3
-        };
+        }
 
         // Map external API format to CE.SDK AssetResult format
         return {
-          assets: mockApiResponse.results.map((photo) => ({
+          assets: mockApiResponse.results.map(photo => ({
             id: photo.id,
             label: photo.alt_description,
             meta: {
@@ -246,9 +246,9 @@ class Example implements EditorPlugin {
             mockApiResponse.total > (queryData.page + 1) * queryData.perPage
               ? queryData.page + 1
               : undefined
-        };
+        }
       }
-    });
+    })
 
     // ===== Section 4: Display Customization - Background Types =====
     // Configure how thumbnails scale in the asset library
@@ -256,7 +256,7 @@ class Example implements EditorPlugin {
       sourceIds: ['custom-images', 'custom-api-source'],
       gridBackgroundType: 'cover', // Crop to fill card
       previewBackgroundType: 'contain' // Fit entire image in preview
-    });
+    })
 
     // Audio thumbnails with contain to show full waveform
     // Note: Audio assets automatically show a play button overlay for previewing
@@ -265,19 +265,19 @@ class Example implements EditorPlugin {
       gridBackgroundType: 'contain', // Show full waveform
       previewBackgroundType: 'contain',
       cardBorder: true // Add border to make cards more visible
-    });
+    })
 
     // ===== Section 5: Display Customization - Grid Layout =====
     // Configure grid columns and item height
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       gridColumns: 3, // 3 columns in grid view
       gridItemHeight: 'square' // Square aspect ratio for all cards
-    });
+    })
 
     cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
       gridColumns: 2, // 2 columns for audio
       gridItemHeight: 'auto' // Auto height based on content
-    });
+    })
 
     // ===== Section 6: Display Customization - Card Background Preferences =====
     // Configure fallback order for card backgrounds
@@ -287,14 +287,14 @@ class Example implements EditorPlugin {
         { path: 'meta.vectorPath', type: 'svgVectorPath' }, // Try SVG first
         { path: 'meta.thumbUri', type: 'image' } // Fallback to thumbnail
       ]
-    });
+    })
 
     // For images, prioritize thumbnail
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       cardBackgroundPreferences: [
         { path: 'meta.thumbUri', type: 'image' } // Use thumbnail as primary background
       ]
-    });
+    })
 
     // Open the asset library to the audio and image panels to demonstrate thumbnails
     // Audio assets are previewable - hover over them to see a play button
@@ -303,11 +303,11 @@ class Example implements EditorPlugin {
       payload: {
         entries: ['ly.img.audio', 'ly.img.image']
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers configuring basic thumbnails, preview URIs for audio playback, custom thumbnail mapping for external APIs, and UI customization options.
@@ -340,19 +340,19 @@ The `previewUri` is a performance optimization for large audio files. Without it
 Add thumbnails using the `thumbUri` property in asset metadata. We can register assets using `engine.asset.addSource()` for custom sources or `engine.asset.addAssetToSource()` for local sources.
 
 ```typescript highlight-basic-thumbnails
-    // Add a local asset source with basic thumbnails
-    engine.asset.addLocalSource('custom-images');
+// Add a local asset source with basic thumbnails
+engine.asset.addLocalSource('custom-images')
 
-    // Add an image with 512px width thumbnail (recommended size)
-    engine.asset.addAssetToSource('custom-images', {
-      id: 'sample-1',
-      label: { en: 'Landscape Photo' },
-      meta: {
-        uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
-        thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg', // 512px recommended
-        blockType: '//ly.img.ubq/graphic'
-      }
-    });
+// Add an image with 512px width thumbnail (recommended size)
+engine.asset.addAssetToSource('custom-images', {
+  id: 'sample-1',
+  label: { en: 'Landscape Photo' },
+  meta: {
+    uri: 'https://img.ly/static/ubq_samples/sample_1.jpg',
+    thumbUri: 'https://img.ly/static/ubq_samples/sample_1.jpg', // 512px recommended
+    blockType: '//ly.img.ubq/graphic'
+  }
+})
 ```
 
 The `thumbUri` should point to a 512px width image for optimal quality across platforms. The engine displays this thumbnail in the asset library grid and preview panels.
@@ -367,54 +367,54 @@ For audio assets, use `previewUri` to provide lightweight preview clips. The eng
 Without `previewUri`, the engine falls back to `uri`, which can cause slow loading for large audio files. Use shorter preview clips (30 seconds recommended) to improve performance.
 
 ```typescript highlight-audio-preview-uri
-    // Add audio assets with preview URIs for playback in the asset library
-    engine.asset.addLocalSource('custom-audio');
+// Add audio assets with preview URIs for playback in the asset library
+engine.asset.addLocalSource('custom-audio')
 
-    // Audio with full URIs and preview clips
-    engine.asset.addAssetToSource('custom-audio', {
-      id: 'dance-harder',
-      label: { en: 'Dance Harder' },
-      meta: {
-        uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/dance_harder.m4a', // Full audio file
-        thumbUri:
+// Audio with full URIs and preview clips
+engine.asset.addAssetToSource('custom-audio', {
+  id: 'dance-harder',
+  label: { en: 'Dance Harder' },
+  meta: {
+    uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/dance_harder.m4a', // Full audio file
+    thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.audio/thumbnails/dance_harder.jpg', // Waveform visualization (image, UI-only)
-        previewUri:
+    previewUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/dance_harder.m4a', // Preview clip - set as block property on canvas
-        mimeType: 'audio/x-m4a', // Required for audio preview to work
-        blockType: '//ly.img.ubq/audio',
-        duration: '212.531995'
-      }
-    });
+    mimeType: 'audio/x-m4a', // Required for audio preview to work
+    blockType: '//ly.img.ubq/audio',
+    duration: '212.531995'
+  }
+})
 
-    engine.asset.addAssetToSource('custom-audio', {
-      id: 'far-from-home',
-      label: { en: 'Far From Home' },
-      meta: {
-        uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a',
-        thumbUri:
+engine.asset.addAssetToSource('custom-audio', {
+  id: 'far-from-home',
+  label: { en: 'Far From Home' },
+  meta: {
+    uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a',
+    thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.audio/thumbnails/audio-wave.png',
-        previewUri:
+    previewUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a',
-        mimeType: 'audio/x-m4a',
-        blockType: '//ly.img.ubq/audio',
-        duration: '98.716009'
-      }
-    });
+    mimeType: 'audio/x-m4a',
+    blockType: '//ly.img.ubq/audio',
+    duration: '98.716009'
+  }
+})
 
-    engine.asset.addAssetToSource('custom-audio', {
-      id: 'elsewhere',
-      label: { en: 'Elsewhere' },
-      meta: {
-        uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/elsewhere.m4a',
-        thumbUri:
+engine.asset.addAssetToSource('custom-audio', {
+  id: 'elsewhere',
+  label: { en: 'Elsewhere' },
+  meta: {
+    uri: 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/elsewhere.m4a',
+    thumbUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.audio/thumbnails/elsewhere.jpg',
-        previewUri:
+    previewUri:
           'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/elsewhere.m4a',
-        mimeType: 'audio/x-m4a',
-        blockType: '//ly.img.ubq/audio',
-        duration: '121.2'
-      }
-    });
+    mimeType: 'audio/x-m4a',
+    blockType: '//ly.img.ubq/audio',
+    duration: '121.2'
+  }
+})
 ```
 
 The `thumbUri` displays a waveform visualization in the asset library, while `previewUri` provides the audio content for playback preview.
@@ -424,62 +424,62 @@ The `thumbUri` displays a waveform visualization in the asset library, while `pr
 We can map external API responses to CE.SDK format with thumbnails in the `findAssets` method. This example shows how to transform API responses (like Unsplash) that use different thumbnail field names into CE.SDK's `meta.thumbUri` format.
 
 ```typescript highlight-custom-source-thumbnails
-    // Create a custom asset source that maps external API responses to CE.SDK format
-    // This example mimics how Unsplash thumbnails would be mapped
-    engine.asset.addSource({
-      id: 'custom-api-source',
-      async findAssets(queryData) {
-        // Simulate external API response (e.g., from Unsplash)
-        const mockApiResponse = {
-          results: [
-            {
-              id: 'photo-1',
-              urls: {
-                full: 'https://img.ly/static/ubq_samples/sample_4.jpg', // High-res
-                small: 'https://img.ly/static/ubq_samples/sample_4.jpg' // 512px thumbnail
-              },
-              alt_description: 'Mountain landscape'
-            },
-            {
-              id: 'photo-2',
-              urls: {
-                full: 'https://img.ly/static/ubq_samples/sample_5.jpg',
-                small: 'https://img.ly/static/ubq_samples/sample_5.jpg'
-              },
-              alt_description: 'Ocean waves'
-            },
-            {
-              id: 'photo-3',
-              urls: {
-                full: 'https://img.ly/static/ubq_samples/sample_6.jpg',
-                small: 'https://img.ly/static/ubq_samples/sample_6.jpg'
-              },
-              alt_description: 'Forest path'
-            }
-          ],
-          total: 3
-        };
+// Create a custom asset source that maps external API responses to CE.SDK format
+// This example mimics how Unsplash thumbnails would be mapped
+engine.asset.addSource({
+  id: 'custom-api-source',
+  async findAssets(queryData) {
+    // Simulate external API response (e.g., from Unsplash)
+    const mockApiResponse = {
+      results: [
+        {
+          id: 'photo-1',
+          urls: {
+            full: 'https://img.ly/static/ubq_samples/sample_4.jpg', // High-res
+            small: 'https://img.ly/static/ubq_samples/sample_4.jpg' // 512px thumbnail
+          },
+          alt_description: 'Mountain landscape'
+        },
+        {
+          id: 'photo-2',
+          urls: {
+            full: 'https://img.ly/static/ubq_samples/sample_5.jpg',
+            small: 'https://img.ly/static/ubq_samples/sample_5.jpg'
+          },
+          alt_description: 'Ocean waves'
+        },
+        {
+          id: 'photo-3',
+          urls: {
+            full: 'https://img.ly/static/ubq_samples/sample_6.jpg',
+            small: 'https://img.ly/static/ubq_samples/sample_6.jpg'
+          },
+          alt_description: 'Forest path'
+        }
+      ],
+      total: 3
+    }
 
-        // Map external API format to CE.SDK AssetResult format
-        return {
-          assets: mockApiResponse.results.map((photo) => ({
-            id: photo.id,
-            label: photo.alt_description,
-            meta: {
-              uri: photo.urls.full, // High-res image for canvas
-              thumbUri: photo.urls.small, // Thumbnail for asset library (512px recommended)
-              blockType: '//ly.img.ubq/graphic'
-            }
-          })),
-          total: mockApiResponse.total,
-          currentPage: queryData.page,
-          nextPage:
+    // Map external API format to CE.SDK AssetResult format
+    return {
+      assets: mockApiResponse.results.map(photo => ({
+        id: photo.id,
+        label: photo.alt_description,
+        meta: {
+          uri: photo.urls.full, // High-res image for canvas
+          thumbUri: photo.urls.small, // Thumbnail for asset library (512px recommended)
+          blockType: '//ly.img.ubq/graphic'
+        }
+      })),
+      total: mockApiResponse.total,
+      currentPage: queryData.page,
+      nextPage:
             mockApiResponse.total > (queryData.page + 1) * queryData.perPage
               ? queryData.page + 1
               : undefined
-        };
-      }
-    });
+    }
+  }
+})
 ```
 
 The custom source maps `photo.urls.full` to `meta.uri` for the high-resolution canvas image and `photo.urls.small` to `meta.thumbUri` for the 512px asset library thumbnail.
@@ -494,21 +494,21 @@ We can configure how thumbnails scale in the asset library using `gridBackground
 - **contain** — Fits the entire thumbnail within the card, may leave empty space
 
 ```typescript highlight-background-types
-    // Configure how thumbnails scale in the asset library
-    cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
-      sourceIds: ['custom-images', 'custom-api-source'],
-      gridBackgroundType: 'cover', // Crop to fill card
-      previewBackgroundType: 'contain' // Fit entire image in preview
-    });
+// Configure how thumbnails scale in the asset library
+cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
+  sourceIds: ['custom-images', 'custom-api-source'],
+  gridBackgroundType: 'cover', // Crop to fill card
+  previewBackgroundType: 'contain' // Fit entire image in preview
+})
 
-    // Audio thumbnails with contain to show full waveform
-    // Note: Audio assets automatically show a play button overlay for previewing
-    cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
-      sourceIds: ['custom-audio'],
-      gridBackgroundType: 'contain', // Show full waveform
-      previewBackgroundType: 'contain',
-      cardBorder: true // Add border to make cards more visible
-    });
+// Audio thumbnails with contain to show full waveform
+// Note: Audio assets automatically show a play button overlay for previewing
+cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
+  sourceIds: ['custom-audio'],
+  gridBackgroundType: 'contain', // Show full waveform
+  previewBackgroundType: 'contain',
+  cardBorder: true // Add border to make cards more visible
+})
 ```
 
 Use `cover` for thumbnails that should fill cards completely (cropping if needed). Use `contain` to show the complete thumbnail without cropping, which is useful for waveforms or icons.
@@ -518,16 +518,16 @@ Use `cover` for thumbnails that should fill cards completely (cropping if needed
 Configure the number of columns and item aspect ratio in the asset library grid:
 
 ```typescript highlight-grid-layout
-    // Configure grid columns and item height
-    cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
-      gridColumns: 3, // 3 columns in grid view
-      gridItemHeight: 'square' // Square aspect ratio for all cards
-    });
+// Configure grid columns and item height
+cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
+  gridColumns: 3, // 3 columns in grid view
+  gridItemHeight: 'square' // Square aspect ratio for all cards
+})
 
-    cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
-      gridColumns: 2, // 2 columns for audio
-      gridItemHeight: 'auto' // Auto height based on content
-    });
+cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
+  gridColumns: 2, // 2 columns for audio
+  gridItemHeight: 'auto' // Auto height based on content
+})
 ```
 
 The `gridColumns` property controls how many thumbnails appear per row. The `gridItemHeight` can be `square` for uniform sizing or `auto` for dynamic height based on content.
@@ -537,21 +537,21 @@ The `gridColumns` property controls how many thumbnails appear per row. The `gri
 Configure the fallback order for card backgrounds when thumbnails are missing. The engine checks preferences in array order and uses the first available value.
 
 ```typescript highlight-card-background-preferences
-    // Configure fallback order for card backgrounds
-    // Try vector path first, then thumbnail image
-    cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
-      cardBackgroundPreferences: [
-        { path: 'meta.vectorPath', type: 'svgVectorPath' }, // Try SVG first
-        { path: 'meta.thumbUri', type: 'image' } // Fallback to thumbnail
-      ]
-    });
+// Configure fallback order for card backgrounds
+// Try vector path first, then thumbnail image
+cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
+  cardBackgroundPreferences: [
+    { path: 'meta.vectorPath', type: 'svgVectorPath' }, // Try SVG first
+    { path: 'meta.thumbUri', type: 'image' } // Fallback to thumbnail
+  ]
+})
 
-    // For images, prioritize thumbnail
-    cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
-      cardBackgroundPreferences: [
-        { path: 'meta.thumbUri', type: 'image' } // Use thumbnail as primary background
-      ]
-    });
+// For images, prioritize thumbnail
+cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
+  cardBackgroundPreferences: [
+    { path: 'meta.thumbUri', type: 'image' } // Use thumbnail as primary background
+  ]
+})
 ```
 
 The `path` property uses dot notation to access asset properties (e.g., `meta.thumbUri` accesses `asset.meta.thumbUri`). The `type` determines rendering:

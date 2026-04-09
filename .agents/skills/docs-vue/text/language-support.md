@@ -24,7 +24,7 @@ your designs using CE.SDK's comprehensive text rendering capabilities.
 CE.SDK provides built-in support for creating designs that work seamlessly across different languages and writing systems. The engine automatically handles text shaping, bidirectional layout, and script-specific rendering - supporting all Unicode characters, complex script ligatures, and mixed LTR/RTL content without additional configuration.
 
 ```typescript file=@cesdk_web_examples/guides-text-language-support-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext, CreativeEngine } from '@cesdk/cesdk-js';
+import type { CreativeEngine, EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 // Typeface definitions
 const ROBOTO_BOLD = {
@@ -55,7 +55,7 @@ const ROBOTO_BOLD = {
       style: 'normal' as const
     }
   ]
-};
+}
 
 const NOTO_NASKH_ARABIC = {
   name: 'Noto Naskh Arabic',
@@ -67,7 +67,7 @@ const NOTO_NASKH_ARABIC = {
       style: 'normal' as const
     }
   ]
-};
+}
 
 const NOTO_SANS_KR = {
   name: 'Noto Sans KR',
@@ -79,24 +79,24 @@ const NOTO_SANS_KR = {
       style: 'normal' as const
     }
   ]
-};
+}
 
 // Layout configuration
 const LAYOUT = {
   PAGE: { width: 800, height: 1200 },
   TEXT: { x: 50, width: 700, defaultHeight: 140, fontSize: 20 },
   SPACING: { gap: 16, startY: 50 }
-};
+}
 
 // Typeface interface
 interface Typeface {
-  name: string;
+  name: string
   fonts: Array<{
-    uri: string;
-    subFamily: string;
-    weight: 'normal' | 'bold';
-    style: 'normal' | 'italic';
-  }>;
+    uri: string
+    subFamily: string
+    weight: 'normal' | 'bold'
+    style: 'normal' | 'italic'
+  }>
 }
 
 function createTextBlock(
@@ -108,18 +108,18 @@ function createTextBlock(
   height: number = LAYOUT.TEXT.defaultHeight,
   alignment: 'Left' | 'Center' | 'Right' = 'Left'
 ): void {
-  const textBlock = engine.block.create('text');
-  engine.block.setString(textBlock, 'text/text', text);
-  engine.block.setPositionX(textBlock, LAYOUT.TEXT.x);
-  engine.block.setPositionY(textBlock, yPosition);
-  engine.block.setWidth(textBlock, LAYOUT.TEXT.width);
-  engine.block.setHeight(textBlock, height);
-  engine.block.setFloat(textBlock, 'text/fontSize', LAYOUT.TEXT.fontSize);
-  engine.block.setTypeface(textBlock, typeface);
+  const textBlock = engine.block.create('text')
+  engine.block.setString(textBlock, 'text/text', text)
+  engine.block.setPositionX(textBlock, LAYOUT.TEXT.x)
+  engine.block.setPositionY(textBlock, yPosition)
+  engine.block.setWidth(textBlock, LAYOUT.TEXT.width)
+  engine.block.setHeight(textBlock, height)
+  engine.block.setFloat(textBlock, 'text/fontSize', LAYOUT.TEXT.fontSize)
+  engine.block.setTypeface(textBlock, typeface)
   if (alignment !== 'Left') {
-    engine.block.setEnum(textBlock, 'text/horizontalAlignment', alignment);
+    engine.block.setEnum(textBlock, 'text/horizontalAlignment', alignment)
   }
-  engine.block.appendChild(page, textBlock);
+  engine.block.appendChild(page, textBlock)
 }
 
 /**
@@ -132,16 +132,16 @@ function createTextBlock(
  * - Text alignment for different writing directions
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
     // Add custom multilingual fonts to asset library
-    cesdk.engine.asset.addLocalSource('multilingual-typefaces');
+    cesdk.engine.asset.addLocalSource('multilingual-typefaces')
 
     cesdk.engine.asset.addAssetToSource('multilingual-typefaces', {
       id: 'noto-naskh-arabic',
@@ -159,7 +159,7 @@ class Example implements EditorPlugin {
           ]
         }
       }
-    });
+    })
 
     cesdk.engine.asset.addAssetToSource('multilingual-typefaces', {
       id: 'noto-sans-kr',
@@ -177,21 +177,21 @@ class Example implements EditorPlugin {
           ]
         }
       }
-    });
+    })
 
     cesdk.ui.updateAssetLibraryEntry('ly.img.typefaces', {
       sourceIds: ['ly.img.typeface', 'multilingual-typefaces']
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a blank scene with a white canvas
-    const scene = engine.scene.create();
-    const page = engine.block.create('page');
-    engine.block.setWidth(page, LAYOUT.PAGE.width);
-    engine.block.setHeight(page, LAYOUT.PAGE.height);
-    engine.block.appendChild(scene, page);
-    engine.scene.zoomToBlock(page);
+    const scene = engine.scene.create()
+    const page = engine.block.create('page')
+    engine.block.setWidth(page, LAYOUT.PAGE.width)
+    engine.block.setHeight(page, LAYOUT.PAGE.height)
+    engine.block.appendChild(scene, page)
+    engine.scene.zoomToBlock(page)
 
     // Create four text elements demonstrating multilingual font support
     const textElements = [
@@ -204,9 +204,9 @@ class Example implements EditorPlugin {
       },
       { text: 'Korean', typeface: ROBOTO_BOLD, height: 140 },
       { text: '이는 한 예입니다.', typeface: NOTO_SANS_KR, height: 140 }
-    ];
+    ]
 
-    let currentY = LAYOUT.SPACING.startY;
+    let currentY = LAYOUT.SPACING.startY
     for (const element of textElements) {
       createTextBlock(
         engine,
@@ -216,13 +216,13 @@ class Example implements EditorPlugin {
         currentY,
         element.height,
         element.alignment
-      );
-      currentY += element.height + LAYOUT.SPACING.gap;
+      )
+      currentY += element.height + LAYOUT.SPACING.gap
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to work with multilingual text using both the built-in text UI and programmatic APIs for font configuration, text direction, and dynamic language content.
@@ -235,12 +235,12 @@ For applications that need to manage multilingual text programmatically, we star
 
 ```typescript highlight-setup
 // Create a blank scene with a white canvas
-const scene = engine.scene.create();
-const page = engine.block.create('page');
-engine.block.setWidth(page, LAYOUT.PAGE.width);
-engine.block.setHeight(page, LAYOUT.PAGE.height);
-engine.block.appendChild(scene, page);
-engine.scene.zoomToBlock(page);
+const scene = engine.scene.create()
+const page = engine.block.create('page')
+engine.block.setWidth(page, LAYOUT.PAGE.width)
+engine.block.setHeight(page, LAYOUT.PAGE.height)
+engine.block.appendChild(scene, page)
+engine.scene.zoomToBlock(page)
 ```
 
 This creates a blank 800×1200px canvas that we'll use for demonstrating multilingual text features.
@@ -261,7 +261,7 @@ const ROBOTO_BOLD = {
       style: 'normal' as const
     }
   ]
-};
+}
 
 const NOTO_NASKH_ARABIC = {
   name: 'Noto Naskh Arabic',
@@ -273,7 +273,7 @@ const NOTO_NASKH_ARABIC = {
       style: 'normal' as const
     }
   ]
-};
+}
 
 const NOTO_SANS_KR = {
   name: 'Noto Sans KR',
@@ -285,7 +285,7 @@ const NOTO_SANS_KR = {
       style: 'normal' as const
     }
   ]
-};
+}
 ```
 
 The example defines three typefaces as named constants:
@@ -320,48 +320,48 @@ function createTextBlock(
   height: number = LAYOUT.TEXT.defaultHeight,
   alignment: 'Left' | 'Center' | 'Right' = 'Left'
 ): void {
-  const textBlock = engine.block.create('text');
-  engine.block.setString(textBlock, 'text/text', text);
-  engine.block.setPositionX(textBlock, LAYOUT.TEXT.x);
-  engine.block.setPositionY(textBlock, yPosition);
-  engine.block.setWidth(textBlock, LAYOUT.TEXT.width);
-  engine.block.setHeight(textBlock, height);
-  engine.block.setFloat(textBlock, 'text/fontSize', LAYOUT.TEXT.fontSize);
-  engine.block.setTypeface(textBlock, typeface);
+  const textBlock = engine.block.create('text')
+  engine.block.setString(textBlock, 'text/text', text)
+  engine.block.setPositionX(textBlock, LAYOUT.TEXT.x)
+  engine.block.setPositionY(textBlock, yPosition)
+  engine.block.setWidth(textBlock, LAYOUT.TEXT.width)
+  engine.block.setHeight(textBlock, height)
+  engine.block.setFloat(textBlock, 'text/fontSize', LAYOUT.TEXT.fontSize)
+  engine.block.setTypeface(textBlock, typeface)
   if (alignment !== 'Left') {
-    engine.block.setEnum(textBlock, 'text/horizontalAlignment', alignment);
+    engine.block.setEnum(textBlock, 'text/horizontalAlignment', alignment)
   }
-  engine.block.appendChild(page, textBlock);
+  engine.block.appendChild(page, textBlock)
 }
 ```
 
 ```typescript highlight-apply-fonts
-    // Create four text elements demonstrating multilingual font support
-    const textElements = [
-      { text: 'RTL Arabic', typeface: ROBOTO_BOLD, height: 140 },
-      {
-        text: 'هذا مثال.',
-        typeface: NOTO_NASKH_ARABIC,
-        height: 160,
-        alignment: 'Right' as const
-      },
-      { text: 'Korean', typeface: ROBOTO_BOLD, height: 140 },
-      { text: '이는 한 예입니다.', typeface: NOTO_SANS_KR, height: 140 }
-    ];
+// Create four text elements demonstrating multilingual font support
+const textElements = [
+  { text: 'RTL Arabic', typeface: ROBOTO_BOLD, height: 140 },
+  {
+    text: 'هذا مثال.',
+    typeface: NOTO_NASKH_ARABIC,
+    height: 160,
+    alignment: 'Right' as const
+  },
+  { text: 'Korean', typeface: ROBOTO_BOLD, height: 140 },
+  { text: '이는 한 예입니다.', typeface: NOTO_SANS_KR, height: 140 }
+]
 
-    let currentY = LAYOUT.SPACING.startY;
-    for (const element of textElements) {
-      createTextBlock(
-        engine,
-        page,
-        element.text,
-        element.typeface,
-        currentY,
-        element.height,
-        element.alignment
-      );
-      currentY += element.height + LAYOUT.SPACING.gap;
-    }
+let currentY = LAYOUT.SPACING.startY
+for (const element of textElements) {
+  createTextBlock(
+    engine,
+    page,
+    element.text,
+    element.typeface,
+    currentY,
+    element.height,
+    element.alignment
+  )
+  currentY += element.height + LAYOUT.SPACING.gap
+}
 ```
 
 This approach provides several benefits:
@@ -379,32 +379,32 @@ The `engine.block.setTypeface()` method applies fonts at the block level. CE.SDK
 CE.SDK automatically detects text direction based on Unicode character properties. When you create a text block with RTL content like Arabic or Hebrew, the engine analyzes the text and applies right-to-left rendering automatically.
 
 ```typescript highlight-apply-fonts
-    // Create four text elements demonstrating multilingual font support
-    const textElements = [
-      { text: 'RTL Arabic', typeface: ROBOTO_BOLD, height: 140 },
-      {
-        text: 'هذا مثال.',
-        typeface: NOTO_NASKH_ARABIC,
-        height: 160,
-        alignment: 'Right' as const
-      },
-      { text: 'Korean', typeface: ROBOTO_BOLD, height: 140 },
-      { text: '이는 한 예입니다.', typeface: NOTO_SANS_KR, height: 140 }
-    ];
+// Create four text elements demonstrating multilingual font support
+const textElements = [
+  { text: 'RTL Arabic', typeface: ROBOTO_BOLD, height: 140 },
+  {
+    text: 'هذا مثال.',
+    typeface: NOTO_NASKH_ARABIC,
+    height: 160,
+    alignment: 'Right' as const
+  },
+  { text: 'Korean', typeface: ROBOTO_BOLD, height: 140 },
+  { text: '이는 한 예입니다.', typeface: NOTO_SANS_KR, height: 140 }
+]
 
-    let currentY = LAYOUT.SPACING.startY;
-    for (const element of textElements) {
-      createTextBlock(
-        engine,
-        page,
-        element.text,
-        element.typeface,
-        currentY,
-        element.height,
-        element.alignment
-      );
-      currentY += element.height + LAYOUT.SPACING.gap;
-    }
+let currentY = LAYOUT.SPACING.startY
+for (const element of textElements) {
+  createTextBlock(
+    engine,
+    page,
+    element.text,
+    element.typeface,
+    currentY,
+    element.height,
+    element.alignment
+  )
+  currentY += element.height + LAYOUT.SPACING.gap
+}
 ```
 
 The engine implements the Unicode Bidirectional Algorithm (UAX #9), which:
@@ -425,7 +425,7 @@ CE.SDK now defaults to 'Auto' alignment, which automatically aligns text based o
 
 ```typescript highlight-text-alignment
 if (alignment !== 'Left') {
-  engine.block.setEnum(textBlock, 'text/horizontalAlignment', alignment);
+  engine.block.setEnum(textBlock, 'text/horizontalAlignment', alignment)
 }
 ```
 
@@ -461,7 +461,7 @@ You can still override alignment when needed:
 To check the effective alignment when 'Auto' is set, use `getTextEffectiveHorizontalAlignment()`:
 
 ```typescript
-const effectiveAlignment = engine.block.getTextEffectiveHorizontalAlignment(textBlock);
+const effectiveAlignment = engine.block.getTextEffectiveHorizontalAlignment(textBlock)
 // Returns 'Left' or 'Right' based on text content, never 'Auto'
 ```
 

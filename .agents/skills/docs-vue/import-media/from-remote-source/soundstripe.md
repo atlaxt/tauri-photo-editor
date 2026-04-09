@@ -25,7 +25,7 @@ designs.
 Soundstripe provides a vast library of high-quality, royalty-free audio tracks through their API. This guide shows you how to integrate Soundstripe's audio search and browsing capabilities directly into CE.SDK using the official `@imgly/plugin-soundstripe-web` plugin. You'll learn how to set up Soundstripe API authentication (including proxy server requirements for production), implement search and discovery features, configure the asset library UI, and handle automatic URI refresh for expired audio links.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-from-remote-source-soundstripe-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -42,11 +42,11 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import SoundstripePlugin from '@imgly/plugin-soundstripe-web';
-import { refreshSoundstripeAudioURIs } from '@imgly/plugin-soundstripe-web';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import SoundstripePlugin, { refreshSoundstripeAudioURIs } from '@imgly/plugin-soundstripe-web'
+import packageJson from './package.json'
+
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Soundstripe Audio Integration
@@ -59,27 +59,27 @@ import packageJson from './package.json';
  * - Manual URI refresh utility
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new VideoEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -89,9 +89,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -105,40 +105,40 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
     // Configure Soundstripe plugin with proxy server
     // The proxy securely handles API authentication without exposing keys in the frontend
     // Set up your own proxy server following:
     // https://docs.soundstripe.com/docs/integrating-soundstripes-content-into-your-application
-    const proxyUrl =
-      import.meta.env.VITE_SOUNDSTRIPE_PROXY_URL ||
-      'https://your-proxy-server.example.com';
+    const proxyUrl
+      = import.meta.env.VITE_SOUNDSTRIPE_PROXY_URL
+        || 'https://your-proxy-server.example.com'
 
     await cesdk.addPlugin(
       SoundstripePlugin({
         baseUrl: proxyUrl
       })
-    );
+    )
 
     // Configure localization for the asset library
     cesdk.i18n.setTranslations({
       en: {
         'libraries.soundstripe.label': 'Soundstripe'
       }
-    });
+    })
 
     // Configure the asset library UI with a dedicated Soundstripe dock entry
     cesdk.ui.addAssetLibraryEntry({
@@ -147,13 +147,13 @@ class Example implements EditorPlugin {
       previewLength: 6,
       gridColumns: 2,
       gridItemHeight: 'auto',
-      cardLabel: (assetResult) => assetResult.label
-    });
+      cardLabel: assetResult => assetResult.label
+    })
 
     // Add Soundstripe to the existing Audio asset library
     cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
       sourceIds: ({ currentIds }) => [...currentIds, 'ly.img.audio.soundstripe']
-    });
+    })
 
     // Add Soundstripe as the first button in the dock with a separator
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -165,15 +165,15 @@ class Example implements EditorPlugin {
       },
       { id: 'ly.img.separator' },
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Example: Manual URI refresh utility
     // This is useful if you need to manually refresh expired URIs
     // The plugin handles automatic refresh during scene loading and playback
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const handleManualRefresh = async () => {
-      await refreshSoundstripeAudioURIs(engine, { baseUrl: proxyUrl });
-    };
+      await refreshSoundstripeAudioURIs(engine, { baseUrl: proxyUrl })
+    }
 
     // You can call this function when needed
     // For example, when loading a scene or before playback
@@ -181,7 +181,7 @@ class Example implements EditorPlugin {
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers installing the Soundstripe plugin, configuring API authentication with direct access or proxy server, adding Soundstripe to the audio asset library, understanding URI expiration and automatic refresh, and manually triggering URI refresh when needed.
@@ -222,19 +222,19 @@ The Soundstripe plugin requires configuration with either a proxy server (recomm
 Configure the plugin with a proxy server base URL to keep your API key secure:
 
 ```typescript highlight-plugin-configuration
-    // Configure Soundstripe plugin with proxy server
-    // The proxy securely handles API authentication without exposing keys in the frontend
-    // Set up your own proxy server following:
-    // https://docs.soundstripe.com/docs/integrating-soundstripes-content-into-your-application
-    const proxyUrl =
-      import.meta.env.VITE_SOUNDSTRIPE_PROXY_URL ||
-      'https://your-proxy-server.example.com';
+// Configure Soundstripe plugin with proxy server
+// The proxy securely handles API authentication without exposing keys in the frontend
+// Set up your own proxy server following:
+// https://docs.soundstripe.com/docs/integrating-soundstripes-content-into-your-application
+const proxyUrl
+  = import.meta.env.VITE_SOUNDSTRIPE_PROXY_URL
+    || 'https://your-proxy-server.example.com'
 
-    await cesdk.addPlugin(
-      SoundstripePlugin({
-        baseUrl: proxyUrl
-      })
-    );
+await cesdk.addPlugin(
+  SoundstripePlugin({
+    baseUrl: proxyUrl
+  })
+)
 ```
 
 The proxy server handles Soundstripe API authentication server-side, preventing exposure of your API key in the frontend code. This is the recommended approach for both development and production environments.
@@ -244,13 +244,13 @@ The proxy server handles Soundstripe API authentication server-side, preventing 
 For local development and testing, you can configure the plugin with a direct API key:
 
 ```typescript
-const apiKey = import.meta.env.VITE_SOUNDSTRIPE_API_KEY;
+const apiKey = import.meta.env.VITE_SOUNDSTRIPE_API_KEY
 
 await cesdk.addPlugin(
   SoundstripePlugin({
     apiKey,
   }),
-);
+)
 ```
 
 This approach should not be used in production as it exposes your API key in the frontend code.
@@ -275,32 +275,32 @@ The source ID for Soundstripe is `ly.img.audio.soundstripe`, which the plugin re
 After adding the plugin, configure how Soundstripe appears in CE.SDK's asset library panel:
 
 ```typescript highlight-add-asset-library-entry
-    // Configure the asset library UI with a dedicated Soundstripe dock entry
-    cesdk.ui.addAssetLibraryEntry({
-      id: 'soundstripe',
-      sourceIds: ['ly.img.audio.soundstripe'],
-      previewLength: 6,
-      gridColumns: 2,
-      gridItemHeight: 'auto',
-      cardLabel: (assetResult) => assetResult.label
-    });
+// Configure the asset library UI with a dedicated Soundstripe dock entry
+cesdk.ui.addAssetLibraryEntry({
+  id: 'soundstripe',
+  sourceIds: ['ly.img.audio.soundstripe'],
+  previewLength: 6,
+  gridColumns: 2,
+  gridItemHeight: 'auto',
+  cardLabel: assetResult => assetResult.label
+})
 
-    // Add Soundstripe to the existing Audio asset library
-    cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
-      sourceIds: ({ currentIds }) => [...currentIds, 'ly.img.audio.soundstripe']
-    });
+// Add Soundstripe to the existing Audio asset library
+cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
+  sourceIds: ({ currentIds }) => [...currentIds, 'ly.img.audio.soundstripe']
+})
 
-    // Add Soundstripe as the first button in the dock with a separator
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
-      {
-        id: 'ly.img.assetLibrary.dock',
-        key: 'soundstripe',
-        label: 'libraries.soundstripe.label',
-        entries: ['soundstripe']
-      },
-      { id: 'ly.img.separator' },
-      ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+// Add Soundstripe as the first button in the dock with a separator
+cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
+  {
+    id: 'ly.img.assetLibrary.dock',
+    key: 'soundstripe',
+    label: 'libraries.soundstripe.label',
+    entries: ['soundstripe']
+  },
+  { id: 'ly.img.separator' },
+  ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
+])
 ```
 
 The `addAssetLibraryEntry()` call registers the Soundstripe asset library panel with display settings:
@@ -344,17 +344,17 @@ The plugin monitors audio blocks in your scene and refreshes expired Soundstripe
 In some cases, you may need to manually trigger a URI refresh. The plugin exports a `refreshSoundstripeAudioURIs()` utility function for this purpose:
 
 ```typescript highlight-uri-refresh-example
-    // Example: Manual URI refresh utility
-    // This is useful if you need to manually refresh expired URIs
-    // The plugin handles automatic refresh during scene loading and playback
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const handleManualRefresh = async () => {
-      await refreshSoundstripeAudioURIs(engine, { baseUrl: proxyUrl });
-    };
+// Example: Manual URI refresh utility
+// This is useful if you need to manually refresh expired URIs
+// The plugin handles automatic refresh during scene loading and playback
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function handleManualRefresh() {
+  await refreshSoundstripeAudioURIs(engine, { baseUrl: proxyUrl })
+}
 
-    // You can call this function when needed
-    // For example, when loading a scene or before playback
-    // handleManualRefresh();
+// You can call this function when needed
+// For example, when loading a scene or before playback
+// handleManualRefresh();
 ```
 
 This function scans all audio blocks in the current scene, identifies Soundstripe audio tracks with expired URIs, and refreshes them using the configured API key or proxy server. You can call this function when loading a scene from storage, before starting video playback, or when users report audio playback issues.
@@ -370,15 +370,15 @@ Here's an example Node.js Express endpoint for creating your own proxy:
 app.use('/api/soundstripe', async (req, res) => {
   const response = await fetch(`https://api.soundstripe.com/v1${req.path}`, {
     headers: {
-      Authorization: `Bearer ${process.env.SOUNDSTRIPE_API_KEY}`,
-      Accept: 'application/vnd.api+json',
+      'Authorization': `Bearer ${process.env.SOUNDSTRIPE_API_KEY}`,
+      'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
     },
-  });
+  })
 
-  const data = await response.json();
-  res.json(data);
-});
+  const data = await response.json()
+  res.json(data)
+})
 ```
 
 The proxy server receives requests from your frontend, adds the authentication header with your API key (stored in environment variables), forwards the request to Soundstripe's API, and returns the response to your frontend. Configure your plugin to use your proxy:
@@ -388,7 +388,7 @@ await cesdk.addPlugin(
   SoundstripePlugin({
     baseUrl: 'https://your-domain.com/api/soundstripe',
   }),
-);
+)
 ```
 
 ## Searching and Browsing Audio
@@ -400,14 +400,14 @@ Once configured, the plugin automatically handles search queries through the ass
 To add Soundstripe audio tracks to the scene programmatically, use `engine.asset.apply()`:
 
 ```typescript
-const sourceId = 'ly.img.audio.soundstripe';
+const sourceId = 'ly.img.audio.soundstripe'
 const assets = await engine.asset.findAssets(sourceId, {
   page: 0,
   perPage: 10,
-});
+})
 
 if (assets.assets.length > 0) {
-  const audioBlock = await engine.asset.apply(sourceId, assets.assets[0]);
+  const audioBlock = await engine.asset.apply(sourceId, assets.assets[0])
   // The audio block is now added to the scene
 }
 ```
@@ -419,19 +419,19 @@ The plugin ensures URIs are fresh before adding audio to the scene.
 When users add Soundstripe songs, the plugin stores the song ID as metadata. You can retrieve these IDs programmatically (e.g., during export). This is useful when you need to pass the song ID through the Soundstripe API to generate a code for YouTube video captions or descriptions before publishing:
 
 ```typescript
-const audioBlocks = cesdk.engine.block.findByType('audio');
+const audioBlocks = cesdk.engine.block.findByType('audio')
 
-audioBlocks.forEach(blockId => {
+audioBlocks.forEach((blockId) => {
   const songId = cesdk.engine.block.getMetadata(
     blockId,
     'ly.img.audio.soundstripe.songId',
-  );
+  )
 
   if (songId) {
-    console.log('Soundstripe Song ID:', songId);
+    console.log('Soundstripe Song ID:', songId)
     // Use this songId with Soundstripe API to generate YouTube attribution codes
   }
-});
+})
 ```
 
 The song ID is stored using the metadata key `'ly.img.audio.soundstripe.songId'` and can be retrieved at any time after the audio has been added to the scene. This allows you to integrate with Soundstripe's attribution API or include required attribution information in your exported content.

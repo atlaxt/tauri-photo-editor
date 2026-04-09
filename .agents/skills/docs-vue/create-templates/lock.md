@@ -25,7 +25,7 @@ Many integrations need two different editing experiences: one for designers who 
 In the live example, the headline text is pre-selected and the Placeholder panel is open, showing the scope settings that control what Adopters can edit. Toggle the role to Adopter and try selecting the logo to see the restrictions in action.
 
 ```typescript file=@cesdk_web_examples/guides-create-templates-lock-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Lock the Template
@@ -53,22 +53,22 @@ import packageJson from './package.json';
  * - Adopter role: Restricted access for users customizing templates
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -79,69 +79,69 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 500, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the page and set dimensions
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Create a brand template with a logo and headline
     const logoBlock = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/imgly_logo.jpg',
       { size: { width: 120, height: 30 } }
-    );
-    engine.block.appendChild(page, logoBlock);
-    engine.block.setPositionX(logoBlock, 40);
-    engine.block.setPositionY(logoBlock, 40);
-    engine.block.setName(logoBlock, 'Logo');
+    )
+    engine.block.appendChild(page, logoBlock)
+    engine.block.setPositionX(logoBlock, 40)
+    engine.block.setPositionY(logoBlock, 40)
+    engine.block.setName(logoBlock, 'Logo')
 
-    const headlineBlock = engine.block.create('text');
-    engine.block.replaceText(headlineBlock, 'Edit this headline');
-    engine.block.setWidth(headlineBlock, 720);
-    engine.block.setHeightMode(headlineBlock, 'Auto');
-    engine.block.setFloat(headlineBlock, 'text/fontSize', 48);
-    engine.block.setEnum(headlineBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.appendChild(page, headlineBlock);
-    engine.block.setPositionX(headlineBlock, 40);
-    engine.block.setPositionY(headlineBlock, 200);
-    engine.block.setName(headlineBlock, 'Headline');
+    const headlineBlock = engine.block.create('text')
+    engine.block.replaceText(headlineBlock, 'Edit this headline')
+    engine.block.setWidth(headlineBlock, 720)
+    engine.block.setHeightMode(headlineBlock, 'Auto')
+    engine.block.setFloat(headlineBlock, 'text/fontSize', 48)
+    engine.block.setEnum(headlineBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.appendChild(page, headlineBlock)
+    engine.block.setPositionX(headlineBlock, 40)
+    engine.block.setPositionY(headlineBlock, 200)
+    engine.block.setName(headlineBlock, 'Headline')
 
     // Configure which elements Adopters can edit
     // Enable selection and text editing on the headline
-    engine.block.setScopeEnabled(headlineBlock, 'editor/select', true);
-    engine.block.setScopeEnabled(headlineBlock, 'text/edit', true);
+    engine.block.setScopeEnabled(headlineBlock, 'editor/select', true)
+    engine.block.setScopeEnabled(headlineBlock, 'text/edit', true)
 
     // Leave all scopes disabled on the logo (default state)
     // This prevents Adopters from selecting or modifying the logo
 
     // The Creator role ignores all scope restrictions
-    engine.editor.setRole('Creator');
+    engine.editor.setRole('Creator')
 
     // Add a role toggle to the navigation bar (engine calls are reactive)
     cesdk.ui.registerComponent(
       'ly.img.roleToggle.navigationBar',
       ({ builder }) => {
-        const role = engine.editor.getRole();
+        const role = engine.editor.getRole()
         builder.ButtonGroup('role-toggle', {
           children: () => {
             builder.Button('creator', {
               label: 'Creator',
               isActive: role === 'Creator',
               onClick: () => engine.editor.setRole('Creator')
-            });
+            })
             builder.Button('adopter', {
               label: 'Adopter',
               isActive: role === 'Adopter',
@@ -149,33 +149,33 @@ class Example implements EditorPlugin {
                 // Close the placeholder panel since Adopters can't configure scopes
                 cesdk.ui.closePanel(
                   '//ly.img.panel/inspector/placeholderSettings'
-                );
-                engine.editor.setRole('Adopter');
+                )
+                engine.editor.setRole('Adopter')
               }
-            });
+            })
           }
-        });
+        })
       }
-    );
+    )
 
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
       'ly.img.undoRedo.navigationBar',
       'ly.img.spacer',
       'ly.img.roleToggle.navigationBar',
       'ly.img.spacer'
-    ]);
+    ])
 
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Select the headline and open the placeholder panel so users see the scope settings
-    engine.block.select(headlineBlock);
+    engine.block.select(headlineBlock)
     setTimeout(() => {
-      cesdk.ui.openPanel('//ly.img.panel/inspector/placeholderSettings');
-    }, 300);
+      cesdk.ui.openPanel('//ly.img.panel/inspector/placeholderSettings')
+    }, 300)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to understand the two-surface pattern, configure roles for different user groups, and set up scope restrictions that control what Adopters can edit.
@@ -197,7 +197,7 @@ The Creator surface is where templates are built. We use `engine.editor.setRole(
 
 ```typescript highlight=highlight-creator-surface
 // The Creator role ignores all scope restrictions
-engine.editor.setRole('Creator');
+engine.editor.setRole('Creator')
 ```
 
 In Creator mode, all operations are permitted regardless of scope settings. This is where designers build the template layout, configure which elements should be editable, set scope restrictions using `engine.block.setScopeEnabled()`, and save the template for distribution.
@@ -222,13 +222,13 @@ For simpler use cases where all users have the same permissions, you may not nee
 The scope system controls what Adopters can modify. In Creator mode, we enable specific scopes on blocks that should be editable.
 
 ```typescript highlight=highlight-configure-scopes
-    // Configure which elements Adopters can edit
-    // Enable selection and text editing on the headline
-    engine.block.setScopeEnabled(headlineBlock, 'editor/select', true);
-    engine.block.setScopeEnabled(headlineBlock, 'text/edit', true);
+// Configure which elements Adopters can edit
+// Enable selection and text editing on the headline
+engine.block.setScopeEnabled(headlineBlock, 'editor/select', true)
+engine.block.setScopeEnabled(headlineBlock, 'text/edit', true)
 
-    // Leave all scopes disabled on the logo (default state)
-    // This prevents Adopters from selecting or modifying the logo
+// Leave all scopes disabled on the logo (default state)
+// This prevents Adopters from selecting or modifying the logo
 ```
 
 When Adopters load this template, they can edit the headline text but nothing else. The `editor/select` scope must be enabled for users to interact with a block at all. For comprehensive scope configuration patterns, see [Lock Content](./rules/lock-content.md).
@@ -250,40 +250,40 @@ Changes made in the Placeholder panel are equivalent to calling `engine.block.se
 Add a segmented control to the navigation bar that switches between Creator and Adopter modes. Engine calls inside the builder are automatically reactive—the component re-renders when the role changes.
 
 ```typescript highlight=highlight-toggle-role
-    // Add a role toggle to the navigation bar (engine calls are reactive)
-    cesdk.ui.registerComponent(
-      'ly.img.roleToggle.navigationBar',
-      ({ builder }) => {
-        const role = engine.editor.getRole();
-        builder.ButtonGroup('role-toggle', {
-          children: () => {
-            builder.Button('creator', {
-              label: 'Creator',
-              isActive: role === 'Creator',
-              onClick: () => engine.editor.setRole('Creator')
-            });
-            builder.Button('adopter', {
-              label: 'Adopter',
-              isActive: role === 'Adopter',
-              onClick: () => {
-                // Close the placeholder panel since Adopters can't configure scopes
-                cesdk.ui.closePanel(
-                  '//ly.img.panel/inspector/placeholderSettings'
-                );
-                engine.editor.setRole('Adopter');
-              }
-            });
+// Add a role toggle to the navigation bar (engine calls are reactive)
+cesdk.ui.registerComponent(
+  'ly.img.roleToggle.navigationBar',
+  ({ builder }) => {
+    const role = engine.editor.getRole()
+    builder.ButtonGroup('role-toggle', {
+      children: () => {
+        builder.Button('creator', {
+          label: 'Creator',
+          isActive: role === 'Creator',
+          onClick: () => engine.editor.setRole('Creator')
+        })
+        builder.Button('adopter', {
+          label: 'Adopter',
+          isActive: role === 'Adopter',
+          onClick: () => {
+            // Close the placeholder panel since Adopters can't configure scopes
+            cesdk.ui.closePanel(
+              '//ly.img.panel/inspector/placeholderSettings'
+            )
+            engine.editor.setRole('Adopter')
           }
-        });
+        })
       }
-    );
+    })
+  }
+)
 
-    cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
-      'ly.img.undoRedo.navigationBar',
-      'ly.img.spacer',
-      'ly.img.roleToggle.navigationBar',
-      'ly.img.spacer'
-    ]);
+cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
+  'ly.img.undoRedo.navigationBar',
+  'ly.img.spacer',
+  'ly.img.roleToggle.navigationBar',
+  'ly.img.spacer'
+])
 ```
 
 ## Troubleshooting

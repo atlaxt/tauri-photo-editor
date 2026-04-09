@@ -27,29 +27,29 @@ The Actions API provides four methods:
 Register actions after initializing CE.SDK:
 
 ```javascript
-import CreativeEditorSDK from '@cesdk/cesdk-js';
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 
 const cesdk = await CreativeEditorSDK.create(container, {
   // license: 'YOUR_CESDK_LICENSE_KEY',
-});
+})
 
 // Register an action
 cesdk.actions.register('actionType', async (...args) => {
   // Your custom implementation
-  return result;
-});
+  return result
+})
 
 // Execute a registered action
-await cesdk.actions.run('actionType', arg1, arg2);
+await cesdk.actions.run('actionType', arg1, arg2)
 
 // Or retrieve an action to call it later
-const action = cesdk.actions.get('actionType');
+const action = cesdk.actions.get('actionType')
 
 // List all registered actions
-const allActions = cesdk.actions.list();
+const allActions = cesdk.actions.list()
 
 // List actions matching a pattern
-const exportActions = cesdk.actions.list({ matcher: 'export*' });
+const exportActions = cesdk.actions.list({ matcher: 'export*' })
 ```
 
 ## Default Actions
@@ -108,7 +108,7 @@ Creates a new scene with configurable mode, layout and page sizes. Returns the s
 
 ```javascript
 // Create a scene
-await cesdk.actions.run('scene.create');
+await cesdk.actions.run('scene.create')
 ```
 
 **Options:**
@@ -131,12 +131,12 @@ Specify width, height, and unit directly:
 ```javascript
 await cesdk.actions.run('scene.create', {
   page: { width: 1080, height: 1920, unit: 'Pixel' }
-});
+})
 
 // With fixed orientation (prevents rotation from swapping dimensions)
 await cesdk.actions.run('scene.create', {
   page: { width: 1080, height: 1920, unit: 'Pixel', fixedOrientation: true }
-});
+})
 ```
 
 **2. Asset source reference**
@@ -150,7 +150,7 @@ await cesdk.actions.run('scene.create', {
     sourceId: 'ly.img.page.presets',
     assetId: 'ly.img.page.presets.instagram.story'
   }
-});
+})
 ```
 
 **3. Asset object**
@@ -160,10 +160,10 @@ Pass an asset object directly, for example one returned by `engine.asset.findAss
 ```javascript
 const result = await cesdk.engine.asset.findAssets('ly.img.page.presets', {
   query: ''
-});
+})
 await cesdk.actions.run('scene.create', {
   page: result.assets[0]
-});
+})
 ```
 
 #### Multiple Pages
@@ -177,13 +177,13 @@ await cesdk.actions.run('scene.create', {
     { width: 1080, height: 1920, unit: 'Pixel' },
     { width: 1920, height: 1080, unit: 'Pixel' }
   ]
-});
+})
 
 // Multiple identical pages using pageCount
 await cesdk.actions.run('scene.create', {
   page: { width: 1080, height: 1080, unit: 'Pixel' },
   pageCount: 3
-});
+})
 ```
 
 > **Tip:** When no `page` or `pages` option is provided, `scene.create` creates a single
@@ -198,14 +198,14 @@ Handles saving the current scene. Default implementation downloads the scene fil
 ```javascript
 // Basic implementation
 cesdk.actions.register('saveScene', async () => {
-  const scene = await cesdk.engine.scene.saveToString();
-  console.log('Scene saved:', scene.length, 'characters');
+  const scene = await cesdk.engine.scene.saveToString()
+  console.log('Scene saved:', scene.length, 'characters')
 
   // Production:
   // await yourAPI.saveScene(scene);
 
-  cesdk.ui.showNotification('Scene saved successfully');
-});
+  cesdk.ui.showNotification('Scene saved successfully')
+})
 
 // With loading dialog
 cesdk.actions.register('saveScene', async () => {
@@ -213,11 +213,11 @@ cesdk.actions.register('saveScene', async () => {
     title: 'Saving Scene',
     message: 'Please wait...',
     progress: 'indeterminate',
-  });
+  })
 
   try {
-    const scene = await cesdk.engine.scene.saveToString();
-    console.log('Scene saved:', scene.length, 'characters');
+    const scene = await cesdk.engine.scene.saveToString()
+    console.log('Scene saved:', scene.length, 'characters')
 
     // Production:
     // await yourAPI.saveScene(scene);
@@ -225,15 +225,16 @@ cesdk.actions.register('saveScene', async () => {
     dialogController.showSuccess({
       title: 'Saved',
       message: 'Scene saved successfully',
-    });
-  } catch (error) {
+    })
+  }
+  catch (error) {
     dialogController.showError({
       title: 'Save Failed',
       message: 'Could not save the scene',
-    });
-    throw error;
+    })
+    throw error
   }
-});
+})
 ```
 
 #### `shareScene`
@@ -243,15 +244,15 @@ Handles scene sharing. No default implementation.
 ```javascript
 // Register share functionality
 cesdk.actions.register('shareScene', async () => {
-  const scene = await cesdk.engine.scene.saveToString();
-  const shareUrl = 'https://example.com/shared-scene-placeholder';
-  console.log('Scene ready to share:', scene.length, 'characters');
+  const scene = await cesdk.engine.scene.saveToString()
+  const shareUrl = 'https://example.com/shared-scene-placeholder'
+  console.log('Scene ready to share:', scene.length, 'characters')
 
   // Production:
   // const shareUrl = await yourAPI.createShareableLink(scene);
 
-  await navigator.share({ url: shareUrl });
-});
+  await navigator.share({ url: shareUrl })
+})
 ```
 
 #### `importScene` and `exportScene`
@@ -262,36 +263,38 @@ Handle scene import/export operations with support for both scene files and arch
 // Import scene or archive
 cesdk.actions.register('importScene', async ({ format }) => {
   if (format === 'archive') {
-    console.log('Archive import requested');
+    console.log('Archive import requested')
 
     // Production:
     // const archive = await yourAPI.loadArchive();
     // await cesdk.engine.scene.loadFromArchiveURL(archive);
-  } else {
-    console.log('Scene import requested');
+  }
+  else {
+    console.log('Scene import requested')
 
     // Production:
     // const scene = await yourAPI.loadScene();
     // await cesdk.engine.scene.loadFromString(scene);
   }
-});
+})
 
 // Export scene or archive
 cesdk.actions.register('exportScene', async ({ format }) => {
   if (format === 'archive') {
-    const archive = await cesdk.engine.scene.saveToArchive();
-    console.log('Archive ready for export:', archive.length, 'bytes');
+    const archive = await cesdk.engine.scene.saveToArchive()
+    console.log('Archive ready for export:', archive.length, 'bytes')
 
     // Production:
     // await yourAPI.uploadArchive(archive);
-  } else {
-    const scene = await cesdk.engine.scene.saveToString();
-    console.log('Scene ready for export:', scene.length, 'characters');
+  }
+  else {
+    const scene = await cesdk.engine.scene.saveToString()
+    console.log('Scene ready for export:', scene.length, 'characters')
 
     // Production:
     // await yourAPI.uploadScene(scene);
   }
-});
+})
 ```
 
 ### Export Operations
@@ -302,31 +305,31 @@ Handles all export operations (images, PDFs, videos). Default implementation dow
 
 ```javascript
 // Basic implementation
-cesdk.actions.register('exportDesign', async options => {
+cesdk.actions.register('exportDesign', async (options) => {
   // Use the utils API to perform the export with loading dialog
-  const { blobs, options: exportOptions } = await cesdk.utils.export(options);
-  console.log('Exported', blobs.length, 'files');
-  blobs.forEach((blob, i) => console.log(`File ${i + 1}:`, blob.size, 'bytes'));
+  const { blobs, options: exportOptions } = await cesdk.utils.export(options)
+  console.log('Exported', blobs.length, 'files')
+  blobs.forEach((blob, i) => console.log(`File ${i + 1}:`, blob.size, 'bytes'))
 
   // Production:
   // await Promise.all(blobs.map(blob => yourCDN.upload(blob)));
 
-  cesdk.ui.showNotification('Export completed successfully');
-});
+  cesdk.ui.showNotification('Export completed successfully')
+})
 
 // Direct engine export with custom loading dialog (bypassing utils)
-cesdk.actions.register('exportDesign', async options => {
+cesdk.actions.register('exportDesign', async (options) => {
   const dialogController = cesdk.utils.showLoadingDialog({
     title: 'Exporting',
     message: 'Processing your export...',
-  });
+  })
 
   try {
-    const page = cesdk.engine.scene.getCurrentPage();
+    const page = cesdk.engine.scene.getCurrentPage()
     if (page === null) {
-      throw new Error('No page selected for export');
+      throw new Error('No page selected for export')
     }
-    let result;
+    let result
 
     if (options?.mimeType?.startsWith('video/')) {
       // Video export with progress
@@ -336,15 +339,16 @@ cesdk.actions.register('exportDesign', async options => {
           dialogController.updateProgress({
             value: rendered,
             max: total,
-          });
+          })
         },
-      });
-    } else {
+      })
+    }
+    else {
       // Static export (image/PDF)
-      result = await cesdk.engine.block.export(page, options);
+      result = await cesdk.engine.block.export(page, options)
     }
 
-    console.log('File ready for export:', result.size, 'bytes');
+    console.log('File ready for export:', result.size, 'bytes')
 
     // Production:
     // await yourCDN.upload(result);
@@ -352,15 +356,16 @@ cesdk.actions.register('exportDesign', async options => {
     dialogController.showSuccess({
       title: 'Export Complete',
       message: 'Files uploaded successfully',
-    });
-  } catch (error) {
+    })
+  }
+  catch (error) {
     dialogController.showError({
       title: 'Export Failed',
       message: 'Could not complete the export',
-    });
-    throw error;
+    })
+    throw error
   }
-});
+})
 ```
 
 ### File Upload Action
@@ -372,10 +377,10 @@ Handles file uploads to asset sources. Default implementation uses local upload 
 ```javascript
 // Register production upload handler
 cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
-  console.log('Uploading file:', file.name, file.size, 'bytes');
-  onProgress(50); // Simulate progress
-  await new Promise(resolve => setTimeout(resolve, 500));
-  onProgress(100);
+  console.log('Uploading file:', file.name, file.size, 'bytes')
+  onProgress(50) // Simulate progress
+  await new Promise(resolve => setTimeout(resolve, 500))
+  onProgress(100)
 
   // Production:
   // const asset = await yourStorageService.upload(file, {
@@ -385,7 +390,7 @@ cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
 
   // Return AssetDefinition
   return {
-    id: 'local-' + Date.now(),
+    id: `local-${Date.now()}`,
     label: { en: file.name },
     meta: {
       uri: URL.createObjectURL(file),
@@ -399,8 +404,8 @@ cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
       // width: asset.width,
       // height: asset.height
     },
-  };
-});
+  }
+})
 ```
 
 You can control which file types users can upload by setting the `upload/supportedMimeTypes` setting:
@@ -410,19 +415,19 @@ You can control which file types users can upload by setting the `upload/support
 cesdk.engine.editor.setSettingString(
   'upload/supportedMimeTypes',
   'image/png,image/jpeg,image/gif,image/svg+xml',
-);
+)
 
 // Example 2: Allow images and videos
 cesdk.engine.editor.setSettingString(
   'upload/supportedMimeTypes',
   'image/png,image/jpeg,image/gif,video/mp4,video/quicktime',
-);
+)
 
 // Example 3: Allow specific document types
 cesdk.engine.editor.setSettingString(
   'upload/supportedMimeTypes',
   'application/pdf,image/png,image/jpeg',
-);
+)
 ```
 
 > **Caution:** The default `uploadFile` implementation uses local upload for development
@@ -438,8 +443,8 @@ Handles unsupported browser detection. No default implementation is provided.
 // Register handler for unsupported browsers
 cesdk.actions.register('onUnsupportedBrowser', () => {
   // Redirect to a custom compatibility page
-  window.location.href = '/browser-not-supported';
-});
+  window.location.href = '/browser-not-supported'
+})
 ```
 
 ### Video Support Actions
@@ -489,19 +494,19 @@ Returns a `Promise<boolean>` - `true` if video encoding is supported, `false` ot
 
 ```javascript
 // Check video encode support before attempting export
-const canExport = await cesdk.actions.run('video.encode.checkSupport');
+const canExport = await cesdk.actions.run('video.encode.checkSupport')
 
 if (!canExport) {
   // A warning dialog is shown automatically
   // User can dismiss and continue editing
   // Consider offering server-side export as alternative
-  console.log('Video export unavailable - consider server-side rendering');
+  console.log('Video export unavailable - consider server-side rendering')
 }
 
 // You can also disable the dialog and handle feedback yourself:
 const canExportSilently = await cesdk.actions.run('video.encode.checkSupport', {
   dialog: false
-});
+})
 ```
 
 **Options:**
@@ -542,14 +547,14 @@ Zooms the viewport to fit a specific block.
 
 ```javascript
 // Zoom to a block with default settings
-await cesdk.actions.run('zoom.toBlock', blockId);
+await cesdk.actions.run('zoom.toBlock', blockId)
 
 // Zoom with custom padding and animation
 await cesdk.actions.run('zoom.toBlock', blockId, {
   padding: 50, // Uniform padding on all sides
   animate: true,
   autoFit: false
-});
+})
 
 // Different padding for each side
 await cesdk.actions.run('zoom.toBlock', blockId, {
@@ -558,7 +563,7 @@ await cesdk.actions.run('zoom.toBlock', blockId, {
     duration: 0.3,
     easing: 'EaseInOut'
   }
-});
+})
 ```
 
 #### `zoom.toPage`
@@ -570,13 +575,13 @@ Zooms to the current page or a specified page. If no options are provided, defau
 await cesdk.actions.run('zoom.toPage', {
   autoFit: true,
   animate: false
-});
+})
 
 // Zoom with custom padding
 await cesdk.actions.run('zoom.toPage', {
   padding: { x: 40, y: 80 },
   animate: true
-});
+})
 ```
 
 #### `zoom.toSelection`
@@ -588,13 +593,13 @@ Zooms to fit all currently selected blocks in the viewport.
 await cesdk.actions.run('zoom.toSelection', {
   padding: 40,
   animate: true
-});
+})
 
 // Auto-fit to selection
 await cesdk.actions.run('zoom.toSelection', {
   autoFit: true,
   padding: { x: 20, y: 20 }
-});
+})
 ```
 
 #### `zoom.in` and `zoom.out`
@@ -603,13 +608,13 @@ Step-based zoom controls with configurable limits.
 
 ```javascript
 // Zoom in with default settings
-await cesdk.actions.run('zoom.in');
+await cesdk.actions.run('zoom.in')
 
 // Zoom in with custom maximum
 await cesdk.actions.run('zoom.in', {
   maxZoom: 4, // Maximum zoom level
   animate: true
-});
+})
 
 // Zoom out with custom minimum
 await cesdk.actions.run('zoom.out', {
@@ -618,7 +623,7 @@ await cesdk.actions.run('zoom.out', {
     duration: 0.2,
     easing: 'EaseOut'
   }
-});
+})
 ```
 
 #### `zoom.toLevel`
@@ -627,14 +632,14 @@ Sets the zoom to a specific level.
 
 ```javascript
 // Set zoom to 100%
-await cesdk.actions.run('zoom.toLevel', 1.0);
+await cesdk.actions.run('zoom.toLevel', 1.0)
 
 // Set zoom to 200% with animation
 await cesdk.actions.run('zoom.toLevel', 2.0, {
   animate: true,
   minZoom: 0.125,
   maxZoom: 32
-});
+})
 
 // Fit to width (50% zoom)
 await cesdk.actions.run('zoom.toLevel', 0.5, {
@@ -642,7 +647,7 @@ await cesdk.actions.run('zoom.toLevel', 0.5, {
     duration: 0.3,
     easing: 'EaseInOut'
   }
-});
+})
 ```
 
 #### Padding Options
@@ -688,7 +693,7 @@ The `autoFit` option enables automatic zoom adjustment when the viewport resizes
 await cesdk.actions.run('zoom.toPage', {
   autoFit: true,
   padding: { x: 40, y: 80 }
-});
+})
 ```
 
 When auto-fit is enabled, the zoom level will automatically adjust to keep the target properly framed when the viewport size changes.
@@ -701,21 +706,22 @@ You can override the default zoom actions with custom implementations:
 // Custom zoom to page with analytics
 cesdk.actions.register('zoom.toPage', async (options) => {
   // Track zoom event
-  console.log('User zoomed to page');
+  console.log('User zoomed to page')
 
   // Get current page
-  const currentPage = cesdk.engine.scene.getCurrentPage();
-  if (!currentPage) return;
+  const currentPage = cesdk.engine.scene.getCurrentPage()
+  if (!currentPage)
+    return
 
   // Apply custom zoom logic
   await cesdk.engine.scene.zoomToBlock(currentPage, {
     padding: options?.padding ?? { x: 50, y: 100 },
     animate: options?.animate ?? true
-  });
+  })
 
   // Custom post-zoom behavior
-  cesdk.ui.showNotification('Zoomed to page');
-});
+  cesdk.ui.showNotification('Zoomed to page')
+})
 ```
 
 ### Video Timeline Zoom Actions
@@ -728,7 +734,7 @@ Zooms in the video timeline by one step (multiplies current zoom level by 1.25).
 
 ```javascript
 // Zoom in the timeline
-await cesdk.actions.run('timeline.zoom.in');
+await cesdk.actions.run('timeline.zoom.in')
 ```
 
 #### `timeline.zoom.out`
@@ -737,7 +743,7 @@ Zooms out the video timeline by one step (divides current zoom level by 1.25).
 
 ```javascript
 // Zoom out the timeline
-await cesdk.actions.run('timeline.zoom.out');
+await cesdk.actions.run('timeline.zoom.out')
 ```
 
 #### `timeline.zoom.fit`
@@ -746,7 +752,7 @@ Automatically adjusts the timeline zoom to fit all content in the visible area.
 
 ```javascript
 // Fit timeline to show all content
-await cesdk.actions.run('timeline.zoom.fit');
+await cesdk.actions.run('timeline.zoom.fit')
 ```
 
 #### `timeline.zoom.toLevel`
@@ -755,13 +761,13 @@ Sets the timeline zoom to a specific level.
 
 ```javascript
 // Set timeline zoom to 100%
-await cesdk.actions.run('timeline.zoom.toLevel', 1.0);
+await cesdk.actions.run('timeline.zoom.toLevel', 1.0)
 
 // Set timeline zoom to 150%
-await cesdk.actions.run('timeline.zoom.toLevel', 1.5);
+await cesdk.actions.run('timeline.zoom.toLevel', 1.5)
 
 // Set timeline zoom to 50%
-await cesdk.actions.run('timeline.zoom.toLevel', 0.5);
+await cesdk.actions.run('timeline.zoom.toLevel', 0.5)
 ```
 
 #### `timeline.zoom.reset`
@@ -770,7 +776,7 @@ Resets the timeline zoom to the default level (1.0 or 100%).
 
 ```javascript
 // Reset timeline zoom to default
-await cesdk.actions.run('timeline.zoom.reset');
+await cesdk.actions.run('timeline.zoom.reset')
 ```
 
 ### Scroll Actions
@@ -783,18 +789,18 @@ Scrolls the viewport to center on a specific page without changing the zoom leve
 
 ```javascript
 // Scroll to current page without animation
-await cesdk.actions.run('scroll.toPage');
+await cesdk.actions.run('scroll.toPage')
 
 // Scroll to current page with smooth animation
 await cesdk.actions.run('scroll.toPage', {
   animate: true
-});
+})
 
 // Scroll to a specific page
 await cesdk.actions.run('scroll.toPage', {
   pageId: myPageId,
   animate: true
-});
+})
 ```
 
 #### Parameters
@@ -833,20 +839,20 @@ const dialogController = cesdk.utils.showLoadingDialog({
   clickOutsideToClose: false,
   onAbort: () => console.log('User cancelled'),
   onDone: () => console.log('Dialog closed'),
-});
+})
 
 // Update progress
-dialogController.updateProgress({ value: 50, max: 100 });
+dialogController.updateProgress({ value: 50, max: 100 })
 
 // Show success or error
 dialogController.showSuccess({
   title: 'Done!',
   message: 'Operation completed',
-});
-dialogController.showError({ title: 'Error', message: 'Something went wrong' });
+})
+dialogController.showError({ title: 'Error', message: 'Something went wrong' })
 
 // Close dialog
-dialogController.close();
+dialogController.close()
 ```
 
 ### Export Utility
@@ -876,13 +882,13 @@ const { blobs, options } = await cesdk.utils.export({
 const file = await cesdk.utils.loadFile({
   accept: 'image/*',
   returnType: 'File', // 'dataURL', 'text', 'blob', 'arrayBuffer', or 'File'
-});
+})
 
 // Download file to user's device
-await cesdk.utils.downloadFile(blob, 'image/png');
+await cesdk.utils.downloadFile(blob, 'image/png')
 
 // Local upload (development only)
-const asset = await cesdk.utils.localUpload(file, context);
+const asset = await cesdk.utils.localUpload(file, context)
 ```
 
 ### Video Support Detection
@@ -893,19 +899,21 @@ Check browser video capabilities before working with video content:
 // Check if video decoding/playback is supported
 if (cesdk.utils.supportsVideoDecode()) {
   // Safe to load and play video content
-  await cesdk.engine.scene.loadFromURL(videoSceneUrl);
-} else {
+  await cesdk.engine.scene.loadFromURL(videoSceneUrl)
+}
+else {
   // Show fallback UI or message
-  console.log('Video playback not available in this browser');
+  console.log('Video playback not available in this browser')
 }
 
 // Check if video encoding/export is supported (async)
 if (await cesdk.utils.supportsVideoEncode()) {
   // Video export is available
-  const blob = await cesdk.engine.block.exportVideo(page);
-} else {
+  const blob = await cesdk.engine.block.exportVideo(page)
+}
+else {
   // Suggest server-side rendering alternative
-  console.log('Video export not available - consider using CE.SDK Renderer');
+  console.log('Video export not available - consider using CE.SDK Renderer')
 }
 ```
 
@@ -920,10 +928,11 @@ These utilities provide the same checks as the `video.decode.checkSupport` and `
 cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
   if (process.env.NODE_ENV === 'development') {
     // Use utils for local upload
-    return await cesdk.utils.localUpload(file, context);
-  } else {
-    console.log('Production upload for:', file.name);
-    onProgress(100);
+    return await cesdk.utils.localUpload(file, context)
+  }
+  else {
+    console.log('Production upload for:', file.name)
+    onProgress(100)
 
     // Production:
     // const asset = await yourCDNService.upload(file, {
@@ -931,7 +940,7 @@ cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
     // });
 
     return {
-      id: 'prod-' + Date.now(),
+      id: `prod-${Date.now()}`,
       label: { en: file.name },
       meta: {
         uri: URL.createObjectURL(file),
@@ -940,43 +949,44 @@ cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
         // uri: asset.url,
         // thumbUri: asset.thumbnailUrl
       },
-    };
+    }
   }
-});
+})
 ```
 
 ### Combining Utils with Custom Logic
 
 ```javascript
 // Use utils for heavy lifting, add custom business logic
-cesdk.actions.register('exportDesign', async options => {
-  console.log('Export started:', { format: options?.mimeType });
+cesdk.actions.register('exportDesign', async (options) => {
+  console.log('Export started:', { format: options?.mimeType })
 
   // Production:
   // analytics.track('export_started', { format: options?.mimeType });
 
   // Use utils to handle the export with loading dialog
-  const { blobs, options: exportOptions } = await cesdk.utils.export(options);
+  const { blobs, options: exportOptions } = await cesdk.utils.export(options)
 
   // Custom post-processing
   if (exportOptions.mimeType === 'application/pdf') {
-    console.log('PDF ready for watermarking:', blobs[0].size, 'bytes');
+    console.log('PDF ready for watermarking:', blobs[0].size, 'bytes')
 
     // Production:
     // const watermarkedBlob = await addWatermark(blobs[0]);
     // await cesdk.utils.downloadFile(watermarkedBlob, 'application/pdf');
 
-    await cesdk.utils.downloadFile(blobs[0], 'application/pdf');
-  } else {
+    await cesdk.utils.downloadFile(blobs[0], 'application/pdf')
+  }
+  else {
     // Direct download for other formats
-    await cesdk.utils.downloadFile(blobs[0], exportOptions.mimeType);
+    await cesdk.utils.downloadFile(blobs[0], exportOptions.mimeType)
   }
 
-  console.log('Export completed:', { format: exportOptions.mimeType });
+  console.log('Export completed:', { format: exportOptions.mimeType })
 
   // Production:
   // analytics.track('export_completed', { format: exportOptions.mimeType });
-});
+})
 ```
 
 ## Registering Custom Actions with Custom IDs
@@ -985,18 +995,18 @@ Beyond the predefined action types, you can register actions with custom IDs for
 
 ```javascript
 // Register a custom action
-cesdk.actions.register('myCustomAction', async data => {
-  console.log('Custom action triggered with:', data);
-  return { success: true, processedData: data };
-});
+cesdk.actions.register('myCustomAction', async (data) => {
+  console.log('Custom action triggered with:', data)
+  return { success: true, processedData: data }
+})
 
 // Execute the custom action using run
-const result = await cesdk.actions.run('myCustomAction', { someData: 'value' });
+const result = await cesdk.actions.run('myCustomAction', { someData: 'value' })
 
 // Or retrieve it for conditional execution
-const customAction = cesdk.actions.get('myCustomAction');
+const customAction = cesdk.actions.get('myCustomAction')
 if (customAction) {
-  const result = await customAction({ someData: 'value' });
+  const result = await customAction({ someData: 'value' })
 }
 ```
 
@@ -1006,12 +1016,12 @@ Use `list()` to get all registered action IDs or find actions matching a pattern
 
 ```javascript
 // Get all registered action IDs
-const registeredActions = cesdk.actions.list();
-console.log('Available actions:', registeredActions);
+const registeredActions = cesdk.actions.list()
+console.log('Available actions:', registeredActions)
 
 // Find actions matching a pattern
-const exportActions = cesdk.actions.list({ matcher: 'export*' });
-console.log('Export actions:', exportActions);
+const exportActions = cesdk.actions.list({ matcher: 'export*' })
+console.log('Export actions:', exportActions)
 ```
 
 ## Using Actions with Navigation Actions

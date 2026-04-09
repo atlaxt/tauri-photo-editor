@@ -23,7 +23,7 @@ Apply template content to an existing scene while preserving your canvas dimensi
 Unlike loading a scene which replaces everything, applying a template merges template content into your current scene. CE.SDK preserves the current page dimensions and design unit while automatically adjusting template content to fit. This approach is ideal for template switching workflows where users explore different layouts without changing canvas dimensions, or for automation pipelines that standardize output sizes across varying template sources.
 
 ```typescript file=@cesdk_web_examples/guides-use-templates-apply-template-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Apply a Template
@@ -52,20 +52,20 @@ import packageJson from './package.json';
  * 3. Switching between templates
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -76,59 +76,59 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { width: 1080, height: 1920, unit: 'Pixel' } });
+    await cesdk.actions.run('scene.create', { page: { width: 1080, height: 1920, unit: 'Pixel' } })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Set custom page dimensions - these will be preserved when applying templates
 
     // Apply a template from URL - content adjusts to fit current page dimensions
-    const templateUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
+    const templateUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
 
-    await engine.scene.applyTemplateFromURL(templateUrl);
+    await engine.scene.applyTemplateFromURL(templateUrl)
 
     // Auto-fit zoom to page
-    await cesdk.actions.run('zoom.toPage', { autoFit: true });
+    await cesdk.actions.run('zoom.toPage', { autoFit: true })
 
-    console.log('Template applied from URL');
+    console.log('Template applied from URL')
 
     // Verify that page dimensions are preserved after applying template
-    const width = engine.block.getWidth(page);
-    const height = engine.block.getHeight(page);
-    console.log(`Page dimensions preserved: ${width}x${height}`);
+    const width = engine.block.getWidth(page)
+    const height = engine.block.getHeight(page)
+    console.log(`Page dimensions preserved: ${width}x${height}`)
 
     // Demonstrate template switching - apply a different template
     // The page dimensions remain the same while content changes
-    const alternativeTemplateUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_2.scene';
+    const alternativeTemplateUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_2.scene'
 
     // Uncomment to switch templates:
     // await engine.scene.applyTemplateFromURL(alternativeTemplateUrl);
     // console.log('Switched to alternative template');
 
     // Store for potential use
-    console.log('Alternative template URL:', alternativeTemplateUrl);
+    console.log('Alternative template URL:', alternativeTemplateUrl)
 
-    console.log('Apply template example completed');
+    console.log('Apply template example completed')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to apply templates from URLs and strings while preserving page dimensions, and how to implement template switching functionality.
@@ -150,57 +150,57 @@ Use `loadFromString()` or `loadFromURL()` when you need the template's original 
 We first create a scene with specific dimensions. These dimensions will be preserved when we apply the template.
 
 ```typescript highlight=highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { width: 1080, height: 1920, unit: 'Pixel' } });
+await cesdk.actions.run('scene.create', { page: { width: 1080, height: 1920, unit: 'Pixel' } })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
-    if (!page) {
-      throw new Error('No page found');
-    }
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
+if (!page) {
+  throw new Error('No page found')
+}
 
-    // Set custom page dimensions - these will be preserved when applying templates
+// Set custom page dimensions - these will be preserved when applying templates
 ```
 
 To apply a template from a URL, call `engine.scene.applyTemplateFromURL()` with the template URL. The template content adjusts automatically to fit the current page dimensions.
 
 ```typescript highlight=highlight-apply-from-url
-    // Apply a template from URL - content adjusts to fit current page dimensions
-    const templateUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
+// Apply a template from URL - content adjusts to fit current page dimensions
+const templateUrl
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
 
-    await engine.scene.applyTemplateFromURL(templateUrl);
+await engine.scene.applyTemplateFromURL(templateUrl)
 
-    // Auto-fit zoom to page
-    await cesdk.actions.run('zoom.toPage', { autoFit: true });
+// Auto-fit zoom to page
+await cesdk.actions.run('zoom.toPage', { autoFit: true })
 
-    console.log('Template applied from URL');
+console.log('Template applied from URL')
 ```
 
 ## Verify Preserved Dimensions
@@ -209,9 +209,9 @@ After applying the template, the page dimensions remain unchanged. You can verif
 
 ```typescript highlight=highlight-verify-dimensions
 // Verify that page dimensions are preserved after applying template
-const width = engine.block.getWidth(page);
-const height = engine.block.getHeight(page);
-console.log(`Page dimensions preserved: ${width}x${height}`);
+const width = engine.block.getWidth(page)
+const height = engine.block.getHeight(page)
+console.log(`Page dimensions preserved: ${width}x${height}`)
 ```
 
 ## Template Switching
@@ -219,17 +219,17 @@ console.log(`Page dimensions preserved: ${width}x${height}`);
 You can apply multiple templates to the same scene. Each application replaces the content while preserving the page setup. This enables "preview" functionality where users explore different templates without affecting their canvas dimensions.
 
 ```typescript highlight=highlight-template-switching
-    // Demonstrate template switching - apply a different template
-    // The page dimensions remain the same while content changes
-    const alternativeTemplateUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_2.scene';
+// Demonstrate template switching - apply a different template
+// The page dimensions remain the same while content changes
+const alternativeTemplateUrl
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_2.scene'
 
-    // Uncomment to switch templates:
-    // await engine.scene.applyTemplateFromURL(alternativeTemplateUrl);
-    // console.log('Switched to alternative template');
+// Uncomment to switch templates:
+// await engine.scene.applyTemplateFromURL(alternativeTemplateUrl);
+// console.log('Switched to alternative template');
 
-    // Store for potential use
-    console.log('Alternative template URL:', alternativeTemplateUrl);
+// Store for potential use
+console.log('Alternative template URL:', alternativeTemplateUrl)
 ```
 
 ## Apply a Template from String
@@ -238,10 +238,10 @@ For templates stored in databases or received from APIs, use `engine.scene.apply
 
 ```typescript
 // Scene string typically retrieved from storage or API
-const templateString = 'UBQ1ewoiZm9ybWF0Ij...';
+const templateString = 'UBQ1ewoiZm9ybWF0Ij...'
 
 // Apply template content to current scene
-await engine.scene.applyTemplateFromString(templateString);
+await engine.scene.applyTemplateFromString(templateString)
 ```
 
 ## Troubleshooting

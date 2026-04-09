@@ -23,7 +23,7 @@ Generate personalized designs from a single template by merging external data in
 Data merge generates multiple personalized designs from a single template by replacing variable content with external data. Use it for certificates, badges, team cards, or any design requiring consistent layout with varying content.
 
 ```typescript file=@cesdk_web_examples/guides-automation-data-merge-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Data Merge Guide
@@ -54,22 +54,22 @@ import packageJson from './package.json';
  * - Exporting personalized designs
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -80,22 +80,22 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 400, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Sample data to merge into the template
     const sampleData = {
@@ -103,83 +103,83 @@ class Example implements EditorPlugin {
       title: 'Creative Developer',
       email: 'alex.smith@example.com',
       photoUrl: 'https://img.ly/static/ubq_samples/sample_1.jpg'
-    };
+    }
 
     // Create a profile photo block with a semantic name
-    const photoBlock = engine.block.create('graphic');
-    engine.block.setShape(photoBlock, engine.block.createShape('rect'));
-    const photoFill = engine.block.createFill('image');
+    const photoBlock = engine.block.create('graphic')
+    engine.block.setShape(photoBlock, engine.block.createShape('rect'))
+    const photoFill = engine.block.createFill('image')
     engine.block.setString(
       photoFill,
       'fill/image/imageFileURI',
       sampleData.photoUrl
-    );
-    engine.block.setFill(photoBlock, photoFill);
-    engine.block.setWidth(photoBlock, 150);
-    engine.block.setHeight(photoBlock, 150);
-    engine.block.setPositionX(photoBlock, 50);
-    engine.block.setPositionY(photoBlock, 125);
-    engine.block.setName(photoBlock, 'profile-photo');
-    engine.block.appendChild(page, photoBlock);
+    )
+    engine.block.setFill(photoBlock, photoFill)
+    engine.block.setWidth(photoBlock, 150)
+    engine.block.setHeight(photoBlock, 150)
+    engine.block.setPositionX(photoBlock, 50)
+    engine.block.setPositionY(photoBlock, 125)
+    engine.block.setName(photoBlock, 'profile-photo')
+    engine.block.appendChild(page, photoBlock)
 
     // Create a text block with variable placeholders
-    const textBlock = engine.block.create('text');
+    const textBlock = engine.block.create('text')
     const textContent = `{{name}}
 {{title}}
-{{email}}`;
-    engine.block.replaceText(textBlock, textContent);
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
-    engine.block.setFloat(textBlock, 'text/fontSize', 32);
-    engine.block.setPositionX(textBlock, 230);
-    engine.block.setPositionY(textBlock, 140);
-    engine.block.appendChild(page, textBlock);
+{{email}}`
+    engine.block.replaceText(textBlock, textContent)
+    engine.block.setWidthMode(textBlock, 'Auto')
+    engine.block.setHeightMode(textBlock, 'Auto')
+    engine.block.setFloat(textBlock, 'text/fontSize', 32)
+    engine.block.setPositionX(textBlock, 230)
+    engine.block.setPositionY(textBlock, 140)
+    engine.block.appendChild(page, textBlock)
 
     // Set the variable values from data
-    engine.variable.setString('name', sampleData.name);
-    engine.variable.setString('title', sampleData.title);
-    engine.variable.setString('email', sampleData.email);
+    engine.variable.setString('name', sampleData.name)
+    engine.variable.setString('title', sampleData.title)
+    engine.variable.setString('email', sampleData.email)
 
     // Discover all variables in the scene
-    const variables = engine.variable.findAll();
-    console.log('Variables in scene:', variables);
+    const variables = engine.variable.findAll()
+    console.log('Variables in scene:', variables)
 
     // Check if the text block references any variables
-    const hasVariables = engine.block.referencesAnyVariables(textBlock);
-    console.log('Text block has variables:', hasVariables);
+    const hasVariables = engine.block.referencesAnyVariables(textBlock)
+    console.log('Text block has variables:', hasVariables)
 
     // Find blocks by their semantic name
-    const [foundPhotoBlock] = engine.block.findByName('profile-photo');
+    const [foundPhotoBlock] = engine.block.findByName('profile-photo')
     if (foundPhotoBlock) {
-      console.log('Found profile-photo block:', foundPhotoBlock);
+      console.log('Found profile-photo block:', foundPhotoBlock)
 
       // Update the image content
-      const fill = engine.block.getFill(foundPhotoBlock);
+      const fill = engine.block.getFill(foundPhotoBlock)
       engine.block.setString(
         fill,
         'fill/image/imageFileURI',
         'https://img.ly/static/ubq_samples/sample_2.jpg'
-      );
+      )
     }
 
     // Export the personalized design
-    const blob = await engine.block.export(page, { mimeType: 'image/png' });
-    console.log('Exported PNG blob:', blob.size, 'bytes');
+    const blob = await engine.block.export(page, { mimeType: 'image/png' })
+    console.log('Exported PNG blob:', blob.size, 'bytes')
 
     // Create a download link for the exported image
-    const url = URL.createObjectURL(blob);
-    console.log('Download URL created:', url);
+    const url = URL.createObjectURL(blob)
+    console.log('Download URL created:', url)
 
     // Select the text block to show the variable values
-    engine.block.select(textBlock);
+    engine.block.select(textBlock)
 
     console.log(
       'Data merge guide initialized. Try changing variable values in the console.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to prepare templates with variables, set values from data, and export personalized designs.
@@ -189,39 +189,39 @@ This guide covers how to prepare templates with variables, set values from data,
 We start by initializing CE.SDK with a Design scene and setting up the page dimensions for our template.
 
 ```typescript highlight=highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      page: { width: 800, height: 400, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  page: { width: 800, height: 400, unit: 'Pixel' }
+})
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
 ```
 
 ## Prepare Sample Data
@@ -235,7 +235,7 @@ const sampleData = {
   title: 'Creative Developer',
   email: 'alex.smith@example.com',
   photoUrl: 'https://img.ly/static/ubq_samples/sample_1.jpg'
-};
+}
 ```
 
 Each data record contains field names that map to template variables and placeholder blocks.
@@ -246,21 +246,21 @@ We build the template by creating blocks and assigning semantic names. The profi
 
 ```typescript highlight=highlight-create-template
 // Create a profile photo block with a semantic name
-const photoBlock = engine.block.create('graphic');
-engine.block.setShape(photoBlock, engine.block.createShape('rect'));
-const photoFill = engine.block.createFill('image');
+const photoBlock = engine.block.create('graphic')
+engine.block.setShape(photoBlock, engine.block.createShape('rect'))
+const photoFill = engine.block.createFill('image')
 engine.block.setString(
   photoFill,
   'fill/image/imageFileURI',
   sampleData.photoUrl
-);
-engine.block.setFill(photoBlock, photoFill);
-engine.block.setWidth(photoBlock, 150);
-engine.block.setHeight(photoBlock, 150);
-engine.block.setPositionX(photoBlock, 50);
-engine.block.setPositionY(photoBlock, 125);
-engine.block.setName(photoBlock, 'profile-photo');
-engine.block.appendChild(page, photoBlock);
+)
+engine.block.setFill(photoBlock, photoFill)
+engine.block.setWidth(photoBlock, 150)
+engine.block.setHeight(photoBlock, 150)
+engine.block.setPositionX(photoBlock, 50)
+engine.block.setPositionY(photoBlock, 125)
+engine.block.setName(photoBlock, 'profile-photo')
+engine.block.appendChild(page, photoBlock)
 ```
 
 Using semantic names like `profile-photo` makes it easy to locate and modify blocks when processing different data records.
@@ -270,18 +270,18 @@ Using semantic names like `profile-photo` makes it easy to locate and modify blo
 Text variables use double curly brace syntax: `{{variableName}}`. We create a text block with variable placeholders for name, title, and email.
 
 ```typescript highlight=highlight-create-text-with-variables
-    // Create a text block with variable placeholders
-    const textBlock = engine.block.create('text');
-    const textContent = `{{name}}
+// Create a text block with variable placeholders
+const textBlock = engine.block.create('text')
+const textContent = `{{name}}
 {{title}}
-{{email}}`;
-    engine.block.replaceText(textBlock, textContent);
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
-    engine.block.setFloat(textBlock, 'text/fontSize', 32);
-    engine.block.setPositionX(textBlock, 230);
-    engine.block.setPositionY(textBlock, 140);
-    engine.block.appendChild(page, textBlock);
+{{email}}`
+engine.block.replaceText(textBlock, textContent)
+engine.block.setWidthMode(textBlock, 'Auto')
+engine.block.setHeightMode(textBlock, 'Auto')
+engine.block.setFloat(textBlock, 'text/fontSize', 32)
+engine.block.setPositionX(textBlock, 230)
+engine.block.setPositionY(textBlock, 140)
+engine.block.appendChild(page, textBlock)
 ```
 
 Variables in text blocks automatically display their values when set through the Variable API.
@@ -292,9 +292,9 @@ We use `engine.variable.setString()` to define the value for each variable. When
 
 ```typescript highlight=highlight-set-variables
 // Set the variable values from data
-engine.variable.setString('name', sampleData.name);
-engine.variable.setString('title', sampleData.title);
-engine.variable.setString('email', sampleData.email);
+engine.variable.setString('name', sampleData.name)
+engine.variable.setString('title', sampleData.title)
+engine.variable.setString('email', sampleData.email)
 ```
 
 Variable values persist throughout the engine session. Setting a variable to a new value updates all references immediately.
@@ -304,13 +304,13 @@ Variable values persist throughout the engine session. Setting a variable to a n
 Use `engine.variable.findAll()` to discover which variables exist in the scene. Use `engine.block.referencesAnyVariables()` to check if a specific block contains variable references.
 
 ```typescript highlight=highlight-discover-variables
-    // Discover all variables in the scene
-    const variables = engine.variable.findAll();
-    console.log('Variables in scene:', variables);
+// Discover all variables in the scene
+const variables = engine.variable.findAll()
+console.log('Variables in scene:', variables)
 
-    // Check if the text block references any variables
-    const hasVariables = engine.block.referencesAnyVariables(textBlock);
-    console.log('Text block has variables:', hasVariables);
+// Check if the text block references any variables
+const hasVariables = engine.block.referencesAnyVariables(textBlock)
+console.log('Text block has variables:', hasVariables)
 ```
 
 This is useful when loading existing templates to determine which data fields are required.
@@ -320,19 +320,19 @@ This is useful when loading existing templates to determine which data fields ar
 Use `engine.block.findByName()` to locate blocks by their semantic name. Once found, you can update properties like image content by modifying the fill URI.
 
 ```typescript highlight=highlight-find-by-name
-    // Find blocks by their semantic name
-    const [foundPhotoBlock] = engine.block.findByName('profile-photo');
-    if (foundPhotoBlock) {
-      console.log('Found profile-photo block:', foundPhotoBlock);
+// Find blocks by their semantic name
+const [foundPhotoBlock] = engine.block.findByName('profile-photo')
+if (foundPhotoBlock) {
+  console.log('Found profile-photo block:', foundPhotoBlock)
 
-      // Update the image content
-      const fill = engine.block.getFill(foundPhotoBlock);
-      engine.block.setString(
-        fill,
-        'fill/image/imageFileURI',
-        'https://img.ly/static/ubq_samples/sample_2.jpg'
-      );
-    }
+  // Update the image content
+  const fill = engine.block.getFill(foundPhotoBlock)
+  engine.block.setString(
+    fill,
+    'fill/image/imageFileURI',
+    'https://img.ly/static/ubq_samples/sample_2.jpg'
+  )
+}
 ```
 
 This pattern works well for updating profile photos, logos, or other image placeholders in templates.
@@ -342,13 +342,13 @@ This pattern works well for updating profile photos, logos, or other image place
 After merging data into the template, export the personalized design using `engine.block.export()`.
 
 ```typescript highlight=highlight-export
-    // Export the personalized design
-    const blob = await engine.block.export(page, { mimeType: 'image/png' });
-    console.log('Exported PNG blob:', blob.size, 'bytes');
+// Export the personalized design
+const blob = await engine.block.export(page, { mimeType: 'image/png' })
+console.log('Exported PNG blob:', blob.size, 'bytes')
 
-    // Create a download link for the exported image
-    const url = URL.createObjectURL(blob);
-    console.log('Download URL created:', url);
+// Create a download link for the exported image
+const url = URL.createObjectURL(blob)
+console.log('Download URL created:', url)
 ```
 
 You can export to PNG, JPEG, WebP, or PDF formats. For batch processing, collect blobs in an array or write directly to a file system.

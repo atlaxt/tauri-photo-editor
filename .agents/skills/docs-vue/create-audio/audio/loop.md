@@ -24,7 +24,7 @@ and rhythmic elements using CE.SDK's audio looping system.
 Audio looping allows media to play continuously by restarting from the beginning when it reaches the end. When you set a block's duration longer than the audio length and enable looping, CE.SDK automatically repeats the audio to fill the entire duration. This makes looping perfect for background music, ambient soundscapes, and repeating sound effects.
 
 ```typescript file=@cesdk_web_examples/guides-create-audio-audio-loop-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Audio Loop Guide
@@ -56,27 +56,27 @@ import packageJson from './package.json';
  * - Understanding loop and duration interaction
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -86,9 +86,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -102,110 +102,106 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1280, height: 720, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const scene = engine.scene.get()!;
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : scene;
+    const engine = cesdk.engine
+    const scene = engine.scene.get()!
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : scene
 
-    engine.block.setDuration(page, 30); // 30 second timeline
+    engine.block.setDuration(page, 30) // 30 second timeline
 
     // Use sample audio from demo assets
-    const audioUri =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a';
+    const audioUri
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a'
 
     // Create a basic audio block
-    const audioBlock = engine.block.create('audio')!;
-    engine.block.appendChild(page, audioBlock);
+    const audioBlock = engine.block.create('audio')!
+    engine.block.appendChild(page, audioBlock)
 
     // Set the audio source URI
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
+    engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
 
     // Load the audio resource to access metadata like duration
-    await engine.block.forceLoadAVResource(audioBlock);
+    await engine.block.forceLoadAVResource(audioBlock)
 
     // Get the total audio duration
     const audioDuration = engine.block.getDouble(
       audioBlock,
       'audio/totalDuration'
-    );
-    // eslint-disable-next-line no-console
-    console.log('Audio duration:', audioDuration, 'seconds');
+    )
+
+    console.log('Audio duration:', audioDuration, 'seconds')
 
     // Enable looping for this audio block
-    engine.block.setLooping(audioBlock, true);
+    engine.block.setLooping(audioBlock, true)
 
     // Set the block duration longer than the audio length
     // The audio will loop to fill the entire duration
-    engine.block.setDuration(audioBlock, 15);
+    engine.block.setDuration(audioBlock, 15)
 
-    // eslint-disable-next-line no-console
-    console.log('Looping enabled - audio will repeat to fill 15 seconds');
+    console.log('Looping enabled - audio will repeat to fill 15 seconds')
 
     // Check if an audio block is set to loop
-    const isLooping = engine.block.isLooping(audioBlock);
-    // eslint-disable-next-line no-console
-    console.log('Is looping:', isLooping); // true
+    const isLooping = engine.block.isLooping(audioBlock)
+
+    console.log('Is looping:', isLooping) // true
 
     // Create a second audio block to demonstrate non-looping behavior
-    const nonLoopingAudio = engine.block.create('audio')!;
-    engine.block.appendChild(page, nonLoopingAudio);
-    engine.block.setString(nonLoopingAudio, 'audio/fileURI', audioUri);
-    await engine.block.forceLoadAVResource(nonLoopingAudio);
+    const nonLoopingAudio = engine.block.create('audio')!
+    engine.block.appendChild(page, nonLoopingAudio)
+    engine.block.setString(nonLoopingAudio, 'audio/fileURI', audioUri)
+    await engine.block.forceLoadAVResource(nonLoopingAudio)
 
     // Set time offset so it doesn't overlap with first audio
-    engine.block.setTimeOffset(nonLoopingAudio, 16);
+    engine.block.setTimeOffset(nonLoopingAudio, 16)
 
     // Disable looping (or leave it at default false)
-    engine.block.setLooping(nonLoopingAudio, false);
+    engine.block.setLooping(nonLoopingAudio, false)
 
     // Set duration longer than audio length
     // Audio will play once and stop (no looping)
-    engine.block.setDuration(nonLoopingAudio, 12);
+    engine.block.setDuration(nonLoopingAudio, 12)
 
-    // eslint-disable-next-line no-console
-    console.log('Looping disabled - audio plays once and stops');
+    console.log('Looping disabled - audio plays once and stops')
 
     // Create a third audio block demonstrating looping with trim
-    const trimmedLoopAudio = engine.block.create('audio')!;
-    engine.block.appendChild(page, trimmedLoopAudio);
-    engine.block.setString(trimmedLoopAudio, 'audio/fileURI', audioUri);
-    await engine.block.forceLoadAVResource(trimmedLoopAudio);
+    const trimmedLoopAudio = engine.block.create('audio')!
+    engine.block.appendChild(page, trimmedLoopAudio)
+    engine.block.setString(trimmedLoopAudio, 'audio/fileURI', audioUri)
+    await engine.block.forceLoadAVResource(trimmedLoopAudio)
 
     // Trim to a 2-second segment
-    engine.block.setTrimOffset(trimmedLoopAudio, 1.0);
-    engine.block.setTrimLength(trimmedLoopAudio, 2.0);
+    engine.block.setTrimOffset(trimmedLoopAudio, 1.0)
+    engine.block.setTrimLength(trimmedLoopAudio, 2.0)
 
     // Enable looping and set duration longer than trim length
-    engine.block.setLooping(trimmedLoopAudio, true);
-    engine.block.setDuration(trimmedLoopAudio, 8.0);
+    engine.block.setLooping(trimmedLoopAudio, true)
+    engine.block.setDuration(trimmedLoopAudio, 8.0)
 
     // Position in timeline
-    engine.block.setTimeOffset(trimmedLoopAudio, 29);
+    engine.block.setTimeOffset(trimmedLoopAudio, 29)
 
-    // eslint-disable-next-line no-console
-    console.log('Trimmed loop - 2s segment will loop 4 times to fill 8s');
+    console.log('Trimmed loop - 2s segment will loop 4 times to fill 8s')
 
     // Select the first audio block to show it in timeline
-    engine.block.setSelected(audioBlock, true);
+    engine.block.setSelected(audioBlock, true)
 
-    // eslint-disable-next-line no-console
-    console.log('Audio looping guide initialized successfully');
+    console.log('Audio looping guide initialized successfully')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to enable and disable audio looping, control looping behavior with duration settings, and loop trimmed audio segments.
@@ -223,12 +219,12 @@ The loop transitions are seamless—CE.SDK jumps immediately from the end back t
 Audio blocks use file URIs to reference audio sources. We create the block, add it to the page, and set the audio source.
 
 ```typescript highlight-create-audio-block
-    // Create a basic audio block
-    const audioBlock = engine.block.create('audio')!;
-    engine.block.appendChild(page, audioBlock);
+// Create a basic audio block
+const audioBlock = engine.block.create('audio')!
+engine.block.appendChild(page, audioBlock)
 
-    // Set the audio source URI
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
+// Set the audio source URI
+engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
 ```
 
 The `audio/fileURI` property points to the audio file. CE.SDK supports common audio formats including MP3, M4A, WAV, and AAC.
@@ -240,16 +236,16 @@ The `audio/fileURI` property points to the audio file. CE.SDK supports common au
 Before working with audio properties like duration or trim, we load the audio resource to ensure metadata is available.
 
 ```typescript highlight-load-audio-resource
-    // Load the audio resource to access metadata like duration
-    await engine.block.forceLoadAVResource(audioBlock);
+// Load the audio resource to access metadata like duration
+await engine.block.forceLoadAVResource(audioBlock)
 
-    // Get the total audio duration
-    const audioDuration = engine.block.getDouble(
-      audioBlock,
-      'audio/totalDuration'
-    );
-    // eslint-disable-next-line no-console
-    console.log('Audio duration:', audioDuration, 'seconds');
+// Get the total audio duration
+const audioDuration = engine.block.getDouble(
+  audioBlock,
+  'audio/totalDuration'
+)
+
+console.log('Audio duration:', audioDuration, 'seconds')
 ```
 
 Loading the resource provides access to the total audio duration, which helps calculate how many times the audio will loop given a specific block duration.
@@ -259,15 +255,14 @@ Loading the resource provides access to the total audio duration, which helps ca
 We enable looping by calling `setLooping()` with `true`. When combined with a block duration longer than the audio length, the audio repeats to fill the full duration.
 
 ```typescript highlight-enable-looping
-    // Enable looping for this audio block
-    engine.block.setLooping(audioBlock, true);
+// Enable looping for this audio block
+engine.block.setLooping(audioBlock, true)
 
-    // Set the block duration longer than the audio length
-    // The audio will loop to fill the entire duration
-    engine.block.setDuration(audioBlock, 15);
+// Set the block duration longer than the audio length
+// The audio will loop to fill the entire duration
+engine.block.setDuration(audioBlock, 15)
 
-    // eslint-disable-next-line no-console
-    console.log('Looping enabled - audio will repeat to fill 15 seconds');
+console.log('Looping enabled - audio will repeat to fill 15 seconds')
 ```
 
 In this example, if the audio is 5 seconds long and the block duration is 15 seconds, the audio loops three times (5 seconds × 3 = 15 seconds total).
@@ -280,9 +275,9 @@ We can check whether an audio block has looping enabled at any time.
 
 ```typescript highlight-query-looping-state
 // Check if an audio block is set to loop
-const isLooping = engine.block.isLooping(audioBlock);
-// eslint-disable-next-line no-console
-console.log('Is looping:', isLooping); // true
+const isLooping = engine.block.isLooping(audioBlock)
+
+console.log('Is looping:', isLooping) // true
 ```
 
 This is useful when managing complex compositions with multiple audio tracks, allowing us to query and update looping states dynamically.
@@ -292,23 +287,22 @@ This is useful when managing complex compositions with multiple audio tracks, al
 To play audio once without repeating, we set looping to `false`.
 
 ```typescript highlight-non-looping-audio
-    const nonLoopingAudio = engine.block.create('audio')!;
-    engine.block.appendChild(page, nonLoopingAudio);
-    engine.block.setString(nonLoopingAudio, 'audio/fileURI', audioUri);
-    await engine.block.forceLoadAVResource(nonLoopingAudio);
+const nonLoopingAudio = engine.block.create('audio')!
+engine.block.appendChild(page, nonLoopingAudio)
+engine.block.setString(nonLoopingAudio, 'audio/fileURI', audioUri)
+await engine.block.forceLoadAVResource(nonLoopingAudio)
 
-    // Set time offset so it doesn't overlap with first audio
-    engine.block.setTimeOffset(nonLoopingAudio, 16);
+// Set time offset so it doesn't overlap with first audio
+engine.block.setTimeOffset(nonLoopingAudio, 16)
 
-    // Disable looping (or leave it at default false)
-    engine.block.setLooping(nonLoopingAudio, false);
+// Disable looping (or leave it at default false)
+engine.block.setLooping(nonLoopingAudio, false)
 
-    // Set duration longer than audio length
-    // Audio will play once and stop (no looping)
-    engine.block.setDuration(nonLoopingAudio, 12);
+// Set duration longer than audio length
+// Audio will play once and stop (no looping)
+engine.block.setDuration(nonLoopingAudio, 12)
 
-    // eslint-disable-next-line no-console
-    console.log('Looping disabled - audio plays once and stops');
+console.log('Looping disabled - audio plays once and stops')
 ```
 
 With looping disabled and a duration longer than the audio length, the audio plays once and then stops, leaving silence for the remaining duration.
@@ -320,25 +314,24 @@ With looping disabled and a duration longer than the audio length, the audio pla
 We can combine trimming with looping to create short repeating segments from longer audio files.
 
 ```typescript highlight-looping-with-trim
-    // Create a third audio block demonstrating looping with trim
-    const trimmedLoopAudio = engine.block.create('audio')!;
-    engine.block.appendChild(page, trimmedLoopAudio);
-    engine.block.setString(trimmedLoopAudio, 'audio/fileURI', audioUri);
-    await engine.block.forceLoadAVResource(trimmedLoopAudio);
+// Create a third audio block demonstrating looping with trim
+const trimmedLoopAudio = engine.block.create('audio')!
+engine.block.appendChild(page, trimmedLoopAudio)
+engine.block.setString(trimmedLoopAudio, 'audio/fileURI', audioUri)
+await engine.block.forceLoadAVResource(trimmedLoopAudio)
 
-    // Trim to a 2-second segment
-    engine.block.setTrimOffset(trimmedLoopAudio, 1.0);
-    engine.block.setTrimLength(trimmedLoopAudio, 2.0);
+// Trim to a 2-second segment
+engine.block.setTrimOffset(trimmedLoopAudio, 1.0)
+engine.block.setTrimLength(trimmedLoopAudio, 2.0)
 
-    // Enable looping and set duration longer than trim length
-    engine.block.setLooping(trimmedLoopAudio, true);
-    engine.block.setDuration(trimmedLoopAudio, 8.0);
+// Enable looping and set duration longer than trim length
+engine.block.setLooping(trimmedLoopAudio, true)
+engine.block.setDuration(trimmedLoopAudio, 8.0)
 
-    // Position in timeline
-    engine.block.setTimeOffset(trimmedLoopAudio, 29);
+// Position in timeline
+engine.block.setTimeOffset(trimmedLoopAudio, 29)
 
-    // eslint-disable-next-line no-console
-    console.log('Trimmed loop - 2s segment will loop 4 times to fill 8s');
+console.log('Trimmed loop - 2s segment will loop 4 times to fill 8s')
 ```
 
 This trims the audio to a 2-second segment (from 1.0s to 3.0s of the source), then loops that segment four times to fill an 8-second duration. This technique is powerful for creating rhythmic loops or extracting repeatable portions from longer audio files.

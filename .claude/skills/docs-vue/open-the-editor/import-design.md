@@ -23,7 +23,7 @@ Open existing designs from various sources in CE.SDK, including saved scenes, pr
 CE.SDK supports multiple import methods to bring designs into the editor. Load saved **scene files** or self-contained **archives**, create editable scenes from images and videos, or import from professional design tools.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-import-design-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import { calculateGridLayout } from './utils';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,30 +69,30 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Method 1: Load Scene from URL =====
     // URL to a saved CE.SDK scene file
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const sceneUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
+    const sceneUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
 
     // Load the scene from remote URL
     // await engine.scene.loadFromURL(sceneUrl);
@@ -103,7 +103,7 @@ class Example implements EditorPlugin {
     // ===== Method 2: Load Scene from String =====
     // Scene content as a string (from localStorage, database, or saveToString())
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const savedSceneString = '{ /* scene JSON content */ }';
+    const savedSceneString = '{ /* scene JSON content */ }'
 
     // Load the scene from string content
     // await engine.scene.loadFromString(savedSceneString);
@@ -114,7 +114,7 @@ class Example implements EditorPlugin {
     // ===== Method 3: Load from Archive URL =====
     // Archive URL from cloud storage, CDN, or user upload
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const archiveUrl = 'https://example.com/designs/project-bundle.zip';
+    const archiveUrl = 'https://example.com/designs/project-bundle.zip'
 
     // Load the archive using loadFromArchiveURL
     // await engine.scene.loadFromArchiveURL(archiveUrl);
@@ -125,7 +125,7 @@ class Example implements EditorPlugin {
     // ===== Method 4: Create Scene from Image =====
     // Create an editable scene from an existing image
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const imageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Create a scene sized to the image dimensions
     // await engine.scene.createFromImage(imageUrl);
@@ -136,8 +136,8 @@ class Example implements EditorPlugin {
     // ===== Method 5: Create Scene from Video =====
     // Create a video editing scene from an existing video
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const videoUrl =
-      'https://img.ly/static/ubq_samples/videos/pexels-drone-footage-of-a-surfer-by-ben-chewar-5368886_360p.mp4';
+    const videoUrl
+      = 'https://img.ly/static/ubq_samples/videos/pexels-drone-footage-of-a-surfer-by-ben-chewar-5368886_360p.mp4'
 
     // Create a scene from an existing video
     // await engine.scene.createFromVideo(videoUrl);
@@ -155,16 +155,16 @@ class Example implements EditorPlugin {
 
     // Create a visual demonstration showing different import sources
 
-    const demoPage = engine.block.findByType('page')[0];
+    const demoPage = engine.block.findByType('page')[0]
 
     // Set page dimensions for proper grid layout
-    engine.block.setWidth(demoPage, 1920);
-    engine.block.setHeight(demoPage, 1080);
+    engine.block.setWidth(demoPage, 1920)
+    engine.block.setHeight(demoPage, 1080)
 
     const layout = calculateGridLayout(1920, 1080, 4, {
       spacing: 30,
       margin: 60
-    });
+    })
 
     // Create demonstration blocks showing different sources
     const demoImage1 = await engine.block.addImage(
@@ -173,7 +173,7 @@ class Example implements EditorPlugin {
         ...layout.getPosition(0),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
     const demoImage2 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_2.jpg',
@@ -181,7 +181,7 @@ class Example implements EditorPlugin {
         ...layout.getPosition(1),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
     const demoImage3 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_3.jpg',
@@ -189,7 +189,7 @@ class Example implements EditorPlugin {
         ...layout.getPosition(2),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
     const demoImage4 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_4.jpg',
@@ -197,39 +197,39 @@ class Example implements EditorPlugin {
         ...layout.getPosition(3),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
     // Add labels to each demonstration
     const labels = ['From URL', 'From String', 'From Archive', 'From Media'];
 
     [demoImage1, demoImage2, demoImage3, demoImage4].forEach((block, index) => {
-      engine.block.appendChild(demoPage, block);
+      engine.block.appendChild(demoPage, block)
 
       // Add text label below each image
-      const label = engine.block.create('text');
-      const pos = layout.getPosition(index);
-      engine.block.setString(label, 'text/text', labels[index]);
-      engine.block.setWidth(label, layout.blockWidth);
-      engine.block.setPositionX(label, pos.x);
-      engine.block.setPositionY(label, pos.y + layout.blockHeight + 10);
-      engine.block.setFloat(label, 'text/fontSize', 24);
+      const label = engine.block.create('text')
+      const pos = layout.getPosition(index)
+      engine.block.setString(label, 'text/text', labels[index])
+      engine.block.setWidth(label, layout.blockWidth)
+      engine.block.setPositionX(label, pos.x)
+      engine.block.setPositionY(label, pos.y + layout.blockHeight + 10)
+      engine.block.setFloat(label, 'text/fontSize', 24)
       engine.block.setColor(label, 'fill/solid/color', {
         r: 0.2,
         g: 0.2,
         b: 0.2,
         a: 1.0
-      });
-      engine.block.appendChild(demoPage, label);
-    });
+      })
+      engine.block.appendChild(demoPage, label)
+    })
 
     // Zoom to show the full grid
     await engine.scene.zoomToBlock(demoPage, {
       padding: 40
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to load saved CE.SDK scenes and create scenes from media files.
@@ -255,16 +255,16 @@ Load previously saved scenes to resume editing work. CE.SDK provides three metho
 Use `engine.scene.loadFromURL()` to load scenes from a server or cloud storage. This works well for cloud-based editing where users access designs from any device.
 
 ```typescript highlight-load-from-url
-    // URL to a saved CE.SDK scene file
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const sceneUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
+// URL to a saved CE.SDK scene file
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const sceneUrl
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
 
-    // Load the scene from remote URL
-    // await engine.scene.loadFromURL(sceneUrl);
+// Load the scene from remote URL
+// await engine.scene.loadFromURL(sceneUrl);
 
-    // The scene is now loaded and ready for editing
-    // All blocks and properties from the saved scene are restored
+// The scene is now loaded and ready for editing
+// All blocks and properties from the saved scene are restored
 ```
 
 The engine fetches the scene file asynchronously and replaces the current scene with the loaded content. All asset URLs referenced in the scene must remain accessible for the scene to render correctly.
@@ -274,15 +274,15 @@ The engine fetches the scene file asynchronously and replaces the current scene 
 Use `engine.scene.loadFromString()` when you have scene content as a string from local storage, a database, or a previous `engine.scene.saveToString()` call.
 
 ```typescript highlight-load-from-string
-    // Scene content as a string (from localStorage, database, or saveToString())
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const savedSceneString = '{ /* scene JSON content */ }';
+// Scene content as a string (from localStorage, database, or saveToString())
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const savedSceneString = '{ /* scene JSON content */ }'
 
-    // Load the scene from string content
-    // await engine.scene.loadFromString(savedSceneString);
+// Load the scene from string content
+// await engine.scene.loadFromString(savedSceneString);
 
-    // The scene is restored from the string representation
-    // This is useful for offline storage or database persistence
+// The scene is restored from the string representation
+// This is useful for offline storage or database persistence
 ```
 
 This approach works well for offline-first applications or when integrating with custom storage systems that return scene data as strings.
@@ -300,15 +300,15 @@ Create editable scenes directly from images or videos.
 Use `engine.scene.createFromImage()` to create a design based on an existing image. This creates a scene sized to the image dimensions with the image as the primary content.
 
 ```typescript highlight-create-from-image
-    // Create an editable scene from an existing image
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const imageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+// Create an editable scene from an existing image
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const imageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
-    // Create a scene sized to the image dimensions
-    // await engine.scene.createFromImage(imageUrl);
+// Create a scene sized to the image dimensions
+// await engine.scene.createFromImage(imageUrl);
 
-    // The image becomes the base content, ready for editing
-    // You can now add text, shapes, effects, etc.
+// The image becomes the base content, ready for editing
+// You can now add text, shapes, effects, etc.
 ```
 
 The scene is ready for editing. You can add text, shapes, effects, and other design elements on top of the base image.
@@ -318,15 +318,15 @@ The scene is ready for editing. You can add text, shapes, effects, and other des
 Use `engine.scene.createFromVideo()` to create a scene from a video file, automatically setting up dimensions and duration.
 
 ```typescript highlight-create-from-video
-    // Create a video editing scene from an existing video
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const videoUrl =
-      'https://img.ly/static/ubq_samples/videos/pexels-drone-footage-of-a-surfer-by-ben-chewar-5368886_360p.mp4';
+// Create a video editing scene from an existing video
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const videoUrl
+  = 'https://img.ly/static/ubq_samples/videos/pexels-drone-footage-of-a-surfer-by-ben-chewar-5368886_360p.mp4'
 
-    // Create a scene from an existing video
-    // await engine.scene.createFromVideo(videoUrl);
+// Create a scene from an existing video
+// await engine.scene.createFromVideo(videoUrl);
 
-    // The scene is set up with timeline controls for video editing
+// The scene is set up with timeline controls for video editing
 ```
 
 The scene is set up for video editing with time-based properties and video-specific features.
@@ -353,12 +353,13 @@ Always wrap import operations in try-catch blocks to handle failures gracefully:
 
 ```typescript
 try {
-  await engine.scene.loadFromURL(sceneUrl);
-} catch (error) {
+  await engine.scene.loadFromURL(sceneUrl)
+}
+catch (error) {
   // Show user-friendly error message
-  console.error('Failed to load scene:', error);
+  console.error('Failed to load scene:', error)
   // Optionally fall back to a default scene
-  await engine.scene.create();
+  await engine.scene.create()
 }
 ```
 

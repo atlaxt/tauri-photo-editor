@@ -23,7 +23,7 @@ Add synchronized captions to video projects using CE.SDK's caption system, with 
 Captions in CE.SDK follow a hierarchy: **Page → CaptionTrack → Caption blocks**. Each caption has text, timing (time offset and duration), and styling properties. Captions appear and disappear based on their timing, synchronized with video playback.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-add-captions-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Add Captions Guide
@@ -55,27 +55,27 @@ import packageJson from './package.json';
  * - Adding animations to captions
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -85,9 +85,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -101,78 +101,76 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
-    engine.block.setDuration(page, 40);
+    engine.block.setDuration(page, 40)
 
     // Add a video clip as the base content
-    const videoUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4';
+    const videoUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4'
 
-    const track = engine.block.create('track');
-    engine.block.appendChild(page, track);
+    const track = engine.block.create('track')
+    engine.block.appendChild(page, track)
 
     const videoClip = await engine.block.addVideo(videoUrl, 1920, 1080, {
       timeline: { duration: 40, timeOffset: 0 }
-    });
-    engine.block.appendChild(track, videoClip);
-    engine.block.fillParent(track);
+    })
+    engine.block.appendChild(track, videoClip)
+    engine.block.fillParent(track)
 
     // Import captions from SRT file
     // createCaptionsFromURI parses SRT/VTT and creates caption blocks with timing
-    const captionSrtUrl = 'https://img.ly/static/examples/captions.srt';
+    const captionSrtUrl = 'https://img.ly/static/examples/captions.srt'
     const captionBlocks = await engine.block.createCaptionsFromURI(
       captionSrtUrl
-    );
+    )
 
-    // eslint-disable-next-line no-console
-    console.log(`Imported ${captionBlocks.length} captions from SRT file`);
+    console.log(`Imported ${captionBlocks.length} captions from SRT file`)
 
     // Adjust caption timing to start at the beginning of the video
     // The SRT file may have different timing, so we reset to start at 0
-    let currentOffset = 0;
+    let currentOffset = 0
     for (const captionId of captionBlocks) {
-      const duration = engine.block.getDuration(captionId);
-      engine.block.setTimeOffset(captionId, currentOffset);
-      currentOffset += duration;
+      const duration = engine.block.getDuration(captionId)
+      engine.block.setTimeOffset(captionId, currentOffset)
+      currentOffset += duration
     }
 
     // Create a caption track and add captions to it
     // Caption tracks organize captions in the timeline
-    const captionTrack = engine.block.create('//ly.img.ubq/captionTrack');
-    engine.block.appendChild(page, captionTrack);
+    const captionTrack = engine.block.create('//ly.img.ubq/captionTrack')
+    engine.block.appendChild(page, captionTrack)
 
     // Add each caption block to the track
     for (const captionId of captionBlocks) {
-      engine.block.appendChild(captionTrack, captionId);
+      engine.block.appendChild(captionTrack, captionId)
     }
 
-    // eslint-disable-next-line no-console
-    console.log(`Caption track created with ${captionBlocks.length} captions`);
+    console.log(`Caption track created with ${captionBlocks.length} captions`)
 
     // Apply a caption preset for consistent styling
     // Caption presets provide pre-configured styles (fonts, colors, backgrounds)
-    const captionPresetsSourceId = 'ly.img.caption.presets';
-    const comicPresetId = '//ly.img.caption.presets/comic';
+    const captionPresetsSourceId = 'ly.img.caption.presets'
+    const comicPresetId = '//ly.img.caption.presets/comic'
 
     // Fetch the preset asset
     const comicPreset = await engine.asset.fetchAsset(
       captionPresetsSourceId,
       comicPresetId
-    );
+    )
 
     // Apply preset to the first caption (styling syncs across all captions)
     if (comicPreset && captionBlocks.length > 0) {
@@ -180,77 +178,75 @@ class Example implements EditorPlugin {
         captionPresetsSourceId,
         comicPreset,
         captionBlocks[0]
-      );
-      // eslint-disable-next-line no-console
-      console.log('Applied comic preset to captions');
+      )
+
+      console.log('Applied comic preset to captions')
     }
 
     // Position captions at the bottom of the video frame
     // Caption position and size sync across all captions, so we only set it once
     if (captionBlocks.length > 0) {
-      const firstCaption = captionBlocks[0];
+      const firstCaption = captionBlocks[0]
 
       // Use percentage-based positioning for responsive layout
-      engine.block.setPositionXMode(firstCaption, 'Percent');
-      engine.block.setPositionYMode(firstCaption, 'Percent');
-      engine.block.setWidthMode(firstCaption, 'Percent');
-      engine.block.setHeightMode(firstCaption, 'Percent');
+      engine.block.setPositionXMode(firstCaption, 'Percent')
+      engine.block.setPositionYMode(firstCaption, 'Percent')
+      engine.block.setWidthMode(firstCaption, 'Percent')
+      engine.block.setHeightMode(firstCaption, 'Percent')
 
       // Position at bottom center with padding
-      engine.block.setPositionX(firstCaption, 0.05); // 5% from left
-      engine.block.setPositionY(firstCaption, 0.8); // 80% from top (near bottom)
-      engine.block.setWidth(firstCaption, 0.9); // 90% width
-      engine.block.setHeight(firstCaption, 0.15); // 15% height
+      engine.block.setPositionX(firstCaption, 0.05) // 5% from left
+      engine.block.setPositionY(firstCaption, 0.8) // 80% from top (near bottom)
+      engine.block.setWidth(firstCaption, 0.9) // 90% width
+      engine.block.setHeight(firstCaption, 0.15) // 15% height
     }
 
     // Modify a specific caption's text and timing
     if (captionBlocks.length > 0) {
-      const firstCaption = captionBlocks[0];
+      const firstCaption = captionBlocks[0]
 
       // Get current text
-      const currentText = engine.block.getString(firstCaption, 'caption/text');
-      // eslint-disable-next-line no-console
-      console.log('First caption text:', currentText);
+      const currentText = engine.block.getString(firstCaption, 'caption/text')
+
+      console.log('First caption text:', currentText)
 
       // Get timing info
-      const offset = engine.block.getTimeOffset(firstCaption);
-      const duration = engine.block.getDuration(firstCaption);
-      // eslint-disable-next-line no-console
-      console.log(`First caption: offset=${offset}s, duration=${duration}s`);
+      const offset = engine.block.getTimeOffset(firstCaption)
+      const duration = engine.block.getDuration(firstCaption)
+
+      console.log(`First caption: offset=${offset}s, duration=${duration}s`)
     }
 
     // Add fade-in animation to the first caption
     if (captionBlocks.length > 0) {
-      const firstCaption = captionBlocks[0];
+      const firstCaption = captionBlocks[0]
 
       // Create and apply entry animation
-      const fadeIn = engine.block.createAnimation('fade');
-      engine.block.setDuration(fadeIn, 0.3);
-      engine.block.setInAnimation(firstCaption, fadeIn);
+      const fadeIn = engine.block.createAnimation('fade')
+      engine.block.setDuration(fadeIn, 0.3)
+      engine.block.setInAnimation(firstCaption, fadeIn)
 
-      // eslint-disable-next-line no-console
-      console.log('Added fade-in animation to first caption');
+      console.log('Added fade-in animation to first caption')
     }
 
     // Select the first caption to show it in the inspector
     if (captionBlocks.length > 0) {
-      engine.block.select(captionBlocks[0]);
+      engine.block.select(captionBlocks[0])
     }
 
     // Seek to show the first caption at 1 second
-    engine.block.setPlaybackTime(page, 1);
+    engine.block.setPlaybackTime(page, 1)
 
     // Open the caption inspector panel
-    cesdk.ui.openPanel('//ly.img.panel/inspector/caption');
+    cesdk.ui.openPanel('//ly.img.panel/inspector/caption')
 
-    // eslint-disable-next-line no-console
     console.log(
       'Add Captions guide initialized. Captions imported and styled.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to import captions from SRT/VTT files, style them using presets and custom properties, create captions programmatically, and export videos with burned-in captions.
@@ -274,24 +270,23 @@ Each caption has two timing properties: **time offset** (when the caption appear
 The fastest way to add captions is importing from an SRT or VTT subtitle file. CE.SDK parses the file and creates caption blocks with timing already configured.
 
 ```typescript highlight-import-captions
-    // Import captions from SRT file
-    // createCaptionsFromURI parses SRT/VTT and creates caption blocks with timing
-    const captionSrtUrl = 'https://img.ly/static/examples/captions.srt';
-    const captionBlocks = await engine.block.createCaptionsFromURI(
-      captionSrtUrl
-    );
+// Import captions from SRT file
+// createCaptionsFromURI parses SRT/VTT and creates caption blocks with timing
+const captionSrtUrl = 'https://img.ly/static/examples/captions.srt'
+const captionBlocks = await engine.block.createCaptionsFromURI(
+  captionSrtUrl
+)
 
-    // eslint-disable-next-line no-console
-    console.log(`Imported ${captionBlocks.length} captions from SRT file`);
+console.log(`Imported ${captionBlocks.length} captions from SRT file`)
 
-    // Adjust caption timing to start at the beginning of the video
-    // The SRT file may have different timing, so we reset to start at 0
-    let currentOffset = 0;
-    for (const captionId of captionBlocks) {
-      const duration = engine.block.getDuration(captionId);
-      engine.block.setTimeOffset(captionId, currentOffset);
-      currentOffset += duration;
-    }
+// Adjust caption timing to start at the beginning of the video
+// The SRT file may have different timing, so we reset to start at 0
+let currentOffset = 0
+for (const captionId of captionBlocks) {
+  const duration = engine.block.getDuration(captionId)
+  engine.block.setTimeOffset(captionId, currentOffset)
+  currentOffset += duration
+}
 ```
 
 The `createCaptionsFromURI` method downloads the subtitle file, parses the timing and text, and creates a caption track with all captions positioned correctly. It returns an array of caption block IDs for the imported captions.
@@ -301,18 +296,17 @@ The `createCaptionsFromURI` method downloads the subtitle file, parses the timin
 After importing captions, create a caption track to organize them in the composition. The caption track manages caption positioning and display.
 
 ```typescript highlight-create-caption-track
-    // Create a caption track and add captions to it
-    // Caption tracks organize captions in the timeline
-    const captionTrack = engine.block.create('//ly.img.ubq/captionTrack');
-    engine.block.appendChild(page, captionTrack);
+// Create a caption track and add captions to it
+// Caption tracks organize captions in the timeline
+const captionTrack = engine.block.create('//ly.img.ubq/captionTrack')
+engine.block.appendChild(page, captionTrack)
 
-    // Add each caption block to the track
-    for (const captionId of captionBlocks) {
-      engine.block.appendChild(captionTrack, captionId);
-    }
+// Add each caption block to the track
+for (const captionId of captionBlocks) {
+  engine.block.appendChild(captionTrack, captionId)
+}
 
-    // eslint-disable-next-line no-console
-    console.log(`Caption track created with ${captionBlocks.length} captions`);
+console.log(`Caption track created with ${captionBlocks.length} captions`)
 ```
 
 Create a caption track with `engine.block.create('//ly.img.ubq/captionTrack')` and append it to the page. Then add each caption block to the track using `appendChild`.
@@ -342,8 +336,8 @@ Double-click a caption in the timeline or panel to edit its text. Drag the edges
 For full control over captions, create them programmatically. First, create a caption track and append it to the page.
 
 ```typescript
-const captionTrack = engine.block.create('//ly.img.ubq/captionTrack');
-engine.block.appendChild(page, captionTrack);
+const captionTrack = engine.block.create('//ly.img.ubq/captionTrack')
+engine.block.appendChild(page, captionTrack)
 ```
 
 ### Creating Caption Blocks
@@ -351,15 +345,15 @@ engine.block.appendChild(page, captionTrack);
 Create individual captions with text and timing.
 
 ```typescript
-const caption = engine.block.create('//ly.img.ubq/caption');
-engine.block.appendChild(captionTrack, caption);
+const caption = engine.block.create('//ly.img.ubq/caption')
+engine.block.appendChild(captionTrack, caption)
 
 // Set caption text
-engine.block.setString(caption, 'caption/text', 'Hello, world!');
+engine.block.setString(caption, 'caption/text', 'Hello, world!')
 
 // Set timing - appears at 2 seconds for 3 seconds
-engine.block.setTimeOffset(caption, 2);
-engine.block.setDuration(caption, 3);
+engine.block.setTimeOffset(caption, 2)
+engine.block.setDuration(caption, 3)
 ```
 
 Set the caption text using `setString` with the `caption/text` property. Position the caption in time using `setTimeOffset` (when it appears) and `setDuration` (how long it shows).
@@ -371,27 +365,27 @@ Set the caption text using `setString` with the `caption/text` property. Positio
 The fastest way to style captions is using presets. Presets provide pre-configured styling including fonts, colors, backgrounds, and effects.
 
 ```typescript highlight-apply-preset
-    // Apply a caption preset for consistent styling
-    // Caption presets provide pre-configured styles (fonts, colors, backgrounds)
-    const captionPresetsSourceId = 'ly.img.caption.presets';
-    const comicPresetId = '//ly.img.caption.presets/comic';
+// Apply a caption preset for consistent styling
+// Caption presets provide pre-configured styles (fonts, colors, backgrounds)
+const captionPresetsSourceId = 'ly.img.caption.presets'
+const comicPresetId = '//ly.img.caption.presets/comic'
 
-    // Fetch the preset asset
-    const comicPreset = await engine.asset.fetchAsset(
-      captionPresetsSourceId,
-      comicPresetId
-    );
+// Fetch the preset asset
+const comicPreset = await engine.asset.fetchAsset(
+  captionPresetsSourceId,
+  comicPresetId
+)
 
-    // Apply preset to the first caption (styling syncs across all captions)
-    if (comicPreset && captionBlocks.length > 0) {
-      await engine.asset.applyToBlock(
-        captionPresetsSourceId,
-        comicPreset,
-        captionBlocks[0]
-      );
-      // eslint-disable-next-line no-console
-      console.log('Applied comic preset to captions');
-    }
+// Apply preset to the first caption (styling syncs across all captions)
+if (comicPreset && captionBlocks.length > 0) {
+  await engine.asset.applyToBlock(
+    captionPresetsSourceId,
+    comicPreset,
+    captionBlocks[0]
+  )
+
+  console.log('Applied comic preset to captions')
+}
 ```
 
 Fetch a preset using `engine.asset.fetchAsset` and apply it with `engine.asset.applyToBlock`. Caption styling automatically syncs across all captions, so applying a preset to one caption styles them all.
@@ -401,23 +395,23 @@ Fetch a preset using `engine.asset.fetchAsset` and apply it with `engine.asset.a
 Position captions at the bottom of the video frame using percentage-based positioning for responsive layout.
 
 ```typescript highlight-position-captions
-    // Position captions at the bottom of the video frame
-    // Caption position and size sync across all captions, so we only set it once
-    if (captionBlocks.length > 0) {
-      const firstCaption = captionBlocks[0];
+// Position captions at the bottom of the video frame
+// Caption position and size sync across all captions, so we only set it once
+if (captionBlocks.length > 0) {
+  const firstCaption = captionBlocks[0]
 
-      // Use percentage-based positioning for responsive layout
-      engine.block.setPositionXMode(firstCaption, 'Percent');
-      engine.block.setPositionYMode(firstCaption, 'Percent');
-      engine.block.setWidthMode(firstCaption, 'Percent');
-      engine.block.setHeightMode(firstCaption, 'Percent');
+  // Use percentage-based positioning for responsive layout
+  engine.block.setPositionXMode(firstCaption, 'Percent')
+  engine.block.setPositionYMode(firstCaption, 'Percent')
+  engine.block.setWidthMode(firstCaption, 'Percent')
+  engine.block.setHeightMode(firstCaption, 'Percent')
 
-      // Position at bottom center with padding
-      engine.block.setPositionX(firstCaption, 0.05); // 5% from left
-      engine.block.setPositionY(firstCaption, 0.8); // 80% from top (near bottom)
-      engine.block.setWidth(firstCaption, 0.9); // 90% width
-      engine.block.setHeight(firstCaption, 0.15); // 15% height
-    }
+  // Position at bottom center with padding
+  engine.block.setPositionX(firstCaption, 0.05) // 5% from left
+  engine.block.setPositionY(firstCaption, 0.8) // 80% from top (near bottom)
+  engine.block.setWidth(firstCaption, 0.9) // 90% width
+  engine.block.setHeight(firstCaption, 0.15) // 15% height
+}
 ```
 
 Use percentage mode (`setPositionXMode`, `setPositionYMode`) for positions that adapt to different video resolutions. Caption position and size sync across all captions automatically.
@@ -431,9 +425,9 @@ Enable a background behind caption text for better readability over video conten
 CE.SDK can automatically adjust font size to fit caption text within bounds. Enable automatic sizing and set minimum and maximum size limits.
 
 ```typescript
-engine.block.setBool(captionId, 'caption/automaticFontSizeEnabled', true);
-engine.block.setFloat(captionId, 'caption/minAutomaticFontSize', 24);
-engine.block.setFloat(captionId, 'caption/maxAutomaticFontSize', 72);
+engine.block.setBool(captionId, 'caption/automaticFontSizeEnabled', true)
+engine.block.setFloat(captionId, 'caption/minAutomaticFontSize', 24)
+engine.block.setFloat(captionId, 'caption/maxAutomaticFontSize', 72)
 ```
 
 This prevents text from overflowing while maintaining readability.
@@ -448,9 +442,9 @@ Query available caption presets from the asset library.
 const presetsResult = await engine.asset.findAssets('ly.img.caption.presets', {
   page: 0,
   perPage: 100
-});
+})
 
-const presets = presetsResult.assets;
+const presets = presetsResult.assets
 ```
 
 The `findAssets` method returns preset metadata including IDs and preview thumbnails.
@@ -460,8 +454,8 @@ The `findAssets` method returns preset metadata including IDs and preview thumbn
 Apply a preset to a caption using `applyToBlock`.
 
 ```typescript
-const preset = presets[0];
-await engine.asset.applyToBlock('ly.img.caption.presets', preset, captionId);
+const preset = presets[0]
+await engine.asset.applyToBlock('ly.img.caption.presets', preset, captionId)
 ```
 
 The preset applies all styling properties at once—font, colors, background, and any animations defined in the preset.
@@ -473,18 +467,17 @@ The preset applies all styling properties at once—font, colors, background, an
 Make captions more engaging by adding entry animations.
 
 ```typescript highlight-add-animation
-    // Add fade-in animation to the first caption
-    if (captionBlocks.length > 0) {
-      const firstCaption = captionBlocks[0];
+// Add fade-in animation to the first caption
+if (captionBlocks.length > 0) {
+  const firstCaption = captionBlocks[0]
 
-      // Create and apply entry animation
-      const fadeIn = engine.block.createAnimation('fade');
-      engine.block.setDuration(fadeIn, 0.3);
-      engine.block.setInAnimation(firstCaption, fadeIn);
+  // Create and apply entry animation
+  const fadeIn = engine.block.createAnimation('fade')
+  engine.block.setDuration(fadeIn, 0.3)
+  engine.block.setInAnimation(firstCaption, fadeIn)
 
-      // eslint-disable-next-line no-console
-      console.log('Added fade-in animation to first caption');
-    }
+  console.log('Added fade-in animation to first caption')
+}
 ```
 
 Create an animation using `createAnimation` with types like 'fade', 'slide', or 'scale'. Set the animation duration and apply it with `setInAnimation`.
@@ -507,21 +500,21 @@ Set loop animations with `setLoopAnimation` for continuous effects, or exit anim
 Retrieve caption properties to display in custom UI or for processing.
 
 ```typescript highlight-modify-caption
-    // Modify a specific caption's text and timing
-    if (captionBlocks.length > 0) {
-      const firstCaption = captionBlocks[0];
+// Modify a specific caption's text and timing
+if (captionBlocks.length > 0) {
+  const firstCaption = captionBlocks[0]
 
-      // Get current text
-      const currentText = engine.block.getString(firstCaption, 'caption/text');
-      // eslint-disable-next-line no-console
-      console.log('First caption text:', currentText);
+  // Get current text
+  const currentText = engine.block.getString(firstCaption, 'caption/text')
 
-      // Get timing info
-      const offset = engine.block.getTimeOffset(firstCaption);
-      const duration = engine.block.getDuration(firstCaption);
-      // eslint-disable-next-line no-console
-      console.log(`First caption: offset=${offset}s, duration=${duration}s`);
-    }
+  console.log('First caption text:', currentText)
+
+  // Get timing info
+  const offset = engine.block.getTimeOffset(firstCaption)
+  const duration = engine.block.getDuration(firstCaption)
+
+  console.log(`First caption: offset=${offset}s, duration=${duration}s`)
+}
 ```
 
 Use `getString` for text, `getTimeOffset` for start time, and `getDuration` for display length. These values are useful for building custom caption editors or synchronization tools.
@@ -535,7 +528,7 @@ When you export a video, captions are burned into the video as pixels. They beco
 ```typescript
 const videoBlob = await engine.block.exportVideo(page, {
   mimeType: 'video/mp4'
-});
+})
 ```
 
 The export process renders each frame with captions overlaid at the correct timing. Export time depends on video length and resolution.

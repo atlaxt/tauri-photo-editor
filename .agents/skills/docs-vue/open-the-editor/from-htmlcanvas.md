@@ -23,7 +23,7 @@ Create a CE.SDK scene from an HTMLCanvas element's rendered content, enabling ed
 You can capture any graphics rendered to a canvas—2D drawings, WebGL content, or programmatically generated visuals—and use them as the starting point for editing in CE.SDK. The workflow extracts canvas content as a data URL and passes it to the scene API.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-from-htmlcanvas-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,25 +38,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (cesdk == null) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -67,56 +67,56 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
+    const canvas = document.createElement('canvas')
+    canvas.width = 512
+    canvas.height = 512
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')
     if (ctx == null) {
-      throw new Error('Could not get 2D context');
+      throw new Error('Could not get 2D context')
     }
 
     // Draw a gradient background
-    const gradient = ctx.createLinearGradient(0, 0, 512, 512);
-    gradient.addColorStop(0, '#4158D0');
-    gradient.addColorStop(0.5, '#C850C0');
-    gradient.addColorStop(1, '#FFCC70');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 512, 512);
+    const gradient = ctx.createLinearGradient(0, 0, 512, 512)
+    gradient.addColorStop(0, '#4158D0')
+    gradient.addColorStop(0.5, '#C850C0')
+    gradient.addColorStop(1, '#FFCC70')
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, 512, 512)
 
     // Draw "img.ly" text
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 72px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('img.ly', 256, 256);
+    ctx.fillStyle = '#FFFFFF'
+    ctx.font = 'bold 72px Arial, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('img.ly', 256, 256)
 
-    const dataURL = canvas.toDataURL();
+    const dataURL = canvas.toDataURL()
 
     // Second parameter is DPI: 72 for screen, 300 for print (default)
-    await engine.scene.createFromImage(dataURL);
+    await engine.scene.createFromImage(dataURL)
 
     // Enable auto-fit zoom on the page
-    const pages = engine.block.findByType('page');
+    const pages = engine.block.findByType('page')
     if (pages.length > 0) {
-      engine.scene.enableZoomAutoFit(pages[0], 'Both', 40, 40, 40, 40);
+      engine.scene.enableZoomAutoFit(pages[0], 'Both', 40, 40, 40, 40)
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create a canvas element, draw content to it, extract that content as a data URL, and create an editable CE.SDK scene from the result.
@@ -126,9 +126,9 @@ This guide covers how to create a canvas element, draw content to it, extract th
 Start by creating a canvas element with specific dimensions. These dimensions determine the resulting scene size.
 
 ```typescript highlight=highlight-setup
-const canvas = document.createElement('canvas');
-canvas.width = 512;
-canvas.height = 512;
+const canvas = document.createElement('canvas')
+canvas.width = 512
+canvas.height = 512
 ```
 
 The canvas `width` and `height` attributes set the actual pixel dimensions, not CSS styling.
@@ -138,9 +138,9 @@ The canvas `width` and `height` attributes set the actual pixel dimensions, not 
 Obtain the 2D rendering context from the canvas to draw content.
 
 ```typescript highlight=highlight-draw-canvas
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d')
 if (ctx == null) {
-  throw new Error('Could not get 2D context');
+  throw new Error('Could not get 2D context')
 }
 ```
 
@@ -151,7 +151,7 @@ Use the context to render any graphics—2D drawings, chart visualizations, or p
 Extract the canvas content as a base64-encoded data URL using `toDataURL()`.
 
 ```typescript highlight=highlight-extract-data-url
-const dataURL = canvas.toDataURL();
+const dataURL = canvas.toDataURL()
 ```
 
 The default format is PNG. For JPEG with compression, use `canvas.toDataURL('image/jpeg', 0.9)`.
@@ -162,7 +162,7 @@ Pass the data URL to `engine.scene.createFromImage()` to create an editable scen
 
 ```typescript highlight=highlight-create-scene
 // Second parameter is DPI: 72 for screen, 300 for print (default)
-await engine.scene.createFromImage(dataURL);
+await engine.scene.createFromImage(dataURL)
 ```
 
 The second parameter controls DPI: use 72 for screen display or 300 (default) for print output.

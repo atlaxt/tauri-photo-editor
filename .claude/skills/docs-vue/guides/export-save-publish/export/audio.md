@@ -34,13 +34,13 @@ Audio can be exported from multiple block types:
 Export audio from any block using the `exportAudio` API:
 
 ```javascript
-const page = cesdk.engine.scene.getCurrentPage();
+const page = cesdk.engine.scene.getCurrentPage()
 
 const audioBlob = await cesdk.engine.block.exportAudio(page, {
   mimeType: 'audio/wav',
   sampleRate: 48000,
   numberOfChannels: 2
-});
+})
 ```
 
 ### Export Options
@@ -60,17 +60,18 @@ To find blocks with audio in your scene:
 
 ```javascript
 // Find audio blocks
-const audioBlocks = cesdk.engine.block.findByType('audio');
+const audioBlocks = cesdk.engine.block.findByType('audio')
 
 // Find video blocks with audio
-const videoFills = cesdk.engine.block.findByType('//ly.img.ubq/fill/video');
-const videosWithAudio = videoFills.filter(block => {
+const videoFills = cesdk.engine.block.findByType('//ly.img.ubq/fill/video')
+const videosWithAudio = videoFills.filter((block) => {
   try {
-    return cesdk.engine.block.getAudioInfoFromVideo(block).length > 0;
-  } catch {
-    return false;
+    return cesdk.engine.block.getAudioInfoFromVideo(block).length > 0
   }
-});
+  catch {
+    return false
+  }
+})
 ```
 
 ## Working with Multi-Track Video Audio
@@ -80,49 +81,49 @@ Videos can contain multiple audio tracks (e.g., different languages). CE.SDK pro
 ### Check audio track count
 
 ```javascript
-const videoFillId = cesdk.engine.block.findByType('//ly.img.ubq/fill/video')[0];
+const videoFillId = cesdk.engine.block.findByType('//ly.img.ubq/fill/video')[0]
 
-const trackCount = cesdk.engine.block.getAudioTrackCountFromVideo(videoFillId);
-console.log(`Video has ${trackCount} audio track(s)`);
+const trackCount = cesdk.engine.block.getAudioTrackCountFromVideo(videoFillId)
+console.log(`Video has ${trackCount} audio track(s)`)
 ```
 
 ### Get track information
 
 ```javascript
-const audioTracks = cesdk.engine.block.getAudioInfoFromVideo(videoFillId);
+const audioTracks = cesdk.engine.block.getAudioInfoFromVideo(videoFillId)
 
 audioTracks.forEach((track, index) => {
   console.log(`Track ${index}:`, {
-    channels: track.channels,      // 1=mono, 2=stereo
-    sampleRate: track.sampleRate,  // Sample rate in Hz
-    language: track.language,      // e.g., "en", "es"
-    label: track.label             // Track description
-  });
-});
+    channels: track.channels, // 1=mono, 2=stereo
+    sampleRate: track.sampleRate, // Sample rate in Hz
+    language: track.language, // e.g., "en", "es"
+    label: track.label // Track description
+  })
+})
 ```
 
 ### Extract a specific track
 
 ```javascript
 // Create audio block from track 0 (first track)
-const audioBlockId = cesdk.engine.block.createAudioFromVideo(videoFillId, 0);
+const audioBlockId = cesdk.engine.block.createAudioFromVideo(videoFillId, 0)
 
 // Export just this track's audio
 const trackAudioBlob = await cesdk.engine.block.exportAudio(audioBlockId, {
   mimeType: 'audio/wav'
-});
+})
 ```
 
 ### Extract all tracks
 
 ```javascript
 // Create audio blocks for all tracks
-const audioBlockIds = cesdk.engine.block.createAudiosFromVideo(videoFillId);
+const audioBlockIds = cesdk.engine.block.createAudiosFromVideo(videoFillId)
 
 // Export each track
 for (let i = 0; i < audioBlockIds.length; i++) {
-  const trackBlob = await cesdk.engine.block.exportAudio(audioBlockIds[i]);
-  console.log(`Track ${i}: ${trackBlob.size} bytes`);
+  const trackBlob = await cesdk.engine.block.exportAudio(audioBlockIds[i])
+  console.log(`Track ${i}: ${trackBlob.size} bytes`)
 }
 ```
 
@@ -133,13 +134,13 @@ A common workflow is to export audio, send it to a transcription service, and us
 ### Step 1: Export Audio
 
 ```javascript
-const page = cesdk.engine.scene.getCurrentPage();
+const page = cesdk.engine.scene.getCurrentPage()
 
 const audioBlob = await cesdk.engine.block.exportAudio(page, {
   mimeType: 'audio/wav',
   sampleRate: 48000,
   numberOfChannels: 2
-});
+})
 ```
 
 ### Step 2: Send to Transcription Service
@@ -148,23 +149,23 @@ Send the audio to a service that returns SubRip (SRT) format captions:
 
 ```javascript
 async function transcribeAudio(audioBlob) {
-  const formData = new FormData();
-  formData.append('audio', audioBlob, 'audio.wav');
-  formData.append('format', 'srt');
+  const formData = new FormData()
+  formData.append('audio', audioBlob, 'audio.wav')
+  formData.append('format', 'srt')
 
   const response = await fetch('https://api.transcription-service.com/transcribe', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer YOUR_API_KEY'
+      Authorization: 'Bearer YOUR_API_KEY'
     },
     body: formData
-  });
+  })
 
   // Returns SRT format text
-  return await response.text();
+  return await response.text()
 }
 
-const srtContent = await transcribeAudio(audioBlob);
+const srtContent = await transcribeAudio(audioBlob)
 ```
 
 ### Step 3: Import Captions from SRT
@@ -175,26 +176,26 @@ Use the built-in API to create caption blocks from the SRT response:
 // Create a file from the SRT text
 const srtFile = new File([srtContent], 'captions.srt', {
   type: 'application/x-subrip'
-});
+})
 
 // Create object URL and import captions
-const uri = URL.createObjectURL(srtFile);
-const captions = await cesdk.engine.block.createCaptionsFromURI(uri);
-URL.revokeObjectURL(uri);
+const uri = URL.createObjectURL(srtFile)
+const captions = await cesdk.engine.block.createCaptionsFromURI(uri)
+URL.revokeObjectURL(uri)
 
 // Add captions to page
-const page = cesdk.engine.scene.getCurrentPage();
-const captionTrack = cesdk.engine.block.create('//ly.img.ubq/captionTrack');
+const page = cesdk.engine.scene.getCurrentPage()
+const captionTrack = cesdk.engine.block.create('//ly.img.ubq/captionTrack')
 
-captions.forEach(caption => {
-  cesdk.engine.block.appendChild(captionTrack, caption);
-});
+captions.forEach((caption) => {
+  cesdk.engine.block.appendChild(captionTrack, caption)
+})
 
-cesdk.engine.block.appendChild(page, captionTrack);
+cesdk.engine.block.appendChild(page, captionTrack)
 
 // Center the first caption as a reference point
-cesdk.engine.block.alignHorizontally([captions[0]], 'Center');
-cesdk.engine.block.alignVertically([captions[0]], 'Center');
+cesdk.engine.block.alignHorizontally([captions[0]], 'Center')
+cesdk.engine.block.alignVertically([captions[0]], 'Center')
 ```
 
 ### Other Processing Services

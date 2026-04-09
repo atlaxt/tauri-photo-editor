@@ -95,7 +95,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
     icon: '@imgly/Layout',
     entries: ['layouts'],
   },
-]);
+])
 ```
 
 <Picture src={addLayoutsToUI} style={{ width: '80%' }} alt="Default dock vs. custom dock with layout option." formats={['webp']} />
@@ -115,17 +115,15 @@ To configure how the **Layouts** panel looks and behaves, use the `ui.addAssetLi
 For example, the demo uses this configuration:
 
 ```jsx title="CustomCase.jsx"
-
 instance.ui.addAssetLibraryEntry({
-id: 'ly.img.layouts', // Referenced in the dock entry in Step 1
-sourceIds: ['ly.img.layouts'], // Points to our custom layout asset source
-previewLength: 2, // Number of preview items int the compact panel
-gridColumns: 2, // Organize tiles in 2 columns
-gridItemHeight: 'square', // Square tiles
-previewBackgroundType: 'contain', // Fit compact panel background
-gridBackgroundType: 'contain' // Fit panel background
-});
-
+  id: 'ly.img.layouts', // Referenced in the dock entry in Step 1
+  sourceIds: ['ly.img.layouts'], // Points to our custom layout asset source
+  previewLength: 2, // Number of preview items int the compact panel
+  gridColumns: 2, // Organize tiles in 2 columns
+  gridItemHeight: 'square', // Square tiles
+  previewBackgroundType: 'contain', // Fit compact panel background
+  gridBackgroundType: 'contain' // Fit panel background
+})
 ```
 
 <Picture src={panelLayout} style={{ width: '80%' }} alt="Default dock vs. custom dock with layout option." formats={['webp']} />
@@ -140,24 +138,23 @@ The demo uses a [helper function](https://github.com/imgly/cesdk-web-examples/bl
 - A `baseURL` for your custom assets that replaces the `{{base_url}}`.
 
 ```jsx title="CustomCase.jsx"
-
-import { createApplyLayoutAsset } from './lib/createApplyLayoutAsset';
-import loadAssetSourceFromContentJSON from './lib/loadAssetSourceFromContentJSON';
+import { createApplyLayoutAsset } from './lib/createApplyLayoutAsset'
+import loadAssetSourceFromContentJSON from './lib/loadAssetSourceFromContentJSON'
 
 // ...
-const caseAssetPath = (path, caseId = 'layouts') =>
-  `${process.env.NEXT_PUBLIC_URL_HOSTNAME}${process.env.NEXT_PUBLIC_URL}/cases/${caseId}${path}`;
+function caseAssetPath(path, caseId = 'layouts') {
+  return `${process.env.NEXT_PUBLIC_URL_HOSTNAME}${process.env.NEXT_PUBLIC_URL}/cases/${caseId}${path}`
+}
 
 // Call the helper to load the layout assets
- loadAssetSourceFromContentJSON(
-      instance.engine, // Pss the CE.SDK engine to load assets into
-      LAYOUT_ASSETS, // Pass the JSON bundle
-      caseAssetPath(''), // Base URL for assets
-      createApplyLayoutAsset(instance.engine) // Callback to createApplyLayoutAsset.js helper
-    );
-    await instance.loadFromURL(caseAssetPath('/custom-layouts.scene')); // Load the scene
+loadAssetSourceFromContentJSON(
+  instance.engine, // Pss the CE.SDK engine to load assets into
+  LAYOUT_ASSETS, // Pass the JSON bundle
+  caseAssetPath(''), // Base URL for assets
+  createApplyLayoutAsset(instance.engine) // Callback to createApplyLayoutAsset.js helper
+)
+await instance.loadFromURL(caseAssetPath('/custom-layouts.scene')) // Load the scene
 // ...
-
 ```
 
 In the previous example, the helper accepts an optional **applyAsset callback**, so:
@@ -184,12 +181,10 @@ You can find this workflow in the `createApplyLayoutAsset()` helper from the dem
 - Clear the selected blocks with `block.setSelected(block, false)`.
 
 ```js title="createApplyLayoutAsset.js"
-
-const scopeBefore = engine.editor.getGlobalScope('lifecycle/destroy');
-engine.editor.setGlobalScope('lifecycle/destroy', 'Allow');
-const page = engine.scene.getCurrentPage();
-engine.block.findAllSelected().forEach((block) => engine.block.setSelected(block, false));
-
+const scopeBefore = engine.editor.getGlobalScope('lifecycle/destroy')
+engine.editor.setGlobalScope('lifecycle/destroy', 'Allow')
+const page = engine.scene.getCurrentPage()
+engine.block.findAllSelected().forEach(block => engine.block.setSelected(block, false))
 ```
 
 ### 2. Load the New Layout
@@ -198,11 +193,9 @@ engine.block.findAllSelected().forEach((block) => engine.block.setSelected(block
 - Return the first page from the loaded blocks as the layout page.
 
 ```js title="createApplyLayoutAsset.js"
-
-const sceneString = await fetch(asset.meta.uri).then((response) => response.text());
-const blocks = await engine.block.loadFromString(sceneString);
-const layoutPage = blocks[0];
-
+const sceneString = await fetch(asset.meta.uri).then(response => response.text())
+const blocks = await engine.block.loadFromString(sceneString)
+const layoutPage = blocks[0]
 ```
 
 ### 3. Backup Current Page
@@ -212,15 +205,13 @@ const layoutPage = blocks[0];
 - Clear the current page structure by destroying all its children.
 
 ```js title="createApplyLayoutAsset.js"
-
-const oldPage = engine.block.duplicate(page);
+const oldPage = engine.block.duplicate(page)
 engine.block.getChildren(page).forEach((child) => {
-  engine.block.destroy(child);
-});
+  engine.block.destroy(child)
+})
 engine.block.getChildren(layoutPage).forEach((child) => {
-  engine.block.insertChild(page, child, engine.block.getChildren(page).length);
-});
-
+  engine.block.insertChild(page, child, engine.block.getChildren(page).length)
+})
 ```
 
 ### 4. Transfer Content
@@ -228,9 +219,7 @@ engine.block.getChildren(layoutPage).forEach((child) => {
 Copy user text and images onto the new layout:
 
 ```js title="createApplyLayoutAsset.js"
-
-copyAssets(engine, oldPage, page);
-
+copyAssets(engine, oldPage, page)
 ```
 
 ### 5. Sort Blocks Visually and Pair Content
@@ -238,12 +227,10 @@ copyAssets(engine, oldPage, page);
 Grab text and image blocks from both pages in visual order (top to bottom, left to right):
 
 ```js title="createApplyLayoutAsset.js"
-
-const fromChildren = visuallySortBlocks(engine, getChildrenTree(engine, fromPageId).flat());
-const textsOnFromPage = fromChildren.filter((childId) => engine.block.getType(childId).includes('text'));
-const imagesOnFromPage = fromChildren.filter((childId) => engine.block.getKind(childId) === 'image');
+const fromChildren = visuallySortBlocks(engine, getChildrenTree(engine, fromPageId).flat())
+const textsOnFromPage = fromChildren.filter(childId => engine.block.getType(childId).includes('text'))
+const imagesOnFromPage = fromChildren.filter(childId => engine.block.getKind(childId) === 'image')
 // same for toPageId -> textsOnToPage, imagesOnToPage
-
 ```
 
 Then apply the content from the old page to the new layout by looping through the blocks:

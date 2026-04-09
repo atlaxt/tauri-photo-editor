@@ -8,8 +8,8 @@ Load the contents of a scene file.
 The string must be the binary contents of a scene file and is directly imported as blocks. Any existing scene is replaced by the new one.
 This is useful for loading scenes that were saved with `saveToString` or scenes that were created in another editor instance.
 ```javascript
-const sceneContent = await creativeEngine.scene.saveToString();
-creativeEngine.scene.loadFromString(sceneContent);
+const sceneContent = await creativeEngine.scene.saveToString()
+creativeEngine.scene.loadFromString(sceneContent)
 ```
 
 ```typescript
@@ -28,8 +28,8 @@ loadFromString(sceneContent: string, overrideEditorConfig?: boolean, waitForReso
 Load a scene from the URL to the scene file.
 The scene file will be fetched asynchronously by the engine and loaded into the engine once it is available. Any existing scene is replaced by the new one.
 ```javascript
-const sceneURL = 'https://example.com/my-scene.json';
-creativeEngine.scene.loadFromURL(sceneURL);
+const sceneURL = 'https://example.com/my-scene.json'
+creativeEngine.scene.loadFromURL(sceneURL)
 ```
 
 ```typescript
@@ -109,7 +109,7 @@ saveToArchive(): Promise<Blob>
 
 Create a new design scene, along with its own camera.
 ```javascript
-const scene = engine.scene.create(layout);
+const scene = engine.scene.create(layout)
 ```
 
 ```typescript
@@ -146,7 +146,7 @@ createVideo(options?: CreateSceneOptions): DesignBlockId
 Loads the given image and creates a scene with a single page showing the image.
 Fetching the image may take an arbitrary amount of time, so the scene isn't immediately available.
 ```javascript
-const scene = await engine.scene.createFromImage('https://img.ly/static/ubq_samples/sample_4.jpg');
+const scene = await engine.scene.createFromImage('https://img.ly/static/ubq_samples/sample_4.jpg')
 ```
 
 ```typescript
@@ -166,7 +166,7 @@ Loads the given video and creates a scene with a single page showing the video.
 Fetching the video may take an arbitrary amount of time, so the scene isn't immediately
 available.
 ```javascript
-const scene = await engine.scene.createFromVideo('https://img.ly/static/ubq_video_samples/bbb.mp4');
+const scene = await engine.scene.createFromVideo('https://img.ly/static/ubq_video_samples/bbb.mp4')
 ```
 
 ```typescript
@@ -184,7 +184,7 @@ createFromVideo(url: string): Promise<DesignBlockId>
 
 Return the currently active scene.
 ```javascript
-const scene = engine.scene.get();
+const scene = engine.scene.get()
 ```
 
 ```typescript
@@ -218,7 +218,7 @@ setMode(mode: SceneMode): void
 
 Converts all values of the current scene into the given design unit.
 ```javascript
-engine.scene.setDesignUnit('Pixel');
+engine.scene.setDesignUnit('Pixel')
 ```
 
 ```typescript
@@ -232,7 +232,7 @@ setDesignUnit(designUnit: DesignUnit): void
 
 Returns the design unit of the current scene.
 ```javascript
-engine.scene.getDesignUnit();
+engine.scene.getDesignUnit()
 ```
 
 ```typescript
@@ -245,7 +245,7 @@ getDesignUnit(): DesignUnit
 
 Get the layout of the current scene.
 ```javascript
-const layout = engine.scene.getLayout();
+const layout = engine.scene.getLayout()
 ```
 
 ```typescript
@@ -262,7 +262,7 @@ and reparenting pages as needed.
 When transitioning from stack layouts (VerticalStack, HorizontalStack, DepthStack) to Free layout,
 the global positions of pages are preserved to maintain their visual appearance in the scene.
 ```javascript
-engine.scene.setLayout('VerticalStack');
+engine.scene.setLayout('VerticalStack')
 ```
 
 ```typescript
@@ -281,7 +281,7 @@ This loads the template scene while keeping the design unit and page dimensions
 of the current scene. The content of the pages is automatically adjusted to fit
 the new dimensions.
 ```javascript
-engine.scene.applyTemplateFromString("UBQ1ewoiZm9ybWF0Ij...");
+engine.scene.applyTemplateFromString('UBQ1ewoiZm9ybWF0Ij...')
 ```
 
 ```typescript
@@ -300,7 +300,7 @@ This loads the template scene while keeping the design unit and page dimensions
 of the current scene. The content of the pages is automatically adjusted to fit
 the new dimensions.
 ```javascript
-engine.scene.applyTemplateFromURL('https://cdn.img.ly/assets/demo/v4/ly.img.template/templates/cesdk_postcard_1.scene');
+engine.scene.applyTemplateFromURL('https://cdn.img.ly/assets/demo/v4/ly.img.template/templates/cesdk_postcard_1.scene')
 ```
 
 ```typescript
@@ -318,7 +318,7 @@ applyTemplateFromURL(url: string): Promise<void>
 
 Get the sorted list of pages in the scene.
 ```javascript
-const pages = engine.scene.getPages();
+const pages = engine.scene.getPages()
 ```
 
 ```typescript
@@ -332,7 +332,7 @@ getPages(): DesignBlockId[]
 Get the current page, i.e., the page of the first selected element if this page
 is at least 25% visible or, otherwise, the page nearest to the viewport center.
 ```javascript
-const currentPage = engine.scene.getCurrentPage();
+const currentPage = engine.scene.getCurrentPage()
 ```
 
 ```typescript
@@ -346,9 +346,9 @@ getCurrentPage(): DesignBlockId | null
 Find all blocks with the given type sorted by the distance to viewport center.
 ```javascript
 // Use longhand block type ID to find nearest pages.
-let nearestPageByType = engine.scene.findNearestToViewPortCenterByType('//ly.img.ubq/page')[0];
+let nearestPageByType = engine.scene.findNearestToViewPortCenterByType('//ly.img.ubq/page')[0]
 // Or use shorthand block type ID.
-nearestPageByType = engine.scene.findNearestToViewPortCenterByType('page')[0];
+nearestPageByType = engine.scene.findNearestToViewPortCenterByType('page')[0]
 ```
 
 ```typescript
@@ -364,7 +364,7 @@ findNearestToViewPortCenterByType(type: DesignBlockType): DesignBlockId[]
 
 Find all blocks with the given kind sorted by the distance to viewport center.
 ```javascript
-let nearestImageByKind = engine.scene.findNearestToViewPortCenterByKind('image')[0];
+const nearestImageByKind = engine.scene.findNearestToViewPortCenterByKind('image')[0]
 ```
 
 ```typescript
@@ -385,9 +385,9 @@ This only shows an effect if the zoom level is not handled/overwritten by the UI
 Setting a zoom level of 2.0f results in one dot in the design to be two pixels on the screen.
 ```javascript
 // Zoom to 100%
-engine.scene.setZoomLevel(1.0);
+engine.scene.setZoomLevel(1.0)
 // Zoom to 50%
-engine.scene.setZoomLevel(0.5 * engine.scene.getZoomLevel());
+engine.scene.setZoomLevel(0.5 * engine.scene.getZoomLevel())
 ```
 
 ```typescript
@@ -402,7 +402,7 @@ setZoomLevel(zoomLevel?: number): void
 Get the zoom level of the scene or for a camera in the scene in unit `dpx/dot`. A zoom level of 2.0 results in one pixel in the design to be two pixels
 on the screen.
 ```javascript
-const zoomLevel = engine.scene.getZoomLevel();
+const zoomLevel = engine.scene.getZoomLevel()
 ```
 
 ```typescript
@@ -418,7 +418,7 @@ This only shows an effect if the zoom level is not handled/overwritten by the UI
 Without padding, this results in a tight view on the block.
 ```javascript
 // Bring entire scene in view with padding of 20px in all directions
-engine.scene.zoomToBlock(scene, 20.0, 20.0, 20.0, 20.0);
+engine.scene.zoomToBlock(scene, 20.0, 20.0, 20.0, 20.0)
 ```
 
 ```typescript
@@ -442,7 +442,7 @@ Without padding, this results in a tight view on the block.
 Calling `setZoomLevel` or `zoomToBlock` disables the continuous adjustment.
 ```javascript
 // Follow page with padding of 20px in both directions
-engine.scene.enableZoomAutoFit(page, 'Both', 20.0, 20.0, 20.0, 20.0);
+engine.scene.enableZoomAutoFit(page, 'Both', 20.0, 20.0, 20.0, 20.0)
 ```
 
 ```typescript
@@ -461,7 +461,7 @@ enableZoomAutoFit(id: DesignBlockId, axis: 'Both', paddingLeft?: number, padding
 
 Disables any previously set zoom auto-fit.
 ```javascript
-engine.scene.disableZoomAutoFit(scene);
+engine.scene.disableZoomAutoFit(scene)
 ```
 
 ```typescript
@@ -475,7 +475,7 @@ disableZoomAutoFit(blockOrScene: DesignBlockId): void
 
 Queries whether zoom auto-fit is enabled for the given block.
 ```javascript
-engine.scene.isZoomAutoFitEnabled(scene);
+engine.scene.isZoomAutoFitEnabled(scene)
 ```
 
 ```typescript
@@ -498,7 +498,7 @@ Continually ensures the camera position to be within the width and height of the
 Disables any previously set camera position clamping in the scene and also takes priority over clamp camera commands.
 ```javascript
 // Keep the scene with padding of 10px within the camera
-engine.scene.unstable_enableCameraPositionClamping([scene], 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0);
+engine.scene.unstable_enableCameraPositionClamping([scene], 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0)
 ```
 Without padding, this results in a tight clamp on the block. With padding, the padded part of the
 blocks is ensured to be visible.
@@ -522,7 +522,7 @@ unstable_enableCameraPositionClamping(ids: DesignBlockId[], paddingLeft?: number
 
 Disables any previously set position clamping for the current scene.
 ```javascript
-engine.scene.unstable_disableCameraPositionClamping();
+engine.scene.unstable_disableCameraPositionClamping()
 ```
 
 ```typescript
@@ -536,7 +536,7 @@ unstable_disableCameraPositionClamping(blockOrScene?: number | null): void
 
 Queries whether position clamping is enabled.
 ```javascript
-engine.scene.unstable_isCameraPositionClampingEnabled();
+engine.scene.unstable_isCameraPositionClampingEnabled()
 ```
 
 ```typescript
@@ -554,7 +554,7 @@ otherwise.
 Continually ensures the zoom level of the camera in the active scene to be in the given range.
 ```javascript
 // Allow zooming from 12.5% to 800% relative to the size of a page
-engine.scene.unstable_enableCameraZoomClamping([page], 0.125, 8.0, 0.0, 0.0, 0.0, 0.0);
+engine.scene.unstable_enableCameraZoomClamping([page], 0.125, 8.0, 0.0, 0.0, 0.0, 0.0)
 ```
 
 ```typescript
@@ -574,7 +574,7 @@ unstable_enableCameraZoomClamping(ids: DesignBlockId[], minZoomLimit?: number, m
 
 Disables any previously set zoom clamping for the current scene.
 ```javascript
-engine.scene.unstable_disableCameraZoomClamping();
+engine.scene.unstable_disableCameraZoomClamping()
 ```
 
 ```typescript
@@ -588,7 +588,7 @@ unstable_disableCameraZoomClamping(blockOrScene?: number | null): void
 
 Queries whether zoom clamping is enabled.
 ```javascript
-engine.scene.unstable_isCameraZoomClampingEnabled();
+engine.scene.unstable_isCameraZoomClampingEnabled()
 ```
 
 ```typescript
@@ -607,9 +607,9 @@ unstable_isCameraZoomClampingEnabled(blockOrScene?: number | null): boolean
 Subscribe to changes to the zoom level.
 ```javascript
 const unsubscribeZoomLevelChanged = engine.scene.onZoomLevelChanged(() => {
-  const zoomLevel = engine.scene.getZoomLevel();
-  console.log('Zoom level is now: ', zoomLevel);
-});
+  const zoomLevel = engine.scene.getZoomLevel()
+  console.log('Zoom level is now: ', zoomLevel)
+})
 ```
 
 ```typescript
@@ -626,8 +626,8 @@ onZoomLevelChanged(callback: () => void): (() => void)
 Subscribe to changes to the active scene rendered by the engine.
 ```javascript
 const unsubscribe = engine.scene.onActiveChanged(() => {
-  const newActiveScene = engine.scene.get();
-});
+  const newActiveScene = engine.scene.get()
+})
 ```
 
 ```typescript

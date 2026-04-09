@@ -1,19 +1,19 @@
 import ui from '@nuxt/ui/vue-plugin'
-import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import router from './router'
-import App from './App.vue'
-import './assets/css/main.css'
+import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n'
+import App from './App.vue'
 import en from './locales/en.json'
 import tr from './locales/tr.json'
+import router from './router'
+import './assets/css/main.css'
 
 const app = createApp(App)
 
 const i18n = createI18n({
-    locale: 'en',
-    fallbackLocale: 'en',
-    messages: { en, tr },
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: { en, tr },
 })
 
 app.use(ui)

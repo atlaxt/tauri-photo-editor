@@ -27,7 +27,7 @@ import type {
   EditorPlugin,
   EditorPluginContext,
   RGBAColor
-} from '@cesdk/cesdk-js';
+} from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -43,9 +43,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Apply Colors Guide
@@ -57,22 +57,22 @@ import packageJson from './package.json';
  * - Converting colors between color spaces
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -83,99 +83,99 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create a graphic block to apply colors to
-    const block = engine.block.create('graphic');
-    engine.block.setShape(block, engine.block.createShape('rect'));
-    engine.block.setFill(block, engine.block.createFill('color'));
-    engine.block.setWidth(block, 200);
-    engine.block.setHeight(block, 150);
-    engine.block.setPositionX(block, 100);
-    engine.block.setPositionY(block, 100);
-    engine.block.appendChild(page, block);
+    const block = engine.block.create('graphic')
+    engine.block.setShape(block, engine.block.createShape('rect'))
+    engine.block.setFill(block, engine.block.createFill('color'))
+    engine.block.setWidth(block, 200)
+    engine.block.setHeight(block, 150)
+    engine.block.setPositionX(block, 100)
+    engine.block.setPositionY(block, 100)
+    engine.block.appendChild(page, block)
 
     // Create RGB color (values 0.0-1.0)
-    const rgbaBlue: RGBAColor = { r: 0.0, g: 0.0, b: 1.0, a: 1.0 };
+    const rgbaBlue: RGBAColor = { r: 0.0, g: 0.0, b: 1.0, a: 1.0 }
 
     // Create CMYK color (cyan, magenta, yellow, black, tint)
-    const cmykRed = { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 };
+    const cmykRed = { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 }
 
     // Create spot color reference
     const spotPink = {
       name: 'Pink-Flamingo',
       tint: 1.0,
       externalReference: 'Pantone'
-    };
+    }
 
     // Define spot colors with screen preview approximations
-    engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.41, 0.71);
-    engine.editor.setSpotColorCMYK('Corporate-Blue', 1.0, 0.5, 0.0, 0.2);
+    engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.41, 0.71)
+    engine.editor.setSpotColorCMYK('Corporate-Blue', 1.0, 0.5, 0.0, 0.2)
 
     // Apply RGB color to fill
-    const fill = engine.block.getFill(block);
-    engine.block.setColor(fill, 'fill/color/value', rgbaBlue);
+    const fill = engine.block.getFill(block)
+    engine.block.setColor(fill, 'fill/color/value', rgbaBlue)
 
     // Read the current fill color
-    const currentFillColor = engine.block.getColor(fill, 'fill/color/value');
-    console.log('Current fill color:', currentFillColor);
+    const currentFillColor = engine.block.getColor(fill, 'fill/color/value')
+    console.log('Current fill color:', currentFillColor)
 
     // Enable and apply stroke color
-    engine.block.setStrokeEnabled(block, true);
-    engine.block.setStrokeWidth(block, 4);
-    engine.block.setColor(block, 'stroke/color', cmykRed);
+    engine.block.setStrokeEnabled(block, true)
+    engine.block.setStrokeWidth(block, 4)
+    engine.block.setColor(block, 'stroke/color', cmykRed)
 
     // Enable and apply drop shadow color
-    engine.block.setDropShadowEnabled(block, true);
-    engine.block.setDropShadowOffsetX(block, 5);
-    engine.block.setDropShadowOffsetY(block, 5);
-    engine.block.setColor(block, 'dropShadow/color', spotPink);
+    engine.block.setDropShadowEnabled(block, true)
+    engine.block.setDropShadowOffsetX(block, 5)
+    engine.block.setDropShadowOffsetY(block, 5)
+    engine.block.setColor(block, 'dropShadow/color', spotPink)
 
     // Convert colors between color spaces
     const cmykFromRgb = engine.editor.convertColorToColorSpace(
       rgbaBlue,
       'CMYK'
-    );
-    console.log('CMYK from RGB:', cmykFromRgb);
+    )
+    console.log('CMYK from RGB:', cmykFromRgb)
 
-    const rgbFromCmyk = engine.editor.convertColorToColorSpace(cmykRed, 'sRGB');
-    console.log('RGB from CMYK:', rgbFromCmyk);
+    const rgbFromCmyk = engine.editor.convertColorToColorSpace(cmykRed, 'sRGB')
+    console.log('RGB from CMYK:', rgbFromCmyk)
 
     // List all defined spot colors
-    const allSpotColors = engine.editor.findAllSpotColors();
-    console.log('Defined spot colors:', allSpotColors);
+    const allSpotColors = engine.editor.findAllSpotColors()
+    console.log('Defined spot colors:', allSpotColors)
 
     // Update a spot color definition
-    engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.6, 0.8);
-    console.log('Updated Pink-Flamingo spot color');
+    engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.6, 0.8)
+    console.log('Updated Pink-Flamingo spot color')
 
     // Remove a spot color definition (falls back to magenta)
-    engine.editor.removeSpotColor('Corporate-Blue');
-    console.log('Removed Corporate-Blue spot color');
+    engine.editor.removeSpotColor('Corporate-Blue')
+    console.log('Removed Corporate-Blue spot color')
 
     // Select the block to show in the editor
-    engine.block.select(block);
+    engine.block.select(block)
 
-    console.log('Apply colors guide initialized.');
+    console.log('Apply colors guide initialized.')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create color objects in different color spaces, apply colors to fill, stroke, and shadow properties, work with spot colors including defining and managing them, and convert colors between color spaces.
@@ -185,18 +185,18 @@ This guide covers how to create color objects in different color spaces, apply c
 CE.SDK represents colors as JavaScript objects with properties specific to each color space. We create color objects that match our target output—RGB for screens, CMYK for print, or spot colors for precise color matching.
 
 ```typescript highlight=highlight-create-colors
-    // Create RGB color (values 0.0-1.0)
-    const rgbaBlue: RGBAColor = { r: 0.0, g: 0.0, b: 1.0, a: 1.0 };
+// Create RGB color (values 0.0-1.0)
+const rgbaBlue: RGBAColor = { r: 0.0, g: 0.0, b: 1.0, a: 1.0 }
 
-    // Create CMYK color (cyan, magenta, yellow, black, tint)
-    const cmykRed = { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 };
+// Create CMYK color (cyan, magenta, yellow, black, tint)
+const cmykRed = { c: 0.0, m: 1.0, y: 1.0, k: 0.0, tint: 1.0 }
 
-    // Create spot color reference
-    const spotPink = {
-      name: 'Pink-Flamingo',
-      tint: 1.0,
-      externalReference: 'Pantone'
-    };
+// Create spot color reference
+const spotPink = {
+  name: 'Pink-Flamingo',
+  tint: 1.0,
+  externalReference: 'Pantone'
+}
 ```
 
 RGB colors use `{ r, g, b, a }` with values from 0.0 to 1.0 for each channel, where `a` is alpha (opacity). CMYK colors use `{ c, m, y, k, tint }` where tint controls the overall intensity. Spot colors use `{ name, tint, externalReference }` to reference a defined spot color by name.
@@ -207,8 +207,8 @@ Before applying a spot color, we must define its screen preview approximation. T
 
 ```typescript highlight=highlight-define-spot
 // Define spot colors with screen preview approximations
-engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.41, 0.71);
-engine.editor.setSpotColorCMYK('Corporate-Blue', 1.0, 0.5, 0.0, 0.2);
+engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.41, 0.71)
+engine.editor.setSpotColorCMYK('Corporate-Blue', 1.0, 0.5, 0.0, 0.2)
 ```
 
 Use `engine.editor.setSpotColorRGB()` to define the RGB approximation with red, green, and blue values from 0.0 to 1.0. Use `engine.editor.setSpotColorCMYK()` for the CMYK approximation with cyan, magenta, yellow, black, and tint values. A spot color can have both RGB and CMYK approximations defined.
@@ -218,13 +218,13 @@ Use `engine.editor.setSpotColorRGB()` to define the RGB approximation with red, 
 To set a block's fill color, we first get the fill block using `engine.block.getFill()`, then apply the color using `engine.block.setColor()` with the `'fill/color/value'` property.
 
 ```typescript highlight=highlight-apply-fill
-    // Apply RGB color to fill
-    const fill = engine.block.getFill(block);
-    engine.block.setColor(fill, 'fill/color/value', rgbaBlue);
+// Apply RGB color to fill
+const fill = engine.block.getFill(block)
+engine.block.setColor(fill, 'fill/color/value', rgbaBlue)
 
-    // Read the current fill color
-    const currentFillColor = engine.block.getColor(fill, 'fill/color/value');
-    console.log('Current fill color:', currentFillColor);
+// Read the current fill color
+const currentFillColor = engine.block.getColor(fill, 'fill/color/value')
+console.log('Current fill color:', currentFillColor)
 ```
 
 The fill block is a separate entity from the design block. We can read the current color using `engine.block.getColor()` with the same property path.
@@ -235,9 +235,9 @@ Stroke colors are applied directly to the design block using the `'stroke/color'
 
 ```typescript highlight=highlight-apply-stroke
 // Enable and apply stroke color
-engine.block.setStrokeEnabled(block, true);
-engine.block.setStrokeWidth(block, 4);
-engine.block.setColor(block, 'stroke/color', cmykRed);
+engine.block.setStrokeEnabled(block, true)
+engine.block.setStrokeWidth(block, 4)
+engine.block.setColor(block, 'stroke/color', cmykRed)
 ```
 
 The stroke renders around the edges of the block with the specified color. Set the stroke width using `engine.block.setStrokeWidth()` to control the line thickness.
@@ -248,10 +248,10 @@ Drop shadow colors use the `'dropShadow/color'` property on the design block. En
 
 ```typescript highlight=highlight-apply-shadow
 // Enable and apply drop shadow color
-engine.block.setDropShadowEnabled(block, true);
-engine.block.setDropShadowOffsetX(block, 5);
-engine.block.setDropShadowOffsetY(block, 5);
-engine.block.setColor(block, 'dropShadow/color', spotPink);
+engine.block.setDropShadowEnabled(block, true)
+engine.block.setDropShadowOffsetX(block, 5)
+engine.block.setDropShadowOffsetY(block, 5)
+engine.block.setColor(block, 'dropShadow/color', spotPink)
 ```
 
 Control the shadow position using `setDropShadowOffsetX()` and `setDropShadowOffsetY()`. Spot colors work with shadows just like RGB or CMYK colors.
@@ -261,15 +261,15 @@ Control the shadow position using `setDropShadowOffsetX()` and `setDropShadowOff
 Use `engine.editor.convertColorToColorSpace()` to convert any color to a different color space. This is useful when you need to output designs in a specific color format.
 
 ```typescript highlight=highlight-convert-color
-    // Convert colors between color spaces
-    const cmykFromRgb = engine.editor.convertColorToColorSpace(
-      rgbaBlue,
-      'CMYK'
-    );
-    console.log('CMYK from RGB:', cmykFromRgb);
+// Convert colors between color spaces
+const cmykFromRgb = engine.editor.convertColorToColorSpace(
+  rgbaBlue,
+  'CMYK'
+)
+console.log('CMYK from RGB:', cmykFromRgb)
 
-    const rgbFromCmyk = engine.editor.convertColorToColorSpace(cmykRed, 'sRGB');
-    console.log('RGB from CMYK:', rgbFromCmyk);
+const rgbFromCmyk = engine.editor.convertColorToColorSpace(cmykRed, 'sRGB')
+console.log('RGB from CMYK:', rgbFromCmyk)
 ```
 
 Pass the source color object and target color space (`'sRGB'` or `'CMYK'`). Spot colors convert to their defined approximation in the target space. Note that color conversions are approximations—CMYK has a smaller color gamut than sRGB.
@@ -280,8 +280,8 @@ Query all spot colors currently defined in the editor using `engine.editor.findA
 
 ```typescript highlight=highlight-list-spot
 // List all defined spot colors
-const allSpotColors = engine.editor.findAllSpotColors();
-console.log('Defined spot colors:', allSpotColors);
+const allSpotColors = engine.editor.findAllSpotColors()
+console.log('Defined spot colors:', allSpotColors)
 ```
 
 This is useful for building color pickers or validating that required spot colors are defined before export.
@@ -292,8 +292,8 @@ Redefine a spot color's approximation by calling `setSpotColorRGB()` or `setSpot
 
 ```typescript highlight=highlight-update-spot
 // Update a spot color definition
-engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.6, 0.8);
-console.log('Updated Pink-Flamingo spot color');
+engine.editor.setSpotColorRGB('Pink-Flamingo', 1.0, 0.6, 0.8)
+console.log('Updated Pink-Flamingo spot color')
 ```
 
 This allows you to adjust how spot colors appear on screen without modifying every block that uses them.
@@ -304,8 +304,8 @@ Remove a spot color definition using `engine.editor.removeSpotColor()`. Blocks s
 
 ```typescript highlight=highlight-remove-spot
 // Remove a spot color definition (falls back to magenta)
-engine.editor.removeSpotColor('Corporate-Blue');
-console.log('Removed Corporate-Blue spot color');
+engine.editor.removeSpotColor('Corporate-Blue')
+console.log('Removed Corporate-Blue spot color')
 ```
 
 This is useful when cleaning up unused spot colors or when you need to signal that a spot color is no longer valid.

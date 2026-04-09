@@ -26,7 +26,7 @@ CE.SDK provides built-in action button components that you can insert and config
 2. **Custom action buttons** using `ly.img.action.navigationBar` with your own `onClick` handlers
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-quick-start-add-action-buttons-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -42,25 +42,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -71,39 +71,39 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Add a built-in save button that integrates with the Actions API
     cesdk.ui.insertOrderComponent(
       { in: 'ly.img.navigation.bar', after: 'ly.img.spacer' },
       { id: 'ly.img.saveScene.navigationBar' }
-    );
+    )
 
     // Register the action handler for the save button
     cesdk.actions.register('saveScene', async () => {
-      const sceneString = await cesdk.engine.scene.saveToString();
-      // eslint-disable-next-line no-console
-      console.log('Scene saved via Actions API! Length:', sceneString.length);
+      const sceneString = await cesdk.engine.scene.saveToString()
+
+      console.log('Scene saved via Actions API! Length:', sceneString.length)
       // In production: send sceneString to your backend
       cesdk.ui.showNotification({
         message: 'Scene saved successfully!'
-      });
-    });
+      })
+    })
 
     // Add a custom action button with inline onClick handler
     cesdk.ui.insertOrderComponent(
@@ -114,12 +114,11 @@ class Example implements EditorPlugin {
         label: 'Custom',
         icon: '@imgly/Settings',
         onClick: async () => {
-          // eslint-disable-next-line no-console
-          console.log('Custom action clicked!');
+          console.log('Custom action clicked!')
           // Your custom logic here
         }
       }
-    );
+    )
 
     // Add an Export button with accent styling
     cesdk.ui.insertOrderComponent(
@@ -132,13 +131,13 @@ class Example implements EditorPlugin {
         color: 'accent',
         onClick: async () => {
           // Export to PNG using the utils API
-          const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' });
-          // eslint-disable-next-line no-console
-          console.log('Exported PNG! Size:', blobs[0].size);
+          const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' })
+
+          console.log('Exported PNG! Size:', blobs[0].size)
           // In production: download or upload the blob
         }
       }
-    );
+    )
 
     // Create a dropdown menu with multiple export options
     cesdk.ui.insertOrderComponent(
@@ -155,8 +154,8 @@ class Example implements EditorPlugin {
             onClick: async () => {
               const { blobs } = await cesdk.utils.export({
                 mimeType: 'image/png'
-              });
-              downloadBlob(blobs[0], 'design.png');
+              })
+              downloadBlob(blobs[0], 'design.png')
             }
           },
           {
@@ -166,8 +165,8 @@ class Example implements EditorPlugin {
             onClick: async () => {
               const { blobs } = await cesdk.utils.export({
                 mimeType: 'image/jpeg'
-              });
-              downloadBlob(blobs[0], 'design.jpg');
+              })
+              downloadBlob(blobs[0], 'design.jpg')
             }
           },
           {
@@ -177,13 +176,13 @@ class Example implements EditorPlugin {
             onClick: async () => {
               const { blobs } = await cesdk.utils.export({
                 mimeType: 'application/pdf'
-              });
-              downloadBlob(blobs[0], 'design.pdf');
+              })
+              downloadBlob(blobs[0], 'design.pdf')
             }
           }
         ]
       }
-    );
+    )
 
     // Insert multiple buttons at once with a separator between them
     cesdk.ui.insertOrderComponent(
@@ -195,8 +194,7 @@ class Example implements EditorPlugin {
           label: 'Share',
           icon: '@imgly/Share',
           onClick: () => {
-            // eslint-disable-next-line no-console
-            console.log('Share clicked!');
+            console.log('Share clicked!')
           }
         },
         'ly.img.separator',
@@ -206,11 +204,11 @@ class Example implements EditorPlugin {
           label: 'Print',
           icon: '@imgly/Print',
           onClick: () => {
-            window.print();
+            window.print()
           }
         }
       ]
-    );
+    )
 
     // Use the Utils API for export with built-in loading dialog
     cesdk.ui.insertOrderComponent(
@@ -223,31 +221,30 @@ class Example implements EditorPlugin {
         color: 'accent',
         onClick: async () => {
           // cesdk.utils.export() shows a loading dialog automatically
-          const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' });
+          const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' })
           // Download the exported file to user's device
-          await cesdk.utils.downloadFile(blobs[0], 'image/png');
+          await cesdk.utils.downloadFile(blobs[0], 'image/png')
         }
       }
-    );
+    )
 
-    // eslint-disable-next-line no-console
-    console.log('Add Action Buttons example loaded successfully');
+    console.log('Add Action Buttons example loaded successfully')
   }
 }
 
 // Helper function to download a blob as a file
 function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers both approaches, along with button appearance configuration, dropdown menus, and the Utils API for export operations.
@@ -257,22 +254,22 @@ This guide covers both approaches, along with button appearance configuration, d
 CE.SDK provides pre-configured action buttons for common operations like saving, exporting, and importing. These buttons have default labels and icons, and they automatically integrate with the Actions API.
 
 ```typescript highlight=highlight-builtin-button
-    // Add a built-in save button that integrates with the Actions API
-    cesdk.ui.insertOrderComponent(
-      { in: 'ly.img.navigation.bar', after: 'ly.img.spacer' },
-      { id: 'ly.img.saveScene.navigationBar' }
-    );
+// Add a built-in save button that integrates with the Actions API
+cesdk.ui.insertOrderComponent(
+  { in: 'ly.img.navigation.bar', after: 'ly.img.spacer' },
+  { id: 'ly.img.saveScene.navigationBar' }
+)
 
-    // Register the action handler for the save button
-    cesdk.actions.register('saveScene', async () => {
-      const sceneString = await cesdk.engine.scene.saveToString();
-      // eslint-disable-next-line no-console
-      console.log('Scene saved via Actions API! Length:', sceneString.length);
-      // In production: send sceneString to your backend
-      cesdk.ui.showNotification({
-        message: 'Scene saved successfully!'
-      });
-    });
+// Register the action handler for the save button
+cesdk.actions.register('saveScene', async () => {
+  const sceneString = await cesdk.engine.scene.saveToString()
+
+  console.log('Scene saved via Actions API! Length:', sceneString.length)
+  // In production: send sceneString to your backend
+  cesdk.ui.showNotification({
+    message: 'Scene saved successfully!'
+  })
+})
 ```
 
 When you insert a built-in button like `ly.img.saveScene.navigationBar`, clicking it automatically calls the registered `saveScene` action. You provide the implementation by registering your handler with `cesdk.actions.register()`.
@@ -309,12 +306,11 @@ cesdk.ui.insertOrderComponent(
     label: 'Custom',
     icon: '@imgly/Settings',
     onClick: async () => {
-      // eslint-disable-next-line no-console
-      console.log('Custom action clicked!');
+      console.log('Custom action clicked!')
       // Your custom logic here
     }
   }
-);
+)
 ```
 
 The `onClick` handler can be synchronous or asynchronous. In this example, we serialize the scene and log the result. In production, you would send this data to your backend.
@@ -335,13 +331,13 @@ cesdk.ui.insertOrderComponent(
     color: 'accent',
     onClick: async () => {
       // Export to PNG using the utils API
-      const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' });
-      // eslint-disable-next-line no-console
-      console.log('Exported PNG! Size:', blobs[0].size);
+      const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' })
+
+      console.log('Exported PNG! Size:', blobs[0].size)
       // In production: download or upload the blob
     }
   }
-);
+)
 ```
 
 | Property | Type | Description |
@@ -376,8 +372,8 @@ cesdk.ui.insertOrderComponent(
         onClick: async () => {
           const { blobs } = await cesdk.utils.export({
             mimeType: 'image/png'
-          });
-          downloadBlob(blobs[0], 'design.png');
+          })
+          downloadBlob(blobs[0], 'design.png')
         }
       },
       {
@@ -387,8 +383,8 @@ cesdk.ui.insertOrderComponent(
         onClick: async () => {
           const { blobs } = await cesdk.utils.export({
             mimeType: 'image/jpeg'
-          });
-          downloadBlob(blobs[0], 'design.jpg');
+          })
+          downloadBlob(blobs[0], 'design.jpg')
         }
       },
       {
@@ -398,13 +394,13 @@ cesdk.ui.insertOrderComponent(
         onClick: async () => {
           const { blobs } = await cesdk.utils.export({
             mimeType: 'application/pdf'
-          });
-          downloadBlob(blobs[0], 'design.pdf');
+          })
+          downloadBlob(blobs[0], 'design.pdf')
         }
       }
     ]
   }
-);
+)
 ```
 
 Each child in the `children` array follows the same configuration pattern as single action buttons. The dropdown automatically manages its open/close state and displays the children in a menu when clicked.
@@ -424,8 +420,7 @@ cesdk.ui.insertOrderComponent(
       label: 'Share',
       icon: '@imgly/Share',
       onClick: () => {
-        // eslint-disable-next-line no-console
-        console.log('Share clicked!');
+        console.log('Share clicked!')
       }
     },
     'ly.img.separator',
@@ -435,11 +430,11 @@ cesdk.ui.insertOrderComponent(
       label: 'Print',
       icon: '@imgly/Print',
       onClick: () => {
-        window.print();
+        window.print()
       }
     }
   ]
-);
+)
 ```
 
 The array can contain both component objects and string component IDs (like `'ly.img.separator'`). This allows you to mix action buttons with layout components.
@@ -472,12 +467,12 @@ cesdk.ui.insertOrderComponent(
     color: 'accent',
     onClick: async () => {
       // cesdk.utils.export() shows a loading dialog automatically
-      const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' });
+      const { blobs } = await cesdk.utils.export({ mimeType: 'image/png' })
       // Download the exported file to user's device
-      await cesdk.utils.downloadFile(blobs[0], 'image/png');
+      await cesdk.utils.downloadFile(blobs[0], 'image/png')
     }
   }
-);
+)
 ```
 
 **Key Utils API methods:**

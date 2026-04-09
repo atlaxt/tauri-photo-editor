@@ -30,9 +30,7 @@ import type {
   AssetsQueryResult,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -47,8 +45,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Create Custom Filters Guide
@@ -61,22 +61,22 @@ import { DesignEditorConfig } from './design-editor/plugin';
  * - Applying filters from custom sources
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -87,25 +87,25 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Enable filters in the inspector panel using the Feature API
-    cesdk.feature.enable('ly.img.filter');
+    cesdk.feature.enable('ly.img.filter')
 
     // Add a custom filter to the built-in LUT filter source
     // The ID must follow the format //ly.img.cesdk.filters.lut/{name}
@@ -122,14 +122,14 @@ class Example implements EditorPlugin {
         verticalTileCount: '5',
         blockType: '//ly.img.ubq/effect/lut_filter'
       }
-    });
+    })
 
     // Add translation for the custom filter label
     cesdk.i18n.setTranslations({
       en: {
         'property.lutFilter.mycustomfilter': 'MY CUSTOM FILTER'
       }
-    });
+    })
 
     // Create a custom filter asset source for organizing multiple filters
     const customFilterSource: AssetSource = {
@@ -179,34 +179,34 @@ class Example implements EditorPlugin {
               blockType: '//ly.img.ubq/effect/lut_filter'
             }
           }
-        ];
+        ]
 
         // Filter by query if provided
-        let filteredAssets = filters;
+        let filteredAssets = filters
         if (queryData.query) {
-          const searchTerm = queryData.query.toLowerCase();
+          const searchTerm = queryData.query.toLowerCase()
           filteredAssets = filters.filter(
-            (asset) =>
-              asset.label?.toLowerCase().includes(searchTerm) ||
-              asset.tags?.some((tag) => tag.toLowerCase().includes(searchTerm))
-          );
+            asset =>
+              asset.label?.toLowerCase().includes(searchTerm)
+              || asset.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
+          )
         }
 
         // Filter by groups if provided
         if (queryData.groups && queryData.groups.length > 0) {
-          filteredAssets = filteredAssets.filter((asset) =>
-            asset.tags?.some((tag) => queryData.groups?.includes(tag))
-          );
+          filteredAssets = filteredAssets.filter(asset =>
+            asset.tags?.some(tag => queryData.groups?.includes(tag))
+          )
         }
 
         // Handle pagination
-        const page = queryData.page ?? 0;
-        const perPage = queryData.perPage ?? 10;
-        const startIndex = page * perPage;
+        const page = queryData.page ?? 0
+        const perPage = queryData.perPage ?? 10
+        const startIndex = page * perPage
         const paginatedAssets = filteredAssets.slice(
           startIndex,
           startIndex + perPage
-        );
+        )
 
         return {
           assets: paginatedAssets,
@@ -214,17 +214,17 @@ class Example implements EditorPlugin {
           currentPage: page,
           nextPage:
             startIndex + perPage < filteredAssets.length ? page + 1 : undefined
-        };
+        }
       },
 
       // Return available filter categories
       async getGroups(): Promise<string[]> {
-        return ['vintage', 'cinema', 'black and white'];
+        return ['vintage', 'cinema', 'black and white']
       }
-    };
+    }
 
     // Register the custom filter source for programmatic access
-    engine.asset.addSource(customFilterSource);
+    engine.asset.addSource(customFilterSource)
 
     // Load filters from a JSON configuration string
     const filterConfigJSON = JSON.stringify({
@@ -260,14 +260,14 @@ class Example implements EditorPlugin {
           }
         }
       ]
-    });
+    })
 
     // Create asset source from JSON string
     const jsonSourceId = await engine.asset.addLocalAssetSourceFromJSONString(
       filterConfigJSON
-    );
-    // eslint-disable-next-line no-console
-    console.log('Created JSON-based filter source:', jsonSourceId);
+    )
+
+    console.log('Created JSON-based filter source:', jsonSourceId)
 
     // Query filters from our custom source for programmatic use
     const customFilterResults = await engine.asset.findAssets(
@@ -276,49 +276,49 @@ class Example implements EditorPlugin {
         page: 0,
         perPage: 10
       }
-    );
+    )
 
     // Create an image block to demonstrate applying a custom filter
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
     const imageBlock = await engine.block.addImage(imageUri, {
       x: 50,
       y: 150,
       size: { width: 300, height: 200 }
-    });
-    engine.block.appendChild(page, imageBlock);
+    })
+    engine.block.appendChild(page, imageBlock)
 
     // Get a filter from our custom source
-    const filterAsset = customFilterResults.assets[0];
+    const filterAsset = customFilterResults.assets[0]
     if (filterAsset && filterAsset.meta) {
       // Create and configure the LUT filter effect
       const lutEffect = engine.block.createEffect(
         '//ly.img.ubq/effect/lut_filter'
-      );
+      )
 
       // Set LUT file URI from asset metadata
       engine.block.setString(
         lutEffect,
         'effect/lut_filter/lutFileURI',
         filterAsset.meta.uri as string
-      );
+      )
 
       // Configure LUT grid dimensions
       engine.block.setInt(
         lutEffect,
         'effect/lut_filter/horizontalTileCount',
-        parseInt(filterAsset.meta.horizontalTileCount as string, 10)
-      );
+        Number.parseInt(filterAsset.meta.horizontalTileCount as string, 10)
+      )
       engine.block.setInt(
         lutEffect,
         'effect/lut_filter/verticalTileCount',
-        parseInt(filterAsset.meta.verticalTileCount as string, 10)
-      );
+        Number.parseInt(filterAsset.meta.verticalTileCount as string, 10)
+      )
 
       // Set filter intensity (0.0 to 1.0)
-      engine.block.setFloat(lutEffect, 'effect/lut_filter/intensity', 0.85);
+      engine.block.setFloat(lutEffect, 'effect/lut_filter/intensity', 0.85)
 
       // Apply the effect to the image block
-      engine.block.appendEffect(imageBlock, lutEffect);
+      engine.block.appendEffect(imageBlock, lutEffect)
     }
 
     // Create a second image without a filter for comparison
@@ -326,20 +326,19 @@ class Example implements EditorPlugin {
       x: 450,
       y: 150,
       size: { width: 300, height: 200 }
-    });
-    engine.block.appendChild(page, imageBlock2);
+    })
+    engine.block.appendChild(page, imageBlock2)
 
     // Select the filtered image to show the filter in the inspector
-    engine.block.select(imageBlock);
+    engine.block.select(imageBlock)
 
-    // eslint-disable-next-line no-console
     console.log(
       'Custom filters guide initialized. Select an image to see filters in the inspector panel.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create filter asset sources, define filter metadata, load filters from JSON configuration, and apply custom filters to design elements.
@@ -359,124 +358,124 @@ LUT filters need these properties in the `meta` object:
 We register a custom filter source using `engine.asset.addSource()` with a `findAssets` callback. This callback returns filter assets matching the query parameters. After registering the source, we use `cesdk.ui.updateAssetLibraryEntry()` to add our custom source to the filter inspector panel.
 
 ```typescript highlight-create-custom-source
-    // Add a custom filter to the built-in LUT filter source
-    // The ID must follow the format //ly.img.cesdk.filters.lut/{name}
-    // for the UI to display the label correctly
-    engine.asset.addAssetToSource('ly.img.filter', {
-      id: '//ly.img.cesdk.filters.lut/mycustomfilter',
-      label: { en: 'MY CUSTOM FILTER' },
-      tags: { en: ['custom', 'brand'] },
-      meta: {
-        uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-        thumbUri:
+// Add a custom filter to the built-in LUT filter source
+// The ID must follow the format //ly.img.cesdk.filters.lut/{name}
+// for the UI to display the label correctly
+engine.asset.addAssetToSource('ly.img.filter', {
+  id: '//ly.img.cesdk.filters.lut/mycustomfilter',
+  label: { en: 'MY CUSTOM FILTER' },
+  tags: { en: ['custom', 'brand'] },
+  meta: {
+    uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+    thumbUri:
           'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-        horizontalTileCount: '5',
-        verticalTileCount: '5',
-        blockType: '//ly.img.ubq/effect/lut_filter'
-      }
-    });
+    horizontalTileCount: '5',
+    verticalTileCount: '5',
+    blockType: '//ly.img.ubq/effect/lut_filter'
+  }
+})
 
-    // Add translation for the custom filter label
-    cesdk.i18n.setTranslations({
-      en: {
-        'property.lutFilter.mycustomfilter': 'MY CUSTOM FILTER'
-      }
-    });
+// Add translation for the custom filter label
+cesdk.i18n.setTranslations({
+  en: {
+    'property.lutFilter.mycustomfilter': 'MY CUSTOM FILTER'
+  }
+})
 
-    // Create a custom filter asset source for organizing multiple filters
-    const customFilterSource: AssetSource = {
-      id: 'my-custom-filters',
+// Create a custom filter asset source for organizing multiple filters
+const customFilterSource: AssetSource = {
+  id: 'my-custom-filters',
 
-      async findAssets(
-        queryData: AssetQueryData
-      ): Promise<AssetsQueryResult | undefined> {
-        // Define custom LUT filter assets
-        const filters: AssetResult[] = [
-          {
-            id: 'vintage-warm',
-            label: 'Vintage Warm',
-            tags: ['vintage', 'warm', 'retro'],
-            meta: {
-              uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-              thumbUri:
+  async findAssets(
+    queryData: AssetQueryData
+  ): Promise<AssetsQueryResult | undefined> {
+    // Define custom LUT filter assets
+    const filters: AssetResult[] = [
+      {
+        id: 'vintage-warm',
+        label: 'Vintage Warm',
+        tags: ['vintage', 'warm', 'retro'],
+        meta: {
+          uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+          thumbUri:
                 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-              horizontalTileCount: '5',
-              verticalTileCount: '5',
-              blockType: '//ly.img.ubq/effect/lut_filter'
-            }
-          },
-          {
-            id: 'cool-cinema',
-            label: 'Cool Cinema',
-            tags: ['cinema', 'cool', 'film'],
-            meta: {
-              uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-              thumbUri:
-                'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-              horizontalTileCount: '5',
-              verticalTileCount: '5',
-              blockType: '//ly.img.ubq/effect/lut_filter'
-            }
-          },
-          {
-            id: 'bw-classic',
-            label: 'B&W Classic',
-            tags: ['black and white', 'classic', 'monochrome'],
-            meta: {
-              uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-              thumbUri:
-                'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-              horizontalTileCount: '5',
-              verticalTileCount: '5',
-              blockType: '//ly.img.ubq/effect/lut_filter'
-            }
-          }
-        ];
-
-        // Filter by query if provided
-        let filteredAssets = filters;
-        if (queryData.query) {
-          const searchTerm = queryData.query.toLowerCase();
-          filteredAssets = filters.filter(
-            (asset) =>
-              asset.label?.toLowerCase().includes(searchTerm) ||
-              asset.tags?.some((tag) => tag.toLowerCase().includes(searchTerm))
-          );
+          horizontalTileCount: '5',
+          verticalTileCount: '5',
+          blockType: '//ly.img.ubq/effect/lut_filter'
         }
-
-        // Filter by groups if provided
-        if (queryData.groups && queryData.groups.length > 0) {
-          filteredAssets = filteredAssets.filter((asset) =>
-            asset.tags?.some((tag) => queryData.groups?.includes(tag))
-          );
-        }
-
-        // Handle pagination
-        const page = queryData.page ?? 0;
-        const perPage = queryData.perPage ?? 10;
-        const startIndex = page * perPage;
-        const paginatedAssets = filteredAssets.slice(
-          startIndex,
-          startIndex + perPage
-        );
-
-        return {
-          assets: paginatedAssets,
-          total: filteredAssets.length,
-          currentPage: page,
-          nextPage:
-            startIndex + perPage < filteredAssets.length ? page + 1 : undefined
-        };
       },
-
-      // Return available filter categories
-      async getGroups(): Promise<string[]> {
-        return ['vintage', 'cinema', 'black and white'];
+      {
+        id: 'cool-cinema',
+        label: 'Cool Cinema',
+        tags: ['cinema', 'cool', 'film'],
+        meta: {
+          uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+          thumbUri:
+                'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+          horizontalTileCount: '5',
+          verticalTileCount: '5',
+          blockType: '//ly.img.ubq/effect/lut_filter'
+        }
+      },
+      {
+        id: 'bw-classic',
+        label: 'B&W Classic',
+        tags: ['black and white', 'classic', 'monochrome'],
+        meta: {
+          uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+          thumbUri:
+                'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+          horizontalTileCount: '5',
+          verticalTileCount: '5',
+          blockType: '//ly.img.ubq/effect/lut_filter'
+        }
       }
-    };
+    ]
 
-    // Register the custom filter source for programmatic access
-    engine.asset.addSource(customFilterSource);
+    // Filter by query if provided
+    let filteredAssets = filters
+    if (queryData.query) {
+      const searchTerm = queryData.query.toLowerCase()
+      filteredAssets = filters.filter(
+        asset =>
+          asset.label?.toLowerCase().includes(searchTerm)
+          || asset.tags?.some(tag => tag.toLowerCase().includes(searchTerm))
+      )
+    }
+
+    // Filter by groups if provided
+    if (queryData.groups && queryData.groups.length > 0) {
+      filteredAssets = filteredAssets.filter(asset =>
+        asset.tags?.some(tag => queryData.groups?.includes(tag))
+      )
+    }
+
+    // Handle pagination
+    const page = queryData.page ?? 0
+    const perPage = queryData.perPage ?? 10
+    const startIndex = page * perPage
+    const paginatedAssets = filteredAssets.slice(
+      startIndex,
+      startIndex + perPage
+    )
+
+    return {
+      assets: paginatedAssets,
+      total: filteredAssets.length,
+      currentPage: page,
+      nextPage:
+            startIndex + perPage < filteredAssets.length ? page + 1 : undefined
+    }
+  },
+
+  // Return available filter categories
+  async getGroups(): Promise<string[]> {
+    return ['vintage', 'cinema', 'black and white']
+  }
+}
+
+// Register the custom filter source for programmatic access
+engine.asset.addSource(customFilterSource)
 ```
 
 The `findAssets` callback receives query parameters including pagination (`page`, `perPage`), search terms (`query`), and category filters (`groups`). We filter and paginate the results accordingly.
@@ -499,48 +498,48 @@ The optional `getGroups()` method returns available filter categories for the UI
 For larger filter collections, we load definitions from JSON using `engine.asset.addLocalAssetSourceFromJSONString()`. This approach simplifies management of filter libraries.
 
 ```typescript highlight-load-from-json-string
-    // Load filters from a JSON configuration string
-    const filterConfigJSON = JSON.stringify({
-      version: '2.0.0',
-      id: 'my-json-filters',
-      assets: [
-        {
-          id: 'sunset-glow',
-          label: { en: 'Sunset Glow' },
-          tags: { en: ['warm', 'sunset', 'golden'] },
-          groups: ['Warm Tones'],
-          meta: {
-            uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-            thumbUri:
+// Load filters from a JSON configuration string
+const filterConfigJSON = JSON.stringify({
+  version: '2.0.0',
+  id: 'my-json-filters',
+  assets: [
+    {
+      id: 'sunset-glow',
+      label: { en: 'Sunset Glow' },
+      tags: { en: ['warm', 'sunset', 'golden'] },
+      groups: ['Warm Tones'],
+      meta: {
+        uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+        thumbUri:
               'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-            horizontalTileCount: '5',
-            verticalTileCount: '5',
-            blockType: '//ly.img.ubq/effect/lut_filter'
-          }
-        },
-        {
-          id: 'ocean-breeze',
-          label: { en: 'Ocean Breeze' },
-          tags: { en: ['cool', 'blue', 'ocean'] },
-          groups: ['Cool Tones'],
-          meta: {
-            uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-            thumbUri:
+        horizontalTileCount: '5',
+        verticalTileCount: '5',
+        blockType: '//ly.img.ubq/effect/lut_filter'
+      }
+    },
+    {
+      id: 'ocean-breeze',
+      label: { en: 'Ocean Breeze' },
+      tags: { en: ['cool', 'blue', 'ocean'] },
+      groups: ['Cool Tones'],
+      meta: {
+        uri: 'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
+        thumbUri:
               'https://cdn.img.ly/assets/v4/ly.img.filter.lut/LUTs/imgly_lut_ad1920_5_5_128.png',
-            horizontalTileCount: '5',
-            verticalTileCount: '5',
-            blockType: '//ly.img.ubq/effect/lut_filter'
-          }
-        }
-      ]
-    });
+        horizontalTileCount: '5',
+        verticalTileCount: '5',
+        blockType: '//ly.img.ubq/effect/lut_filter'
+      }
+    }
+  ]
+})
 
-    // Create asset source from JSON string
-    const jsonSourceId = await engine.asset.addLocalAssetSourceFromJSONString(
-      filterConfigJSON
-    );
-    // eslint-disable-next-line no-console
-    console.log('Created JSON-based filter source:', jsonSourceId);
+// Create asset source from JSON string
+const jsonSourceId = await engine.asset.addLocalAssetSourceFromJSONString(
+  filterConfigJSON
+)
+
+console.log('Created JSON-based filter source:', jsonSourceId)
 ```
 
 ### JSON Structure for Filter Assets

@@ -107,11 +107,11 @@ Bir şablon, sıralı işlem adımlarından oluşan JSON yapısıdır.
   "name": "Instagram Kare",
   "description": "1:1 kırpma + hafif sıcaklık filtresi",
   "steps": [
-    { "op": "crop",       "params": { "aspect": "1:1" } },
+    { "op": "crop", "params": { "aspect": "1:1" } },
     { "op": "brightness", "params": { "value": 10 } },
     { "op": "saturation", "params": { "value": 15 } },
-    { "op": "resize",     "params": { "width": 1080, "height": 1080, "keep_aspect": true } },
-    { "op": "output",     "params": { "format": "jpeg", "quality": 90 } }
+    { "op": "resize", "params": { "width": 1080, "height": 1080, "keep_aspect": true } },
+    { "op": "output", "params": { "format": "jpeg", "quality": 90 } }
   ],
   "created_at": "ISO8601",
   "updated_at": "ISO8601"
@@ -174,9 +174,9 @@ get_image_metadata(file_path: String) -> Result<ImageMeta, String>
 
 ```toml
 image = "0.25"
-serde = { version = "1", features = ["derive"] }
+serde = { version = "1", features = [ "derive" ] }
 serde_json = "1"
-uuid = { version = "1", features = ["v4"] }
+uuid = { version = "1", features = [ "v4" ] }
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 ```

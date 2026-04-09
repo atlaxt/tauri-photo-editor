@@ -23,7 +23,7 @@ Load archived CE.SDK scenes that bundle design structure with all fonts, images,
 Archives solve the portability problem inherent in scene files. While scene files reference assets by URL, archives package everything together in a single `.zip` file. If asset URLs become unavailable, scene files fail to load properly. Archives avoid this issue by bundling all fonts, images, videos, and other resources directly within the archive, making them self-contained and reliable across different environments.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-import-design-from-archive-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import { calculateGridLayout } from './utils';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,28 +69,28 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Method 1: Load Archive from URL =====
     // Archives are self-contained ZIP files containing both the scene
     // structure and all referenced assets (images, fonts, videos, etc.)
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _archiveUrl = 'https://example.com/designs/project-bundle.zip';
+    const _archiveUrl = 'https://example.com/designs/project-bundle.zip'
 
     // Load the archive using loadFromArchiveURL
     // await engine.scene.loadFromArchiveURL(_archiveUrl);
@@ -102,29 +102,31 @@ class Example implements EditorPlugin {
 
     // Pattern for handling user uploads (attach to a button in your UI):
     const handleFileUpload = async (file: File) => {
-      const userArchiveUrl = URL.createObjectURL(file);
+      const userArchiveUrl = URL.createObjectURL(file)
 
       try {
-        await engine.scene.loadFromArchiveURL(userArchiveUrl);
-        console.log('User archive loaded successfully');
-      } catch (error) {
-        console.error('Failed to load user archive:', error);
-      } finally {
-        URL.revokeObjectURL(userArchiveUrl);
+        await engine.scene.loadFromArchiveURL(userArchiveUrl)
+        console.log('User archive loaded successfully')
       }
-    };
+      catch (error) {
+        console.error('Failed to load user archive:', error)
+      }
+      finally {
+        URL.revokeObjectURL(userArchiveUrl)
+      }
+    }
 
     // Example: Create file input for user uploads
     // In production, attach this to your UI button
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.zip';
+    const fileInput = document.createElement('input')
+    fileInput.type = 'file'
+    fileInput.accept = '.zip'
     fileInput.onchange = async (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
+      const file = (event.target as HTMLInputElement).files?.[0]
       if (file) {
-        await handleFileUpload(file);
+        await handleFileUpload(file)
       }
-    };
+    }
 
     // ===== Method 3: Load Archive from Blob =====
     // When you have an archive as a Blob (from fetch, API, or database),
@@ -132,18 +134,20 @@ class Example implements EditorPlugin {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _loadArchiveFromBlob = async (archiveBlob: Blob): Promise<void> => {
-      const blobUrl = URL.createObjectURL(archiveBlob);
+      const blobUrl = URL.createObjectURL(archiveBlob)
 
       try {
-        await engine.scene.loadFromArchiveURL(blobUrl);
-        console.log('Archive loaded from blob successfully');
-      } catch (error) {
-        console.error('Failed to load archive from blob:', error);
-        throw error;
-      } finally {
-        URL.revokeObjectURL(blobUrl);
+        await engine.scene.loadFromArchiveURL(blobUrl)
+        console.log('Archive loaded from blob successfully')
       }
-    };
+      catch (error) {
+        console.error('Failed to load archive from blob:', error)
+        throw error
+      }
+      finally {
+        URL.revokeObjectURL(blobUrl)
+      }
+    }
 
     // In production, this blob would come from your API or storage
     // await _loadArchiveFromBlob(archiveBlob);
@@ -170,12 +174,12 @@ class Example implements EditorPlugin {
     // - Works offline or across different environments
 
     // Create a visual demonstration showing the archive loading workflow
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     const layout = calculateGridLayout(1920, 1080, 3, {
       spacing: 40,
       margin: 80
-    });
+    })
 
     // Create visual elements showing the workflow
     const step1Block = await engine.block.addImage(
@@ -184,7 +188,7 @@ class Example implements EditorPlugin {
         ...layout.getPosition(0),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
     const step2Block = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_2.jpg',
@@ -192,7 +196,7 @@ class Example implements EditorPlugin {
         ...layout.getPosition(1),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
     const step3Block = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_3.jpg',
@@ -200,45 +204,45 @@ class Example implements EditorPlugin {
         ...layout.getPosition(2),
         size: { width: layout.blockWidth, height: layout.blockHeight }
       }
-    );
+    )
 
-    engine.block.appendChild(page, step1Block);
-    engine.block.appendChild(page, step2Block);
-    engine.block.appendChild(page, step3Block);
+    engine.block.appendChild(page, step1Block)
+    engine.block.appendChild(page, step2Block)
+    engine.block.appendChild(page, step3Block)
 
     // Add labels
-    const labels = ['1. Create Archive', '2. Store Archive', '3. Load Archive'];
+    const labels = ['1. Create Archive', '2. Store Archive', '3. Load Archive']
 
-    const blocks = [step1Block, step2Block, step3Block];
+    const blocks = [step1Block, step2Block, step3Block]
     blocks.forEach((block, index) => {
-      engine.block.appendChild(page, block);
+      engine.block.appendChild(page, block)
 
-      const label = engine.block.create('text');
-      const pos = layout.getPosition(index);
+      const label = engine.block.create('text')
+      const pos = layout.getPosition(index)
 
-      engine.block.setString(label, 'text/text', labels[index]);
-      engine.block.setWidth(label, layout.blockWidth);
-      engine.block.setPositionX(label, pos.x);
-      engine.block.setPositionY(label, pos.y + layout.blockHeight + 20);
-      engine.block.setFloat(label, 'text/fontSize', 32);
+      engine.block.setString(label, 'text/text', labels[index])
+      engine.block.setWidth(label, layout.blockWidth)
+      engine.block.setPositionX(label, pos.x)
+      engine.block.setPositionY(label, pos.y + layout.blockHeight + 20)
+      engine.block.setFloat(label, 'text/fontSize', 32)
       engine.block.setColor(label, 'fill/solid/color', {
         r: 0.2,
         g: 0.2,
         b: 0.2,
         a: 1.0
-      });
+      })
 
-      engine.block.appendChild(page, label);
-    });
+      engine.block.appendChild(page, label)
+    })
 
     // Zoom to show full canvas
     await engine.scene.zoomToBlock(page, {
       padding: 40
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to load archived scenes from URLs, handle user-uploaded archive files, and work with loaded archive content.
@@ -262,16 +266,16 @@ The scene file references these assets with relative URIs like `./images/photo-a
 Use `engine.scene.loadFromArchiveURL()` to load a CE.SDK archive from a remote or local URL. The engine fetches the archive, extracts its contents, and loads the scene with all bundled assets.
 
 ```typescript highlight-load-from-archive-url
-    // Archives are self-contained ZIP files containing both the scene
-    // structure and all referenced assets (images, fonts, videos, etc.)
+// Archives are self-contained ZIP files containing both the scene
+// structure and all referenced assets (images, fonts, videos, etc.)
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _archiveUrl = 'https://example.com/designs/project-bundle.zip';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _archiveUrl = 'https://example.com/designs/project-bundle.zip'
 
-    // Load the archive using loadFromArchiveURL
-    // await engine.scene.loadFromArchiveURL(_archiveUrl);
+// Load the archive using loadFromArchiveURL
+// await engine.scene.loadFromArchiveURL(_archiveUrl);
 
-    // The scene is now loaded with all bundled assets
+// The scene is now loaded with all bundled assets
 ```
 
 The method is asynchronous and returns a Promise that resolves when the archive finishes loading. The loaded scene replaces the current scene in the editor and becomes immediately editable.
@@ -287,33 +291,35 @@ For production usage, archive URLs typically point to cloud storage or CDN locat
 For user-uploaded archive files, create an object URL from the File blob and load it using `loadFromArchiveURL()`. This pattern works for file inputs, drag-and-drop uploads, or any scenario where users provide archive files.
 
 ```typescript highlight-load-from-user-upload
-    // For user-uploaded archive files, create an object URL from the File
+// For user-uploaded archive files, create an object URL from the File
 
-    // Pattern for handling user uploads (attach to a button in your UI):
-    const handleFileUpload = async (file: File) => {
-      const userArchiveUrl = URL.createObjectURL(file);
+// Pattern for handling user uploads (attach to a button in your UI):
+async function handleFileUpload(file: File) {
+  const userArchiveUrl = URL.createObjectURL(file)
 
-      try {
-        await engine.scene.loadFromArchiveURL(userArchiveUrl);
-        console.log('User archive loaded successfully');
-      } catch (error) {
-        console.error('Failed to load user archive:', error);
-      } finally {
-        URL.revokeObjectURL(userArchiveUrl);
-      }
-    };
+  try {
+    await engine.scene.loadFromArchiveURL(userArchiveUrl)
+    console.log('User archive loaded successfully')
+  }
+  catch (error) {
+    console.error('Failed to load user archive:', error)
+  }
+  finally {
+    URL.revokeObjectURL(userArchiveUrl)
+  }
+}
 
-    // Example: Create file input for user uploads
-    // In production, attach this to your UI button
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.zip';
-    fileInput.onchange = async (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        await handleFileUpload(file);
-      }
-    };
+// Example: Create file input for user uploads
+// In production, attach this to your UI button
+const fileInput = document.createElement('input')
+fileInput.type = 'file'
+fileInput.accept = '.zip'
+fileInput.onchange = async (event) => {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (file) {
+    await handleFileUpload(file)
+  }
+}
 ```
 
 The example shows a complete file upload handler that creates an input element, handles the file selection, and loads the archive with proper error handling. Object URLs are temporary references to blob data. Always revoke them with `URL.revokeObjectURL()` after loading completes to free memory. The archive content remains loaded in the scene even after the object URL is revoked.
@@ -323,26 +329,28 @@ The example shows a complete file upload handler that creates an input element, 
 When you have an archive as a Blob from API responses, fetch operations, or database storage, create an object URL and load it. The example shows a reusable function that handles blob loading with proper error handling and cleanup.
 
 ```typescript highlight-load-from-blob
-    // When you have an archive as a Blob (from fetch, API, or database),
-    // create an object URL and load it
+// When you have an archive as a Blob (from fetch, API, or database),
+// create an object URL and load it
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _loadArchiveFromBlob = async (archiveBlob: Blob): Promise<void> => {
-      const blobUrl = URL.createObjectURL(archiveBlob);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function _loadArchiveFromBlob(archiveBlob: Blob): Promise<void> {
+  const blobUrl = URL.createObjectURL(archiveBlob)
 
-      try {
-        await engine.scene.loadFromArchiveURL(blobUrl);
-        console.log('Archive loaded from blob successfully');
-      } catch (error) {
-        console.error('Failed to load archive from blob:', error);
-        throw error;
-      } finally {
-        URL.revokeObjectURL(blobUrl);
-      }
-    };
+  try {
+    await engine.scene.loadFromArchiveURL(blobUrl)
+    console.log('Archive loaded from blob successfully')
+  }
+  catch (error) {
+    console.error('Failed to load archive from blob:', error)
+    throw error
+  }
+  finally {
+    URL.revokeObjectURL(blobUrl)
+  }
+}
 
-    // In production, this blob would come from your API or storage
-    // await _loadArchiveFromBlob(archiveBlob);
+// In production, this blob would come from your API or storage
+// await _loadArchiveFromBlob(archiveBlob);
 ```
 
 This pattern is useful for:
@@ -359,14 +367,14 @@ The function encapsulates the object URL lifecycle, ensuring proper cleanup even
 After loading an archive, the scene is immediately editable. All blocks, properties, and assets from the archive are restored and accessible through the standard block API.
 
 ```typescript highlight-modify-loaded-archive
-    // After loading an archive, the scene is immediately editable
-    // All blocks and assets from the archive are available
+// After loading an archive, the scene is immediately editable
+// All blocks and assets from the archive are available
 
-    // const textBlocks = engine.block.findByType('text');
-    // if (textBlocks.length > 0) {
-    //   engine.block.setString(textBlocks[0], 'text/text', 'Loaded from Archive');
-    //   // Archive loads can be undone: engine.editor.undo();
-    // }
+// const textBlocks = engine.block.findByType('text');
+// if (textBlocks.length > 0) {
+//   engine.block.setString(textBlocks[0], 'text/text', 'Loaded from Archive');
+//   // Archive loads can be undone: engine.editor.undo();
+// }
 ```
 
 Archive loads can be reverted using `engine.editor.undo()`, which removes the loaded scene and restores the previous state. This is useful for implementing undo/redo functionality in your application.
@@ -376,15 +384,15 @@ Archive loads can be reverted using `engine.editor.undo()`, which removes the lo
 Archives use standard ZIP compression with a specific internal structure that makes them self-contained. The scene file references assets using relative paths instead of absolute URLs.
 
 ```typescript highlight-archive-contents
-    // Archives contain:
-    // 1. scene.json - The scene structure and properties
-    // 2. Asset directories (images/, fonts/, videos/, audio/)
-    // 3. Relative asset references like "./images/photo-123.jpg"
+// Archives contain:
+// 1. scene.json - The scene structure and properties
+// 2. Asset directories (images/, fonts/, videos/, audio/)
+// 3. Relative asset references like "./images/photo-123.jpg"
 
-    // This self-contained structure makes archives portable:
-    // - No external URL dependencies
-    // - All assets bundled together
-    // - Works offline or across different environments
+// This self-contained structure makes archives portable:
+// - No external URL dependencies
+// - All assets bundled together
+// - Works offline or across different environments
 ```
 
 This self-contained structure provides several benefits:

@@ -25,7 +25,7 @@ Groups let you treat multiple blocks as a cohesive unit. Grouped blocks move, sc
 > **Note:** Groups are not currently available when editing videos.
 
 ```typescript file=@cesdk_web_examples/guides-create-composition-grouping-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Group and Ungroup Objects Guide
@@ -56,21 +56,21 @@ import packageJson from './package.json';
  * - Finding and inspecting groups
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -81,135 +81,135 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a design scene and get the page
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    })
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Create a graphic block with a colored rectangle shape
-    const block1 = engine.block.create('graphic');
-    const shape1 = engine.block.createShape('rect');
-    engine.block.setShape(block1, shape1);
-    engine.block.setWidth(block1, 120);
-    engine.block.setHeight(block1, 120);
-    engine.block.setPositionX(block1, 200);
-    engine.block.setPositionY(block1, 240);
-    const fill1 = engine.block.createFill('color');
+    const block1 = engine.block.create('graphic')
+    const shape1 = engine.block.createShape('rect')
+    engine.block.setShape(block1, shape1)
+    engine.block.setWidth(block1, 120)
+    engine.block.setHeight(block1, 120)
+    engine.block.setPositionX(block1, 200)
+    engine.block.setPositionY(block1, 240)
+    const fill1 = engine.block.createFill('color')
     engine.block.setColor(fill1, 'fill/color/value', {
       r: 0.4,
       g: 0.6,
       b: 0.9,
       a: 1.0
-    });
-    engine.block.setFill(block1, fill1);
-    engine.block.appendChild(page, block1);
+    })
+    engine.block.setFill(block1, fill1)
+    engine.block.appendChild(page, block1)
 
     // Create two more blocks for grouping
-    const block2 = engine.block.create('graphic');
-    const shape2 = engine.block.createShape('rect');
-    engine.block.setShape(block2, shape2);
-    engine.block.setWidth(block2, 120);
-    engine.block.setHeight(block2, 120);
-    engine.block.setPositionX(block2, 340);
-    engine.block.setPositionY(block2, 240);
-    const fill2 = engine.block.createFill('color');
+    const block2 = engine.block.create('graphic')
+    const shape2 = engine.block.createShape('rect')
+    engine.block.setShape(block2, shape2)
+    engine.block.setWidth(block2, 120)
+    engine.block.setHeight(block2, 120)
+    engine.block.setPositionX(block2, 340)
+    engine.block.setPositionY(block2, 240)
+    const fill2 = engine.block.createFill('color')
     engine.block.setColor(fill2, 'fill/color/value', {
       r: 0.9,
       g: 0.5,
       b: 0.4,
       a: 1.0
-    });
-    engine.block.setFill(block2, fill2);
-    engine.block.appendChild(page, block2);
+    })
+    engine.block.setFill(block2, fill2)
+    engine.block.appendChild(page, block2)
 
-    const block3 = engine.block.create('graphic');
-    const shape3 = engine.block.createShape('rect');
-    engine.block.setShape(block3, shape3);
-    engine.block.setWidth(block3, 120);
-    engine.block.setHeight(block3, 120);
-    engine.block.setPositionX(block3, 480);
-    engine.block.setPositionY(block3, 240);
-    const fill3 = engine.block.createFill('color');
+    const block3 = engine.block.create('graphic')
+    const shape3 = engine.block.createShape('rect')
+    engine.block.setShape(block3, shape3)
+    engine.block.setWidth(block3, 120)
+    engine.block.setHeight(block3, 120)
+    engine.block.setPositionX(block3, 480)
+    engine.block.setPositionY(block3, 240)
+    const fill3 = engine.block.createFill('color')
     engine.block.setColor(fill3, 'fill/color/value', {
       r: 0.5,
       g: 0.8,
       b: 0.5,
       a: 1.0
-    });
-    engine.block.setFill(block3, fill3);
-    engine.block.appendChild(page, block3);
+    })
+    engine.block.setFill(block3, fill3)
+    engine.block.appendChild(page, block3)
 
     // Check if the blocks can be grouped together
-    const canGroup = engine.block.isGroupable([block1, block2, block3]);
-    console.log('Blocks can be grouped:', canGroup);
+    const canGroup = engine.block.isGroupable([block1, block2, block3])
+    console.log('Blocks can be grouped:', canGroup)
 
     // Group the blocks together
     if (canGroup) {
-      const groupId = engine.block.group([block1, block2, block3]);
-      console.log('Created group with ID:', groupId);
+      const groupId = engine.block.group([block1, block2, block3])
+      console.log('Created group with ID:', groupId)
 
       // Select the group to show it in the UI
-      engine.block.setSelected(groupId, true);
+      engine.block.setSelected(groupId, true)
 
       // Enter the group to select individual members
-      engine.block.enterGroup(groupId);
+      engine.block.enterGroup(groupId)
 
       // Select a specific member within the group
-      engine.block.setSelected(block2, true);
-      console.log('Selected member inside group');
+      engine.block.setSelected(block2, true)
+      console.log('Selected member inside group')
 
       // Exit the group to return selection to the parent group
-      engine.block.exitGroup(block2);
-      console.log('Exited group, group is now selected');
+      engine.block.exitGroup(block2)
+      console.log('Exited group, group is now selected')
 
       // Find all groups in the scene
-      const allGroups = engine.block.findByType('group');
-      console.log('Number of groups in scene:', allGroups.length);
+      const allGroups = engine.block.findByType('group')
+      console.log('Number of groups in scene:', allGroups.length)
 
       // Check the type of the group block
-      const groupType = engine.block.getType(groupId);
-      console.log('Group block type:', groupType);
+      const groupType = engine.block.getType(groupId)
+      console.log('Group block type:', groupType)
 
       // Get the members of the group
-      const members = engine.block.getChildren(groupId);
-      console.log('Group has', members.length, 'members');
+      const members = engine.block.getChildren(groupId)
+      console.log('Group has', members.length, 'members')
 
       // Ungroup the blocks to make them independent again
-      engine.block.ungroup(groupId);
-      console.log('Ungrouped blocks');
+      engine.block.ungroup(groupId)
+      console.log('Ungrouped blocks')
 
       // Verify blocks are no longer in a group
-      const groupsAfterUngroup = engine.block.findByType('group');
-      console.log('Groups after ungrouping:', groupsAfterUngroup.length);
+      const groupsAfterUngroup = engine.block.findByType('group')
+      console.log('Groups after ungrouping:', groupsAfterUngroup.length)
 
       // Re-group for the final display
-      const finalGroup = engine.block.group([block1, block2, block3]);
-      engine.block.setSelected(finalGroup, true);
+      const finalGroup = engine.block.group([block1, block2, block3])
+      engine.block.setSelected(finalGroup, true)
     }
 
     // Enable auto-fit zoom to keep the page centered
-    engine.scene.enableZoomAutoFit(page, 'Both', 40, 40, 40, 40);
+    engine.scene.enableZoomAutoFit(page, 'Both', 40, 40, 40, 40)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to check if blocks can be grouped, create and dissolve groups, navigate into groups to select individual members, and find existing groups in a scene.
@@ -229,22 +229,22 @@ We first create several graphic blocks that we'll group together. Each block has
 
 ```typescript highlight=highlight-create-blocks
 // Create a graphic block with a colored rectangle shape
-const block1 = engine.block.create('graphic');
-const shape1 = engine.block.createShape('rect');
-engine.block.setShape(block1, shape1);
-engine.block.setWidth(block1, 120);
-engine.block.setHeight(block1, 120);
-engine.block.setPositionX(block1, 200);
-engine.block.setPositionY(block1, 240);
-const fill1 = engine.block.createFill('color');
+const block1 = engine.block.create('graphic')
+const shape1 = engine.block.createShape('rect')
+engine.block.setShape(block1, shape1)
+engine.block.setWidth(block1, 120)
+engine.block.setHeight(block1, 120)
+engine.block.setPositionX(block1, 200)
+engine.block.setPositionY(block1, 240)
+const fill1 = engine.block.createFill('color')
 engine.block.setColor(fill1, 'fill/color/value', {
   r: 0.4,
   g: 0.6,
   b: 0.9,
   a: 1.0
-});
-engine.block.setFill(block1, fill1);
-engine.block.appendChild(page, block1);
+})
+engine.block.setFill(block1, fill1)
+engine.block.appendChild(page, block1)
 ```
 
 ## Check If Blocks Can Be Grouped
@@ -253,8 +253,8 @@ Before grouping, verify that the selected blocks can be grouped using `engine.bl
 
 ```typescript highlight=highlight-check-groupable
 // Check if the blocks can be grouped together
-const canGroup = engine.block.isGroupable([block1, block2, block3]);
-console.log('Blocks can be grouped:', canGroup);
+const canGroup = engine.block.isGroupable([block1, block2, block3])
+console.log('Blocks can be grouped:', canGroup)
 ```
 
 ## Create a Group
@@ -280,12 +280,12 @@ CE.SDK provides methods to navigate into and out of groups while editing.
 When a group is selected, use `engine.block.enterGroup()` to enter editing mode for that group. This allows you to select and modify individual members within the group.
 
 ```typescript highlight=highlight-enter-group
-      // Enter the group to select individual members
-      engine.block.enterGroup(groupId);
+// Enter the group to select individual members
+engine.block.enterGroup(groupId)
 
-      // Select a specific member within the group
-      engine.block.setSelected(block2, true);
-      console.log('Selected member inside group');
+// Select a specific member within the group
+engine.block.setSelected(block2, true)
+console.log('Selected member inside group')
 ```
 
 ### Exit a Group
@@ -294,8 +294,8 @@ When editing a member inside a group, use `engine.block.exitGroup()` to return s
 
 ```typescript highlight=highlight-exit-group
 // Exit the group to return selection to the parent group
-engine.block.exitGroup(block2);
-console.log('Exited group, group is now selected');
+engine.block.exitGroup(block2)
+console.log('Exited group, group is now selected')
 ```
 
 ## Find and Inspect Groups
@@ -303,17 +303,17 @@ console.log('Exited group, group is now selected');
 Discover groups in a scene and inspect their contents using `engine.block.findByType()`, `engine.block.getType()`, and `engine.block.getChildren()`.
 
 ```typescript highlight=highlight-find-groups
-      // Find all groups in the scene
-      const allGroups = engine.block.findByType('group');
-      console.log('Number of groups in scene:', allGroups.length);
+// Find all groups in the scene
+const allGroups = engine.block.findByType('group')
+console.log('Number of groups in scene:', allGroups.length)
 
-      // Check the type of the group block
-      const groupType = engine.block.getType(groupId);
-      console.log('Group block type:', groupType);
+// Check the type of the group block
+const groupType = engine.block.getType(groupId)
+console.log('Group block type:', groupType)
 
-      // Get the members of the group
-      const members = engine.block.getChildren(groupId);
-      console.log('Group has', members.length, 'members');
+// Get the members of the group
+const members = engine.block.getChildren(groupId)
+console.log('Group has', members.length, 'members')
 ```
 
 Use `engine.block.findByType('group')` to get all group blocks in the current scene. Use `engine.block.getType()` to check if a specific block is a group (returns `'//ly.img.ubq/group'`). Use `engine.block.getChildren()` to get the member blocks of a group.
@@ -323,13 +323,13 @@ Use `engine.block.findByType('group')` to get all group blocks in the current sc
 Use `engine.block.ungroup()` to dissolve a group and release its children back to the parent container. The children maintain their current positions in the scene.
 
 ```typescript highlight=highlight-ungroup
-      // Ungroup the blocks to make them independent again
-      engine.block.ungroup(groupId);
-      console.log('Ungrouped blocks');
+// Ungroup the blocks to make them independent again
+engine.block.ungroup(groupId)
+console.log('Ungrouped blocks')
 
-      // Verify blocks are no longer in a group
-      const groupsAfterUngroup = engine.block.findByType('group');
-      console.log('Groups after ungrouping:', groupsAfterUngroup.length);
+// Verify blocks are no longer in a group
+const groupsAfterUngroup = engine.block.findByType('group')
+console.log('Groups after ungrouping:', groupsAfterUngroup.length)
 ```
 
 ## Troubleshooting

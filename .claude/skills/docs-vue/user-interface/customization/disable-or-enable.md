@@ -23,7 +23,7 @@ Control which editor features are available to users using the Feature API.
 The Feature API provides global control over feature visibility throughout the editor. Use it to hide delete buttons from certain users, disable crop controls based on context, or conditionally enable features based on user roles or selection state. Unlike the Component Order API which targets specific components in specific areas, the Feature API affects features everywhere in the editor at once.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-disable-or-enable-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * Disable or Enable Features Example
@@ -54,20 +54,20 @@ import packageJson from './package.json';
  * - Check feature status and discover available features
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -78,81 +78,81 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Enable delete feature with default predicate
-    cesdk.feature.enable('ly.img.delete');
+    cesdk.feature.enable('ly.img.delete')
 
     // Enable multiple features at once
-    cesdk.feature.enable(['ly.img.duplicate', 'ly.img.group']);
+    cesdk.feature.enable(['ly.img.duplicate', 'ly.img.group'])
 
     // Disable crop feature
-    cesdk.feature.disable('ly.img.crop');
+    cesdk.feature.disable('ly.img.crop')
 
     // Disable multiple features at once
-    cesdk.feature.disable(['ly.img.notifications', 'ly.img.preview']);
+    cesdk.feature.disable(['ly.img.notifications', 'ly.img.preview'])
 
     // Disable all transform features using glob pattern
-    cesdk.feature.disable('ly.img.transform*');
+    cesdk.feature.disable('ly.img.transform*')
 
     // Enable all video features using glob pattern
-    cesdk.feature.enable('ly.img.video*');
+    cesdk.feature.enable('ly.img.video*')
 
     // Set feature with boolean (terminal predicate)
-    cesdk.feature.set('ly.img.fill', true);
+    cesdk.feature.set('ly.img.fill', true)
 
     // Set feature with custom predicate based on selection
     cesdk.feature.set('ly.img.duplicate', ({ engine }) => {
-      return engine.block.findAllSelected().length > 0;
-    });
+      return engine.block.findAllSelected().length > 0
+    })
 
     // Extend default predicate with additional condition
     cesdk.feature.set('ly.img.delete', ({ defaultPredicate, engine }) => {
       // Only allow delete when a block is selected
-      return defaultPredicate() && engine.block.findAllSelected().length > 0;
-    });
+      return defaultPredicate() && engine.block.findAllSelected().length > 0
+    })
 
     // Chain multiple predicates using isPreviousEnable
     cesdk.feature.set('ly.img.replace', ({ isPreviousEnable, engine }) => {
-      const previousResult = isPreviousEnable();
-      const hasSelection = engine.block.findAllSelected().length > 0;
-      return previousResult && hasSelection;
-    });
+      const previousResult = isPreviousEnable()
+      const hasSelection = engine.block.findAllSelected().length > 0
+      return previousResult && hasSelection
+    })
 
     // Check if a feature is enabled
-    const isDeleteEnabled = cesdk.feature.isEnabled('ly.img.delete');
-    console.log('Delete feature enabled:', isDeleteEnabled);
+    const isDeleteEnabled = cesdk.feature.isEnabled('ly.img.delete')
+    console.log('Delete feature enabled:', isDeleteEnabled)
 
     // Check if all video features are enabled (returns true only if ALL match)
-    const allVideoEnabled = cesdk.feature.isEnabled('ly.img.video*');
-    console.log('All video features enabled:', allVideoEnabled);
+    const allVideoEnabled = cesdk.feature.isEnabled('ly.img.video*')
+    console.log('All video features enabled:', allVideoEnabled)
 
     // List all registered feature IDs
-    const allFeatures = cesdk.feature.list();
-    console.log('All features:', allFeatures.slice(0, 10), '...');
+    const allFeatures = cesdk.feature.list()
+    console.log('All features:', allFeatures.slice(0, 10), '...')
 
     // List features matching a pattern
     const navigationFeatures = cesdk.feature.list({
       matcher: 'ly.img.navigation*'
-    });
-    console.log('Navigation features:', navigationFeatures);
+    })
+    console.log('Navigation features:', navigationFeatures)
 
     cesdk.ui.insertOrderComponent(
       { in: 'ly.img.navigation.bar', position: 'end' },
@@ -164,13 +164,14 @@ class Example implements EditorPlugin {
             key: 'toggle-dock',
             label: 'Toggle Dock',
             onClick: () => {
-              const enabled = cesdk.feature.isEnabled('ly.img.dock');
+              const enabled = cesdk.feature.isEnabled('ly.img.dock')
               if (enabled) {
-                cesdk.feature.disable('ly.img.dock');
-                console.log('Dock feature disabled');
-              } else {
-                cesdk.feature.enable('ly.img.dock');
-                console.log('Dock feature enabled');
+                cesdk.feature.disable('ly.img.dock')
+                console.log('Dock feature disabled')
+              }
+              else {
+                cesdk.feature.enable('ly.img.dock')
+                console.log('Dock feature enabled')
               }
             }
           },
@@ -180,13 +181,14 @@ class Example implements EditorPlugin {
             label: 'Toggle Crop Features',
             icon: '@imgly/Crop',
             onClick: () => {
-              const enabled = cesdk.feature.isEnabled('ly.img.crop');
+              const enabled = cesdk.feature.isEnabled('ly.img.crop')
               if (enabled) {
-                cesdk.feature.disable('ly.img.crop*');
-                console.log('All crop features disabled');
-              } else {
-                cesdk.feature.enable('ly.img.crop*');
-                console.log('All crop features enabled');
+                cesdk.feature.disable('ly.img.crop*')
+                console.log('All crop features disabled')
+              }
+              else {
+                cesdk.feature.enable('ly.img.crop*')
+                console.log('All crop features enabled')
               }
             }
           },
@@ -196,73 +198,73 @@ class Example implements EditorPlugin {
             label: 'Log Feature Status',
             icon: '@imgly/Info',
             onClick: () => {
-              console.log('=== Feature Status ===');
-              console.log('Dock:', cesdk.feature.isEnabled('ly.img.dock'));
+              console.log('=== Feature Status ===')
+              console.log('Dock:', cesdk.feature.isEnabled('ly.img.dock'))
               console.log(
                 'Duplicate:',
                 cesdk.feature.isEnabled('ly.img.duplicate')
-              );
-              console.log('Crop:', cesdk.feature.isEnabled('ly.img.crop'));
-              console.log('Fill:', cesdk.feature.isEnabled('ly.img.fill'));
+              )
+              console.log('Crop:', cesdk.feature.isEnabled('ly.img.crop'))
+              console.log('Fill:', cesdk.feature.isEnabled('ly.img.fill'))
               console.log(
                 'Navigation features:',
                 cesdk.feature.list({ matcher: 'ly.img.navigation*' })
-              );
+              )
             }
           }
         ]
       }
-    );
+    )
 
-    const page = engine.block.findByType('page')[0];
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const page = engine.block.findByType('page')[0]
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
-    const gradientFill = engine.block.createFill('gradient/linear');
-    engine.block.setFill(page, gradientFill);
+    const gradientFill = engine.block.createFill('gradient/linear')
+    engine.block.setFill(page, gradientFill)
     engine.block.setGradientColorStops(gradientFill, 'fill/gradient/colors', [
       { color: { r: 0.99, g: 0.98, b: 0.97, a: 1 }, stop: 0 },
       { color: { r: 0.97, g: 0.96, b: 0.94, a: 1 }, stop: 1 }
-    ]);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointX', 0);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointY', 0);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointY', 1);
+    ])
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointX', 0)
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/startPointY', 0)
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(gradientFill, 'fill/gradient/linear/endPointY', 1)
 
-    const titleBlock = engine.block.create('text');
-    engine.block.appendChild(page, titleBlock);
-    engine.block.replaceText(titleBlock, 'Disable or Enable Features');
-    engine.block.setTextFontSize(titleBlock, 24);
-    engine.block.setTextColor(titleBlock, { r: 0.25, g: 0.22, b: 0.2, a: 1 });
-    engine.block.setEnum(titleBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(titleBlock, pageWidth * 0.8);
-    engine.block.setHeightMode(titleBlock, 'Auto');
-    engine.block.setPositionX(titleBlock, pageWidth * 0.1);
-    engine.block.setPositionY(titleBlock, pageHeight * 0.4);
+    const titleBlock = engine.block.create('text')
+    engine.block.appendChild(page, titleBlock)
+    engine.block.replaceText(titleBlock, 'Disable or Enable Features')
+    engine.block.setTextFontSize(titleBlock, 24)
+    engine.block.setTextColor(titleBlock, { r: 0.25, g: 0.22, b: 0.2, a: 1 })
+    engine.block.setEnum(titleBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(titleBlock, pageWidth * 0.8)
+    engine.block.setHeightMode(titleBlock, 'Auto')
+    engine.block.setPositionX(titleBlock, pageWidth * 0.1)
+    engine.block.setPositionY(titleBlock, pageHeight * 0.4)
 
-    const subtitleBlock = engine.block.create('text');
-    engine.block.appendChild(page, subtitleBlock);
-    engine.block.replaceText(subtitleBlock, 'IMG.LY');
-    engine.block.setTextFontSize(subtitleBlock, 12);
+    const subtitleBlock = engine.block.create('text')
+    engine.block.appendChild(page, subtitleBlock)
+    engine.block.replaceText(subtitleBlock, 'IMG.LY')
+    engine.block.setTextFontSize(subtitleBlock, 12)
     engine.block.setTextColor(subtitleBlock, {
       r: 0.65,
       g: 0.45,
       b: 0.4,
       a: 1
-    });
-    engine.block.setEnum(subtitleBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(subtitleBlock, pageWidth * 0.8);
-    engine.block.setHeightMode(subtitleBlock, 'Auto');
-    engine.block.setPositionX(subtitleBlock, pageWidth * 0.1);
-    engine.block.setPositionY(subtitleBlock, pageHeight * 0.52);
+    })
+    engine.block.setEnum(subtitleBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(subtitleBlock, pageWidth * 0.8)
+    engine.block.setHeightMode(subtitleBlock, 'Auto')
+    engine.block.setPositionX(subtitleBlock, pageWidth * 0.1)
+    engine.block.setPositionY(subtitleBlock, pageHeight * 0.52)
 
-    engine.block.setSelected(titleBlock, true);
+    engine.block.setSelected(titleBlock, true)
 
-    console.log('Disable or Enable Features example loaded successfully!');
+    console.log('Disable or Enable Features example loaded successfully!')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to enable and disable features with simple toggles, create custom predicates for conditional feature access, use glob patterns for bulk operations, and debug feature configurations.
@@ -286,21 +288,21 @@ Use `cesdk.feature.enable()` to activate a feature with its default predicate be
 
 ```typescript highlight-enable-feature
 // Enable delete feature with default predicate
-cesdk.feature.enable('ly.img.delete');
+cesdk.feature.enable('ly.img.delete')
 ```
 
 You can enable multiple features at once by passing an array:
 
 ```typescript highlight-enable-multiple
 // Enable multiple features at once
-cesdk.feature.enable(['ly.img.duplicate', 'ly.img.group']);
+cesdk.feature.enable(['ly.img.duplicate', 'ly.img.group'])
 ```
 
 Glob patterns allow you to enable all features matching a pattern. The `*` wildcard matches any sequence of characters:
 
 ```typescript highlight-glob-enable
 // Enable all video features using glob pattern
-cesdk.feature.enable('ly.img.video*');
+cesdk.feature.enable('ly.img.video*')
 ```
 
 ## Disable Features
@@ -309,21 +311,21 @@ Use `cesdk.feature.disable()` to hide features from the UI. Like `enable()`, it 
 
 ```typescript highlight-disable-feature
 // Disable crop feature
-cesdk.feature.disable('ly.img.crop');
+cesdk.feature.disable('ly.img.crop')
 ```
 
 Disable multiple features at once by passing an array:
 
 ```typescript highlight-disable-multiple
 // Disable multiple features at once
-cesdk.feature.disable(['ly.img.notifications', 'ly.img.preview']);
+cesdk.feature.disable(['ly.img.notifications', 'ly.img.preview'])
 ```
 
 Use glob patterns to disable all features matching a pattern:
 
 ```typescript highlight-glob-disable
 // Disable all transform features using glob pattern
-cesdk.feature.disable('ly.img.transform*');
+cesdk.feature.disable('ly.img.transform*')
 ```
 
 ## Custom Predicates
@@ -336,7 +338,7 @@ Passing `true` or `false` creates a terminal predicate that overrides any `enabl
 
 ```typescript highlight-set-boolean
 // Set feature with boolean (terminal predicate)
-cesdk.feature.set('ly.img.fill', true);
+cesdk.feature.set('ly.img.fill', true)
 ```
 
 > **Note:** Boolean predicates are terminal. Once you use `set()` with a boolean, subsequent `enable()` or `disable()` calls won't affect that feature because the boolean predicate evaluates first.
@@ -348,8 +350,8 @@ Function predicates receive a context object with `engine`, `isPreviousEnable()`
 ```typescript highlight-set-predicate
 // Set feature with custom predicate based on selection
 cesdk.feature.set('ly.img.duplicate', ({ engine }) => {
-  return engine.block.findAllSelected().length > 0;
-});
+  return engine.block.findAllSelected().length > 0
+})
 ```
 
 This predicate enables the duplicate feature only when at least one block is selected.
@@ -362,8 +364,8 @@ You can build on a feature's default predicate using `defaultPredicate()`. This 
 // Extend default predicate with additional condition
 cesdk.feature.set('ly.img.delete', ({ defaultPredicate, engine }) => {
   // Only allow delete when a block is selected
-  return defaultPredicate() && engine.block.findAllSelected().length > 0;
-});
+  return defaultPredicate() && engine.block.findAllSelected().length > 0
+})
 ```
 
 ### Layering Conditions
@@ -373,10 +375,10 @@ Use `isPreviousEnable()` to chain with previously registered predicates. This en
 ```typescript highlight-chain-predicates
 // Chain multiple predicates using isPreviousEnable
 cesdk.feature.set('ly.img.replace', ({ isPreviousEnable, engine }) => {
-  const previousResult = isPreviousEnable();
-  const hasSelection = engine.block.findAllSelected().length > 0;
-  return previousResult && hasSelection;
-});
+  const previousResult = isPreviousEnable()
+  const hasSelection = engine.block.findAllSelected().length > 0
+  return previousResult && hasSelection
+})
 ```
 
 ## Evaluation Order
@@ -407,16 +409,16 @@ Use `cesdk.feature.isEnabled()` to query if a feature is currently enabled:
 
 ```typescript highlight-check-enabled
 // Check if a feature is enabled
-const isDeleteEnabled = cesdk.feature.isEnabled('ly.img.delete');
-console.log('Delete feature enabled:', isDeleteEnabled);
+const isDeleteEnabled = cesdk.feature.isEnabled('ly.img.delete')
+console.log('Delete feature enabled:', isDeleteEnabled)
 ```
 
 When using a glob pattern with `isEnabled()`, it returns `true` only if all matching features are enabled:
 
 ```typescript highlight-check-glob
 // Check if all video features are enabled (returns true only if ALL match)
-const allVideoEnabled = cesdk.feature.isEnabled('ly.img.video*');
-console.log('All video features enabled:', allVideoEnabled);
+const allVideoEnabled = cesdk.feature.isEnabled('ly.img.video*')
+console.log('All video features enabled:', allVideoEnabled)
 ```
 
 ## Discover Features
@@ -425,8 +427,8 @@ Use `cesdk.feature.list()` to get all registered feature IDs. You can filter wit
 
 ```typescript highlight-list-features
 // List all registered feature IDs
-const allFeatures = cesdk.feature.list();
-console.log('All features:', allFeatures.slice(0, 10), '...');
+const allFeatures = cesdk.feature.list()
+console.log('All features:', allFeatures.slice(0, 10), '...')
 ```
 
 Filter the list with a glob pattern:
@@ -435,8 +437,8 @@ Filter the list with a glob pattern:
 // List features matching a pattern
 const navigationFeatures = cesdk.feature.list({
   matcher: 'ly.img.navigation*'
-});
-console.log('Navigation features:', navigationFeatures);
+})
+console.log('Navigation features:', navigationFeatures)
 ```
 
 ## Built-in Features

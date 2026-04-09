@@ -28,9 +28,7 @@ import type {
   AssetResult,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -45,8 +43,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: User Upload Guide
@@ -61,19 +61,19 @@ import { DesignEditorConfig } from './design-editor/plugin';
  */
 
 // Store uploaded assets in memory (in production, use a database or API)
-const uploadedAssets: AssetResult[] = [];
+const uploadedAssets: AssetResult[] = []
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Create a custom asset source with upload support
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
     engine.asset.addSource({
       id: 'my-uploads',
 
@@ -83,12 +83,12 @@ class Example implements EditorPlugin {
           assets: uploadedAssets,
           total: uploadedAssets.length,
           currentPage: queryData.page
-        };
+        }
       },
 
       // Enable uploads by specifying accepted MIME types
       getSupportedMimeTypes() {
-        return ['image/jpeg', 'image/png', 'image/webp'];
+        return ['image/jpeg', 'image/png', 'image/webp']
       },
 
       // Store uploaded assets (convert AssetDefinition to AssetResult)
@@ -98,9 +98,9 @@ class Example implements EditorPlugin {
           label: asset.label?.en,
           meta: asset.meta,
           groups: asset.groups
-        });
+        })
       }
-    });
+    })
 
     // Register a custom upload handler for production use
     cesdk.actions.register(
@@ -108,35 +108,35 @@ class Example implements EditorPlugin {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async (file: File, onProgress, _context) => {
         // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
         if (!allowedTypes.includes(file.type)) {
           throw new Error(
             `Unsupported file type: ${file.type}. Allowed: ${allowedTypes.join(
               ', '
             )}`
-          );
+          )
         }
 
         // Validate file size (max 50MB)
-        const maxSize = 50 * 1024 * 1024;
+        const maxSize = 50 * 1024 * 1024
         if (file.size > maxSize) {
-          throw new Error('File exceeds maximum size of 50MB');
+          throw new Error('File exceeds maximum size of 50MB')
         }
 
         // Simulate upload progress for demonstration
         // In production, use XMLHttpRequest or fetch with progress tracking
         for (let progress = 0; progress <= 0.9; progress += 0.1) {
-          onProgress(progress);
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          onProgress(progress)
+          await new Promise(resolve => setTimeout(resolve, 100))
         }
 
         // Simulate uploading to a CDN (replace with your actual upload logic)
         // In production, you would use fetch or XMLHttpRequest to upload to your server
-        const mockCdnUrl = URL.createObjectURL(file);
-        const mockThumbUrl = mockCdnUrl;
+        const mockCdnUrl = URL.createObjectURL(file)
+        const mockThumbUrl = mockCdnUrl
 
         // Signal upload complete
-        onProgress(1);
+        onProgress(1)
 
         // Return the asset definition with permanent URLs
         return {
@@ -149,19 +149,19 @@ class Example implements EditorPlugin {
             thumbUri: mockThumbUrl,
             kind: 'image'
           }
-        };
+        }
       }
-    );
+    )
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({ include: ['ly.img.image.upload'] })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -172,24 +172,24 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
+    )
 
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
     // Get the page and set dimensions
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (page) {
     }
 
@@ -202,17 +202,17 @@ class Example implements EditorPlugin {
           right: 40,
           bottom: 40
         }
-      });
+      })
     }
 
     // Log a message to guide users
     console.log(
       'Upload example ready! Click the "Images" panel in the asset library and use the upload button to add images.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to enable upload functionality using demo asset sources and how to register custom upload handlers for production deployments.
@@ -230,20 +230,20 @@ Local uploads store files in browser memory only. Files won't persist when openi
 To enable upload functionality, add the `UploadAssetSources` plugin alongside `DemoAssetSources`:
 
 ```typescript highlight-demo-asset-sources
-    await cesdk.addPlugin(
-      new UploadAssetSources({ include: ['ly.img.image.upload'] })
-    );
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
+await cesdk.addPlugin(
+  new UploadAssetSources({ include: ['ly.img.image.upload'] })
+)
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
 ```
 
 Without the `UploadAssetSources` plugin, the upload button won't appear in the asset library.
@@ -254,39 +254,39 @@ For full control over asset storage and retrieval, create a custom asset source 
 
 ```typescript highlight-custom-asset-source
 // Store uploaded assets in memory (in production, use a database or API)
-const uploadedAssets: AssetResult[] = [];
+const uploadedAssets: AssetResult[] = []
 ```
 
 ```typescript highlight-add-custom-source
-    // Create a custom asset source with upload support
-    const engine = cesdk.engine;
-    engine.asset.addSource({
-      id: 'my-uploads',
+// Create a custom asset source with upload support
+const engine = cesdk.engine
+engine.asset.addSource({
+  id: 'my-uploads',
 
-      // Return stored assets when queried
-      async findAssets(queryData) {
-        return {
-          assets: uploadedAssets,
-          total: uploadedAssets.length,
-          currentPage: queryData.page
-        };
-      },
+  // Return stored assets when queried
+  async findAssets(queryData) {
+    return {
+      assets: uploadedAssets,
+      total: uploadedAssets.length,
+      currentPage: queryData.page
+    }
+  },
 
-      // Enable uploads by specifying accepted MIME types
-      getSupportedMimeTypes() {
-        return ['image/jpeg', 'image/png', 'image/webp'];
-      },
+  // Enable uploads by specifying accepted MIME types
+  getSupportedMimeTypes() {
+    return ['image/jpeg', 'image/png', 'image/webp']
+  },
 
-      // Store uploaded assets (convert AssetDefinition to AssetResult)
-      addAsset(asset: AssetDefinition) {
-        uploadedAssets.push({
-          id: asset.id,
-          label: asset.label?.en,
-          meta: asset.meta,
-          groups: asset.groups
-        });
-      }
-    });
+  // Store uploaded assets (convert AssetDefinition to AssetResult)
+  addAsset(asset: AssetDefinition) {
+    uploadedAssets.push({
+      id: asset.id,
+      label: asset.label?.en,
+      meta: asset.meta,
+      groups: asset.groups
+    })
+  }
+})
 ```
 
 The `addAsset` method is called automatically after a successful upload, with the `AssetDefinition` returned by the upload handler. The asset source is responsible for storing and retrieving these assets.
@@ -296,56 +296,56 @@ The `addAsset` method is called automatically after a successful upload, with th
 For production use, register a custom upload handler using the Actions API after SDK initialization. The handler receives the file, a progress callback, and context. It must return an `AssetDefinition` with the permanent URI.
 
 ```typescript highlight-register-upload-handler
-    // Register a custom upload handler for production use
-    cesdk.actions.register(
-      'uploadFile',
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      async (file: File, onProgress, _context) => {
-        // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-          throw new Error(
-            `Unsupported file type: ${file.type}. Allowed: ${allowedTypes.join(
-              ', '
-            )}`
-          );
-        }
+// Register a custom upload handler for production use
+cesdk.actions.register(
+  'uploadFile',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (file: File, onProgress, _context) => {
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error(
+        `Unsupported file type: ${file.type}. Allowed: ${allowedTypes.join(
+          ', '
+        )}`
+      )
+    }
 
-        // Validate file size (max 50MB)
-        const maxSize = 50 * 1024 * 1024;
-        if (file.size > maxSize) {
-          throw new Error('File exceeds maximum size of 50MB');
-        }
+    // Validate file size (max 50MB)
+    const maxSize = 50 * 1024 * 1024
+    if (file.size > maxSize) {
+      throw new Error('File exceeds maximum size of 50MB')
+    }
 
-        // Simulate upload progress for demonstration
-        // In production, use XMLHttpRequest or fetch with progress tracking
-        for (let progress = 0; progress <= 0.9; progress += 0.1) {
-          onProgress(progress);
-          await new Promise((resolve) => setTimeout(resolve, 100));
-        }
+    // Simulate upload progress for demonstration
+    // In production, use XMLHttpRequest or fetch with progress tracking
+    for (let progress = 0; progress <= 0.9; progress += 0.1) {
+      onProgress(progress)
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
 
-        // Simulate uploading to a CDN (replace with your actual upload logic)
-        // In production, you would use fetch or XMLHttpRequest to upload to your server
-        const mockCdnUrl = URL.createObjectURL(file);
-        const mockThumbUrl = mockCdnUrl;
+    // Simulate uploading to a CDN (replace with your actual upload logic)
+    // In production, you would use fetch or XMLHttpRequest to upload to your server
+    const mockCdnUrl = URL.createObjectURL(file)
+    const mockThumbUrl = mockCdnUrl
 
-        // Signal upload complete
-        onProgress(1);
+    // Signal upload complete
+    onProgress(1)
 
-        // Return the asset definition with permanent URLs
-        return {
-          id: `uploaded-asset-${Date.now()}`,
-          label: {
-            en: file.name
-          },
-          meta: {
-            uri: mockCdnUrl,
-            thumbUri: mockThumbUrl,
-            kind: 'image'
-          }
-        };
+    // Return the asset definition with permanent URLs
+    return {
+      id: `uploaded-asset-${Date.now()}`,
+      label: {
+        en: file.name
+      },
+      meta: {
+        uri: mockCdnUrl,
+        thumbUri: mockThumbUrl,
+        kind: 'image'
       }
-    );
+    }
+  }
+)
 ```
 
 ### File Validation
@@ -353,21 +353,21 @@ For production use, register a custom upload handler using the Actions API after
 Validate files before processing by checking MIME type, file size, or other properties inside the upload handler. Reject invalid files by throwing an error:
 
 ```typescript highlight-file-validation
-        // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-          throw new Error(
-            `Unsupported file type: ${file.type}. Allowed: ${allowedTypes.join(
-              ', '
-            )}`
-          );
-        }
+// Validate file type
+const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+if (!allowedTypes.includes(file.type)) {
+  throw new Error(
+    `Unsupported file type: ${file.type}. Allowed: ${allowedTypes.join(
+      ', '
+    )}`
+  )
+}
 
-        // Validate file size (max 50MB)
-        const maxSize = 50 * 1024 * 1024;
-        if (file.size > maxSize) {
-          throw new Error('File exceeds maximum size of 50MB');
-        }
+// Validate file size (max 50MB)
+const maxSize = 50 * 1024 * 1024
+if (file.size > maxSize) {
+  throw new Error('File exceeds maximum size of 50MB')
+}
 ```
 
 ### Upload Progress
@@ -378,8 +378,8 @@ Use the `onProgress` callback to report upload progress to the user. The callbac
 // Simulate upload progress for demonstration
 // In production, use XMLHttpRequest or fetch with progress tracking
 for (let progress = 0; progress <= 0.9; progress += 0.1) {
-  onProgress(progress);
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  onProgress(progress)
+  await new Promise(resolve => setTimeout(resolve, 100))
 }
 ```
 
@@ -399,7 +399,7 @@ return {
     thumbUri: mockThumbUrl,
     kind: 'image'
   }
-};
+}
 ```
 
 ## Accessing the Default Local Upload
@@ -409,10 +409,10 @@ You can access the built-in local upload utility via `cesdk.utils.localUpload()`
 ```javascript
 cesdk.actions.register('uploadFile', async (file, onProgress, context) => {
   if (shouldUseLocalStorage(file)) {
-    return await cesdk.utils.localUpload(file, context);
+    return await cesdk.utils.localUpload(file, context)
   }
-  return await uploadToRemoteStorage(file);
-});
+  return await uploadToRemoteStorage(file)
+})
 ```
 
 This pattern allows you to conditionally choose between local storage and remote storage based on your application's requirements.

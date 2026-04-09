@@ -23,7 +23,7 @@ Apply duotone effects to images, mapping tones to two colors for stylized visual
 Duotone is a color effect that maps image brightness to two colors: a dark color for shadows and a light color for highlights. The result is a striking two-tone image where all original colors are replaced by gradations between your chosen pair. This technique creates bold, cohesive visuals that are particularly effective for brand consistency, vintage aesthetics, and artistic treatments.
 
 ```typescript file=@cesdk_web_examples/guides-filters-and-effects-duotone-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,10 +39,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
-import { hexToRgba } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { hexToRgba } from './utils'
 
 /**
  * CE.SDK Plugin: Duotone Guide
@@ -54,21 +54,21 @@ import { hexToRgba } from './utils';
  * - Managing and removing effects
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -79,57 +79,57 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Enable duotone filters in the inspector panel
-    cesdk.feature.enable('ly.img.filter');
+    cesdk.feature.enable('ly.img.filter')
 
     // Use a sample image URL
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Create image block for preset demonstration
     const presetImageBlock = await engine.block.addImage(imageUri, {
       size: { width: 350, height: 250 }
-    });
-    engine.block.appendChild(page, presetImageBlock);
-    engine.block.setPositionX(presetImageBlock, 25);
-    engine.block.setPositionY(presetImageBlock, 25);
+    })
+    engine.block.appendChild(page, presetImageBlock)
+    engine.block.setPositionX(presetImageBlock, 25)
+    engine.block.setPositionY(presetImageBlock, 25)
 
     // Verify a block supports effects before applying them
-    const canApplyEffects = engine.block.supportsEffects(presetImageBlock);
+    const canApplyEffects = engine.block.supportsEffects(presetImageBlock)
     if (!canApplyEffects) {
-      console.warn('Block does not support effects');
-      return;
+      console.warn('Block does not support effects')
+      return
     }
 
     // Query duotone presets from the asset library
     const duotoneResults = await engine.asset.findAssets(
       'ly.img.filter',
       { page: 0, perPage: 10 }
-    );
-    const duotonePresets = duotoneResults.assets;
+    )
+    const duotonePresets = duotoneResults.assets
 
     // Apply a preset to the first image
     if (duotonePresets.length > 0) {
-      const preset = duotonePresets[0];
+      const preset = duotonePresets[0]
 
       // Create a new duotone effect block
-      const duotoneEffect = engine.block.createEffect('duotone_filter');
+      const duotoneEffect = engine.block.createEffect('duotone_filter')
 
       // Configure effect with preset colors (convert hex to RGBA)
       if (preset.meta?.darkColor) {
@@ -137,35 +137,35 @@ class Example implements EditorPlugin {
           duotoneEffect,
           'effect/duotone_filter/darkColor',
           hexToRgba(preset.meta.darkColor as string)
-        );
+        )
       }
       if (preset.meta?.lightColor) {
         engine.block.setColor(
           duotoneEffect,
           'effect/duotone_filter/lightColor',
           hexToRgba(preset.meta.lightColor as string)
-        );
+        )
       }
       engine.block.setFloat(
         duotoneEffect,
         'effect/duotone_filter/intensity',
         0.9
-      );
+      )
 
       // Attach the configured effect to the image block
-      engine.block.appendEffect(presetImageBlock, duotoneEffect);
+      engine.block.appendEffect(presetImageBlock, duotoneEffect)
     }
 
     // Create image block for custom duotone demonstration
     const customImageBlock = await engine.block.addImage(imageUri, {
       size: { width: 350, height: 250 }
-    });
-    engine.block.appendChild(page, customImageBlock);
-    engine.block.setPositionX(customImageBlock, 425);
-    engine.block.setPositionY(customImageBlock, 25);
+    })
+    engine.block.appendChild(page, customImageBlock)
+    engine.block.setPositionX(customImageBlock, 425)
+    engine.block.setPositionY(customImageBlock, 25)
 
     // Create duotone with custom brand colors
-    const customDuotone = engine.block.createEffect('duotone_filter');
+    const customDuotone = engine.block.createEffect('duotone_filter')
 
     // Dark color: deep navy blue (shadows)
     engine.block.setColor(customDuotone, 'effect/duotone_filter/darkColor', {
@@ -173,7 +173,7 @@ class Example implements EditorPlugin {
       g: 0.15,
       b: 0.3,
       a: 1.0
-    });
+    })
 
     // Light color: warm cream (highlights)
     engine.block.setColor(customDuotone, 'effect/duotone_filter/lightColor', {
@@ -181,87 +181,87 @@ class Example implements EditorPlugin {
       g: 0.9,
       b: 0.8,
       a: 1.0
-    });
+    })
 
     // Control effect strength (0.0 = original, 1.0 = full duotone)
     engine.block.setFloat(
       customDuotone,
       'effect/duotone_filter/intensity',
       0.85
-    );
+    )
 
-    engine.block.appendEffect(customImageBlock, customDuotone);
+    engine.block.appendEffect(customImageBlock, customDuotone)
 
     // Create image block for combined effects demonstration
     const combinedImageBlock = await engine.block.addImage(imageUri, {
       size: { width: 350, height: 250 }
-    });
-    engine.block.appendChild(page, combinedImageBlock);
-    engine.block.setPositionX(combinedImageBlock, 225);
-    engine.block.setPositionY(combinedImageBlock, 325);
+    })
+    engine.block.appendChild(page, combinedImageBlock)
+    engine.block.setPositionX(combinedImageBlock, 225)
+    engine.block.setPositionY(combinedImageBlock, 325)
 
     // Combine duotone with other effects
     // First, add adjustments for brightness and contrast
-    const adjustments = engine.block.createEffect('adjustments');
-    engine.block.setFloat(adjustments, 'effect/adjustments/brightness', 0.1);
-    engine.block.setFloat(adjustments, 'effect/adjustments/contrast', 0.15);
-    engine.block.appendEffect(combinedImageBlock, adjustments);
+    const adjustments = engine.block.createEffect('adjustments')
+    engine.block.setFloat(adjustments, 'effect/adjustments/brightness', 0.1)
+    engine.block.setFloat(adjustments, 'effect/adjustments/contrast', 0.15)
+    engine.block.appendEffect(combinedImageBlock, adjustments)
 
     // Then add duotone on top
-    const combinedDuotone = engine.block.createEffect('duotone_filter');
+    const combinedDuotone = engine.block.createEffect('duotone_filter')
     engine.block.setColor(
       combinedDuotone,
       'effect/duotone_filter/darkColor',
       { r: 0.2, g: 0.1, b: 0.3, a: 1.0 } // Deep purple
-    );
+    )
     engine.block.setColor(
       combinedDuotone,
       'effect/duotone_filter/lightColor',
       { r: 1.0, g: 0.85, b: 0.7, a: 1.0 } // Warm peach
-    );
+    )
     engine.block.setFloat(
       combinedDuotone,
       'effect/duotone_filter/intensity',
       0.75
-    );
-    engine.block.appendEffect(combinedImageBlock, combinedDuotone);
+    )
+    engine.block.appendEffect(combinedImageBlock, combinedDuotone)
 
     // Get all effects currently applied to a block
-    const appliedEffects = engine.block.getEffects(presetImageBlock);
+    const appliedEffects = engine.block.getEffects(presetImageBlock)
 
-    console.log(`Block has ${appliedEffects.length} effect(s) applied`);
+    console.log(`Block has ${appliedEffects.length} effect(s) applied`)
 
     // Disable an effect without removing it
     if (appliedEffects.length > 0) {
-      engine.block.setEffectEnabled(appliedEffects[0], false);
+      engine.block.setEffectEnabled(appliedEffects[0], false)
 
       // Check if an effect is currently enabled
-      const isEnabled = engine.block.isEffectEnabled(appliedEffects[0]);
-      console.log(`Effect enabled: ${isEnabled}`);
+      const isEnabled = engine.block.isEffectEnabled(appliedEffects[0])
+      console.log(`Effect enabled: ${isEnabled}`)
 
       // Re-enable the effect
-      engine.block.setEffectEnabled(appliedEffects[0], true);
+      engine.block.setEffectEnabled(appliedEffects[0], true)
     }
 
     // Remove an effect at a specific index from a block
-    const effectsOnCustom = engine.block.getEffects(customImageBlock);
+    const effectsOnCustom = engine.block.getEffects(customImageBlock)
     if (effectsOnCustom.length > 0) {
-      engine.block.removeEffect(customImageBlock, 0);
+      engine.block.removeEffect(customImageBlock, 0)
     }
 
     // Destroy removed effect blocks to free memory
     if (effectsOnCustom.length > 0) {
-      engine.block.destroy(effectsOnCustom[0]);
+      engine.block.destroy(effectsOnCustom[0])
     }
 
     // Re-apply custom duotone after demonstration
-    const newCustomDuotone = engine.block.createEffect('duotone_filter');
+    const newCustomDuotone = engine.block.createEffect('duotone_filter')
     engine.block.setColor(newCustomDuotone, 'effect/duotone_filter/darkColor', {
       r: 0.1,
       g: 0.15,
       b: 0.3,
       a: 1.0
-    });
+    })
     engine.block.setColor(
       newCustomDuotone,
       'effect/duotone_filter/lightColor',
@@ -271,24 +271,24 @@ class Example implements EditorPlugin {
         b: 0.8,
         a: 1.0
       }
-    );
+    )
     engine.block.setFloat(
       newCustomDuotone,
       'effect/duotone_filter/intensity',
       0.85
-    );
-    engine.block.appendEffect(customImageBlock, newCustomDuotone);
+    )
+    engine.block.appendEffect(customImageBlock, newCustomDuotone)
 
     // Select the first image block to show the effects panel
-    engine.block.select(presetImageBlock);
+    engine.block.select(presetImageBlock)
 
     console.log(
       'Duotone guide initialized. Select any image to see the filters panel.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Understanding Duotone
@@ -314,7 +314,7 @@ CE.SDK provides a filters panel where users can browse and apply duotone presets
 
 ```typescript highlight=highlight-enable-filters
 // Enable duotone filters in the inspector panel
-cesdk.feature.enable('ly.img.filter');
+cesdk.feature.enable('ly.img.filter')
 ```
 
 With filters enabled, users can:
@@ -331,10 +331,9 @@ Before applying effects programmatically, verify the block supports them. Only g
 
 ```typescript highlight=highlight-check-support
 // Verify a block supports effects before applying them
-const canApplyEffects = engine.block.supportsEffects(presetImageBlock);
+const canApplyEffects = engine.block.supportsEffects(presetImageBlock)
 if (!canApplyEffects) {
-  console.warn('Block does not support effects');
-  return;
+  console.warn('Block does not support effects')
 }
 ```
 
@@ -353,8 +352,8 @@ Use the Asset API to retrieve available duotone presets from the asset library:
 const duotoneResults = await engine.asset.findAssets(
   'ly.img.filter',
   { page: 0, perPage: 10 }
-);
-const duotonePresets = duotoneResults.assets;
+)
+const duotonePresets = duotoneResults.assets
 ```
 
 Preset metadata contains `darkColor` and `lightColor` as hex strings. Convert these to RGBA format (values 0-1) before passing to the effect API.
@@ -365,7 +364,7 @@ Create a new duotone effect block that can be configured and attached to an imag
 
 ```typescript highlight=highlight-create-effect
 // Create a new duotone effect block
-const duotoneEffect = engine.block.createEffect('duotone_filter');
+const duotoneEffect = engine.block.createEffect('duotone_filter')
 ```
 
 ### Configure Preset Colors
@@ -379,20 +378,20 @@ if (preset.meta?.darkColor) {
     duotoneEffect,
     'effect/duotone_filter/darkColor',
     hexToRgba(preset.meta.darkColor as string)
-  );
+  )
 }
 if (preset.meta?.lightColor) {
   engine.block.setColor(
     duotoneEffect,
     'effect/duotone_filter/lightColor',
     hexToRgba(preset.meta.lightColor as string)
-  );
+  )
 }
 engine.block.setFloat(
   duotoneEffect,
   'effect/duotone_filter/intensity',
   0.9
-);
+)
 ```
 
 ### Append Effect to Block
@@ -401,7 +400,7 @@ Attach the fully configured effect to an image block:
 
 ```typescript highlight=highlight-append-effect
 // Attach the configured effect to the image block
-engine.block.appendEffect(presetImageBlock, duotoneEffect);
+engine.block.appendEffect(presetImageBlock, duotoneEffect)
 ```
 
 ## Creating Custom Colors
@@ -409,33 +408,33 @@ engine.block.appendEffect(presetImageBlock, duotoneEffect);
 For brand-specific treatments or unique creative effects, define your own color combinations using `engine.block.setColor()`:
 
 ```typescript highlight=highlight-custom-colors
-    // Create duotone with custom brand colors
-    const customDuotone = engine.block.createEffect('duotone_filter');
+// Create duotone with custom brand colors
+const customDuotone = engine.block.createEffect('duotone_filter')
 
-    // Dark color: deep navy blue (shadows)
-    engine.block.setColor(customDuotone, 'effect/duotone_filter/darkColor', {
-      r: 0.1,
-      g: 0.15,
-      b: 0.3,
-      a: 1.0
-    });
+// Dark color: deep navy blue (shadows)
+engine.block.setColor(customDuotone, 'effect/duotone_filter/darkColor', {
+  r: 0.1,
+  g: 0.15,
+  b: 0.3,
+  a: 1.0
+})
 
-    // Light color: warm cream (highlights)
-    engine.block.setColor(customDuotone, 'effect/duotone_filter/lightColor', {
-      r: 0.95,
-      g: 0.9,
-      b: 0.8,
-      a: 1.0
-    });
+// Light color: warm cream (highlights)
+engine.block.setColor(customDuotone, 'effect/duotone_filter/lightColor', {
+  r: 0.95,
+  g: 0.9,
+  b: 0.8,
+  a: 1.0
+})
 
-    // Control effect strength (0.0 = original, 1.0 = full duotone)
-    engine.block.setFloat(
-      customDuotone,
-      'effect/duotone_filter/intensity',
-      0.85
-    );
+// Control effect strength (0.0 = original, 1.0 = full duotone)
+engine.block.setFloat(
+  customDuotone,
+  'effect/duotone_filter/intensity',
+  0.85
+)
 
-    engine.block.appendEffect(customImageBlock, customDuotone);
+engine.block.appendEffect(customImageBlock, customDuotone)
 ```
 
 ### Choosing Effective Color Pairs
@@ -463,31 +462,31 @@ The relationship between your dark and light colors determines the final aesthet
 Duotone can be stacked with other effects like brightness adjustments, contrast, or blur. Effects are applied in stack order, so the sequence affects the final result:
 
 ```typescript highlight=highlight-combine-effects
-    // Combine duotone with other effects
-    // First, add adjustments for brightness and contrast
-    const adjustments = engine.block.createEffect('adjustments');
-    engine.block.setFloat(adjustments, 'effect/adjustments/brightness', 0.1);
-    engine.block.setFloat(adjustments, 'effect/adjustments/contrast', 0.15);
-    engine.block.appendEffect(combinedImageBlock, adjustments);
+// Combine duotone with other effects
+// First, add adjustments for brightness and contrast
+const adjustments = engine.block.createEffect('adjustments')
+engine.block.setFloat(adjustments, 'effect/adjustments/brightness', 0.1)
+engine.block.setFloat(adjustments, 'effect/adjustments/contrast', 0.15)
+engine.block.appendEffect(combinedImageBlock, adjustments)
 
-    // Then add duotone on top
-    const combinedDuotone = engine.block.createEffect('duotone_filter');
-    engine.block.setColor(
-      combinedDuotone,
-      'effect/duotone_filter/darkColor',
-      { r: 0.2, g: 0.1, b: 0.3, a: 1.0 } // Deep purple
-    );
-    engine.block.setColor(
-      combinedDuotone,
-      'effect/duotone_filter/lightColor',
-      { r: 1.0, g: 0.85, b: 0.7, a: 1.0 } // Warm peach
-    );
-    engine.block.setFloat(
-      combinedDuotone,
-      'effect/duotone_filter/intensity',
-      0.75
-    );
-    engine.block.appendEffect(combinedImageBlock, combinedDuotone);
+// Then add duotone on top
+const combinedDuotone = engine.block.createEffect('duotone_filter')
+engine.block.setColor(
+  combinedDuotone,
+  'effect/duotone_filter/darkColor',
+  { r: 0.2, g: 0.1, b: 0.3, a: 1.0 } // Deep purple
+)
+engine.block.setColor(
+  combinedDuotone,
+  'effect/duotone_filter/lightColor',
+  { r: 1.0, g: 0.85, b: 0.7, a: 1.0 } // Warm peach
+)
+engine.block.setFloat(
+  combinedDuotone,
+  'effect/duotone_filter/intensity',
+  0.75
+)
+engine.block.appendEffect(combinedImageBlock, combinedDuotone)
 ```
 
 **Effect order matters**: In this example, brightness and contrast are applied first, then duotone maps the adjusted tones. Reversing the order would apply duotone first, then adjust the duotone colors' brightness—producing a different result.
@@ -508,7 +507,7 @@ Retrieve all effect block IDs currently attached to a block:
 
 ```typescript highlight=highlight-list-effects
 // Get all effects currently applied to a block
-const appliedEffects = engine.block.getEffects(presetImageBlock);
+const appliedEffects = engine.block.getEffects(presetImageBlock)
 ```
 
 ### Toggle Effect Visibility
@@ -516,17 +515,17 @@ const appliedEffects = engine.block.getEffects(presetImageBlock);
 Disable an effect temporarily without removing it from the block:
 
 ```typescript highlight=highlight-toggle-effects
-    // Disable an effect without removing it
-    if (appliedEffects.length > 0) {
-      engine.block.setEffectEnabled(appliedEffects[0], false);
+// Disable an effect without removing it
+if (appliedEffects.length > 0) {
+  engine.block.setEffectEnabled(appliedEffects[0], false)
 
-      // Check if an effect is currently enabled
-      const isEnabled = engine.block.isEffectEnabled(appliedEffects[0]);
-      console.log(`Effect enabled: ${isEnabled}`);
+  // Check if an effect is currently enabled
+  const isEnabled = engine.block.isEffectEnabled(appliedEffects[0])
+  console.log(`Effect enabled: ${isEnabled}`)
 
-      // Re-enable the effect
-      engine.block.setEffectEnabled(appliedEffects[0], true);
-    }
+  // Re-enable the effect
+  engine.block.setEffectEnabled(appliedEffects[0], true)
+}
 ```
 
 ### Remove Effects
@@ -535,9 +534,9 @@ Detach an effect from a block by specifying its index in the effect stack:
 
 ```typescript highlight=highlight-remove-effect
 // Remove an effect at a specific index from a block
-const effectsOnCustom = engine.block.getEffects(customImageBlock);
+const effectsOnCustom = engine.block.getEffects(customImageBlock)
 if (effectsOnCustom.length > 0) {
-  engine.block.removeEffect(customImageBlock, 0);
+  engine.block.removeEffect(customImageBlock, 0)
 }
 ```
 
@@ -548,7 +547,7 @@ After removing an effect, destroy it to free memory:
 ```typescript highlight=highlight-cleanup-effect
 // Destroy removed effect blocks to free memory
 if (effectsOnCustom.length > 0) {
-  engine.block.destroy(effectsOnCustom[0]);
+  engine.block.destroy(effectsOnCustom[0])
 }
 ```
 

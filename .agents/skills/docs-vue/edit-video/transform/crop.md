@@ -23,7 +23,7 @@ Crop videos to focus on specific areas, remove unwanted edges, or prepare clips 
 Video cropping in CreativeEditor SDK (CE.SDK) lets you re-frame clips, remove unwanted edges, or adapt footage for platform-specific formats. Unlike resizing or scaling which affects the entire frame uniformly, cropping selects a specific region to display.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-transform-crop-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,31 +40,31 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -74,9 +74,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -90,106 +90,106 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 720, height: 1280, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the page from the scene
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
 
     // Add a video using the convenience API - this handles track creation automatically
-    const videoUri =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4';
-    const videoBlock = await engine.block.addVideo(videoUri, 720, 1280);
+    const videoUri
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4'
+    const videoBlock = await engine.block.addVideo(videoUri, 720, 1280)
 
     // Append the video block to the page (for video scenes, this adds to the track)
-    engine.block.appendChild(page, videoBlock);
+    engine.block.appendChild(page, videoBlock)
 
     // Set video duration on the timeline
-    engine.block.setDuration(videoBlock, 10);
+    engine.block.setDuration(videoBlock, 10)
 
     // Get the fill to force load the video resource
-    const videoFill = engine.block.getFill(videoBlock);
-    await engine.block.forceLoadAVResource(videoFill);
+    const videoFill = engine.block.getFill(videoBlock)
+    await engine.block.forceLoadAVResource(videoFill)
 
     // Verify the block supports cropping before applying crop operations
-    const supportsCrop = engine.block.supportsCrop(videoBlock);
-    console.log('Block supports crop:', supportsCrop);
+    const supportsCrop = engine.block.supportsCrop(videoBlock)
+    console.log('Block supports crop:', supportsCrop)
 
     // Set content fill mode to 'Crop' for manual crop control
     // This enables the crop transform APIs to take effect
-    engine.block.setContentFillMode(videoBlock, 'Crop');
+    engine.block.setContentFillMode(videoBlock, 'Crop')
 
     // Scale the video content within its frame using uniform scale ratio
     // Values greater than 1.0 zoom in, values less than 1.0 zoom out
-    engine.block.setCropScaleRatio(videoBlock, 1.1);
+    engine.block.setCropScaleRatio(videoBlock, 1.1)
 
     // Pan the video content within the crop frame
     // Translation values are percentages of the crop frame dimensions
     // Positive X moves content right, positive Y moves content down
-    engine.block.setCropTranslationX(videoBlock, 0.0);
-    engine.block.setCropTranslationY(videoBlock, 0.0);
+    engine.block.setCropTranslationX(videoBlock, 0.0)
+    engine.block.setCropTranslationY(videoBlock, 0.0)
 
     // Rotate the video content within its frame
     // Rotation is specified in radians (Math.PI = 180 degrees)
-    engine.block.setCropRotation(videoBlock, Math.PI / 90); // 2 degrees
+    engine.block.setCropRotation(videoBlock, Math.PI / 90) // 2 degrees
 
     // Retrieve the current crop state
-    const scaleRatio = engine.block.getCropScaleRatio(videoBlock);
-    const translationX = engine.block.getCropTranslationX(videoBlock);
-    const translationY = engine.block.getCropTranslationY(videoBlock);
-    const rotation = engine.block.getCropRotation(videoBlock);
+    const scaleRatio = engine.block.getCropScaleRatio(videoBlock)
+    const translationX = engine.block.getCropTranslationX(videoBlock)
+    const translationY = engine.block.getCropTranslationY(videoBlock)
+    const rotation = engine.block.getCropRotation(videoBlock)
 
-    console.log('Crop scale ratio:', scaleRatio);
-    console.log('Crop translation X:', translationX);
-    console.log('Crop translation Y:', translationY);
-    console.log('Crop rotation (radians):', rotation);
+    console.log('Crop scale ratio:', scaleRatio)
+    console.log('Crop translation X:', translationX)
+    console.log('Crop translation Y:', translationY)
+    console.log('Crop rotation (radians):', rotation)
 
     // Adjust crop to ensure content fills the frame without letterboxing
     // The minScaleRatio parameter sets the minimum allowed scale
     // This corrects any black bars caused by rotation or translation
-    engine.block.adjustCropToFillFrame(videoBlock, 1.1);
-    const finalScale = engine.block.getCropScaleRatio(videoBlock);
-    console.log('Adjusted scale ratio:', finalScale);
+    engine.block.adjustCropToFillFrame(videoBlock, 1.1)
+    const finalScale = engine.block.getCropScaleRatio(videoBlock)
+    console.log('Adjusted scale ratio:', finalScale)
 
     // Flip the video content within its crop frame
     // This flips the content, not the entire block
-    engine.block.flipCropHorizontal(videoBlock);
+    engine.block.flipCropHorizontal(videoBlock)
 
     // Lock the crop aspect ratio during interactive editing
     // When locked, crop handles maintain the current aspect ratio
-    engine.block.setCropAspectRatioLocked(videoBlock, true);
-    const isLocked = engine.block.isCropAspectRatioLocked(videoBlock);
-    console.log('Crop aspect ratio locked:', isLocked);
+    engine.block.setCropAspectRatioLocked(videoBlock, true)
+    const isLocked = engine.block.isCropAspectRatioLocked(videoBlock)
+    console.log('Crop aspect ratio locked:', isLocked)
 
     // Reset crop to default state (removes all crop transformations)
-    engine.block.resetCrop(videoBlock);
+    engine.block.resetCrop(videoBlock)
     // Re-apply a subtle zoom to demonstrate crop is working
-    engine.block.setCropScaleRatio(videoBlock, 1.05);
+    engine.block.setCropScaleRatio(videoBlock, 1.05)
 
     // Select the video block to show it in the UI
-    engine.block.select(videoBlock);
+    engine.block.select(videoBlock)
 
     // Set playback time to show video content
-    engine.block.setPlaybackTime(page, 2.0);
+    engine.block.setPlaybackTime(page, 2.0)
 
     // Zoom to the video block for better visibility of the crop effect
-    cesdk.engine.scene.zoomToBlock(videoBlock, 0.5, 0.5, 0.8);
+    cesdk.engine.scene.zoomToBlock(videoBlock, 0.5, 0.5, 0.8)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers programmatic video cropping using scale, translation, and rotation transforms, checking crop support, adjusting crop to fill frames, flipping content, and locking aspect ratios.
@@ -199,13 +199,13 @@ This guide covers programmatic video cropping using scale, translation, and rota
 Before applying crop operations, verify the block supports cropping using `engine.block.supportsCrop()`. Video blocks with fills support cropping:
 
 ```typescript highlight-check-crop-support
-    // Verify the block supports cropping before applying crop operations
-    const supportsCrop = engine.block.supportsCrop(videoBlock);
-    console.log('Block supports crop:', supportsCrop);
+// Verify the block supports cropping before applying crop operations
+const supportsCrop = engine.block.supportsCrop(videoBlock)
+console.log('Block supports crop:', supportsCrop)
 
-    // Set content fill mode to 'Crop' for manual crop control
-    // This enables the crop transform APIs to take effect
-    engine.block.setContentFillMode(videoBlock, 'Crop');
+// Set content fill mode to 'Crop' for manual crop control
+// This enables the crop transform APIs to take effect
+engine.block.setContentFillMode(videoBlock, 'Crop')
 ```
 
 ## Scale Crop
@@ -215,7 +215,7 @@ Scale the video content within its frame using `engine.block.setCropScaleRatio()
 ```typescript highlight-scale-crop
 // Scale the video content within its frame using uniform scale ratio
 // Values greater than 1.0 zoom in, values less than 1.0 zoom out
-engine.block.setCropScaleRatio(videoBlock, 1.1);
+engine.block.setCropScaleRatio(videoBlock, 1.1)
 ```
 
 ## Translate Crop
@@ -226,8 +226,8 @@ Pan the video content within the crop frame using `engine.block.setCropTranslati
 // Pan the video content within the crop frame
 // Translation values are percentages of the crop frame dimensions
 // Positive X moves content right, positive Y moves content down
-engine.block.setCropTranslationX(videoBlock, 0.0);
-engine.block.setCropTranslationY(videoBlock, 0.0);
+engine.block.setCropTranslationX(videoBlock, 0.0)
+engine.block.setCropTranslationY(videoBlock, 0.0)
 ```
 
 ## Rotate Crop
@@ -237,7 +237,7 @@ Rotate the video content within its frame using `engine.block.setCropRotation()`
 ```typescript highlight-rotate-crop
 // Rotate the video content within its frame
 // Rotation is specified in radians (Math.PI = 180 degrees)
-engine.block.setCropRotation(videoBlock, Math.PI / 90); // 2 degrees
+engine.block.setCropRotation(videoBlock, Math.PI / 90) // 2 degrees
 ```
 
 ## Get Crop Values
@@ -245,16 +245,16 @@ engine.block.setCropRotation(videoBlock, Math.PI / 90); // 2 degrees
 Retrieve the current crop state to read or restore crop settings using getter methods:
 
 ```typescript highlight-get-crop-values
-    // Retrieve the current crop state
-    const scaleRatio = engine.block.getCropScaleRatio(videoBlock);
-    const translationX = engine.block.getCropTranslationX(videoBlock);
-    const translationY = engine.block.getCropTranslationY(videoBlock);
-    const rotation = engine.block.getCropRotation(videoBlock);
+// Retrieve the current crop state
+const scaleRatio = engine.block.getCropScaleRatio(videoBlock)
+const translationX = engine.block.getCropTranslationX(videoBlock)
+const translationY = engine.block.getCropTranslationY(videoBlock)
+const rotation = engine.block.getCropRotation(videoBlock)
 
-    console.log('Crop scale ratio:', scaleRatio);
-    console.log('Crop translation X:', translationX);
-    console.log('Crop translation Y:', translationY);
-    console.log('Crop rotation (radians):', rotation);
+console.log('Crop scale ratio:', scaleRatio)
+console.log('Crop translation X:', translationX)
+console.log('Crop translation Y:', translationY)
+console.log('Crop rotation (radians):', rotation)
 ```
 
 ## Fill Frame
@@ -265,9 +265,9 @@ Adjust the crop to ensure content fills the frame without letterboxing using `en
 // Adjust crop to ensure content fills the frame without letterboxing
 // The minScaleRatio parameter sets the minimum allowed scale
 // This corrects any black bars caused by rotation or translation
-engine.block.adjustCropToFillFrame(videoBlock, 1.1);
-const finalScale = engine.block.getCropScaleRatio(videoBlock);
-console.log('Adjusted scale ratio:', finalScale);
+engine.block.adjustCropToFillFrame(videoBlock, 1.1)
+const finalScale = engine.block.getCropScaleRatio(videoBlock)
+console.log('Adjusted scale ratio:', finalScale)
 ```
 
 This is useful after applying translations or rotations that might reveal empty areas.
@@ -279,7 +279,7 @@ Flip the video content horizontally or vertically within its crop frame using `e
 ```typescript highlight-flip-crop
 // Flip the video content within its crop frame
 // This flips the content, not the entire block
-engine.block.flipCropHorizontal(videoBlock);
+engine.block.flipCropHorizontal(videoBlock)
 ```
 
 ## Lock Aspect Ratio
@@ -289,9 +289,9 @@ Lock the crop aspect ratio during interactive editing using `engine.block.setCro
 ```typescript highlight-lock-aspect-ratio
 // Lock the crop aspect ratio during interactive editing
 // When locked, crop handles maintain the current aspect ratio
-engine.block.setCropAspectRatioLocked(videoBlock, true);
-const isLocked = engine.block.isCropAspectRatioLocked(videoBlock);
-console.log('Crop aspect ratio locked:', isLocked);
+engine.block.setCropAspectRatioLocked(videoBlock, true)
+const isLocked = engine.block.isCropAspectRatioLocked(videoBlock)
+console.log('Crop aspect ratio locked:', isLocked)
 ```
 
 ## Reset Crop
@@ -300,9 +300,9 @@ Reset all crop transformations to their default state using `engine.block.resetC
 
 ```typescript highlight-reset-crop
 // Reset crop to default state (removes all crop transformations)
-engine.block.resetCrop(videoBlock);
+engine.block.resetCrop(videoBlock)
 // Re-apply a subtle zoom to demonstrate crop is working
-engine.block.setCropScaleRatio(videoBlock, 1.05);
+engine.block.setCropScaleRatio(videoBlock, 1.05)
 ```
 
 ## Coordinate System
@@ -323,12 +323,12 @@ You can combine crop operations with other block transforms like position, rotat
 
 ```typescript
 // Crop the content (scales/pans the video within its frame)
-engine.block.setCropScaleRatio(videoBlock, 1.5);
-engine.block.setCropRotation(videoBlock, Math.PI / 12);
+engine.block.setCropScaleRatio(videoBlock, 1.5)
+engine.block.setCropRotation(videoBlock, Math.PI / 12)
 
 // Transform the block itself (moves/rotates the entire block on canvas)
-engine.block.setRotation(videoBlock, Math.PI / 6);
-engine.block.setWidth(videoBlock, 800);
+engine.block.setRotation(videoBlock, Math.PI / 6)
+engine.block.setWidth(videoBlock, 800)
 ```
 
 ## Troubleshooting

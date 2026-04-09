@@ -24,7 +24,7 @@ volume control API, from silent (0.0) to full volume (1.0).
 Volume control adjusts how loud or quiet audio plays during playback. CE.SDK uses a normalized 0.0-1.0 range where 0.0 is completely silent and 1.0 is full volume. This applies to both audio blocks and video fills with embedded audio. Volume settings are commonly used for balancing multiple audio sources, creating fade effects, and allowing users to adjust playback levels.
 
 ```typescript file=@cesdk_web_examples/guides-create-audio-audio-adjust-volume-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Adjust Audio Volume Guide
@@ -55,27 +55,27 @@ import packageJson from './package.json';
  * - Volume levels for multiple audio sources
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -85,9 +85,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -101,12 +101,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
@@ -114,70 +114,69 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const scene = engine.scene.get();
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : scene;
+    const engine = cesdk.engine
+    const scene = engine.scene.get()
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : scene
 
     // Use a sample audio file
-    const audioUri =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/dance_harder.m4a';
+    const audioUri
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/dance_harder.m4a'
 
     // Create an audio block and load the audio file
-    const audioBlock = engine.block.create('audio');
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
+    const audioBlock = engine.block.create('audio')
+    engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
 
     // Wait for audio resource to load
-    await engine.block.forceLoadAVResource(audioBlock);
+    await engine.block.forceLoadAVResource(audioBlock)
 
     // Set volume to 80% (0.8 on a 0.0-1.0 scale)
-    const fullVolumeAudio = engine.block.duplicate(audioBlock);
-    engine.block.appendChild(page, fullVolumeAudio);
-    engine.block.setTimeOffset(fullVolumeAudio, 0);
-    engine.block.setVolume(fullVolumeAudio, 0.8);
+    const fullVolumeAudio = engine.block.duplicate(audioBlock)
+    engine.block.appendChild(page, fullVolumeAudio)
+    engine.block.setTimeOffset(fullVolumeAudio, 0)
+    engine.block.setVolume(fullVolumeAudio, 0.8)
 
     // Set volume to 30% for background music
-    const lowVolumeAudio = engine.block.duplicate(audioBlock);
-    engine.block.appendChild(page, lowVolumeAudio);
-    engine.block.setTimeOffset(lowVolumeAudio, 5);
-    engine.block.setVolume(lowVolumeAudio, 0.3);
+    const lowVolumeAudio = engine.block.duplicate(audioBlock)
+    engine.block.appendChild(page, lowVolumeAudio)
+    engine.block.setTimeOffset(lowVolumeAudio, 5)
+    engine.block.setVolume(lowVolumeAudio, 0.3)
 
     // Mute an audio block (preserves volume setting)
-    const mutedAudio = engine.block.duplicate(audioBlock);
-    engine.block.appendChild(page, mutedAudio);
-    engine.block.setTimeOffset(mutedAudio, 10);
-    engine.block.setVolume(mutedAudio, 1.0);
-    engine.block.setMuted(mutedAudio, true);
+    const mutedAudio = engine.block.duplicate(audioBlock)
+    engine.block.appendChild(page, mutedAudio)
+    engine.block.setTimeOffset(mutedAudio, 10)
+    engine.block.setVolume(mutedAudio, 1.0)
+    engine.block.setMuted(mutedAudio, true)
 
     // Query current volume and mute states
-    const currentVolume = engine.block.getVolume(fullVolumeAudio);
-    const isMuted = engine.block.isMuted(mutedAudio);
-    const isForceMuted = engine.block.isForceMuted(mutedAudio);
+    const currentVolume = engine.block.getVolume(fullVolumeAudio)
+    const isMuted = engine.block.isMuted(mutedAudio)
+    const isForceMuted = engine.block.isForceMuted(mutedAudio)
 
-    // eslint-disable-next-line no-console
-    console.log(`Full volume audio: ${(currentVolume * 100).toFixed(0)}%`);
-    // eslint-disable-next-line no-console
+    console.log(`Full volume audio: ${(currentVolume * 100).toFixed(0)}%`)
+
     console.log(
       `Low volume audio: ${(
         engine.block.getVolume(lowVolumeAudio) * 100
       ).toFixed(0)}%`
-    );
-    // eslint-disable-next-line no-console
+    )
+
     console.log(
       `Muted audio - isMuted: ${isMuted}, isForceMuted: ${isForceMuted}`
-    );
+    )
 
     // Remove the original audio block (we only need the duplicates)
-    engine.block.destroy(audioBlock);
+    engine.block.destroy(audioBlock)
 
     // Zoom to fit all audio blocks
-    engine.scene.zoomToBlock(page, 40, 40, 40, 40);
+    engine.scene.zoomToBlock(page, 40, 40, 40, 40)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to adjust audio volume programmatically using the Engine API, mute and unmute audio, and query volume and mute states.
@@ -197,12 +196,12 @@ CE.SDK supports volume levels from **0.0** (silent) to **1.0** (full volume), wi
 We create an audio block and load an audio file by setting its `fileURI` property.
 
 ```typescript highlight-create-audio
-    // Create an audio block and load the audio file
-    const audioBlock = engine.block.create('audio');
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
+// Create an audio block and load the audio file
+const audioBlock = engine.block.create('audio')
+engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
 
-    // Wait for audio resource to load
-    await engine.block.forceLoadAVResource(audioBlock);
+// Wait for audio resource to load
+await engine.block.forceLoadAVResource(audioBlock)
 ```
 
 Unlike video or image blocks which use fills, audio blocks store the file URI directly on the block itself using the `audio/fileURI` property. The `forceLoadAVResource` call ensures CE.SDK has downloaded the audio file and loaded its metadata before we manipulate it.
@@ -215,10 +214,10 @@ We can set volume using `setVolume()` with a value between 0.0 and 1.0.
 
 ```typescript highlight-set-volume
 // Set volume to 80% (0.8 on a 0.0-1.0 scale)
-const fullVolumeAudio = engine.block.duplicate(audioBlock);
-engine.block.appendChild(page, fullVolumeAudio);
-engine.block.setTimeOffset(fullVolumeAudio, 0);
-engine.block.setVolume(fullVolumeAudio, 0.8);
+const fullVolumeAudio = engine.block.duplicate(audioBlock)
+engine.block.appendChild(page, fullVolumeAudio)
+engine.block.setTimeOffset(fullVolumeAudio, 0)
+engine.block.setVolume(fullVolumeAudio, 0.8)
 ```
 
 Setting volume to 0.8 (80%) is useful when you want prominent audio that isn't at maximum level, leaving headroom for other audio sources or preventing distortion.
@@ -229,10 +228,10 @@ For background music that should be audible but not prominent, use lower volume 
 
 ```typescript highlight-set-low-volume
 // Set volume to 30% for background music
-const lowVolumeAudio = engine.block.duplicate(audioBlock);
-engine.block.appendChild(page, lowVolumeAudio);
-engine.block.setTimeOffset(lowVolumeAudio, 5);
-engine.block.setVolume(lowVolumeAudio, 0.3);
+const lowVolumeAudio = engine.block.duplicate(audioBlock)
+engine.block.appendChild(page, lowVolumeAudio)
+engine.block.setTimeOffset(lowVolumeAudio, 5)
+engine.block.setVolume(lowVolumeAudio, 0.3)
 ```
 
 At 0.3 (30%) volume, the audio is clearly audible but stays in the background. This is a common level for background music under voiceover or dialogue.
@@ -245,11 +244,11 @@ Use `setMuted()` to mute audio without changing its volume setting. This is usef
 
 ```typescript highlight-mute-audio
 // Mute an audio block (preserves volume setting)
-const mutedAudio = engine.block.duplicate(audioBlock);
-engine.block.appendChild(page, mutedAudio);
-engine.block.setTimeOffset(mutedAudio, 10);
-engine.block.setVolume(mutedAudio, 1.0);
-engine.block.setMuted(mutedAudio, true);
+const mutedAudio = engine.block.duplicate(audioBlock)
+engine.block.appendChild(page, mutedAudio)
+engine.block.setTimeOffset(mutedAudio, 10)
+engine.block.setVolume(mutedAudio, 1.0)
+engine.block.setMuted(mutedAudio, true)
 ```
 
 When you mute an audio block, the volume setting (1.0 in this case) is preserved. Unmuting later with `setMuted(block, false)` restores playback at the same volume level.
@@ -259,23 +258,22 @@ When you mute an audio block, the volume setting (1.0 in this case) is preserved
 You can query the current volume and mute states at any time.
 
 ```typescript highlight-query-volume
-    // Query current volume and mute states
-    const currentVolume = engine.block.getVolume(fullVolumeAudio);
-    const isMuted = engine.block.isMuted(mutedAudio);
-    const isForceMuted = engine.block.isForceMuted(mutedAudio);
+// Query current volume and mute states
+const currentVolume = engine.block.getVolume(fullVolumeAudio)
+const isMuted = engine.block.isMuted(mutedAudio)
+const isForceMuted = engine.block.isForceMuted(mutedAudio)
 
-    // eslint-disable-next-line no-console
-    console.log(`Full volume audio: ${(currentVolume * 100).toFixed(0)}%`);
-    // eslint-disable-next-line no-console
-    console.log(
-      `Low volume audio: ${(
-        engine.block.getVolume(lowVolumeAudio) * 100
-      ).toFixed(0)}%`
-    );
-    // eslint-disable-next-line no-console
-    console.log(
-      `Muted audio - isMuted: ${isMuted}, isForceMuted: ${isForceMuted}`
-    );
+console.log(`Full volume audio: ${(currentVolume * 100).toFixed(0)}%`)
+
+console.log(
+  `Low volume audio: ${(
+    engine.block.getVolume(lowVolumeAudio) * 100
+  ).toFixed(0)}%`
+)
+
+console.log(
+  `Muted audio - isMuted: ${isMuted}, isForceMuted: ${isForceMuted}`
+)
 ```
 
 Use `getVolume()` to read the current volume level, `isMuted()` to check if the block is muted by the user, and `isForceMuted()` to check if the engine has automatically muted the block due to playback rules.
@@ -302,9 +300,9 @@ When building a volume slider UI, map the slider value directly to the 0.0-1.0 r
 
 ```typescript
 // Example: Update volume from slider (0-100)
-const sliderValue = 75; // User drags slider to 75%
-const volume = sliderValue / 100; // Convert to 0.0-1.0
-engine.block.setVolume(audioBlock, volume);
+const sliderValue = 75 // User drags slider to 75%
+const volume = sliderValue / 100 // Convert to 0.0-1.0
+engine.block.setVolume(audioBlock, volume)
 ```
 
 ### Mute Toggle
@@ -313,8 +311,8 @@ Implement mute buttons using `setMuted()` and indicate the current state using `
 
 ```typescript
 // Example: Toggle mute state
-const currentlyMuted = engine.block.isMuted(audioBlock);
-engine.block.setMuted(audioBlock, !currentlyMuted);
+const currentlyMuted = engine.block.isMuted(audioBlock)
+engine.block.setMuted(audioBlock, !currentlyMuted)
 
 // Check if engine force-muted (e.g., high playback speed)
 if (engine.block.isForceMuted(audioBlock)) {

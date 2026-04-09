@@ -23,8 +23,14 @@ Import Adobe InDesign (IDML) files into CE.SDK, converting them into editable sc
 The `@imgly/idml-importer` package converts InDesign IDML files into CE.SDK scene format, preserving design structure for editing or export. This guide focuses on enabling end-users to upload their own IDML files directly in the browser and load them into the CE.SDK editor. For batch conversion of template libraries at build-time, see the [server guide](./open-the-editor/import-design/from-indesign.md).
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-import-design-from-indesign-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
+import type {
+  AssetQueryData,
+  AssetResult,
+  AssetsQueryResult
+} from '@cesdk/engine'
+import type { TypefaceResolver } from '@imgly/idml-importer'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -39,16 +45,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import type {
-  AssetQueryData,
-  AssetResult,
-  AssetsQueryResult
-} from '@cesdk/engine';
-import type { TypefaceResolver } from '@imgly/idml-importer';
-import { IDMLParser, addGoogleFontsAssetLibrary } from '@imgly/idml-importer';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { addGoogleFontsAssetLibrary, IDMLParser } from '@imgly/idml-importer'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Import from InDesign Guide
@@ -65,11 +65,11 @@ import packageJson from './package.json';
  */
 
 // Asset source ID for IDML library
-const IDML_SOURCE_ID = 'idml-files';
+const IDML_SOURCE_ID = 'idml-files'
 
 // Base URL for IDML template files
-const IDML_BASE_URL =
-  'https://staticimgly.com/imgly/docs-reference-files-temp/indesign-template-import';
+const IDML_BASE_URL
+  = 'https://staticimgly.com/imgly/docs-reference-files-temp/indesign-template-import'
 
 // Sample IDML files for the asset library
 // These files are hosted on the IMG.LY CDN from the showcases-app public folder
@@ -110,28 +110,28 @@ const SAMPLE_IDML_FILES: AssetResult[] = [
       height: 600
     }
   }
-];
+]
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Initialize CE.SDK with Google Fonts support for IDML text matching
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -142,65 +142,66 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Register Google Fonts before parsing IDML files for best font matching
-    await addGoogleFontsAssetLibrary(engine);
+    await addGoogleFontsAssetLibrary(engine)
 
     // Optional: Create a custom font resolver for advanced font mapping
     // Use this when you need to map InDesign fonts to specific alternatives,
     // use enterprise fonts, or implement custom fallback logic
     const customFontResolver: TypefaceResolver = async (fontParams, eng) => {
-      const { family, style, weight } = fontParams;
+      const { family, style, weight } = fontParams
 
       // Define font mappings from InDesign fonts to available alternatives
       const fontMappings: Record<string, string> = {
-        Arial: 'Open Sans',
-        Helvetica: 'Inter',
+        'Arial': 'Open Sans',
+        'Helvetica': 'Inter',
         'Helvetica Neue': 'Inter',
         'Times New Roman': 'Lora',
-        Georgia: 'Merriweather'
-      };
+        'Georgia': 'Merriweather'
+      }
 
       // Use mapped font or original family name
-      const targetFamily = fontMappings[family] || family;
+      const targetFamily = fontMappings[family] || family
 
       // Search for the font in available typefaces
       const result = await eng.asset.findAssets('ly.img.typeface', {
         query: targetFamily,
         page: 0,
         perPage: 10
-      });
+      })
 
       if (result.assets.length === 0) {
-        console.warn(`Font "${family}" not found, using default fallback`);
-        return null; // Let the parser use its default fallback
+        console.warn(`Font "${family}" not found, using default fallback`)
+        return null // Let the parser use its default fallback
       }
 
       // Get the typeface from the asset payload
-      const asset = result.assets[0];
-      const typeface = asset.payload?.typeface;
-      if (!typeface) return null;
+      const asset = result.assets[0]
+      const typeface = asset.payload?.typeface
+      if (!typeface)
+        return null
 
       // Find the best matching font variant (weight and style)
-      const matchingFont =
-        typeface.fonts.find(
-          (f: { weight?: string; style?: string }) =>
+      const matchingFont
+        = typeface.fonts.find(
+          (f: { weight?: string, style?: string }) =>
             f.weight === weight && f.style === style
-        ) ||
-        typeface.fonts.find((f: { weight?: string }) => f.weight === weight) ||
-        typeface.fonts[0];
+        )
+        || typeface.fonts.find((f: { weight?: string }) => f.weight === weight)
+        || typeface.fonts[0]
 
-      return { typeface, font: matchingFont };
-    };
+      return { typeface, font: matchingFont }
+    }
 
     // Create an initial design scene
     await cesdk.actions.run('scene.create', {
@@ -208,22 +209,23 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Helper function to import IDML from URL or buffer
     const importIdml = async (
       source: string | ArrayBuffer,
       sourceName: string
     ) => {
-      console.log(`Processing IDML: ${sourceName}`);
+      console.log(`Processing IDML: ${sourceName}`)
 
       // Get buffer from URL or use directly
-      let buffer: ArrayBuffer;
+      let buffer: ArrayBuffer
       if (typeof source === 'string') {
-        const response = await fetch(source);
-        buffer = await response.arrayBuffer();
-      } else {
-        buffer = source;
+        const response = await fetch(source)
+        buffer = await response.arrayBuffer()
+      }
+      else {
+        buffer = source
       }
 
       // Parse the IDML file using the IDML importer
@@ -235,20 +237,20 @@ class Example implements EditorPlugin {
         (content: string) =>
           new DOMParser().parseFromString(content, 'text/xml')
         // Optional: customFontResolver for advanced font mapping
-      );
-      await parser.parse();
+      )
+      await parser.parse()
 
       // Verify pages were imported successfully
-      const pages = engine.scene.getPages();
+      const pages = engine.scene.getPages()
       if (pages.length === 0) {
-        console.error('No pages imported from IDML');
-        throw new Error('No pages could be imported from the IDML file');
+        console.error('No pages imported from IDML')
+        throw new Error('No pages could be imported from the IDML file')
       }
-      console.log(`Successfully imported ${pages.length} page(s)`);
+      console.log(`Successfully imported ${pages.length} page(s)`)
 
       // Save the imported scene as an archive for editor loading
-      const sceneArchive = await engine.scene.saveToArchive();
-      const archiveUrl = URL.createObjectURL(sceneArchive);
+      const sceneArchive = await engine.scene.saveToArchive()
+      const archiveUrl = URL.createObjectURL(sceneArchive)
 
       // Optional: Save scene as JSON string with stable URLs instead of archive
       // This is useful when storing scenes in a database or referencing CDN-hosted assets
@@ -259,34 +261,34 @@ class Example implements EditorPlugin {
       const uploadToBackend = async (data: Uint8Array): Promise<string> => {
         // In production, upload the data to your CDN/storage and return the permanent URL
         // For this example, we create a blob URL to demonstrate the workflow
-        const blob = new Blob([data], { type: 'image/png' });
-        return URL.createObjectURL(blob);
-      };
-
-      const transientResources = engine.editor.findAllTransientResources();
-      for (const resource of transientResources) {
-        const { URL: bufferUri, size } = resource;
-        const data = engine.editor.getBufferData(bufferUri, 0, size);
-        const permanentUrl = await uploadToBackend(data);
-        engine.editor.relocateResource(bufferUri, permanentUrl);
+        const blob = new Blob([data], { type: 'image/png' })
+        return URL.createObjectURL(blob)
       }
-      const sceneString = await engine.scene.saveToString();
+
+      const transientResources = engine.editor.findAllTransientResources()
+      for (const resource of transientResources) {
+        const { URL: bufferUri, size } = resource
+        const data = engine.editor.getBufferData(bufferUri, 0, size)
+        const permanentUrl = await uploadToBackend(data)
+        engine.editor.relocateResource(bufferUri, permanentUrl)
+      }
+      const sceneString = await engine.scene.saveToString()
 
       // Load the archived scene into the editor
-      await cesdk.engine.scene.loadFromArchiveURL(archiveUrl);
+      await cesdk.engine.scene.loadFromArchiveURL(archiveUrl)
 
       // Verify scene loaded correctly
-      const loadedPages = engine.scene.getPages();
+      const loadedPages = engine.scene.getPages()
       console.log(
         `IDML imported successfully with ${loadedPages.length} page(s)`
-      );
+      )
 
       // Zoom to fit the imported page
-      await cesdk.actions.run('zoom.toPage', { page: 'first', autoFit: true });
+      await cesdk.actions.run('zoom.toPage', { page: 'first', autoFit: true })
 
       // Clean up object URL
-      URL.revokeObjectURL(archiveUrl);
-    };
+      URL.revokeObjectURL(archiveUrl)
+    }
 
     // Add custom asset source for IDML templates
     engine.asset.addSource({
@@ -295,16 +297,16 @@ class Example implements EditorPlugin {
       async findAssets(
         queryData: AssetQueryData
       ): Promise<AssetsQueryResult<AssetResult>> {
-        let assets = SAMPLE_IDML_FILES;
+        let assets = SAMPLE_IDML_FILES
 
         // Filter by query if provided
         if (queryData.query) {
-          const query = queryData.query.toLowerCase();
+          const query = queryData.query.toLowerCase()
           assets = assets.filter(
-            (a) =>
-              a.label?.toLowerCase().includes(query) ||
-              a.tags?.some((t) => t.toLowerCase().includes(query))
-          );
+            a =>
+              a.label?.toLowerCase().includes(query)
+              || a.tags?.some(t => t.toLowerCase().includes(query))
+          )
         }
 
         return {
@@ -312,19 +314,19 @@ class Example implements EditorPlugin {
           total: assets.length,
           currentPage: queryData.page,
           nextPage: undefined
-        };
+        }
       },
 
       async applyAsset(asset: AssetResult): Promise<number | undefined> {
         if (!asset.meta?.uri) {
-          console.error('Asset has no URI');
-          return undefined;
+          console.error('Asset has no URI')
+          return undefined
         }
 
-        await importIdml(asset.meta.uri as string, asset.label || asset.id);
-        return undefined; // Scene replaced, no new block created
+        await importIdml(asset.meta.uri as string, asset.label || asset.id)
+        return undefined // Scene replaced, no new block created
       }
-    });
+    })
 
     // Set labels for the asset source and library entry
     cesdk.i18n.setTranslations({
@@ -332,7 +334,7 @@ class Example implements EditorPlugin {
         [`libraries.${IDML_SOURCE_ID}.label`]: 'IDML Files',
         'libraries.idml-library-entry.label': 'InDesign Templates'
       }
-    });
+    })
 
     // Configure the asset library UI to show the IDML source
     cesdk.ui.addAssetLibraryEntry({
@@ -342,13 +344,13 @@ class Example implements EditorPlugin {
       previewBackgroundType: 'contain',
       gridBackgroundType: 'contain',
       gridColumns: 2
-    });
+    })
 
     // Add IDML library to the dock and remove the default Templates entry
-    const existingDockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' });
+    const existingDockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
     const filteredDockOrder = existingDockOrder.filter(
-      (entry) => entry.key !== 'ly.img.templates'
-    );
+      entry => entry.key !== 'ly.img.templates'
+    )
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       {
         id: 'ly.img.assetLibrary.dock',
@@ -358,7 +360,7 @@ class Example implements EditorPlugin {
         entries: ['idml-library-entry']
       },
       ...filteredDockOrder
-    ]);
+    ])
 
     // Add a custom nav bar button for uploading and importing IDML files
     // Uses cesdk.utils.loadFile() to open the browser's file picker
@@ -372,17 +374,17 @@ class Example implements EditorPlugin {
           const buffer = await cesdk.utils.loadFile({
             accept: '.idml,application/vnd.adobe.indesign-idml-package',
             returnType: 'arrayBuffer'
-          });
-          await importIdml(buffer, 'uploaded.idml');
+          })
+          await importIdml(buffer, 'uploaded.idml')
         }
-      });
-    });
+      })
+    })
 
     // Add the upload button to the right side of the navigation bar
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.navigation.bar' }),
       'idml.uploadButton'
-    ]);
+    ])
 
     // Open the IDML Templates library by default
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
@@ -390,7 +392,7 @@ class Example implements EditorPlugin {
         entries: ['idml-library-entry'],
         title: 'InDesign Templates'
       }
-    });
+    })
 
     // Override the importScene action to support IDML files alongside standard formats
     // This integrates IDML import with the default import workflow
@@ -399,42 +401,45 @@ class Example implements EditorPlugin {
       async ({
         format = 'scene'
       }: {
-        format?: 'scene' | 'archive' | 'idml';
+        format?: 'scene' | 'archive' | 'idml'
       }) => {
         if (format === 'idml') {
           // Handle IDML import using cesdk.utils.loadFile
           const buffer = await cesdk.utils.loadFile({
             accept: '.idml,application/vnd.adobe.indesign-idml-package',
             returnType: 'arrayBuffer'
-          });
-          await importIdml(buffer, 'imported.idml');
-        } else if (format === 'scene') {
+          })
+          await importIdml(buffer, 'imported.idml')
+        }
+        else if (format === 'scene') {
           // Handle standard .scene files
           const scene = await cesdk.utils.loadFile({
             accept: '.scene',
             returnType: 'text'
-          });
-          await cesdk.engine.scene.loadFromString(scene);
-          await cesdk.actions.run('zoom.toPage', { page: 'first' });
-        } else {
+          })
+          await cesdk.engine.scene.loadFromString(scene)
+          await cesdk.actions.run('zoom.toPage', { page: 'first' })
+        }
+        else {
           // Handle archive files (.zip)
           const blobURL = await cesdk.utils.loadFile({
             accept: '.zip',
             returnType: 'objectURL'
-          });
+          })
           try {
-            await cesdk.engine.scene.loadFromArchiveURL(blobURL);
-          } finally {
-            URL.revokeObjectURL(blobURL);
+            await cesdk.engine.scene.loadFromArchiveURL(blobURL)
           }
-          await cesdk.actions.run('zoom.toPage', { page: 'first' });
+          finally {
+            URL.revokeObjectURL(blobURL)
+          }
+          await cesdk.actions.run('zoom.toPage', { page: 'first' })
         }
       }
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Installation
@@ -464,36 +469,36 @@ The IDML importer preserves the following InDesign elements:
 Text elements in IDML files reference fonts that may not be available in CE.SDK. Use `addGoogleFontsAssetLibrary()` to register Google Fonts as a font source before parsing:
 
 ```typescript highlight=highlight-setup
-    // Initialize CE.SDK with Google Fonts support for IDML text matching
-    await cesdk.addPlugin(new DesignEditorConfig());
+// Initialize CE.SDK with Google Fonts support for IDML text matching
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    // Register Google Fonts before parsing IDML files for best font matching
-    await addGoogleFontsAssetLibrary(engine);
+// Register Google Fonts before parsing IDML files for best font matching
+await addGoogleFontsAssetLibrary(engine)
 ```
 
 Call this function on the engine before parsing IDML files. The importer attempts to match fonts from the IDML with available Google Fonts. For fonts not found, the importer uses a fallback font.
@@ -503,26 +508,27 @@ Call this function on the engine before parsing IDML files. The importer attempt
 Use `IDMLParser.fromFile()` with the browser's native `DOMParser` for XML parsing. After parsing, the scene is immediately available in the engine:
 
 ```typescript highlight=highlight-parse-idml
-      // Get buffer from URL or use directly
-      let buffer: ArrayBuffer;
-      if (typeof source === 'string') {
-        const response = await fetch(source);
-        buffer = await response.arrayBuffer();
-      } else {
-        buffer = source;
-      }
+// Get buffer from URL or use directly
+let buffer: ArrayBuffer
+if (typeof source === 'string') {
+  const response = await fetch(source)
+  buffer = await response.arrayBuffer()
+}
+else {
+  buffer = source
+}
 
-      // Parse the IDML file using the IDML importer
-      // The addGoogleFontsAssetLibrary() call above enables automatic font matching
-      // For custom font mapping, pass fontResolver as 4th parameter (see customFontResolver example)
-      const parser = await IDMLParser.fromFile(
-        engine,
-        buffer,
-        (content: string) =>
-          new DOMParser().parseFromString(content, 'text/xml')
-        // Optional: customFontResolver for advanced font mapping
-      );
-      await parser.parse();
+// Parse the IDML file using the IDML importer
+// The addGoogleFontsAssetLibrary() call above enables automatic font matching
+// For custom font mapping, pass fontResolver as 4th parameter (see customFontResolver example)
+const parser = await IDMLParser.fromFile(
+  engine,
+  buffer,
+  (content: string) =>
+    new DOMParser().parseFromString(content, 'text/xml')
+  // Optional: customFontResolver for advanced font mapping
+)
+await parser.parse()
 ```
 
 The parser creates a new scene in the engine with all supported IDML elements converted to CE.SDK blocks.
@@ -533,12 +539,12 @@ Verify the import succeeded by checking the page count. If no pages were importe
 
 ```typescript highlight=highlight-check-warnings
 // Verify pages were imported successfully
-const pages = engine.scene.getPages();
+const pages = engine.scene.getPages()
 if (pages.length === 0) {
-  console.error('No pages imported from IDML');
-  throw new Error('No pages could be imported from the IDML file');
+  console.error('No pages imported from IDML')
+  throw new Error('No pages could be imported from the IDML file')
 }
-console.log(`Successfully imported ${pages.length} page(s)`);
+console.log(`Successfully imported ${pages.length} page(s)`)
 ```
 
 Log warnings about any unsupported features to help users understand what couldn't be converted.
@@ -549,8 +555,8 @@ After parsing, save the imported scene as an archive. This creates a portable bu
 
 ```typescript highlight=highlight-save-archive
 // Save the imported scene as an archive for editor loading
-const sceneArchive = await engine.scene.saveToArchive();
-const archiveUrl = URL.createObjectURL(sceneArchive);
+const sceneArchive = await engine.scene.saveToArchive()
+const archiveUrl = URL.createObjectURL(sceneArchive)
 ```
 
 Archives can be stored, shared, or loaded later using `loadFromArchiveURL()`.
@@ -571,27 +577,27 @@ However, if you want to save scenes as JSON strings (`engine.scene.saveToString(
 After parsing the IDML file, use CE.SDK's native APIs to find and relocate all transient resources:
 
 ```typescript highlight=highlight-stable-urls
-      // Optional: Save scene as JSON string with stable URLs instead of archive
-      // This is useful when storing scenes in a database or referencing CDN-hosted assets
-      // By default, IDML images use transient buffer:// URLs that only work with saveToArchive()
-      // To use saveToString(), relocate transient resources to permanent URLs first:
+// Optional: Save scene as JSON string with stable URLs instead of archive
+// This is useful when storing scenes in a database or referencing CDN-hosted assets
+// By default, IDML images use transient buffer:// URLs that only work with saveToArchive()
+// To use saveToString(), relocate transient resources to permanent URLs first:
 
-      // Mock upload function - replace with your actual backend upload logic
-      const uploadToBackend = async (data: Uint8Array): Promise<string> => {
-        // In production, upload the data to your CDN/storage and return the permanent URL
-        // For this example, we create a blob URL to demonstrate the workflow
-        const blob = new Blob([data], { type: 'image/png' });
-        return URL.createObjectURL(blob);
-      };
+// Mock upload function - replace with your actual backend upload logic
+async function uploadToBackend(data: Uint8Array): Promise<string> {
+  // In production, upload the data to your CDN/storage and return the permanent URL
+  // For this example, we create a blob URL to demonstrate the workflow
+  const blob = new Blob([data], { type: 'image/png' })
+  return URL.createObjectURL(blob)
+}
 
-      const transientResources = engine.editor.findAllTransientResources();
-      for (const resource of transientResources) {
-        const { URL: bufferUri, size } = resource;
-        const data = engine.editor.getBufferData(bufferUri, 0, size);
-        const permanentUrl = await uploadToBackend(data);
-        engine.editor.relocateResource(bufferUri, permanentUrl);
-      }
-      const sceneString = await engine.scene.saveToString();
+const transientResources = engine.editor.findAllTransientResources()
+for (const resource of transientResources) {
+  const { URL: bufferUri, size } = resource
+  const data = engine.editor.getBufferData(bufferUri, 0, size)
+  const permanentUrl = await uploadToBackend(data)
+  engine.editor.relocateResource(bufferUri, permanentUrl)
+}
+const sceneString = await engine.scene.saveToString()
 ```
 
 The relocation workflow:
@@ -611,17 +617,17 @@ When using the default font resolver with Google Fonts, the resulting scene stri
 Load the archived scene into the CE.SDK editor for user editing:
 
 ```typescript highlight=highlight-load-editor
-      // Load the archived scene into the editor
-      await cesdk.engine.scene.loadFromArchiveURL(archiveUrl);
+// Load the archived scene into the editor
+await cesdk.engine.scene.loadFromArchiveURL(archiveUrl)
 
-      // Verify scene loaded correctly
-      const loadedPages = engine.scene.getPages();
-      console.log(
-        `IDML imported successfully with ${loadedPages.length} page(s)`
-      );
+// Verify scene loaded correctly
+const loadedPages = engine.scene.getPages()
+console.log(
+  `IDML imported successfully with ${loadedPages.length} page(s)`
+)
 
-      // Zoom to fit the imported page
-      await cesdk.actions.run('zoom.toPage', { page: 'first', autoFit: true });
+// Zoom to fit the imported page
+await cesdk.actions.run('zoom.toPage', { page: 'first', autoFit: true })
 ```
 
 After loading, verify the scene contains at least one page. The imported design is now ready for editing in the CE.SDK editor.

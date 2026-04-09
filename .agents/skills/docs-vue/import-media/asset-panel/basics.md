@@ -42,7 +42,7 @@ The asset library connects the engine to the user interface through three layers
 The following example demonstrates all three layers working together:
 
 ```typescript file=@cesdk_web_examples/guides-import-media-asset-library-basics-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -58,9 +58,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Asset Library Basics Guide
@@ -71,21 +71,21 @@ import packageJson from './package.json';
  * - Connecting the entry to the dock (UI interaction layer)
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -96,22 +96,22 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Layer 1: Asset Source - provides assets to the UI
     cesdk.engine.asset.addSource({
@@ -150,9 +150,9 @@ class Example implements EditorPlugin {
         currentPage: 1,
         nextPage: undefined
       }),
-      applyAsset: async (assetResult) =>
+      applyAsset: async assetResult =>
         cesdk.engine.asset.defaultApplyAsset(assetResult)
-    });
+    })
 
     // Layer 2: Asset Library Entry - connects sources to display settings
     cesdk.ui.addAssetLibraryEntry({
@@ -161,7 +161,7 @@ class Example implements EditorPlugin {
       previewLength: 3,
       gridColumns: 3,
       gridItemHeight: 'square'
-    });
+    })
 
     // Layer 3: Dock - adds button to access the entry
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -172,26 +172,26 @@ class Example implements EditorPlugin {
         entries: ['my-images-entry']
       },
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
     cesdk.i18n.setTranslations({
       en: { 'libraries.my-images-entry.label': 'My Images' }
-    });
+    })
 
     // Query registered entries
-    const allEntries = cesdk.ui.findAllAssetLibraryEntries();
-    console.log('Registered entries:', allEntries);
+    const allEntries = cesdk.ui.findAllAssetLibraryEntries()
+    console.log('Registered entries:', allEntries)
 
-    const myEntry = cesdk.ui.getAssetLibraryEntry('my-images-entry');
-    console.log('My entry:', myEntry);
+    const myEntry = cesdk.ui.getAssetLibraryEntry('my-images-entry')
+    console.log('My entry:', myEntry)
 
     // Open the panel to show the custom assets immediately
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: { entries: ['my-images-entry'] }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers:
@@ -242,9 +242,9 @@ cesdk.engine.asset.addSource({
     currentPage: 1,
     nextPage: undefined
   }),
-  applyAsset: async (assetResult) =>
+  applyAsset: async assetResult =>
     cesdk.engine.asset.defaultApplyAsset(assetResult)
-});
+})
 ```
 
 For details on asset source configuration, see the [Asset Sources concept](./import-media/concepts.md).
@@ -261,7 +261,7 @@ cesdk.ui.addAssetLibraryEntry({
   previewLength: 3,
   gridColumns: 3,
   gridItemHeight: 'square'
-});
+})
 ```
 
 For display properties like `gridColumns` and `previewLength`, see the [Thumbnails](./import-media/asset-panel/thumbnails.md) guide.
@@ -280,10 +280,10 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
     entries: ['my-images-entry']
   },
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-]);
+])
 cesdk.i18n.setTranslations({
   en: { 'libraries.my-images-entry.label': 'My Images' }
-});
+})
 ```
 
 ## Managing Entries
@@ -291,12 +291,12 @@ cesdk.i18n.setTranslations({
 Query and inspect registered entries:
 
 ```typescript highlight=highlight-list-entries
-    // Query registered entries
-    const allEntries = cesdk.ui.findAllAssetLibraryEntries();
-    console.log('Registered entries:', allEntries);
+// Query registered entries
+const allEntries = cesdk.ui.findAllAssetLibraryEntries()
+console.log('Registered entries:', allEntries)
 
-    const myEntry = cesdk.ui.getAssetLibraryEntry('my-images-entry');
-    console.log('My entry:', myEntry);
+const myEntry = cesdk.ui.getAssetLibraryEntry('my-images-entry')
+console.log('My entry:', myEntry)
 ```
 
 ## API Reference

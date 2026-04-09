@@ -24,7 +24,7 @@ CE.SDK application using the Audio Generation plugin powered by ElevenLabs.
 The Audio Generation plugin provides two main capabilities: text-to-speech with multiple voice options and sound effect generation from text descriptions. The plugin adds a built-in UI to CE.SDK that allows end users to generate audio content, while also providing programmatic control for automation workflows.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ai-integration-audio-generation-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,32 +41,32 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import AiApps from '@imgly/plugin-ai-apps-web';
-import Elevenlabs from '@imgly/plugin-ai-audio-generation-web/elevenlabs';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import AiApps from '@imgly/plugin-ai-apps-web'
+import Elevenlabs from '@imgly/plugin-ai-audio-generation-web/elevenlabs'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -76,9 +76,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -92,12 +92,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
@@ -105,12 +105,12 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
     // Configure the audio generation plugin
     // NOTE: In production, provide a secure proxy URL that forwards
     // requests to ElevenLabs API with your API key
-    const proxyUrl = 'https://your-proxy-server.com/api/elevenlabs';
+    const proxyUrl = 'https://your-proxy-server.com/api/elevenlabs'
 
     // Configure audio generation with text-to-speech and sound effects
     await cesdk.addPlugin(
@@ -129,32 +129,32 @@ class Example implements EditorPlugin {
         // IMPORTANT: dryRun mode simulates generation without API calls
         dryRun: true
       })
-    );
+    )
 
     // Reorder dock to show AI Apps button prominently
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       'ly.img.ai.apps.dock',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Add AI audio generation history to the audio asset library
-    const audioEntry = cesdk.ui.getAssetLibraryEntry('ly.img.audio');
+    const audioEntry = cesdk.ui.getAssetLibraryEntry('ly.img.audio')
     if (audioEntry != null) {
       const existingSourceIds = Array.isArray(audioEntry.sourceIds)
         ? audioEntry.sourceIds
-        : audioEntry.sourceIds({} as any);
+        : audioEntry.sourceIds({} as any)
 
       cesdk.ui.updateAssetLibraryEntry('ly.img.audio', {
         sourceIds: [...existingSourceIds, 'ly.img.ai.audio-generation.history']
-      });
+      })
     }
 
     // Open the AI Apps panel to make the audio generation features visible
-    cesdk.ui.openPanel('ly.img.ai.apps');
+    cesdk.ui.openPanel('ly.img.ai.apps')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers installing the plugin, configuring providers, customizing voice parameters, controlling feature visibility, implementing middleware, and troubleshooting common issues.
@@ -210,8 +210,8 @@ Install the audio generation plugin package:
 Import the plugin and provider modules in your application:
 
 ```typescript highlight-install
-import AiApps from '@imgly/plugin-ai-apps-web';
-import Elevenlabs from '@imgly/plugin-ai-audio-generation-web/elevenlabs';
+import AiApps from '@imgly/plugin-ai-apps-web'
+import Elevenlabs from '@imgly/plugin-ai-audio-generation-web/elevenlabs'
 ```
 
 The plugin provides the `AudioGeneration` function for configuration and the `Elevenlabs` module containing provider implementations.
@@ -240,7 +240,7 @@ await cesdk.addPlugin(
     // IMPORTANT: dryRun mode simulates generation without API calls
     dryRun: true
   })
-);
+)
 ```
 
 The `proxyUrl` parameter is required and should point to your proxy server that forwards requests to ElevenLabs. Custom headers allow you to add metadata like client version or request tracking information.
@@ -261,7 +261,7 @@ text2speech: Elevenlabs.ElevenMultilingualV2({
     voice_settings_stability: 0.5,
     voice_settings_similarity_boost: 0.75,
   },
-});
+})
 ```
 
 The `voice_id` parameter selects which ElevenLabs voice to use. Stability controls voice consistency (higher values = more consistent), while similarity boost affects how closely the generated voice matches the selected voice model. These defaults can still be adjusted by users through the UI.
@@ -286,7 +286,7 @@ await cesdk.addPlugin(
       ],
     },
   }),
-);
+)
 ```
 
 Each provider in the array can have different voice settings, allowing you to offer users a curated selection of voice options with predefined characteristics.
@@ -299,7 +299,7 @@ We can control which plugin features are visible to users using `cesdk.feature.e
 cesdk.feature.enable(
   'ly.img.plugin-ai-audio-generation-web.speech.providerSelect',
   false,
-);
+)
 ```
 
 The feature ID `ly.img.plugin-ai-audio-generation-web.speech.providerSelect` controls the provider selection UI. Setting it to `false` hides the selection interface when you've configured only one provider and don't want users choosing between options.
@@ -316,7 +316,7 @@ cesdk.i18n.setTranslations({
     'ly.img.plugin-ai-audio-generation-web.elevenlabs/multilingual/v2.property.voice_id':
       'Select Voice',
   },
-});
+})
 ```
 
 Translation keys follow a hierarchy where provider-specific keys (including the provider name) take precedence over generic keys. This allows you to customize text differently for each provider or apply consistent changes across all providers.
@@ -326,12 +326,12 @@ Translation keys follow a hierarchy where provider-specific keys (including the 
 Middleware functions intercept generation requests and responses, enabling logging, rate limiting, or custom error handling:
 
 ```typescript
-const loggingMiddleware = async (input, options, next) => {
-  console.log('Generation started:', input);
-  const result = await next(input, options);
-  console.log('Generation completed:', result);
-  return result;
-};
+async function loggingMiddleware(input, options, next) {
+  console.log('Generation started:', input)
+  const result = await next(input, options)
+  console.log('Generation completed:', result)
+  return result
+}
 
 await cesdk.addPlugin(
   AiApps({
@@ -340,7 +340,7 @@ await cesdk.addPlugin(
     },
     middleware: [loggingMiddleware],
   }),
-);
+)
 ```
 
 Middleware receives the input parameters, an options object, and a `next` callback. Calling `next` continues the generation process. Middleware can modify inputs before generation, process outputs after generation, or implement cross-cutting concerns like logging and rate limiting.
@@ -358,7 +358,7 @@ await cesdk.addPlugin(
     debug: true, // Enable console logging
     dryRun: true, // Simulate generation without API calls
   }),
-);
+)
 ```
 
 Debug mode logs request and response details to the console, helping you verify configuration. Dry-run mode simulates generation without calling the ElevenLabs API, useful for testing integration and UI flows without incurring API costs.
@@ -370,7 +370,7 @@ Generated audio is automatically stored in provider-specific history sources wit
 ```typescript
 const assets = await cesdk.engine.asset.findAssets(
   'elevenlabs/multilingual/v2.history',
-);
+)
 ```
 
 The history source ID follows the pattern `{provider}/{variant}.history`. Assets include metadata like the prompt used and generation parameters. Users can also access generated audio through the asset library UI and add it to their scenes.

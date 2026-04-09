@@ -24,7 +24,7 @@ creating depth, focus, and atmospheric effects.
 Unlike general effects that stack on elements, blur is a dedicated feature with its own API methods. Each block supports exactly one blur at a time, though the same blur instance can be shared across multiple blocks. CE.SDK provides four blur types: **uniform** for consistent softening, **linear** and **mirrored** for gradient-based effects along axes, and **radial** for circular focal points.
 
 ```typescript file=@cesdk_web_examples/guides-filters-and-effects-blur-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,27 +40,27 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 class BlurPlugin implements EditorPlugin {
-  name = 'BlurPlugin';
+  name = 'BlurPlugin'
 
-  version = '1.0.0';
+  version = '1.0.0'
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -71,72 +71,72 @@ class BlurPlugin implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } });
+    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } })
 
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Get page dimensions to position content correctly
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     if (!engine.block.supportsBlur(page)) {
-      console.log('Block does not support blur');
-      return;
+      console.log('Block does not support blur')
+      return
     }
 
     // Create an image block
-    const imageBlock = engine.block.create('graphic');
-    engine.block.setShape(imageBlock, engine.block.createShape('rect'));
-    const imageFill = engine.block.createFill('image');
-    engine.block.setFill(imageBlock, imageFill);
+    const imageBlock = engine.block.create('graphic')
+    engine.block.setShape(imageBlock, engine.block.createShape('rect'))
+    const imageFill = engine.block.createFill('image')
+    engine.block.setFill(imageBlock, imageFill)
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
+    )
 
     // Position image to fill the page
-    engine.block.setWidth(imageBlock, pageWidth);
-    engine.block.setHeight(imageBlock, pageHeight);
-    engine.block.setPositionX(imageBlock, 0);
-    engine.block.setPositionY(imageBlock, 0);
+    engine.block.setWidth(imageBlock, pageWidth)
+    engine.block.setHeight(imageBlock, pageHeight)
+    engine.block.setPositionX(imageBlock, 0)
+    engine.block.setPositionY(imageBlock, 0)
 
-    engine.block.appendChild(page, imageBlock);
+    engine.block.appendChild(page, imageBlock)
 
-    const blur = engine.block.createBlur('//ly.img.ubq/blur/radial');
+    const blur = engine.block.createBlur('//ly.img.ubq/blur/radial')
 
-    engine.block.setFloat(blur, 'blur/radial/blurRadius', 40);
-    engine.block.setFloat(blur, 'blur/radial/radius', 100);
-    engine.block.setFloat(blur, 'blur/radial/gradientRadius', 80);
-    engine.block.setFloat(blur, 'blur/radial/x', 0.5);
-    engine.block.setFloat(blur, 'blur/radial/y', 0.5);
+    engine.block.setFloat(blur, 'blur/radial/blurRadius', 40)
+    engine.block.setFloat(blur, 'blur/radial/radius', 100)
+    engine.block.setFloat(blur, 'blur/radial/gradientRadius', 80)
+    engine.block.setFloat(blur, 'blur/radial/x', 0.5)
+    engine.block.setFloat(blur, 'blur/radial/y', 0.5)
 
-    engine.block.setBlur(imageBlock, blur);
-    engine.block.setBlurEnabled(imageBlock, true);
+    engine.block.setBlur(imageBlock, blur)
+    engine.block.setBlurEnabled(imageBlock, true)
 
-    const appliedBlur = engine.block.getBlur(imageBlock);
-    const isEnabled = engine.block.isBlurEnabled(imageBlock);
-    const blurType = engine.block.getType(appliedBlur);
-    console.log('Blur type:', blurType, 'Enabled:', isEnabled);
+    const appliedBlur = engine.block.getBlur(imageBlock)
+    const isEnabled = engine.block.isBlurEnabled(imageBlock)
+    const blurType = engine.block.getType(appliedBlur)
+    console.log('Blur type:', blurType, 'Enabled:', isEnabled)
 
-    engine.block.setBlurEnabled(imageBlock, false);
-    const nowEnabled = engine.block.isBlurEnabled(imageBlock);
-    console.log('Blur now enabled:', nowEnabled);
-    engine.block.setBlurEnabled(imageBlock, true);
+    engine.block.setBlurEnabled(imageBlock, false)
+    const nowEnabled = engine.block.isBlurEnabled(imageBlock)
+    console.log('Blur now enabled:', nowEnabled)
+    engine.block.setBlurEnabled(imageBlock, true)
   }
 }
 
-export default BlurPlugin;
+export default BlurPlugin
 ```
 
 This guide covers how to apply blur effects programmatically using the block API.
@@ -149,8 +149,7 @@ Before applying blur to a block, verify it supports blur effects. Graphic blocks
 
 ```typescript highlight-check-blur-support
 if (!engine.block.supportsBlur(page)) {
-  console.log('Block does not support blur');
-  return;
+  console.log('Block does not support blur')
 }
 ```
 
@@ -161,7 +160,7 @@ Always check support before creating and applying blur to avoid errors.
 Create a blur instance using `createBlur()` with a blur type, then attach it to a block using `setBlur()`. Enable the blur with `setBlurEnabled()`.
 
 ```typescript highlight-create-blur
-const blur = engine.block.createBlur('//ly.img.ubq/blur/radial');
+const blur = engine.block.createBlur('//ly.img.ubq/blur/radial')
 ```
 
 CE.SDK provides four blur types:
@@ -179,11 +178,11 @@ CE.SDK provides four blur types:
 Each blur type has specific parameters to control its appearance. Configure them using `setFloat()`.
 
 ```typescript highlight-configure-blur
-engine.block.setFloat(blur, 'blur/radial/blurRadius', 40);
-engine.block.setFloat(blur, 'blur/radial/radius', 100);
-engine.block.setFloat(blur, 'blur/radial/gradientRadius', 80);
-engine.block.setFloat(blur, 'blur/radial/x', 0.5);
-engine.block.setFloat(blur, 'blur/radial/y', 0.5);
+engine.block.setFloat(blur, 'blur/radial/blurRadius', 40)
+engine.block.setFloat(blur, 'blur/radial/radius', 100)
+engine.block.setFloat(blur, 'blur/radial/gradientRadius', 80)
+engine.block.setFloat(blur, 'blur/radial/x', 0.5)
+engine.block.setFloat(blur, 'blur/radial/y', 0.5)
 ```
 
 **Radial blur parameters:**
@@ -217,8 +216,8 @@ engine.block.setFloat(blur, 'blur/radial/y', 0.5);
 After configuring the blur, apply it to the target block and enable it.
 
 ```typescript highlight-apply-blur
-engine.block.setBlur(imageBlock, blur);
-engine.block.setBlurEnabled(imageBlock, true);
+engine.block.setBlur(imageBlock, blur)
+engine.block.setBlurEnabled(imageBlock, true)
 ```
 
 The blur takes effect immediately once enabled. You can modify parameters at any time and changes apply in real-time.
@@ -230,10 +229,10 @@ The blur takes effect immediately once enabled. You can modify parameters at any
 Retrieve the blur applied to a block using `getBlur()`. You can then read or modify its properties.
 
 ```typescript highlight-read-blur
-const appliedBlur = engine.block.getBlur(imageBlock);
-const isEnabled = engine.block.isBlurEnabled(imageBlock);
-const blurType = engine.block.getType(appliedBlur);
-console.log('Blur type:', blurType, 'Enabled:', isEnabled);
+const appliedBlur = engine.block.getBlur(imageBlock)
+const isEnabled = engine.block.isBlurEnabled(imageBlock)
+const blurType = engine.block.getType(appliedBlur)
+console.log('Blur type:', blurType, 'Enabled:', isEnabled)
 ```
 
 ### Enable/Disable Blur
@@ -241,10 +240,10 @@ console.log('Blur type:', blurType, 'Enabled:', isEnabled);
 Toggle blur on and off without removing it using `setBlurEnabled()`. This preserves all blur parameters for quick before/after comparisons.
 
 ```typescript highlight-toggle-blur
-engine.block.setBlurEnabled(imageBlock, false);
-const nowEnabled = engine.block.isBlurEnabled(imageBlock);
-console.log('Blur now enabled:', nowEnabled);
-engine.block.setBlurEnabled(imageBlock, true);
+engine.block.setBlurEnabled(imageBlock, false)
+const nowEnabled = engine.block.isBlurEnabled(imageBlock)
+console.log('Blur now enabled:', nowEnabled)
+engine.block.setBlurEnabled(imageBlock, true)
 ```
 
 When disabled, the blur remains attached to the block but doesn't render until re-enabled.
@@ -254,13 +253,13 @@ When disabled, the blur remains attached to the block but doesn't render until r
 A single blur instance can be applied to multiple blocks. Create the blur once, then assign it to each block with `setBlur()`.
 
 ```typescript
-const sharedBlur = engine.block.createBlur('//ly.img.ubq/blur/uniform');
-engine.block.setFloat(sharedBlur, 'blur/uniform/intensity', 0.4);
+const sharedBlur = engine.block.createBlur('//ly.img.ubq/blur/uniform')
+engine.block.setFloat(sharedBlur, 'blur/uniform/intensity', 0.4)
 
-engine.block.setBlur(block1, sharedBlur);
-engine.block.setBlur(block2, sharedBlur);
-engine.block.setBlurEnabled(block1, true);
-engine.block.setBlurEnabled(block2, true);
+engine.block.setBlur(block1, sharedBlur)
+engine.block.setBlur(block2, sharedBlur)
+engine.block.setBlurEnabled(block1, true)
+engine.block.setBlurEnabled(block2, true)
 ```
 
 Changes to the shared blur affect all blocks using it.
@@ -270,9 +269,9 @@ Changes to the shared blur affect all blocks using it.
 To change the blur type on a block, create a new blur and assign it with `setBlur()`. The previous blur association is automatically removed.
 
 ```typescript
-const newBlur = engine.block.createBlur('//ly.img.ubq/blur/linear');
-engine.block.setBlur(block, newBlur);
-engine.block.setBlurEnabled(block, true);
+const newBlur = engine.block.createBlur('//ly.img.ubq/blur/linear')
+engine.block.setBlur(block, newBlur)
+engine.block.setBlurEnabled(block, true)
 ```
 
 If the old blur isn't used elsewhere, destroy it with `engine.block.destroy(oldBlur)`.

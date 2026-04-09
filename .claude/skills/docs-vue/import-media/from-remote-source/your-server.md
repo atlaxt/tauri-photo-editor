@@ -24,7 +24,7 @@ CE.SDK for integration with CMS, DAM, or custom asset management systems.
 CE.SDK provides multiple ways to load assets from your servers. Static libraries like stickers and icons use JSON manifests hosted on a CDN. Dynamic libraries like user photos and DAM content require API endpoints backed by databases.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-from-remote-source-your-server-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,31 +41,31 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -75,9 +75,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -91,32 +91,32 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Register a custom asset source for images from your backend API
     engine.asset.addSource({
       id: 'my-server-images',
       async findAssets(queryData) {
         // Replace with your API: fetch(`/api/images?page=${queryData.page}&q=${queryData.query}`)
-        const filtered = filterByQuery(MOCK_IMAGES, queryData.query);
-        const paginated = paginate(filtered, queryData.page, queryData.perPage);
+        const filtered = filterByQuery(MOCK_IMAGES, queryData.query)
+        const paginated = paginate(filtered, queryData.page, queryData.perPage)
 
         return {
-          assets: paginated.items.map((item) => ({
+          assets: paginated.items.map(item => ({
             id: item.id,
             label: item.title,
             meta: {
@@ -131,18 +131,18 @@ class Example implements EditorPlugin {
           total: filtered.length,
           currentPage: queryData.page,
           nextPage: paginated.nextPage
-        };
+        }
       }
-    });
+    })
 
     // Register a custom source for video assets
     engine.asset.addSource({
       id: 'my-server-videos',
       async findAssets(queryData) {
-        const filtered = filterByQuery(MOCK_VIDEOS, queryData.query);
+        const filtered = filterByQuery(MOCK_VIDEOS, queryData.query)
 
         return {
-          assets: filtered.map((item) => ({
+          assets: filtered.map(item => ({
             id: item.id,
             label: item.title,
             meta: {
@@ -156,18 +156,18 @@ class Example implements EditorPlugin {
           total: filtered.length,
           currentPage: queryData.page,
           nextPage: undefined
-        };
+        }
       }
-    });
+    })
 
     // Register a custom source for audio assets
     engine.asset.addSource({
       id: 'my-server-audio',
       async findAssets(queryData) {
-        const filtered = filterByQuery(MOCK_AUDIO, queryData.query);
+        const filtered = filterByQuery(MOCK_AUDIO, queryData.query)
 
         return {
-          assets: filtered.map((item) => ({
+          assets: filtered.map(item => ({
             id: item.id,
             label: item.title,
             meta: {
@@ -181,18 +181,18 @@ class Example implements EditorPlugin {
           total: filtered.length,
           currentPage: queryData.page,
           nextPage: undefined
-        };
+        }
       }
-    });
+    })
 
     // Register a custom source for sticker assets (PNG/SVG overlays)
     engine.asset.addSource({
       id: 'my-server-stickers',
       async findAssets(queryData) {
-        const filtered = filterByQuery(MOCK_STICKERS, queryData.query);
+        const filtered = filterByQuery(MOCK_STICKERS, queryData.query)
 
         return {
-          assets: filtered.map((item) => ({
+          assets: filtered.map(item => ({
             id: item.id,
             label: item.title,
             meta: {
@@ -208,9 +208,9 @@ class Example implements EditorPlugin {
           total: filtered.length,
           currentPage: queryData.page,
           nextPage: undefined
-        };
+        }
       }
-    });
+    })
 
     // Register a custom source for scene templates
     engine.asset.addLocalSource(
@@ -218,11 +218,11 @@ class Example implements EditorPlugin {
       undefined,
       async (asset) => {
         if (asset.meta?.uri) {
-          await engine.scene.loadFromURL(asset.meta.uri as string);
+          await engine.scene.loadFromURL(asset.meta.uri as string)
         }
-        return undefined;
+        return undefined
       }
-    );
+    )
 
     // Add video templates to the source
     for (const template of MOCK_TEMPLATES) {
@@ -230,13 +230,13 @@ class Example implements EditorPlugin {
         id: template.id,
         label: { en: template.title },
         meta: { uri: template.url, thumbUri: template.thumbnail }
-      });
+      })
     }
 
     // Load static assets from a JSON manifest file
     await engine.asset.addLocalAssetSourceFromJSONURI(
       'https://cdn.img.ly/assets/v1/ly.img.sticker/content.json'
-    );
+    )
 
     // Add a custom entry to the asset library panel
     cesdk.ui.addAssetLibraryEntry({
@@ -251,14 +251,14 @@ class Example implements EditorPlugin {
       title: ({ sourceId }) => SOURCE_TITLES[sourceId ?? ''] ?? 'My Server',
       gridColumns: 3,
       gridItemHeight: 'square'
-    });
+    })
 
     // Add a dock button for "My Server" as the first item with a separator
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       'my-server-assets.dock',
       'ly.img.separator',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     cesdk.ui.registerComponent(
       'my-server-assets.dock',
@@ -268,40 +268,40 @@ class Example implements EditorPlugin {
           onClick: () => {
             cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
               payload: { entries: ['my-server-assets'] }
-            });
+            })
           }
-        });
+        })
       }
-    );
+    )
 
     // Open the asset library to show our custom server assets
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
       payload: { entries: ['my-server-assets'] }
-    });
+    })
 
     // Apply sample assets to canvas for verification
-    await applyFirstAsset(engine, 'my-server-images');
-    await applyFirstAsset(engine, 'my-server-videos');
-    await applyFirstAsset(engine, 'my-server-audio');
-    await applyFirstAsset(engine, 'my-server-stickers');
+    await applyFirstAsset(engine, 'my-server-images')
+    await applyFirstAsset(engine, 'my-server-videos')
+    await applyFirstAsset(engine, 'my-server-audio')
+    await applyFirstAsset(engine, 'my-server-stickers')
   }
 }
 
-export default Example;
+export default Example
 
 // ============================================================================
 // Mock Data - Replace with your backend API
 // ============================================================================
 
 interface MockAsset {
-  id: string;
-  title: string;
-  url: string;
-  thumbnail: string;
-  width?: number;
-  height?: number;
-  duration?: number;
-  mimeType?: string;
+  id: string
+  title: string
+  url: string
+  thumbnail: string
+  width?: number
+  height?: number
+  duration?: number
+  mimeType?: string
 }
 
 const MOCK_IMAGES: MockAsset[] = [
@@ -345,7 +345,7 @@ const MOCK_IMAGES: MockAsset[] = [
     width: 1920,
     height: 1280
   }
-];
+]
 
 const MOCK_VIDEOS: MockAsset[] = [
   {
@@ -356,7 +356,7 @@ const MOCK_VIDEOS: MockAsset[] = [
       'https://cdn.img.ly/assets/demo/v3/ly.img.video/thumbnails/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.jpg',
     duration: 15.58
   }
-];
+]
 
 const MOCK_AUDIO: MockAsset[] = [
   {
@@ -368,7 +368,7 @@ const MOCK_AUDIO: MockAsset[] = [
     duration: 212.5,
     mimeType: 'audio/x-m4a'
   }
-];
+]
 
 const MOCK_STICKERS: MockAsset[] = [
   {
@@ -380,7 +380,7 @@ const MOCK_STICKERS: MockAsset[] = [
     width: 2048,
     height: 1339
   }
-];
+]
 
 const MOCK_TEMPLATES: MockAsset[] = [
   {
@@ -404,7 +404,7 @@ const MOCK_TEMPLATES: MockAsset[] = [
     thumbnail:
       'https://cdn.img.ly/assets/demo/v3/ly.img.video.template/thumbnails/my-plants.png'
   }
-];
+]
 
 const SOURCE_TITLES: Record<string, string> = {
   'my-server-images': 'My User Photos',
@@ -412,7 +412,7 @@ const SOURCE_TITLES: Record<string, string> = {
   'my-server-audio': 'My User Audio',
   'my-server-stickers': 'My User Stickers',
   'my-server-templates': 'My User Templates'
-};
+}
 
 // ============================================================================
 // Helper Functions
@@ -422,22 +422,23 @@ function filterByQuery<T extends { title: string }>(
   items: T[],
   query: string | undefined
 ): T[] {
-  if (!query) return items;
-  const searchTerm = query.toLowerCase();
-  return items.filter((item) => item.title.toLowerCase().includes(searchTerm));
+  if (!query)
+    return items
+  const searchTerm = query.toLowerCase()
+  return items.filter(item => item.title.toLowerCase().includes(searchTerm))
 }
 
 function paginate<T>(
   items: T[],
   page: number,
   perPage: number
-): { items: T[]; nextPage: number | undefined } {
-  const start = page * perPage;
-  const end = start + perPage;
+): { items: T[], nextPage: number | undefined } {
+  const start = page * perPage
+  const end = start + perPage
   return {
     items: items.slice(start, end),
     nextPage: end < items.length ? page + 1 : undefined
-  };
+  }
 }
 
 async function applyFirstAsset(
@@ -451,9 +452,9 @@ async function applyFirstAsset(
   const results = await engine.asset.findAssets(sourceId, {
     page: 0,
     perPage: 1
-  });
+  })
   if (results.assets.length > 0) {
-    await engine.asset.apply(sourceId, results.assets[0]);
+    await engine.asset.apply(sourceId, results.assets[0])
   }
 }
 ```
@@ -477,33 +478,33 @@ Custom asset sources connect CE.SDK to your backend API. The `findAssets` callba
 Image assets use a graphic block with image fill. Include `width` and `height` for proper aspect ratio handling.
 
 ```typescript highlight-image-assets
-    // Register a custom asset source for images from your backend API
-    engine.asset.addSource({
-      id: 'my-server-images',
-      async findAssets(queryData) {
-        // Replace with your API: fetch(`/api/images?page=${queryData.page}&q=${queryData.query}`)
-        const filtered = filterByQuery(MOCK_IMAGES, queryData.query);
-        const paginated = paginate(filtered, queryData.page, queryData.perPage);
+// Register a custom asset source for images from your backend API
+engine.asset.addSource({
+  id: 'my-server-images',
+  async findAssets(queryData) {
+    // Replace with your API: fetch(`/api/images?page=${queryData.page}&q=${queryData.query}`)
+    const filtered = filterByQuery(MOCK_IMAGES, queryData.query)
+    const paginated = paginate(filtered, queryData.page, queryData.perPage)
 
-        return {
-          assets: paginated.items.map((item) => ({
-            id: item.id,
-            label: item.title,
-            meta: {
-              uri: item.url,
-              thumbUri: item.thumbnail,
-              blockType: '//ly.img.ubq/graphic',
-              fillType: '//ly.img.ubq/fill/image',
-              width: item.width,
-              height: item.height
-            }
-          })),
-          total: filtered.length,
-          currentPage: queryData.page,
-          nextPage: paginated.nextPage
-        };
-      }
-    });
+    return {
+      assets: paginated.items.map(item => ({
+        id: item.id,
+        label: item.title,
+        meta: {
+          uri: item.url,
+          thumbUri: item.thumbnail,
+          blockType: '//ly.img.ubq/graphic',
+          fillType: '//ly.img.ubq/fill/image',
+          width: item.width,
+          height: item.height
+        }
+      })),
+      total: filtered.length,
+      currentPage: queryData.page,
+      nextPage: paginated.nextPage
+    }
+  }
+})
 ```
 
 The `findAssets` callback receives a `queryData` object containing `query` (search term), `page`, `perPage`, `locale`, and `tags`. Return an object with `assets` (the current page), `total` (complete count), `currentPage`, and `nextPage` (next page number or `undefined` when exhausted).
@@ -515,30 +516,30 @@ Each asset requires an `id` and a `meta` object. Set `blockType` to `//ly.img.ub
 Video assets use a graphic block with video fill. Include `duration` for duration display and `thumbUri` for the library thumbnail.
 
 ```typescript highlight-video-assets
-    // Register a custom source for video assets
-    engine.asset.addSource({
-      id: 'my-server-videos',
-      async findAssets(queryData) {
-        const filtered = filterByQuery(MOCK_VIDEOS, queryData.query);
+// Register a custom source for video assets
+engine.asset.addSource({
+  id: 'my-server-videos',
+  async findAssets(queryData) {
+    const filtered = filterByQuery(MOCK_VIDEOS, queryData.query)
 
-        return {
-          assets: filtered.map((item) => ({
-            id: item.id,
-            label: item.title,
-            meta: {
-              uri: item.url,
-              thumbUri: item.thumbnail,
-              blockType: '//ly.img.ubq/graphic',
-              fillType: '//ly.img.ubq/fill/video',
-              duration: String(item.duration)
-            }
-          })),
-          total: filtered.length,
-          currentPage: queryData.page,
-          nextPage: undefined
-        };
-      }
-    });
+    return {
+      assets: filtered.map(item => ({
+        id: item.id,
+        label: item.title,
+        meta: {
+          uri: item.url,
+          thumbUri: item.thumbnail,
+          blockType: '//ly.img.ubq/graphic',
+          fillType: '//ly.img.ubq/fill/video',
+          duration: String(item.duration)
+        }
+      })),
+      total: filtered.length,
+      currentPage: queryData.page,
+      nextPage: undefined
+    }
+  }
+})
 ```
 
 The `fillType` tells CE.SDK how to render the asset. Use `//ly.img.ubq/fill/video` for video content. The `duration` metadata enables proper duration display when working with video scenes.
@@ -548,30 +549,30 @@ The `fillType` tells CE.SDK how to render the asset. Use `//ly.img.ubq/fill/vide
 Audio assets require the `mimeType` property for the asset library to display the play button overlay.
 
 ```typescript highlight-audio-assets
-    // Register a custom source for audio assets
-    engine.asset.addSource({
-      id: 'my-server-audio',
-      async findAssets(queryData) {
-        const filtered = filterByQuery(MOCK_AUDIO, queryData.query);
+// Register a custom source for audio assets
+engine.asset.addSource({
+  id: 'my-server-audio',
+  async findAssets(queryData) {
+    const filtered = filterByQuery(MOCK_AUDIO, queryData.query)
 
-        return {
-          assets: filtered.map((item) => ({
-            id: item.id,
-            label: item.title,
-            meta: {
-              uri: item.url,
-              thumbUri: item.thumbnail,
-              blockType: '//ly.img.ubq/audio',
-              mimeType: item.mimeType,
-              duration: String(item.duration)
-            }
-          })),
-          total: filtered.length,
-          currentPage: queryData.page,
-          nextPage: undefined
-        };
-      }
-    });
+    return {
+      assets: filtered.map(item => ({
+        id: item.id,
+        label: item.title,
+        meta: {
+          uri: item.url,
+          thumbUri: item.thumbnail,
+          blockType: '//ly.img.ubq/audio',
+          mimeType: item.mimeType,
+          duration: String(item.duration)
+        }
+      })),
+      total: filtered.length,
+      currentPage: queryData.page,
+      nextPage: undefined
+    }
+  }
+})
 ```
 
 Set `blockType` to `//ly.img.ubq/audio` for audio content. The `mimeType` (e.g., `audio/x-m4a` or `audio/mpeg`) is required for preview playback in the asset library. Include `duration` for duration display.
@@ -581,32 +582,32 @@ Set `blockType` to `//ly.img.ubq/audio` for audio content. The `mimeType` (e.g.,
 Stickers are image overlays that users can place on the canvas. They use the same structure as images but include `kind: 'sticker'` to differentiate them in the UI.
 
 ```typescript highlight-sticker-assets
-    // Register a custom source for sticker assets (PNG/SVG overlays)
-    engine.asset.addSource({
-      id: 'my-server-stickers',
-      async findAssets(queryData) {
-        const filtered = filterByQuery(MOCK_STICKERS, queryData.query);
+// Register a custom source for sticker assets (PNG/SVG overlays)
+engine.asset.addSource({
+  id: 'my-server-stickers',
+  async findAssets(queryData) {
+    const filtered = filterByQuery(MOCK_STICKERS, queryData.query)
 
-        return {
-          assets: filtered.map((item) => ({
-            id: item.id,
-            label: item.title,
-            meta: {
-              uri: item.url,
-              thumbUri: item.thumbnail,
-              blockType: '//ly.img.ubq/graphic',
-              fillType: '//ly.img.ubq/fill/image',
-              kind: 'sticker',
-              width: item.width,
-              height: item.height
-            }
-          })),
-          total: filtered.length,
-          currentPage: queryData.page,
-          nextPage: undefined
-        };
-      }
-    });
+    return {
+      assets: filtered.map(item => ({
+        id: item.id,
+        label: item.title,
+        meta: {
+          uri: item.url,
+          thumbUri: item.thumbnail,
+          blockType: '//ly.img.ubq/graphic',
+          fillType: '//ly.img.ubq/fill/image',
+          kind: 'sticker',
+          width: item.width,
+          height: item.height
+        }
+      })),
+      total: filtered.length,
+      currentPage: queryData.page,
+      nextPage: undefined
+    }
+  }
+})
 ```
 
 The `kind` property tells CE.SDK to treat this asset as a sticker rather than a regular image. Stickers typically don't support cropping and have limited editing options compared to images.
@@ -616,26 +617,26 @@ The `kind` property tells CE.SDK to treat this asset as a sticker rather than a 
 Templates are complete scenes that users can load as starting points. Use a local source with a custom `applyAsset` function to load scenes from URLs.
 
 ```typescript highlight-template-assets
-    // Register a custom source for scene templates
-    engine.asset.addLocalSource(
-      'my-server-templates',
-      undefined,
-      async (asset) => {
-        if (asset.meta?.uri) {
-          await engine.scene.loadFromURL(asset.meta.uri as string);
-        }
-        return undefined;
-      }
-    );
-
-    // Add video templates to the source
-    for (const template of MOCK_TEMPLATES) {
-      engine.asset.addAssetToSource('my-server-templates', {
-        id: template.id,
-        label: { en: template.title },
-        meta: { uri: template.url, thumbUri: template.thumbnail }
-      });
+// Register a custom source for scene templates
+engine.asset.addLocalSource(
+  'my-server-templates',
+  undefined,
+  async (asset) => {
+    if (asset.meta?.uri) {
+      await engine.scene.loadFromURL(asset.meta.uri as string)
     }
+    return undefined
+  }
+)
+
+// Add video templates to the source
+for (const template of MOCK_TEMPLATES) {
+  engine.asset.addAssetToSource('my-server-templates', {
+    id: template.id,
+    label: { en: template.title },
+    meta: { uri: template.url, thumbUri: template.thumbnail }
+  })
+}
 ```
 
 Templates require a custom `applyAsset` callback because they replace the entire scene rather than adding a block. The `meta.uri` should point to a `.scene` file, and `meta.thumbUri` provides the preview thumbnail.
@@ -648,7 +649,7 @@ For static asset collections that don't change frequently, load assets from a JS
 // Load static assets from a JSON manifest file
 await engine.asset.addLocalAssetSourceFromJSONURI(
   'https://cdn.img.ly/assets/v1/ly.img.sticker/content.json'
-);
+)
 ```
 
 The JSON file should contain asset definitions with `id` and `meta` properties. Use the `{{base_url}}` placeholder in URLs to resolve paths relative to the JSON file's location. This pattern works well for brand assets, stickers, icons, and templates.
@@ -662,41 +663,41 @@ Connect your asset sources to the CE.SDK asset library panel using the UI API.
 Create a library entry that combines one or more asset sources into a single panel tab.
 
 ```typescript highlight-asset-library-entry
-    // Add a custom entry to the asset library panel
-    cesdk.ui.addAssetLibraryEntry({
-      id: 'my-server-assets',
-      sourceIds: [
-        'my-server-images',
-        'my-server-videos',
-        'my-server-audio',
-        'my-server-stickers',
-        'my-server-templates'
-      ],
-      title: ({ sourceId }) => SOURCE_TITLES[sourceId ?? ''] ?? 'My Server',
-      gridColumns: 3,
-      gridItemHeight: 'square'
-    });
+// Add a custom entry to the asset library panel
+cesdk.ui.addAssetLibraryEntry({
+  id: 'my-server-assets',
+  sourceIds: [
+    'my-server-images',
+    'my-server-videos',
+    'my-server-audio',
+    'my-server-stickers',
+    'my-server-templates'
+  ],
+  title: ({ sourceId }) => SOURCE_TITLES[sourceId ?? ''] ?? 'My Server',
+  gridColumns: 3,
+  gridItemHeight: 'square'
+})
 
-    // Add a dock button for "My Server" as the first item with a separator
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
-      'my-server-assets.dock',
-      'ly.img.separator',
-      ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+// Add a dock button for "My Server" as the first item with a separator
+cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
+  'my-server-assets.dock',
+  'ly.img.separator',
+  ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
+])
 
-    cesdk.ui.registerComponent(
-      'my-server-assets.dock',
-      ({ builder: { Button } }) => {
-        Button('my-server-dock-button', {
-          label: 'My Server',
-          onClick: () => {
-            cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
-              payload: { entries: ['my-server-assets'] }
-            });
-          }
-        });
+cesdk.ui.registerComponent(
+  'my-server-assets.dock',
+  ({ builder: { Button } }) => {
+    Button('my-server-dock-button', {
+      label: 'My Server',
+      onClick: () => {
+        cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
+          payload: { entries: ['my-server-assets'] }
+        })
       }
-    );
+    })
+  }
+)
 ```
 
 The `sourceIds` array lists which asset sources appear in this library entry. Use a title function to display descriptive names for each source. Configure `gridColumns` and `gridItemHeight` to control the thumbnail grid layout.

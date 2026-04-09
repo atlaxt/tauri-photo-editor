@@ -351,14 +351,14 @@ Import the providers from their respective packages:
 
 ```typescript highlight=highlight-imports
 // Import providers from individual AI generation packages
-import Elevenlabs from '@imgly/plugin-ai-audio-generation-web/elevenlabs';
-import FalAiImage from '@imgly/plugin-ai-image-generation-web/fal-ai';
-import OpenAiImage from '@imgly/plugin-ai-image-generation-web/open-ai';
-import Anthropic from '@imgly/plugin-ai-text-generation-web/anthropic';
-import FalAiVideo from '@imgly/plugin-ai-video-generation-web/fal-ai';
-
+import Elevenlabs from '@imgly/plugin-ai-audio-generation-web/elevenlabs'
 // Import middleware utilities
-import { uploadMiddleware } from '@imgly/plugin-ai-generation-web';
+import { uploadMiddleware } from '@imgly/plugin-ai-generation-web'
+import FalAiImage from '@imgly/plugin-ai-image-generation-web/fal-ai'
+import OpenAiImage from '@imgly/plugin-ai-image-generation-web/open-ai'
+import Anthropic from '@imgly/plugin-ai-text-generation-web/anthropic'
+
+import FalAiVideo from '@imgly/plugin-ai-video-generation-web/fal-ai'
 ```
 
 ## 2. Initialize CE.SDK
@@ -432,7 +432,7 @@ The main entry point for AI features is the AI dock button. Position it at the b
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   'ly.img.ai.apps.dock',
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-]);
+])
 ```
 
 ### Canvas Menu Options
@@ -445,7 +445,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
   'ly.img.ai.text.canvasMenu',
   'ly.img.ai.image.canvasMenu',
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.menu' })
-]);
+])
 ```
 
 ## 4. Add the AI Apps Plugin
@@ -453,124 +453,124 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
 Configure the AI Apps plugin with all providers:
 
 ```typescript highlight=highlight-add-plugin
-    // Add the AI Apps plugin with all providers
-    cesdk.addPlugin(
-      AiApps({
-        // IMPORTANT: dryRun mode simulates generation without API calls
-        // Perfect for testing and development - remove for production use
-        dryRun: true,
-        providers: {
-          // Text generation and transformation
-          text2text: Anthropic.AnthropicProvider({
-            proxyUrl: 'http://your-proxy-server.com/api/proxy',
-            headers: {
-              'x-client-version': '1.0.0',
-              'x-request-source': 'cesdk-tutorial'
-            },
-            // Optional: Configure default property values
-            properties: {
-              temperature: { default: 0.7 },
-              maxTokens: { default: 500 }
-            }
-          }),
+// Add the AI Apps plugin with all providers
+cesdk.addPlugin(
+  AiApps({
+    // IMPORTANT: dryRun mode simulates generation without API calls
+    // Perfect for testing and development - remove for production use
+    dryRun: true,
+    providers: {
+      // Text generation and transformation
+      text2text: Anthropic.AnthropicProvider({
+        proxyUrl: 'http://your-proxy-server.com/api/proxy',
+        headers: {
+          'x-client-version': '1.0.0',
+          'x-request-source': 'cesdk-tutorial'
+        },
+        // Optional: Configure default property values
+        properties: {
+          temperature: { default: 0.7 },
+          maxTokens: { default: 500 }
+        }
+      }),
 
-          // Image generation - Multiple providers with selection UI
-          text2image: [
-            FalAiImage.RecraftV3({
-              proxyUrl: 'http://your-proxy-server.com/api/proxy',
-              headers: {
-                'x-client-version': '1.0.0',
-                'x-request-source': 'cesdk-tutorial'
-              },
-              // Add upload middleware to store generated images on your server
-              middleware: [
-                uploadMiddleware(async (output) => {
-                  // Upload the generated image to your server
-                  const result = await uploadToYourStorageServer(output.url);
+      // Image generation - Multiple providers with selection UI
+      text2image: [
+        FalAiImage.RecraftV3({
+          proxyUrl: 'http://your-proxy-server.com/api/proxy',
+          headers: {
+            'x-client-version': '1.0.0',
+            'x-request-source': 'cesdk-tutorial'
+          },
+          // Add upload middleware to store generated images on your server
+          middleware: [
+            uploadMiddleware(async (output) => {
+              // Upload the generated image to your server
+              const result = await uploadToYourStorageServer(output.url)
 
-                  // Return the output with your server's URL
-                  return {
-                    ...output,
-                    url: result.permanentUrl
-                  };
-                })
-              ]
-            }),
-            // Alternative with icon style support
-            FalAiImage.Recraft20b({
-              proxyUrl: 'http://your-proxy-server.com/api/proxy',
-              headers: {
-                'x-client-version': '1.0.0',
-                'x-request-source': 'cesdk-tutorial'
-              },
-              // Configure dynamic defaults based on style type
-              properties: {
-                style: { default: 'broken_line' },
-                image_size: { default: 'square_hd' }
-              }
-            }),
-            // Additional image provider for user selection
-            OpenAiImage.GptImage1.Text2Image({
-              proxyUrl: 'http://your-proxy-server.com/api/proxy',
-              headers: {
-                'x-api-key': 'your-key',
-                'x-request-source': 'cesdk-tutorial'
+              // Return the output with your server's URL
+              return {
+                ...output,
+                url: result.permanentUrl
               }
             })
-          ],
+          ]
+        }),
+        // Alternative with icon style support
+        FalAiImage.Recraft20b({
+          proxyUrl: 'http://your-proxy-server.com/api/proxy',
+          headers: {
+            'x-client-version': '1.0.0',
+            'x-request-source': 'cesdk-tutorial'
+          },
+          // Configure dynamic defaults based on style type
+          properties: {
+            style: { default: 'broken_line' },
+            image_size: { default: 'square_hd' }
+          }
+        }),
+        // Additional image provider for user selection
+        OpenAiImage.GptImage1.Text2Image({
+          proxyUrl: 'http://your-proxy-server.com/api/proxy',
+          headers: {
+            'x-api-key': 'your-key',
+            'x-request-source': 'cesdk-tutorial'
+          }
+        })
+      ],
 
-          // Image-to-image transformation
-          image2image: FalAiImage.GeminiFlashEdit({
-            proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
-            headers: {
-              'x-client-version': '1.0.0',
-              'x-request-source': 'cesdk-tutorial'
-            }
-          }),
+      // Image-to-image transformation
+      image2image: FalAiImage.GeminiFlashEdit({
+        proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
+        headers: {
+          'x-client-version': '1.0.0',
+          'x-request-source': 'cesdk-tutorial'
+        }
+      }),
 
-          // Video generation - Multiple providers
-          text2video: [
-            FalAiVideo.MinimaxVideo01Live({
-              proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
-              headers: {
-                'x-client-version': '1.0.0',
-                'x-request-source': 'cesdk-tutorial'
-              }
-            }),
-            FalAiVideo.PixverseV35TextToVideo({
-              proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
-              headers: {
-                'x-client-version': '1.0.0',
-                'x-request-source': 'cesdk-tutorial'
-              }
-            })
-          ],
-          image2video: FalAiVideo.MinimaxVideo01LiveImageToVideo({
-            proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
-            headers: {
-              'x-client-version': '1.0.0',
-              'x-request-source': 'cesdk-tutorial'
-            }
-          }),
+      // Video generation - Multiple providers
+      text2video: [
+        FalAiVideo.MinimaxVideo01Live({
+          proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
+          headers: {
+            'x-client-version': '1.0.0',
+            'x-request-source': 'cesdk-tutorial'
+          }
+        }),
+        FalAiVideo.PixverseV35TextToVideo({
+          proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
+          headers: {
+            'x-client-version': '1.0.0',
+            'x-request-source': 'cesdk-tutorial'
+          }
+        })
+      ],
+      image2video: FalAiVideo.MinimaxVideo01LiveImageToVideo({
+        proxyUrl: 'https://your-server.com/api/fal-ai-proxy',
+        headers: {
+          'x-client-version': '1.0.0',
+          'x-request-source': 'cesdk-tutorial'
+        }
+      }),
 
-          // Audio generation
-          text2speech: Elevenlabs.ElevenMultilingualV2({
-            proxyUrl: 'https://your-server.com/api/elevenlabs-proxy',
-            headers: {
-              'x-client-version': '1.0.0',
-              'x-request-source': 'cesdk-tutorial'
-            }
-          }),
-          text2sound: Elevenlabs.ElevenSoundEffects({
-            proxyUrl: 'https://your-server.com/api/elevenlabs-proxy',
-            headers: {
-              'x-client-version': '1.0.0',
-              'x-request-source': 'cesdk-tutorial'
-            }
-          })
+      // Audio generation
+      text2speech: Elevenlabs.ElevenMultilingualV2({
+        proxyUrl: 'https://your-server.com/api/elevenlabs-proxy',
+        headers: {
+          'x-client-version': '1.0.0',
+          'x-request-source': 'cesdk-tutorial'
+        }
+      }),
+      text2sound: Elevenlabs.ElevenSoundEffects({
+        proxyUrl: 'https://your-server.com/api/elevenlabs-proxy',
+        headers: {
+          'x-client-version': '1.0.0',
+          'x-request-source': 'cesdk-tutorial'
         }
       })
-    );
+    }
+  })
+)
 ```
 
 ### Testing with Dry-Run Mode
@@ -775,26 +775,26 @@ async function uploadToYourStorageServer(imageUrl: string) {
   // return await response.json();
 
   // Mock: Return a fake response
-  return { permanentUrl: imageUrl };
+  return { permanentUrl: imageUrl }
 }
 ```
 
 Then use `uploadMiddleware` to process generated outputs before they're added to the scene:
 
 ```typescript highlight=highlight-upload-middleware
-              // Add upload middleware to store generated images on your server
-              middleware: [
-                uploadMiddleware(async (output) => {
-                  // Upload the generated image to your server
-                  const result = await uploadToYourStorageServer(output.url);
+// Add upload middleware to store generated images on your server
+middleware: [
+  uploadMiddleware(async (output) => {
+    // Upload the generated image to your server
+    const result = await uploadToYourStorageServer(output.url)
 
-                  // Return the output with your server's URL
-                  return {
-                    ...output,
-                    url: result.permanentUrl
-                  };
-                })
-              ]
+    // Return the output with your server's URL
+    return {
+      ...output,
+      url: result.permanentUrl
+    }
+  })
+]
 ```
 
 Use cases for upload middleware:
@@ -809,7 +809,7 @@ Use cases for upload middleware:
 To prevent abuse of AI services, you can implement rate limiting:
 
 ```typescript
-import { rateLimitMiddleware } from '@imgly/plugin-ai-generation-web';
+import { rateLimitMiddleware } from '@imgly/plugin-ai-generation-web'
 
 // In your provider configuration
 middleware: [
@@ -818,8 +818,8 @@ middleware: [
     timeWindowMs: 60 * 60 * 1000, // 1 hour
     onRateLimitExceeded: (input, options, info) => {
       // Show a notice to the user
-      console.log(`Rate limit reached: ${info.currentCount}/${info.maxRequests}`);
-      return false; // Reject the request
+      console.log(`Rate limit reached: ${info.currentCount}/${info.maxRequests}`)
+      return false // Reject the request
     }
   })
 ]
@@ -830,16 +830,17 @@ middleware: [
 You can create custom middleware for error handling:
 
 ```typescript
-const errorMiddleware = async (input, options, next) => {
+async function errorMiddleware(input, options, next) {
   try {
-    return await next(input, options);
-  } catch (error) {
-    // Handle error (show UI notification, log, etc.)
-    console.error('Generation failed:', error);
-    // You can rethrow or return a fallback
-    throw error;
+    return await next(input, options)
   }
-};
+  catch (error) {
+    // Handle error (show UI notification, log, etc.)
+    console.error('Generation failed:', error)
+    // You can rethrow or return a fallback
+    throw error
+  }
+}
 ```
 
 ### Middleware Order
@@ -864,38 +865,38 @@ middleware: [
 You can control which AI features are available to users using CE.SDK's Feature API:
 
 ```typescript highlight=highlight-feature-control
-    // Control AI features with Feature API
-    // Disable specific quick actions
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-image-generation-web.quickAction.editImage',
-      false
-    );
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-text-generation-web.quickAction.translate',
-      false
-    );
+// Control AI features with Feature API
+// Disable specific quick actions
+cesdk.feature.enable(
+  'ly.img.plugin-ai-image-generation-web.quickAction.editImage',
+  false
+)
+cesdk.feature.enable(
+  'ly.img.plugin-ai-text-generation-web.quickAction.translate',
+  false
+)
 
-    // Control input types for image/video generation
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-image-generation-web.fromText',
-      true
-    );
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-image-generation-web.fromImage',
-      false
-    );
+// Control input types for image/video generation
+cesdk.feature.enable(
+  'ly.img.plugin-ai-image-generation-web.fromText',
+  true
+)
+cesdk.feature.enable(
+  'ly.img.plugin-ai-image-generation-web.fromImage',
+  false
+)
 
-    // Hide provider selection dropdowns
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-image-generation-web.providerSelect',
-      false
-    );
+// Hide provider selection dropdowns
+cesdk.feature.enable(
+  'ly.img.plugin-ai-image-generation-web.providerSelect',
+  false
+)
 
-    // Control style groups for specific providers
-    cesdk.feature.enable(
-      'ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.style.vector',
-      false
-    );
+// Control style groups for specific providers
+cesdk.feature.enable(
+  'ly.img.plugin-ai-image-generation-web.fal-ai/recraft-v3.style.vector',
+  false
+)
 ```
 
 This is useful for:
@@ -914,8 +915,8 @@ Each AI provider configuration requires a `proxyUrl` parameter, which should poi
 
 ```typescript
 text2image: FalAiImage.RecraftV3({
-    proxyUrl: 'http://your-proxy-server.com/api/proxy'
-});
+  proxyUrl: 'http://your-proxy-server.com/api/proxy'
+})
 ```
 
 Your proxy server should handle authentication, forward requests to the appropriate AI service providers, and manage response streaming for optimal performance.

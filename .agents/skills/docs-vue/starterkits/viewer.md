@@ -227,17 +227,17 @@ CE.SDK offers multiple ways to load content into the viewer. Choose the method t
 
 ```typescript title="src/imgly/index.ts"
 // Load from a template archive - loads a previously saved project
-await cesdk.loadFromArchiveURL('https://example.com/design.zip');
+await cesdk.loadFromArchiveURL('https://example.com/design.zip')
 
 // Load from a scene file - restores a scene from JSON
-await cesdk.loadFromURL('https://example.com/scene.json');
+await cesdk.loadFromURL('https://example.com/scene.json')
 
 // Zoom to fit the content
 await cesdk.actions.run('zoom.toPage', {
   page: 'first',
   autoFit: true,
   padding: 24
-});
+})
 ```
 
 > **More Loading Options:** See [Open the Editor](./open-the-editor.md) for all available loading methods.
@@ -252,7 +252,7 @@ CE.SDK supports light and dark themes out of the box, plus automatic system pref
 
 ```typescript title="src/imgly/config/settings.ts"
 // 'light' | 'dark' | 'system' | (() => 'light' | 'dark')
-cesdk.ui.setTheme('dark');
+cesdk.ui.setTheme('dark')
 ```
 
 See [Theming](./user-interface/appearance/theming.md) for custom color schemes, CSS variables, and advanced styling options.
@@ -268,17 +268,17 @@ cesdk.i18n.setTranslations({
     'common.zoomIn': 'Zoom In',
     'common.zoomOut': 'Zoom Out'
   }
-});
+})
 
 // Add a new language
 cesdk.i18n.setTranslations({
   de: {
     'common.zoomIn': 'Vergrößern'
   }
-});
+})
 
 // Set the active locale
-cesdk.i18n.setLocale('de');
+cesdk.i18n.setLocale('de')
 ```
 
 See [Localization](./user-interface/localization.md) for supported languages, translation key reference, and right-to-left language support.

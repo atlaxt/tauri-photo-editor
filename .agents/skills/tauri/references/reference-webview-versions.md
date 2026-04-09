@@ -15,7 +15,7 @@ Tauri uses the **OS-provided** WebView; versions and behavior depend on the plat
 ## macOS & iOS: WKWebView
 
 - Uses the **WebKit** that ships with the OS (macOS 10.10+). Updated with OS updates; older OS versions do not get WebKit updates.
-- To see the WebKit version on your Mac:  
+- To see the WebKit version on your Mac:
   `awk '/CFBundleVersion/{getline;gsub(/<[^>]*>/,"");print}' /System/Library/Frameworks/WebKit.framework/Resources/Info.plist`
 - Version format: **$(SYSTEM_VERSION_PREFIX)$(MAJOR).$(MINOR).$(TINY).$(MICRO).$(NANO)**. The prefix maps to macOS/iOS versions (e.g. 17 → macOS 12). See the [webview-versions](/reference/webview-versions/) doc for the full OS ↔ WebKit ↔ Safari version table.
 

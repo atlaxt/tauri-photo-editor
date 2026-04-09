@@ -57,7 +57,7 @@ Apply an asset to a specific block.
 Modifies the target block's properties according to the asset's configuration.
 The behavior can be customized by providing an `applyAssetToBlock` function when registering the asset source.
 ```javascript
-await engine.asset.applyToBlock('asset-source-id', assetResult.assets[0]);
+await engine.asset.applyToBlock('asset-source-id', assetResult.assets[0])
 ```
 
 ```typescript
@@ -75,10 +75,10 @@ Apply a specific asset property to the currently selected element.
 Allows applying individual properties (like colors, fonts, or effects) from an asset
 without creating a new block. The behavior can be customized by providing an `applyAssetProperty` function.
 ```javascript
-const asset = assetResult.assets[0];
+const asset = assetResult.assets[0]
 if (asset.payload && asset.payload.properties) {
   for (const property of asset.payload.properties) {
-    await engine.asset.applyProperty('asset-source-id', asset, property);
+    await engine.asset.applyProperty('asset-source-id', asset, property)
   }
 }
 ```
@@ -112,12 +112,12 @@ engine.asset.addSource({
       total: 1,
       currentPage: queryData.page,
       nextPage: undefined
-    });
+    })
   },
   async applyAsset(assetResult) {
-    return engine.asset.defaultApplyAsset(assetResult);
+    return engine.asset.defaultApplyAsset(assetResult)
   },
-});
+})
 ```
 
 ```typescript
@@ -149,12 +149,12 @@ engine.asset.addSource({
       total: 1,
       currentPage: queryData.page,
       nextPage: undefined
-    });
+    })
   },
   async applyAssetToBlock(assetResult, block) {
-    engine.asset.defaultApplyAssetToBlock(assetResult, block);
+    engine.asset.defaultApplyAssetToBlock(assetResult, block)
   },
-});
+})
 ```
 
 ```typescript
@@ -188,9 +188,9 @@ engine.asset.addSource({
       total: 1,
       currentPage: queryData.page,
       nextPage: undefined
-    });
+    })
   },
-});
+})
 ```
 
 ```typescript
@@ -206,7 +206,7 @@ Add a local asset source.
 Local asset sources allow dynamic asset management through the add/remove methods.
 You can specify supported MIME types to restrict what assets can be added.
 ```javascript
-engine.asset.addLocalSource('local-source');
+engine.asset.addLocalSource('local-source')
 ```
 
 ```typescript
@@ -272,7 +272,7 @@ Remove a registered asset source.
 This permanently removes the asset source and all its associated assets.
 Any ongoing operations with this source will be cancelled.
 ```javascript
-engine.asset.removeSource('asset-source-id');
+engine.asset.removeSource('asset-source-id')
 ```
 
 ```typescript
@@ -286,7 +286,7 @@ removeSource(id: string): void
 
 Get all registered asset source IDs.
 ```javascript
-engine.asset.findAllSources();
+engine.asset.findAllSources()
 ```
 
 ```typescript
@@ -306,8 +306,8 @@ Results include asset metadata, thumbnails, and application context.
 const result = await engine.asset.findAssets('asset-source-id', {
   page: 0,
   perPage: 100
-});
-const asset = result.assets[0];
+})
+const asset = result.assets[0]
 ```
 
 ```typescript
@@ -326,7 +326,7 @@ Fetch a specific asset by ID from an asset source.
 ```javascript
 const asset = await engine.asset.fetchAsset('asset-source-id', 'asset-id', {
   locale: 'en-US'
-});
+})
 ```
 
 ```typescript
@@ -347,7 +347,7 @@ fetchAsset(sourceId: string, assetId: string, params?: Pick<AssetQueryData, 'loc
 Get available asset groups from a source.
 Groups provide categorization for assets within a source, enabling filtered discovery.
 ```javascript
-const groups = engine.asset.getGroups(customSource.id);
+const groups = engine.asset.getGroups(customSource.id)
 ```
 
 ```typescript
@@ -364,7 +364,7 @@ getGroups(id: string): Promise<string[]>
 Get supported MIME types for an asset source.
 Returns the file types that can be added to this source. An empty result means all MIME types are supported.
 ```javascript
-const mimeTypes = engine.asset.getSupportedMimeTypes('asset-source-id');
+const mimeTypes = engine.asset.getSupportedMimeTypes('asset-source-id')
 ```
 
 ```typescript
@@ -380,7 +380,7 @@ getSupportedMimeTypes(sourceId: string): string[]
 
 Get attribution credits for an asset source.
 ```javascript
-const credits = engine.asset.getCredits('asset-source-id');
+const credits = engine.asset.getCredits('asset-source-id')
 ```
 
 ```typescript
@@ -399,7 +399,7 @@ getCredits(sourceId: string): {
 
 Get license information for an asset source.
 ```javascript
-const license = engine.asset.getLicense('asset-source-id');
+const license = engine.asset.getLicense('asset-source-id')
 ```
 
 ```typescript
@@ -420,7 +420,7 @@ Check if an asset source supports asset management.
 Returns true if the source allows adding and removing assets dynamically, via 'Add File' and 'Delete' button on the UI.
 This is typically true for local asset sources and false for remote sources.
 ```javascript
-engine.asset.canManageAssets('asset-source-id');
+engine.asset.canManageAssets('asset-source-id')
 ```
 
 ```typescript
@@ -449,7 +449,7 @@ engine.asset.addAssetToSource('local-source', {
     uri: 'https://example.com/asset.jpg',
     mimeType: 'image/jpeg'
   }
-});
+})
 ```
 
 ```typescript
@@ -466,7 +466,7 @@ Remove an asset from a local asset source.
 Only works with local asset sources that support asset management.
 The asset will be permanently deleted from the source.
 ```javascript
-engine.asset.removeAssetFromSource('local-source', 'asset-id');
+engine.asset.removeAssetFromSource('local-source', 'asset-id')
 ```
 
 ```typescript
@@ -483,7 +483,7 @@ Notify the engine that an asset source's contents have changed.
 This triggers refresh of any UI components that display assets from this source
 and notifies subscribers to the asset source update events.
 ```javascript
-engine.asset.assetSourceContentsChanged('asset-source-id');
+engine.asset.assetSourceContentsChanged('asset-source-id')
 ```
 
 ```typescript
@@ -502,8 +502,8 @@ Subscribe to asset source changes and lifecycle events.
 Subscribe to asset source addition events.
 ```javascript
 engine.asset.onAssetSourceAdded((sourceID) => {
-  console.log(`Added source: ${sourceID}`);
-});
+  console.log(`Added source: ${sourceID}`)
+})
 ```
 
 ```typescript
@@ -520,8 +520,8 @@ onAssetSourceAdded(callback: (sourceID: string) => void): (() => void)
 Subscribe to asset source removal events.
 ```javascript
 engine.asset.onAssetSourceRemoved((sourceID) => {
-  console.log(`Removed source: ${sourceID}`);
-});
+  console.log(`Removed source: ${sourceID}`)
+})
 ```
 
 ```typescript
@@ -538,8 +538,8 @@ onAssetSourceRemoved(callback: (sourceID: string) => void): (() => void)
 Subscribe to asset source content change events.
 ```javascript
 engine.asset.onAssetSourceUpdated((sourceID) => {
-  console.log(`Updated source: ${sourceID}`);
-});
+  console.log(`Updated source: ${sourceID}`)
+})
 ```
 
 ```typescript

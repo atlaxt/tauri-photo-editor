@@ -24,7 +24,7 @@ path = "$APPLOCALDATA/**"
 [[permission]]
 identifier = "deny-webview-data-linux"
 description = "Deny read to webview data on Linux."
-platforms = ["linux"]
+platforms = [ "linux" ]
 
 [[scope.deny]]
 path = "$APPLOCALDATA/**"

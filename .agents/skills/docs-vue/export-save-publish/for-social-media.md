@@ -24,7 +24,7 @@ Configure video exports with appropriate resolution, framerate, and bitrate opti
 Short-form vertical video has become the dominant format for social media. Instagram Reels, TikTok, and YouTube Shorts all use the 9:16 aspect ratio at 1080×1920 pixels. This guide demonstrates how to create and export vertical video content with the correct settings for these platforms.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-for-social-media-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   CaptionPresetsAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Export for Social Media Guide
@@ -53,26 +53,26 @@ import packageJson from './package.json';
  * - Tracking video export progress
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -82,9 +82,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -98,44 +98,45 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a vertical video scene (9:16) for Instagram Reels, TikTok, YouTube Shorts
     await cesdk.actions.run('scene.create', {
       page: { width: 1080, height: 1920, unit: 'Pixel' }
-    });
+    })
 
-    const page = engine.scene.getCurrentPage();
+    const page = engine.scene.getCurrentPage()
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Add a video clip that fills the vertical frame
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
     const videoBlock = await engine.block.addVideo(
       'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4',
       pageWidth,
       pageHeight
-    );
-    engine.block.fillParent(videoBlock);
+    )
+    engine.block.fillParent(videoBlock)
 
     // Export video for Instagram Reels / TikTok / YouTube Shorts (9:16)
     const exportVideo = async () => {
       cesdk.ui.showNotification({
         message: 'Exporting video...',
         type: 'info'
-      });
+      })
 
-      const currentPage = engine.scene.getCurrentPage();
-      if (!currentPage) return;
+      const currentPage = engine.scene.getCurrentPage()
+      if (!currentPage)
+        return
 
       const videoBlob = await engine.block.exportVideo(currentPage, {
         mimeType: 'video/mp4',
@@ -144,21 +145,21 @@ class Example implements EditorPlugin {
         framerate: 30,
         videoBitrate: 8_000_000, // 8 Mbps
         onProgress: (renderedFrames, encodedFrames, totalFrames) => {
-          const percent = Math.round((encodedFrames / totalFrames) * 100);
+          const percent = Math.round((encodedFrames / totalFrames) * 100)
           console.log(
             `Export progress: ${percent}% (${encodedFrames}/${totalFrames} frames)`
-          );
+          )
         }
-      });
+      })
 
-      await cesdk.utils.downloadFile(videoBlob, 'video/mp4');
+      await cesdk.utils.downloadFile(videoBlob, 'video/mp4')
       cesdk.ui.showNotification({
         message: `Video exported: ${(videoBlob.size / 1024 / 1024).toFixed(
           1
         )} MB (1080×1920)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Configure navigation bar with export button
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
@@ -173,11 +174,11 @@ class Example implements EditorPlugin {
         variant: 'plain',
         color: 'accent'
       }
-    ]);
+    ])
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating a vertical video scene, exporting with resolution, framerate, and bitrate settings, and tracking export progress.
@@ -187,25 +188,25 @@ This guide covers creating a vertical video scene, exporting with resolution, fr
 Create a scene with the correct dimensions for vertical video. Use `cesdk.actions.run('scene.create')` with explicit pixel dimensions to ensure your content matches platform requirements.
 
 ```typescript highlight-setup
-    // Create a vertical video scene (9:16) for Instagram Reels, TikTok, YouTube Shorts
-    await cesdk.actions.run('scene.create', {
-      page: { width: 1080, height: 1920, unit: 'Pixel' }
-    });
+// Create a vertical video scene (9:16) for Instagram Reels, TikTok, YouTube Shorts
+await cesdk.actions.run('scene.create', {
+  page: { width: 1080, height: 1920, unit: 'Pixel' }
+})
 
-    const page = engine.scene.getCurrentPage();
-    if (!page) {
-      throw new Error('No page found');
-    }
+const page = engine.scene.getCurrentPage()
+if (!page) {
+  throw new Error('No page found')
+}
 
-    // Add a video clip that fills the vertical frame
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const videoBlock = await engine.block.addVideo(
-      'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4',
-      pageWidth,
-      pageHeight
-    );
-    engine.block.fillParent(videoBlock);
+// Add a video clip that fills the vertical frame
+const pageWidth = engine.block.getWidth(page)
+const pageHeight = engine.block.getHeight(page)
+const videoBlock = await engine.block.addVideo(
+  'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4',
+  pageWidth,
+  pageHeight
+)
+engine.block.fillParent(videoBlock)
 ```
 
 The scene uses 1080×1920 pixels (9:16 aspect ratio), which is the standard resolution for Instagram Reels, TikTok, and YouTube Shorts. The video block fills the entire page dimensions.
@@ -222,12 +223,12 @@ const videoBlob = await engine.block.exportVideo(currentPage, {
   framerate: 30,
   videoBitrate: 8_000_000, // 8 Mbps
   onProgress: (renderedFrames, encodedFrames, totalFrames) => {
-    const percent = Math.round((encodedFrames / totalFrames) * 100);
+    const percent = Math.round((encodedFrames / totalFrames) * 100)
     console.log(
       `Export progress: ${percent}% (${encodedFrames}/${totalFrames} frames)`
-    );
+    )
   }
-});
+})
 ```
 
 Key video export settings:
@@ -245,10 +246,10 @@ Video exports can take time, especially for longer content. Use the `onProgress`
 
 ```typescript highlight-progress
 onProgress: (renderedFrames, encodedFrames, totalFrames) => {
-  const percent = Math.round((encodedFrames / totalFrames) * 100);
+  const percent = Math.round((encodedFrames / totalFrames) * 100)
   console.log(
     `Export progress: ${percent}% (${encodedFrames}/${totalFrames} frames)`
-  );
+  )
 }
 ```
 
@@ -265,8 +266,8 @@ The encoding stage typically trails rendering slightly. Calculate progress perce
 After export, use `cesdk.utils.downloadFile()` to trigger a browser download:
 
 ```typescript
-const videoBlob = await engine.block.exportVideo(page, { /* options */ });
-await cesdk.utils.downloadFile(videoBlob, 'video/mp4');
+const videoBlob = await engine.block.exportVideo(page, { /* options */ })
+await cesdk.utils.downloadFile(videoBlob, 'video/mp4')
 ```
 
 This utility handles the download process automatically, including memory cleanup. For server uploads, pass the Blob directly to your upload function or FormData.

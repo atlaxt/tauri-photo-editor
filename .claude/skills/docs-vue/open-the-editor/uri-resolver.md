@@ -23,7 +23,7 @@ Learn how to intercept and transform asset URIs in CE.SDK, enabling authenticati
 When CE.SDK loads an asset, it resolves the URI to an absolute path before fetching. You can intercept this process to add authentication tokens or transform URIs based on your application's needs.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-uri-resolver-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,9 +38,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: URI Resolver Guide
@@ -52,21 +52,21 @@ import packageJson from './package.json';
  * - Removing custom resolvers
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -77,52 +77,52 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Create a design scene
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the page
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Set page background to light gray
-    const pageFill = engine.block.getFill(page);
+    const pageFill = engine.block.getFill(page)
     engine.block.setColor(pageFill, 'fill/color/value', {
       r: 0.96,
       g: 0.96,
       b: 0.96,
       a: 1.0
-    });
+    })
 
     // ========================================
     // Section 1: Understanding Default URI Resolution
     // ========================================
 
     // Test resolution without loading assets
-    const relativeURI = '/images/photo.jpg';
-    const resolvedURI = await engine.editor.getAbsoluteURI(relativeURI);
-    // eslint-disable-next-line no-console
-    console.log('Default resolution:');
-    // eslint-disable-next-line no-console
-    console.log(`  Input:  ${relativeURI}`);
-    // eslint-disable-next-line no-console
-    console.log(`  Output: ${resolvedURI}`);
+    const relativeURI = '/images/photo.jpg'
+    const resolvedURI = await engine.editor.getAbsoluteURI(relativeURI)
+
+    console.log('Default resolution:')
+
+    console.log(`  Input:  ${relativeURI}`)
+
+    console.log(`  Output: ${resolvedURI}`)
 
     // ========================================
     // Section 2: Setting a Custom URI Resolver
@@ -132,13 +132,12 @@ class Example implements EditorPlugin {
     engine.editor.setURIResolver((uri, defaultURIResolver) => {
       // Transform JPG files to a watermarked version
       if (uri.endsWith('.jpg')) {
-        // eslint-disable-next-line no-console
-        console.log(`Custom resolver: Transforming ${uri}`);
-        return 'https://img.ly/static/ubq_samples/sample_1.jpg';
+        console.log(`Custom resolver: Transforming ${uri}`)
+        return 'https://img.ly/static/ubq_samples/sample_1.jpg'
       }
       // Use default resolver for all other URIs
-      return defaultURIResolver(uri);
-    });
+      return defaultURIResolver(uri)
+    })
 
     // Test the custom resolver
     // ========================================
@@ -146,26 +145,26 @@ class Example implements EditorPlugin {
     // ========================================
 
     // Pre-generate token BEFORE setting the resolver (must be synchronous)
-    const authToken = 'demo-jwt-token-123';
+    const authToken = 'demo-jwt-token-123'
 
     // Set resolver that adds authentication to specific endpoints
     engine.editor.setURIResolver((uri, defaultURIResolver) => {
       // Only add auth token to URIs pointing to your stable link endpoint
       if (uri.includes('your-server/image-stable-links/')) {
-        const authenticatedURI = `${uri}?auth=${authToken}`;
-        // eslint-disable-next-line no-console
-        console.log(`\nAuth resolver: Adding token to ${uri}`);
-        // eslint-disable-next-line no-console
-        console.log(`  Result: ${authenticatedURI}`);
-        return authenticatedURI;
+        const authenticatedURI = `${uri}?auth=${authToken}`
+
+        console.log(`\nAuth resolver: Adding token to ${uri}`)
+
+        console.log(`  Result: ${authenticatedURI}`)
+        return authenticatedURI
       }
       // Use default resolver for all other URIs
-      return defaultURIResolver(uri);
-    });
+      return defaultURIResolver(uri)
+    })
 
     // Test authentication with a protected URI
-    const protectedURI = 'https://your-server/image-stable-links/abc123';
-    await engine.editor.getAbsoluteURI(protectedURI);
+    const protectedURI = 'https://your-server/image-stable-links/abc123'
+    await engine.editor.getAbsoluteURI(protectedURI)
 
     // ========================================
     // Section 3: Removing a Custom Resolver
@@ -174,9 +173,9 @@ class Example implements EditorPlugin {
     // Remove the custom resolver to restore default behavior
     engine.editor.setURIResolver((uri, defaultURIResolver) =>
       defaultURIResolver(uri)
-    );
-    // eslint-disable-next-line no-console
-    console.log('\n✓ Removed custom resolver - back to default behavior');
+    )
+
+    console.log('\n✓ Removed custom resolver - back to default behavior')
 
     // ========================================
     // Visual Demonstration: Load Images
@@ -189,43 +188,43 @@ class Example implements EditorPlugin {
     engine.editor.setURIResolver((uri, defaultURIResolver) => {
       // For this demo, ensure all images resolve to valid URLs
       if (uri.includes('sample')) {
-        return uri;
+        return uri
       }
-      return defaultURIResolver(uri);
-    });
+      return defaultURIResolver(uri)
+    })
 
     // Create three image blocks to demonstrate URI resolution in action
-    const imageSize = { width: 200, height: 150 };
-    const spacing = 40;
-    const startX = (800 - (imageSize.width * 3 + spacing * 2)) / 2;
-    const startY = (600 - imageSize.height) / 2;
+    const imageSize = { width: 200, height: 150 }
+    const spacing = 40
+    const startX = (800 - (imageSize.width * 3 + spacing * 2)) / 2
+    const startY = (600 - imageSize.height) / 2
 
     // Image 1: Standard resolution
     const image1 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_1.jpg',
       { size: imageSize }
-    );
-    engine.block.setPositionX(image1, startX);
-    engine.block.setPositionY(image1, startY);
-    engine.block.appendChild(page, image1);
+    )
+    engine.block.setPositionX(image1, startX)
+    engine.block.setPositionY(image1, startY)
+    engine.block.appendChild(page, image1)
 
     // Image 2: Another sample
     const image2 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_2.jpg',
       { size: imageSize }
-    );
-    engine.block.setPositionX(image2, startX + imageSize.width + spacing);
-    engine.block.setPositionY(image2, startY);
-    engine.block.appendChild(page, image2);
+    )
+    engine.block.setPositionX(image2, startX + imageSize.width + spacing)
+    engine.block.setPositionY(image2, startY)
+    engine.block.appendChild(page, image2)
 
     // Image 3: Third sample
     const image3 = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_3.jpg',
       { size: imageSize }
-    );
-    engine.block.setPositionX(image3, startX + (imageSize.width + spacing) * 2);
-    engine.block.setPositionY(image3, startY);
-    engine.block.appendChild(page, image3);
+    )
+    engine.block.setPositionX(image3, startX + (imageSize.width + spacing) * 2)
+    engine.block.setPositionY(image3, startY)
+    engine.block.appendChild(page, image3)
 
     // Zoom to fit all content
     await engine.scene.zoomToBlock(page, {
@@ -235,14 +234,13 @@ class Example implements EditorPlugin {
         right: 40,
         bottom: 40
       }
-    });
+    })
 
-    // eslint-disable-next-line no-console
-    console.log('\n✓ URI Resolver guide loaded successfully!');
+    console.log('\n✓ URI Resolver guide loaded successfully!')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Default URI Resolution
@@ -253,14 +251,14 @@ Use `getAbsoluteURI()` to test how URIs resolve without loading assets:
 
 ```typescript highlight=highlight-test-resolution
 // Test resolution without loading assets
-const relativeURI = '/images/photo.jpg';
-const resolvedURI = await engine.editor.getAbsoluteURI(relativeURI);
-// eslint-disable-next-line no-console
-console.log('Default resolution:');
-// eslint-disable-next-line no-console
-console.log(`  Input:  ${relativeURI}`);
-// eslint-disable-next-line no-console
-console.log(`  Output: ${resolvedURI}`);
+const relativeURI = '/images/photo.jpg'
+const resolvedURI = await engine.editor.getAbsoluteURI(relativeURI)
+
+console.log('Default resolution:')
+
+console.log(`  Input:  ${relativeURI}`)
+
+console.log(`  Output: ${resolvedURI}`)
 ```
 
 ## Custom URI Resolver
@@ -272,13 +270,12 @@ Set a custom resolver to intercept and transform URIs. The resolver receives the
 engine.editor.setURIResolver((uri, defaultURIResolver) => {
   // Transform JPG files to a watermarked version
   if (uri.endsWith('.jpg')) {
-    // eslint-disable-next-line no-console
-    console.log(`Custom resolver: Transforming ${uri}`);
-    return 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    console.log(`Custom resolver: Transforming ${uri}`)
+    return 'https://img.ly/static/ubq_samples/sample_1.jpg'
   }
   // Use default resolver for all other URIs
-  return defaultURIResolver(uri);
-});
+  return defaultURIResolver(uri)
+})
 ```
 
 **Important:** The resolver must be synchronous—no `async`/`await` or Promises. Pre-compute any tokens or transformations before setting the resolver.
@@ -288,27 +285,27 @@ engine.editor.setURIResolver((uri, defaultURIResolver) => {
 A common use case is adding authentication tokens to asset URIs. Generate the token before setting the resolver, then append it as a query parameter:
 
 ```typescript highlight=highlight-auth-resolver
-    // Pre-generate token BEFORE setting the resolver (must be synchronous)
-    const authToken = 'demo-jwt-token-123';
+// Pre-generate token BEFORE setting the resolver (must be synchronous)
+const authToken = 'demo-jwt-token-123'
 
-    // Set resolver that adds authentication to specific endpoints
-    engine.editor.setURIResolver((uri, defaultURIResolver) => {
-      // Only add auth token to URIs pointing to your stable link endpoint
-      if (uri.includes('your-server/image-stable-links/')) {
-        const authenticatedURI = `${uri}?auth=${authToken}`;
-        // eslint-disable-next-line no-console
-        console.log(`\nAuth resolver: Adding token to ${uri}`);
-        // eslint-disable-next-line no-console
-        console.log(`  Result: ${authenticatedURI}`);
-        return authenticatedURI;
-      }
-      // Use default resolver for all other URIs
-      return defaultURIResolver(uri);
-    });
+// Set resolver that adds authentication to specific endpoints
+engine.editor.setURIResolver((uri, defaultURIResolver) => {
+  // Only add auth token to URIs pointing to your stable link endpoint
+  if (uri.includes('your-server/image-stable-links/')) {
+    const authenticatedURI = `${uri}?auth=${authToken}`
 
-    // Test authentication with a protected URI
-    const protectedURI = 'https://your-server/image-stable-links/abc123';
-    await engine.editor.getAbsoluteURI(protectedURI);
+    console.log(`\nAuth resolver: Adding token to ${uri}`)
+
+    console.log(`  Result: ${authenticatedURI}`)
+    return authenticatedURI
+  }
+  // Use default resolver for all other URIs
+  return defaultURIResolver(uri)
+})
+
+// Test authentication with a protected URI
+const protectedURI = 'https://your-server/image-stable-links/abc123'
+await engine.editor.getAbsoluteURI(protectedURI)
 ```
 
 Your server validates the token and redirects to the actual asset (e.g., pre-signed S3 URL). CE.SDK follows redirects automatically.
@@ -321,9 +318,9 @@ Restore default behavior by setting a resolver that delegates to `defaultURIReso
 // Remove the custom resolver to restore default behavior
 engine.editor.setURIResolver((uri, defaultURIResolver) =>
   defaultURIResolver(uri)
-);
-// eslint-disable-next-line no-console
-console.log('\n✓ Removed custom resolver - back to default behavior');
+)
+
+console.log('\n✓ Removed custom resolver - back to default behavior')
 ```
 
 ## Key Constraints

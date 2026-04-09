@@ -21,7 +21,7 @@ Dynamic content transforms static designs into flexible, data-driven templates. 
 > - [Live demo](https://img.ly/docs/cesdk/examples/guides-create-templates-add-dynamic-content-browser/)
 
 ```typescript file=@cesdk_web_examples/guides-create-templates-add-dynamic-content-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -37,9 +37,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Dynamic Content Overview
@@ -50,21 +50,21 @@ import packageJson from './package.json';
  * - Editing Constraints: Lock properties while allowing controlled changes
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -75,128 +75,128 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Set editor role to Adopter for template usage
-    engine.editor.setRole('Adopter');
+    engine.editor.setRole('Adopter')
 
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Content area: 480px wide, centered (left margin = 160px)
-    const contentX = 160;
-    const contentWidth = 480;
+    const contentX = 160
+    const contentWidth = 480
 
     // TEXT VARIABLES: Define variables for personalization
-    engine.variable.setString('firstName', 'Jane');
-    engine.variable.setString('lastName', 'Doe');
-    engine.variable.setString('companyName', 'IMG.LY');
+    engine.variable.setString('firstName', 'Jane')
+    engine.variable.setString('lastName', 'Doe')
+    engine.variable.setString('companyName', 'IMG.LY')
 
     // Create heading with company variable
-    const headingText = engine.block.create('text');
+    const headingText = engine.block.create('text')
     engine.block.replaceText(
       headingText,
       'Welcome to {{companyName}}, {{firstName}} {{lastName}}.'
-    );
-    engine.block.setWidth(headingText, contentWidth);
-    engine.block.setHeightMode(headingText, 'Auto');
-    engine.block.setFloat(headingText, 'text/fontSize', 64);
-    engine.block.setEnum(headingText, 'text/horizontalAlignment', 'Left');
-    engine.block.appendChild(page, headingText);
-    engine.block.setPositionX(headingText, contentX);
-    engine.block.setPositionY(headingText, 200);
+    )
+    engine.block.setWidth(headingText, contentWidth)
+    engine.block.setHeightMode(headingText, 'Auto')
+    engine.block.setFloat(headingText, 'text/fontSize', 64)
+    engine.block.setEnum(headingText, 'text/horizontalAlignment', 'Left')
+    engine.block.appendChild(page, headingText)
+    engine.block.setPositionX(headingText, contentX)
+    engine.block.setPositionY(headingText, 200)
 
     // Create description with bullet points
-    const descriptionText = engine.block.create('text');
+    const descriptionText = engine.block.create('text')
     engine.block.replaceText(
       descriptionText,
-      'This example demonstrates dynamic templates.\n\n' +
-        '• Text Variables — Personalize content with {{tokens}}\n' +
-        '• Placeholders — Swappable images and media\n' +
-        '• Editing Constraints — Protected brand elements'
-    );
-    engine.block.setWidth(descriptionText, contentWidth);
-    engine.block.setHeightMode(descriptionText, 'Auto');
-    engine.block.setFloat(descriptionText, 'text/fontSize', 44);
-    engine.block.setEnum(descriptionText, 'text/horizontalAlignment', 'Left');
-    engine.block.appendChild(page, descriptionText);
-    engine.block.setPositionX(descriptionText, contentX);
-    engine.block.setPositionY(descriptionText, 300);
+      'This example demonstrates dynamic templates.\n\n'
+      + '• Text Variables — Personalize content with {{tokens}}\n'
+      + '• Placeholders — Swappable images and media\n'
+      + '• Editing Constraints — Protected brand elements'
+    )
+    engine.block.setWidth(descriptionText, contentWidth)
+    engine.block.setHeightMode(descriptionText, 'Auto')
+    engine.block.setFloat(descriptionText, 'text/fontSize', 44)
+    engine.block.setEnum(descriptionText, 'text/horizontalAlignment', 'Left')
+    engine.block.appendChild(page, descriptionText)
+    engine.block.setPositionX(descriptionText, contentX)
+    engine.block.setPositionY(descriptionText, 300)
 
     // Discover all variables in the scene
-    const allVariables = engine.variable.findAll();
-    console.log('Variables in scene:', allVariables);
+    const allVariables = engine.variable.findAll()
+    console.log('Variables in scene:', allVariables)
 
     // PLACEHOLDERS: Create hero image as a swappable drop zone
     const heroImage = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/sample_1.jpg',
       { size: { width: contentWidth, height: 140 } }
-    );
-    engine.block.appendChild(page, heroImage);
-    engine.block.setPositionX(heroImage, contentX);
-    engine.block.setPositionY(heroImage, 40);
+    )
+    engine.block.appendChild(page, heroImage)
+    engine.block.setPositionX(heroImage, contentX)
+    engine.block.setPositionY(heroImage, 40)
 
     // Enable placeholder behavior for the hero image
     if (engine.block.supportsPlaceholderBehavior(heroImage)) {
-      engine.block.setPlaceholderBehaviorEnabled(heroImage, true);
-      engine.block.setPlaceholderEnabled(heroImage, true);
+      engine.block.setPlaceholderBehaviorEnabled(heroImage, true)
+      engine.block.setPlaceholderEnabled(heroImage, true)
 
       if (engine.block.supportsPlaceholderControls(heroImage)) {
-        engine.block.setPlaceholderControlsOverlayEnabled(heroImage, true);
-        engine.block.setPlaceholderControlsButtonEnabled(heroImage, true);
+        engine.block.setPlaceholderControlsOverlayEnabled(heroImage, true)
+        engine.block.setPlaceholderControlsButtonEnabled(heroImage, true)
       }
     }
 
     // Find all placeholders in the scene
-    const placeholders = engine.block.findAllPlaceholders();
-    console.log('Placeholders in scene:', placeholders.length);
+    const placeholders = engine.block.findAllPlaceholders()
+    console.log('Placeholders in scene:', placeholders.length)
 
     // EDITING CONSTRAINTS: Add logo that cannot be moved or selected
     const logo = await engine.block.addImage(
       'https://img.ly/static/ubq_samples/imgly_logo.jpg',
       { size: { width: 100, height: 25 } }
-    );
-    engine.block.appendChild(page, logo);
-    engine.block.setPositionX(logo, 350);
-    engine.block.setPositionY(logo, 540);
+    )
+    engine.block.appendChild(page, logo)
+    engine.block.setPositionX(logo, 350)
+    engine.block.setPositionY(logo, 540)
 
     // Lock the logo: prevent moving, resizing, and selection
-    engine.block.setScopeEnabled(logo, 'layer/move', false);
-    engine.block.setScopeEnabled(logo, 'layer/resize', false);
-    engine.block.setScopeEnabled(logo, 'editor/select', false);
+    engine.block.setScopeEnabled(logo, 'layer/move', false)
+    engine.block.setScopeEnabled(logo, 'layer/resize', false)
+    engine.block.setScopeEnabled(logo, 'editor/select', false)
 
     // Verify constraints are applied
-    const canSelect = engine.block.isScopeEnabled(logo, 'editor/select');
-    const canMove = engine.block.isScopeEnabled(logo, 'layer/move');
-    console.log('Logo - canSelect:', canSelect, 'canMove:', canMove);
+    const canSelect = engine.block.isScopeEnabled(logo, 'editor/select')
+    const canMove = engine.block.isScopeEnabled(logo, 'layer/move')
+    console.log('Logo - canSelect:', canSelect, 'canMove:', canMove)
 
     // Zoom to fit the page with autoFit enabled
     await cesdk.actions.run('zoom.toBlock', page, {
       padding: 40,
       animate: false,
       autoFit: true
-    });
+    })
 
-    console.log('Dynamic Content demo initialized.');
+    console.log('Dynamic Content demo initialized.')
 
-    cesdk.engine.block.setSelected(page, false);
+    cesdk.engine.block.setSelected(page, false)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use dynamic content capabilities in CE.SDK templates. The example creates a social media card with personalized name and company variables, a replaceable hero image, and a protected logo.
@@ -214,16 +214,16 @@ CE.SDK offers three ways to make templates dynamic:
 Text variables enable data-driven text personalization. Define variables using `engine.variable.setString()`, then reference them in text blocks with `{{variableName}}` tokens.
 
 ```typescript highlight-text-variables
-    engine.variable.setString('firstName', 'Jane');
-    engine.variable.setString('lastName', 'Doe');
-    engine.variable.setString('companyName', 'IMG.LY');
+engine.variable.setString('firstName', 'Jane')
+engine.variable.setString('lastName', 'Doe')
+engine.variable.setString('companyName', 'IMG.LY')
 
-    // Create heading with company variable
-    const headingText = engine.block.create('text');
-    engine.block.replaceText(
-      headingText,
-      'Welcome to {{companyName}}, {{firstName}} {{lastName}}.'
-    );
+// Create heading with company variable
+const headingText = engine.block.create('text')
+engine.block.replaceText(
+  headingText,
+  'Welcome to {{companyName}}, {{firstName}} {{lastName}}.'
+)
 ```
 
 Variables are defined globally and can be referenced in any text block. The `findAll()` method returns all variable keys in the scene, useful for building dynamic editing interfaces.
@@ -235,16 +235,16 @@ Variables are defined globally and can be referenced in any text block. The `fin
 Placeholders turn design blocks into drop zones for swappable media. Mark an image block as a placeholder, and users can replace its content while the surrounding design remains fixed.
 
 ```typescript highlight-placeholders
-    // Enable placeholder behavior for the hero image
-    if (engine.block.supportsPlaceholderBehavior(heroImage)) {
-      engine.block.setPlaceholderBehaviorEnabled(heroImage, true);
-      engine.block.setPlaceholderEnabled(heroImage, true);
+// Enable placeholder behavior for the hero image
+if (engine.block.supportsPlaceholderBehavior(heroImage)) {
+  engine.block.setPlaceholderBehaviorEnabled(heroImage, true)
+  engine.block.setPlaceholderEnabled(heroImage, true)
 
-      if (engine.block.supportsPlaceholderControls(heroImage)) {
-        engine.block.setPlaceholderControlsOverlayEnabled(heroImage, true);
-        engine.block.setPlaceholderControlsButtonEnabled(heroImage, true);
-      }
-    }
+  if (engine.block.supportsPlaceholderControls(heroImage)) {
+    engine.block.setPlaceholderControlsOverlayEnabled(heroImage, true)
+    engine.block.setPlaceholderControlsButtonEnabled(heroImage, true)
+  }
+}
 ```
 
 Enable placeholder behavior with `setPlaceholderBehaviorEnabled()`, then enable user interaction with `setPlaceholderEnabled()`. The visual overlay and replace button are controlled separately via `setPlaceholderControlsOverlayEnabled()` and `setPlaceholderControlsButtonEnabled()`.
@@ -254,15 +254,15 @@ Enable placeholder behavior with `setPlaceholderBehaviorEnabled()`, then enable 
 Editing constraints protect design integrity by limiting what users can modify. Use scope-based APIs to lock specific properties while keeping others editable.
 
 ```typescript highlight-editing-constraints
-    // Lock the logo: prevent moving, resizing, and selection
-    engine.block.setScopeEnabled(logo, 'layer/move', false);
-    engine.block.setScopeEnabled(logo, 'layer/resize', false);
-    engine.block.setScopeEnabled(logo, 'editor/select', false);
+// Lock the logo: prevent moving, resizing, and selection
+engine.block.setScopeEnabled(logo, 'layer/move', false)
+engine.block.setScopeEnabled(logo, 'layer/resize', false)
+engine.block.setScopeEnabled(logo, 'editor/select', false)
 
-    // Verify constraints are applied
-    const canSelect = engine.block.isScopeEnabled(logo, 'editor/select');
-    const canMove = engine.block.isScopeEnabled(logo, 'layer/move');
-    console.log('Logo - canSelect:', canSelect, 'canMove:', canMove);
+// Verify constraints are applied
+const canSelect = engine.block.isScopeEnabled(logo, 'editor/select')
+const canMove = engine.block.isScopeEnabled(logo, 'layer/move')
+console.log('Logo - canSelect:', canSelect, 'canMove:', canMove)
 ```
 
 The `setScopeEnabled()` method controls individual properties. Setting `'editor/select'` to `false` prevents users from selecting the block entirely, making it completely non-interactive. Combined with `'layer/move'` and `'layer/resize'`, this creates a fully protected element.

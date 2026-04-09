@@ -23,7 +23,7 @@ Register custom UI components using CE.SDK's builder system and place them in di
 The builder system provides a declarative API for creating UI components that integrate with CE.SDK. Components registered via `cesdk.ui.registerComponent()` receive a render function that is automatically re-invoked when relevant engine state changes, enabling reactive UIs without manual subscription management. You can create buttons, dropdowns, inputs, and other UI elements that react to engine state changes.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ui-extensions-register-new-component-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,23 +38,24 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 const registerNewComponentPlugin: EditorPlugin = {
   name: 'ly.img.registerNewComponentPlugin',
   version: '1.0.0',
 
   async initialize({ cesdk, engine }: EditorPluginContext) {
-    if (cesdk == null) return;
+    if (cesdk == null)
+      return
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -65,20 +66,20 @@ const registerNewComponentPlugin: EditorPlugin = {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Load a scene so the editor has content to display
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
+    )
 
     // Register a custom button component that shows the selected block's type.
     // The render function is automatically re-invoked when engine state changes.
@@ -87,13 +88,13 @@ const registerNewComponentPlugin: EditorPlugin = {
       ({ builder, engine: eng, cesdk: cesdkInstance }) => {
         // Engine API calls are tracked. When the selection changes,
         // the component re-renders automatically.
-        const selectedBlocks = eng.block.findAllSelected();
-        const selectedBlock =
-          selectedBlocks.length > 0 ? selectedBlocks[0] : null;
+        const selectedBlocks = eng.block.findAllSelected()
+        const selectedBlock
+          = selectedBlocks.length > 0 ? selectedBlocks[0] : null
         const blockType = selectedBlock
           ? eng.block.getType(selectedBlock)
-          : null;
-        const label = blockType ? formatBlockType(blockType) : 'No Selection';
+          : null
+        const label = blockType ? formatBlockType(blockType) : 'No Selection'
 
         builder.Button('block-type-display', {
           label,
@@ -102,21 +103,21 @@ const registerNewComponentPlugin: EditorPlugin = {
           onClick: () => {
             const message = selectedBlock
               ? `Selected block type: ${blockType}`
-              : 'No block selected';
-            cesdkInstance.ui.showNotification({ message, type: 'info' });
+              : 'No block selected'
+            cesdkInstance.ui.showNotification({ message, type: 'info' })
           }
-        });
+        })
       }
-    );
+    )
 
     // Register a component with a dropdown menu containing buttons.
     // Dropdowns in the navigation bar support Button and Separator elements.
     cesdk.ui.registerComponent(
       'com.example.actionsDropdown',
       ({ builder, engine: eng, cesdk: cesdkInstance }) => {
-        const selectedBlocks = eng.block.findAllSelected();
-        const selectedBlock =
-          selectedBlocks.length > 0 ? selectedBlocks[0] : null;
+        const selectedBlocks = eng.block.findAllSelected()
+        const selectedBlock
+          = selectedBlocks.length > 0 ? selectedBlocks[0] : null
 
         builder.Dropdown('actions-dropdown', {
           label: 'Actions',
@@ -129,14 +130,14 @@ const registerNewComponentPlugin: EditorPlugin = {
               isDisabled: !selectedBlock,
               onClick: () => {
                 if (selectedBlock) {
-                  eng.block.duplicate(selectedBlock);
+                  eng.block.duplicate(selectedBlock)
                   cesdkInstance.ui.showNotification({
                     message: 'Block duplicated',
                     type: 'info'
-                  });
+                  })
                 }
               }
-            });
+            })
 
             builder.Button('action-delete', {
               label: 'Delete',
@@ -146,35 +147,35 @@ const registerNewComponentPlugin: EditorPlugin = {
               isDisabled: !selectedBlock,
               onClick: () => {
                 if (selectedBlock) {
-                  eng.block.destroy(selectedBlock);
+                  eng.block.destroy(selectedBlock)
                   cesdkInstance.ui.showNotification({
                     message: 'Block deleted',
                     type: 'info'
-                  });
+                  })
                 }
               }
-            });
+            })
 
-            builder.Separator('action-separator');
+            builder.Separator('action-separator')
 
             builder.Button('action-select-all', {
               label: 'Select All',
               icon: '@imgly/icons/SelectAll',
               variant: 'plain',
               onClick: () => {
-                const page = eng.scene.getCurrentPage();
+                const page = eng.scene.getCurrentPage()
                 if (page) {
-                  const children = eng.block.getChildren(page);
-                  children.forEach((child) =>
+                  const children = eng.block.getChildren(page)
+                  children.forEach(child =>
                     eng.block.setSelected(child, true)
-                  );
+                  )
                 }
               }
-            });
+            })
           }
-        });
+        })
       }
-    );
+    )
 
     // Place the custom components in the navigation bar.
     // Use setComponentOrder to define the order of components.
@@ -186,19 +187,19 @@ const registerNewComponentPlugin: EditorPlugin = {
       'ly.img.undo',
       'ly.img.redo',
       'ly.img.zoom.navigationBar'
-    ]);
+    ])
   }
-};
+}
 
 // Helper function to format block type for display
 function formatBlockType(blockType: string): string {
   // Extract the last part of the block type (e.g., '//ly.img.ubq/graphic' -> 'Graphic')
-  const parts = blockType.split('/');
-  const typeName = parts[parts.length - 1];
-  return typeName.charAt(0).toUpperCase() + typeName.slice(1);
+  const parts = blockType.split('/')
+  const typeName = parts.at(-1)
+  return typeName.charAt(0).toUpperCase() + typeName.slice(1)
 }
 
-export default registerNewComponentPlugin;
+export default registerNewComponentPlugin
 ```
 
 This guide demonstrates registering custom components including a button, dropdown menu, checkbox, and select control, then placing them in the navigation bar and inspector bar.
@@ -208,34 +209,34 @@ This guide demonstrates registering custom components including a button, dropdo
 Use `cesdk.ui.registerComponent()` to register a component with a unique ID and a render function. The render function receives `builder`, `engine`, `cesdk`, `state`, and `payload` parameters.
 
 ```typescript highlight-register-component
-    // Register a custom button component that shows the selected block's type.
-    // The render function is automatically re-invoked when engine state changes.
-    cesdk.ui.registerComponent(
-      'com.example.blockTypeButton',
-      ({ builder, engine: eng, cesdk: cesdkInstance }) => {
-        // Engine API calls are tracked. When the selection changes,
-        // the component re-renders automatically.
-        const selectedBlocks = eng.block.findAllSelected();
-        const selectedBlock =
-          selectedBlocks.length > 0 ? selectedBlocks[0] : null;
-        const blockType = selectedBlock
-          ? eng.block.getType(selectedBlock)
-          : null;
-        const label = blockType ? formatBlockType(blockType) : 'No Selection';
+// Register a custom button component that shows the selected block's type.
+// The render function is automatically re-invoked when engine state changes.
+cesdk.ui.registerComponent(
+  'com.example.blockTypeButton',
+  ({ builder, engine: eng, cesdk: cesdkInstance }) => {
+    // Engine API calls are tracked. When the selection changes,
+    // the component re-renders automatically.
+    const selectedBlocks = eng.block.findAllSelected()
+    const selectedBlock
+      = selectedBlocks.length > 0 ? selectedBlocks[0] : null
+    const blockType = selectedBlock
+      ? eng.block.getType(selectedBlock)
+      : null
+    const label = blockType ? formatBlockType(blockType) : 'No Selection'
 
-        builder.Button('block-type-display', {
-          label,
-          icon: '@imgly/icons/Info',
-          isDisabled: !selectedBlock,
-          onClick: () => {
-            const message = selectedBlock
-              ? `Selected block type: ${blockType}`
-              : 'No block selected';
-            cesdkInstance.ui.showNotification({ message, type: 'info' });
-          }
-        });
+    builder.Button('block-type-display', {
+      label,
+      icon: '@imgly/icons/Info',
+      isDisabled: !selectedBlock,
+      onClick: () => {
+        const message = selectedBlock
+          ? `Selected block type: ${blockType}`
+          : 'No block selected'
+        cesdkInstance.ui.showNotification({ message, type: 'info' })
       }
-    );
+    })
+  }
+)
 ```
 
 ### Component ID Naming
@@ -273,72 +274,72 @@ The `builder.Button()` method creates an interactive button. It accepts a unique
 Use `builder.Dropdown()` to create a dropdown menu with nested content. The `children` callback function lets you add buttons and separators inside the dropdown.
 
 ```typescript highlight-builder-dropdown
-    // Register a component with a dropdown menu containing buttons.
-    // Dropdowns in the navigation bar support Button and Separator elements.
-    cesdk.ui.registerComponent(
-      'com.example.actionsDropdown',
-      ({ builder, engine: eng, cesdk: cesdkInstance }) => {
-        const selectedBlocks = eng.block.findAllSelected();
-        const selectedBlock =
-          selectedBlocks.length > 0 ? selectedBlocks[0] : null;
+// Register a component with a dropdown menu containing buttons.
+// Dropdowns in the navigation bar support Button and Separator elements.
+cesdk.ui.registerComponent(
+  'com.example.actionsDropdown',
+  ({ builder, engine: eng, cesdk: cesdkInstance }) => {
+    const selectedBlocks = eng.block.findAllSelected()
+    const selectedBlock
+      = selectedBlocks.length > 0 ? selectedBlocks[0] : null
 
-        builder.Dropdown('actions-dropdown', {
-          label: 'Actions',
-          icon: '@imgly/icons/Adjustments',
-          children: () => {
-            builder.Button('action-duplicate', {
-              label: 'Duplicate',
-              icon: '@imgly/icons/Duplicate',
-              variant: 'plain',
-              isDisabled: !selectedBlock,
-              onClick: () => {
-                if (selectedBlock) {
-                  eng.block.duplicate(selectedBlock);
-                  cesdkInstance.ui.showNotification({
-                    message: 'Block duplicated',
-                    type: 'info'
-                  });
-                }
-              }
-            });
-
-            builder.Button('action-delete', {
-              label: 'Delete',
-              icon: '@imgly/icons/Trash',
-              variant: 'plain',
-              color: 'danger',
-              isDisabled: !selectedBlock,
-              onClick: () => {
-                if (selectedBlock) {
-                  eng.block.destroy(selectedBlock);
-                  cesdkInstance.ui.showNotification({
-                    message: 'Block deleted',
-                    type: 'info'
-                  });
-                }
-              }
-            });
-
-            builder.Separator('action-separator');
-
-            builder.Button('action-select-all', {
-              label: 'Select All',
-              icon: '@imgly/icons/SelectAll',
-              variant: 'plain',
-              onClick: () => {
-                const page = eng.scene.getCurrentPage();
-                if (page) {
-                  const children = eng.block.getChildren(page);
-                  children.forEach((child) =>
-                    eng.block.setSelected(child, true)
-                  );
-                }
-              }
-            });
+    builder.Dropdown('actions-dropdown', {
+      label: 'Actions',
+      icon: '@imgly/icons/Adjustments',
+      children: () => {
+        builder.Button('action-duplicate', {
+          label: 'Duplicate',
+          icon: '@imgly/icons/Duplicate',
+          variant: 'plain',
+          isDisabled: !selectedBlock,
+          onClick: () => {
+            if (selectedBlock) {
+              eng.block.duplicate(selectedBlock)
+              cesdkInstance.ui.showNotification({
+                message: 'Block duplicated',
+                type: 'info'
+              })
+            }
           }
-        });
+        })
+
+        builder.Button('action-delete', {
+          label: 'Delete',
+          icon: '@imgly/icons/Trash',
+          variant: 'plain',
+          color: 'danger',
+          isDisabled: !selectedBlock,
+          onClick: () => {
+            if (selectedBlock) {
+              eng.block.destroy(selectedBlock)
+              cesdkInstance.ui.showNotification({
+                message: 'Block deleted',
+                type: 'info'
+              })
+            }
+          }
+        })
+
+        builder.Separator('action-separator')
+
+        builder.Button('action-select-all', {
+          label: 'Select All',
+          icon: '@imgly/icons/SelectAll',
+          variant: 'plain',
+          onClick: () => {
+            const page = eng.scene.getCurrentPage()
+            if (page) {
+              const children = eng.block.getChildren(page)
+              children.forEach(child =>
+                eng.block.setSelected(child, true)
+              )
+            }
+          }
+        })
       }
-    );
+    })
+  }
+)
 ```
 
 The dropdown receives the same configuration as buttons, but uses `children` instead of `onClick` to define the dropdown content.
@@ -367,22 +368,22 @@ Not every location supports every builder component yet. The following table sho
 The `state` function provides local state management within components, similar to React's `useState`.
 
 ```typescript
-const { value, setValue } = state('unique-id', defaultValue);
+const { value, setValue } = state('unique-id', defaultValue)
 ```
 
 State persists across re-renders with the same ID. Calling `setValue()` triggers a component re-render. Since the returned object matches input component expectations, you can spread it directly into components.
 
 ```typescript
 cesdk.ui.registerComponent('counter', ({ builder, state }) => {
-  const { value, setValue } = state('counter', 0);
+  const { value, setValue } = state('counter', 0)
 
   builder.Button('counter-button', {
     label: `${value} clicks`,
     onClick: () => {
-      setValue(value + 1);
+      setValue(value + 1)
     }
-  });
-});
+  })
+})
 ```
 
 ## Placing Components in the Navigation Bar
@@ -400,7 +401,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
   'ly.img.undo',
   'ly.img.redo',
   'ly.img.zoom.navigationBar'
-]);
+])
 ```
 
 Use `cesdk.ui.insertOrderComponent()` to position components relative to existing ones without replacing the entire order.
@@ -414,7 +415,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.inspector.bar' }, [
   'com.example.myInspectorButton',
   'ly.img.fill',
   'ly.img.stroke'
-]);
+])
 ```
 
 ## Placing Components in the Dock
@@ -426,7 +427,7 @@ cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', id: 'ly.img.assetLibrary.dock' },
   'com.example.myDockButton',
   'after'
-);
+)
 ```
 
 ## Placing Components in the Canvas Menu
@@ -438,7 +439,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
   'ly.img.delete',
   'com.example.myCanvasMenuAction',
   'ly.img.duplicate'
-]);
+])
 ```
 
 ## Placing Components in the Canvas Bar
@@ -446,7 +447,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
 Canvas bars appear above or below the canvas area. Specify `'top'` or `'bottom'` position using `cesdk.ui.setComponentOrder()` or `cesdk.ui.insertOrderComponent()`.
 
 ```typescript
-cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, ['com.example.myCanvasBarButton']);
+cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' }, ['com.example.myCanvasBarButton'])
 ```
 
 ## Passing Payload Data
@@ -457,17 +458,17 @@ Components can receive contextual data through the `payload` parameter. Pass dat
 cesdk.ui.registerComponent(
   'myDockEntry.dock',
   ({ builder: { Button }, payload }) => {
-    const { label } = payload;
-    Button('entry-button', { label });
+    const { label } = payload
+    Button('entry-button', { label })
   }
-);
+)
 
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   {
     id: 'myDockEntry.dock',
     label: 'Custom Label'
   }
-]);
+])
 ```
 
 Use TypeScript generics with `registerComponent<PayloadType>()` to type the payload parameter.

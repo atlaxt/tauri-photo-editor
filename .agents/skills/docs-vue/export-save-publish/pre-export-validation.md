@@ -29,8 +29,8 @@ import type {
   CreativeEngine,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import type CreativeEditorSDK from '@cesdk/cesdk-js';
+} from '@cesdk/cesdk-js'
+import type CreativeEditorSDK from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -46,44 +46,44 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
-type ValidationSeverity = 'error' | 'warning';
+type ValidationSeverity = 'error' | 'warning'
 
 interface ValidationIssue {
   type:
     | 'outside_page'
     | 'protruding'
     | 'text_obscured'
-    | 'unfilled_placeholder';
-  severity: ValidationSeverity;
-  blockId: number;
-  blockName: string;
-  message: string;
+    | 'unfilled_placeholder'
+  severity: ValidationSeverity
+  blockId: number
+  blockName: string
+  message: string
 }
 
 interface ValidationResult {
-  errors: ValidationIssue[];
-  warnings: ValidationIssue[];
+  errors: ValidationIssue[]
+  warnings: ValidationIssue[]
 }
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -94,221 +94,224 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } });
+    await cesdk.actions.run('scene.create', { page: { width: 800, height: 600, unit: 'Pixel' } })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Set role to adopter so placeholders can be replaced
-    engine.editor.setRole('Adopter');
+    engine.editor.setRole('Adopter')
 
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
-    await this.createDemoScene(engine, page);
-    this.overrideExportAction(cesdk, engine);
+    await this.createDemoScene(engine, page)
+    this.overrideExportAction(cesdk, engine)
   }
 
   private async createDemoScene(
     engine: CreativeEngine,
     page: number
   ): Promise<void> {
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const centerY = pageHeight / 2;
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const centerY = pageHeight / 2
 
     // Row 1: Main validation examples (horizontally aligned)
-    const row1Y = centerY - 120;
-    const elementWidth = 150;
-    const elementHeight = 100;
-    const spacing = 20;
+    const row1Y = centerY - 120
+    const elementWidth = 150
+    const elementHeight = 100
+    const spacing = 20
 
     // Calculate positions for 4 elements in a row
-    const totalRowWidth = elementWidth * 4 + spacing * 3;
-    const startX = (pageWidth - totalRowWidth) / 2;
+    const totalRowWidth = elementWidth * 4 + spacing * 3
+    const startX = (pageWidth - totalRowWidth) / 2
 
     // Create an image that's outside the page (will trigger error)
     // Positioned to the left of the page - completely outside
-    const outsideImage = engine.block.create('graphic');
-    engine.block.setName(outsideImage, 'Outside Image');
-    engine.block.setShape(outsideImage, engine.block.createShape('rect'));
-    const outsideFill = engine.block.createFill('image');
+    const outsideImage = engine.block.create('graphic')
+    engine.block.setName(outsideImage, 'Outside Image')
+    engine.block.setShape(outsideImage, engine.block.createShape('rect'))
+    const outsideFill = engine.block.createFill('image')
     engine.block.setString(
       outsideFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(outsideImage, outsideFill);
-    engine.block.setWidth(outsideImage, elementWidth);
-    engine.block.setHeight(outsideImage, elementHeight);
-    engine.block.setPositionX(outsideImage, -elementWidth - 10); // Left of the page
-    engine.block.setPositionY(outsideImage, row1Y);
-    engine.block.appendChild(page, outsideImage);
+    )
+    engine.block.setFill(outsideImage, outsideFill)
+    engine.block.setWidth(outsideImage, elementWidth)
+    engine.block.setHeight(outsideImage, elementHeight)
+    engine.block.setPositionX(outsideImage, -elementWidth - 10) // Left of the page
+    engine.block.setPositionY(outsideImage, row1Y)
+    engine.block.appendChild(page, outsideImage)
 
     // Create a properly placed image for reference (first in row)
-    const validImage = engine.block.create('graphic');
-    engine.block.setName(validImage, 'Valid Image');
-    engine.block.setShape(validImage, engine.block.createShape('rect'));
-    const validFill = engine.block.createFill('image');
+    const validImage = engine.block.create('graphic')
+    engine.block.setName(validImage, 'Valid Image')
+    engine.block.setShape(validImage, engine.block.createShape('rect'))
+    const validFill = engine.block.createFill('image')
     engine.block.setString(
       validFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_3.jpg'
-    );
-    engine.block.setFill(validImage, validFill);
-    engine.block.setWidth(validImage, elementWidth);
-    engine.block.setHeight(validImage, elementHeight);
-    engine.block.setPositionX(validImage, startX);
-    engine.block.setPositionY(validImage, row1Y);
-    engine.block.appendChild(page, validImage);
+    )
+    engine.block.setFill(validImage, validFill)
+    engine.block.setWidth(validImage, elementWidth)
+    engine.block.setHeight(validImage, elementHeight)
+    engine.block.setPositionX(validImage, startX)
+    engine.block.setPositionY(validImage, row1Y)
+    engine.block.appendChild(page, validImage)
 
     // Create unfilled placeholder (second in row - triggers error)
-    const placeholder = engine.block.create('graphic');
-    engine.block.setName(placeholder, 'Unfilled Placeholder');
-    engine.block.setShape(placeholder, engine.block.createShape('rect'));
-    const placeholderFill = engine.block.createFill('image');
-    engine.block.setFill(placeholder, placeholderFill);
-    engine.block.setWidth(placeholder, elementWidth);
-    engine.block.setHeight(placeholder, elementHeight);
-    engine.block.setPositionX(placeholder, startX + elementWidth + spacing);
-    engine.block.setPositionY(placeholder, row1Y);
-    engine.block.appendChild(page, placeholder);
-    engine.block.setScopeEnabled(placeholder, 'fill/change', true);
-    engine.block.setPlaceholderBehaviorEnabled(placeholderFill, true);
-    engine.block.setPlaceholderEnabled(placeholder, true);
-    engine.block.setPlaceholderControlsOverlayEnabled(placeholder, true);
-    engine.block.setPlaceholderControlsButtonEnabled(placeholder, true);
+    const placeholder = engine.block.create('graphic')
+    engine.block.setName(placeholder, 'Unfilled Placeholder')
+    engine.block.setShape(placeholder, engine.block.createShape('rect'))
+    const placeholderFill = engine.block.createFill('image')
+    engine.block.setFill(placeholder, placeholderFill)
+    engine.block.setWidth(placeholder, elementWidth)
+    engine.block.setHeight(placeholder, elementHeight)
+    engine.block.setPositionX(placeholder, startX + elementWidth + spacing)
+    engine.block.setPositionY(placeholder, row1Y)
+    engine.block.appendChild(page, placeholder)
+    engine.block.setScopeEnabled(placeholder, 'fill/change', true)
+    engine.block.setPlaceholderBehaviorEnabled(placeholderFill, true)
+    engine.block.setPlaceholderEnabled(placeholder, true)
+    engine.block.setPlaceholderControlsOverlayEnabled(placeholder, true)
+    engine.block.setPlaceholderControlsButtonEnabled(placeholder, true)
 
     // Create text that will be partially obscured (third in row)
-    const obscuredText = engine.block.create('text');
-    engine.block.setName(obscuredText, 'Obscured Text');
+    const obscuredText = engine.block.create('text')
+    engine.block.setName(obscuredText, 'Obscured Text')
     engine.block.setPositionX(
       obscuredText,
       startX + (elementWidth + spacing) * 2
-    );
-    engine.block.setPositionY(obscuredText, row1Y);
-    engine.block.setWidth(obscuredText, elementWidth);
-    engine.block.setHeight(obscuredText, elementHeight);
-    engine.block.replaceText(obscuredText, 'Hidden');
-    engine.block.setFloat(obscuredText, 'text/fontSize', 48);
-    engine.block.appendChild(page, obscuredText);
+    )
+    engine.block.setPositionY(obscuredText, row1Y)
+    engine.block.setWidth(obscuredText, elementWidth)
+    engine.block.setHeight(obscuredText, elementHeight)
+    engine.block.replaceText(obscuredText, 'Hidden')
+    engine.block.setFloat(obscuredText, 'text/fontSize', 48)
+    engine.block.appendChild(page, obscuredText)
 
     // Create a shape that overlaps the text (added after text = on top)
-    const overlappingShape = engine.block.create('graphic');
-    engine.block.setName(overlappingShape, 'Overlapping Shape');
-    engine.block.setShape(overlappingShape, engine.block.createShape('rect'));
-    const shapeFill = engine.block.createFill('color');
+    const overlappingShape = engine.block.create('graphic')
+    engine.block.setName(overlappingShape, 'Overlapping Shape')
+    engine.block.setShape(overlappingShape, engine.block.createShape('rect'))
+    const shapeFill = engine.block.createFill('color')
     engine.block.setColor(shapeFill, 'fill/color/value', {
       r: 0.2,
       g: 0.4,
       b: 0.8,
       a: 0.8
-    });
-    engine.block.setFill(overlappingShape, shapeFill);
-    engine.block.setWidth(overlappingShape, elementWidth);
-    engine.block.setHeight(overlappingShape, elementHeight);
+    })
+    engine.block.setFill(overlappingShape, shapeFill)
+    engine.block.setWidth(overlappingShape, elementWidth)
+    engine.block.setHeight(overlappingShape, elementHeight)
     engine.block.setPositionX(
       overlappingShape,
       startX + (elementWidth + spacing) * 2
-    );
-    engine.block.setPositionY(overlappingShape, row1Y);
-    engine.block.appendChild(page, overlappingShape);
+    )
+    engine.block.setPositionY(overlappingShape, row1Y)
+    engine.block.appendChild(page, overlappingShape)
 
     // Create an image that protrudes from the page (fourth in row - will trigger warning)
     // Extends past right page boundary
-    const protrudingImage = engine.block.create('graphic');
-    engine.block.setName(protrudingImage, 'Protruding Image');
-    engine.block.setShape(protrudingImage, engine.block.createShape('rect'));
-    const protrudingFill = engine.block.createFill('image');
+    const protrudingImage = engine.block.create('graphic')
+    engine.block.setName(protrudingImage, 'Protruding Image')
+    engine.block.setShape(protrudingImage, engine.block.createShape('rect'))
+    const protrudingFill = engine.block.createFill('image')
     engine.block.setString(
       protrudingFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_2.jpg'
-    );
-    engine.block.setFill(protrudingImage, protrudingFill);
-    engine.block.setWidth(protrudingImage, elementWidth);
-    engine.block.setHeight(protrudingImage, elementHeight);
-    engine.block.setPositionX(protrudingImage, pageWidth - elementWidth / 2); // Extends 75px past right
-    engine.block.setPositionY(protrudingImage, row1Y);
-    engine.block.appendChild(page, protrudingImage);
+    )
+    engine.block.setFill(protrudingImage, protrudingFill)
+    engine.block.setWidth(protrudingImage, elementWidth)
+    engine.block.setHeight(protrudingImage, elementHeight)
+    engine.block.setPositionX(protrudingImage, pageWidth - elementWidth / 2) // Extends 75px past right
+    engine.block.setPositionY(protrudingImage, row1Y)
+    engine.block.appendChild(page, protrudingImage)
 
     // Add explanatory text below the row
-    const explanationText = engine.block.create('text');
-    engine.block.setPositionX(explanationText, 50);
-    engine.block.setPositionY(explanationText, row1Y + elementHeight + 40);
-    engine.block.setWidth(explanationText, pageWidth - 100);
-    engine.block.setHeightMode(explanationText, 'Auto');
+    const explanationText = engine.block.create('text')
+    engine.block.setPositionX(explanationText, 50)
+    engine.block.setPositionY(explanationText, row1Y + elementHeight + 40)
+    engine.block.setWidth(explanationText, pageWidth - 100)
+    engine.block.setHeightMode(explanationText, 'Auto')
     engine.block.replaceText(
       explanationText,
       'Click Export to run validation. Move elements to fix issues.'
-    );
-    engine.block.setFloat(explanationText, 'text/fontSize', 48);
-    engine.block.setEnum(explanationText, 'text/horizontalAlignment', 'Center');
-    engine.block.appendChild(page, explanationText);
+    )
+    engine.block.setFloat(explanationText, 'text/fontSize', 48)
+    engine.block.setEnum(explanationText, 'text/horizontalAlignment', 'Center')
+    engine.block.appendChild(page, explanationText)
   }
 
   private getBoundingBox(
     engine: CreativeEngine,
     blockId: number
   ): [number, number, number, number] {
-    const x = engine.block.getGlobalBoundingBoxX(blockId);
-    const y = engine.block.getGlobalBoundingBoxY(blockId);
-    const width = engine.block.getGlobalBoundingBoxWidth(blockId);
-    const height = engine.block.getGlobalBoundingBoxHeight(blockId);
-    return [x, y, x + width, y + height];
+    const x = engine.block.getGlobalBoundingBoxX(blockId)
+    const y = engine.block.getGlobalBoundingBoxY(blockId)
+    const width = engine.block.getGlobalBoundingBoxWidth(blockId)
+    const height = engine.block.getGlobalBoundingBoxHeight(blockId)
+    return [x, y, x + width, y + height]
   }
 
   private calculateOverlap(
     box1: [number, number, number, number],
     box2: [number, number, number, number]
   ): number {
-    const [ax1, ay1, ax2, ay2] = box1;
-    const [bx1, by1, bx2, by2] = box2;
+    const [ax1, ay1, ax2, ay2] = box1
+    const [bx1, by1, bx2, by2] = box2
 
-    const overlapWidth = Math.max(0, Math.min(ax2, bx2) - Math.max(ax1, bx1));
-    const overlapHeight = Math.max(0, Math.min(ay2, by2) - Math.max(ay1, by1));
-    const overlapArea = overlapWidth * overlapHeight;
+    const overlapWidth = Math.max(0, Math.min(ax2, bx2) - Math.max(ax1, bx1))
+    const overlapHeight = Math.max(0, Math.min(ay2, by2) - Math.max(ay1, by1))
+    const overlapArea = overlapWidth * overlapHeight
 
-    const box1Area = (ax2 - ax1) * (ay2 - ay1);
-    if (box1Area === 0) return 0;
+    const box1Area = (ax2 - ax1) * (ay2 - ay1)
+    if (box1Area === 0)
+      return 0
 
-    return overlapArea / box1Area;
+    return overlapArea / box1Area
   }
 
   private getBlockName(engine: CreativeEngine, blockId: number): string {
-    const name = engine.block.getName(blockId);
-    if (name) return name;
-    const kind = engine.block.getKind(blockId);
-    return kind.charAt(0).toUpperCase() + kind.slice(1);
+    const name = engine.block.getName(blockId)
+    if (name)
+      return name
+    const kind = engine.block.getKind(blockId)
+    return kind.charAt(0).toUpperCase() + kind.slice(1)
   }
 
   private getRelevantBlocks(engine: CreativeEngine): number[] {
     return [
       ...engine.block.findByType('text'),
       ...engine.block.findByType('graphic')
-    ];
+    ]
   }
 
   private findOutsideBlocks(
     engine: CreativeEngine,
     page: number
   ): ValidationIssue[] {
-    const issues: ValidationIssue[] = [];
-    const pageBounds = this.getBoundingBox(engine, page);
+    const issues: ValidationIssue[] = []
+    const pageBounds = this.getBoundingBox(engine, page)
 
     for (const blockId of this.getRelevantBlocks(engine)) {
-      if (!engine.block.isValid(blockId)) continue;
+      if (!engine.block.isValid(blockId))
+        continue
 
-      const blockBounds = this.getBoundingBox(engine, blockId);
-      const overlap = this.calculateOverlap(blockBounds, pageBounds);
+      const blockBounds = this.getBoundingBox(engine, blockId)
+      const overlap = this.calculateOverlap(blockBounds, pageBounds)
 
       if (overlap === 0) {
         // Element is completely outside the page
@@ -318,26 +321,27 @@ class Example implements EditorPlugin {
           blockId,
           blockName: this.getBlockName(engine, blockId),
           message: 'Element is completely outside the visible page area'
-        });
+        })
       }
     }
 
-    return issues;
+    return issues
   }
 
   private findProtrudingBlocks(
     engine: CreativeEngine,
     page: number
   ): ValidationIssue[] {
-    const issues: ValidationIssue[] = [];
-    const pageBounds = this.getBoundingBox(engine, page);
+    const issues: ValidationIssue[] = []
+    const pageBounds = this.getBoundingBox(engine, page)
 
     for (const blockId of this.getRelevantBlocks(engine)) {
-      if (!engine.block.isValid(blockId)) continue;
+      if (!engine.block.isValid(blockId))
+        continue
 
       // Compare element bounds against page bounds
-      const blockBounds = this.getBoundingBox(engine, blockId);
-      const overlap = this.calculateOverlap(blockBounds, pageBounds);
+      const blockBounds = this.getBoundingBox(engine, blockId)
+      const overlap = this.calculateOverlap(blockBounds, pageBounds)
 
       // Protruding: partially inside (overlap > 0) but not fully inside (overlap < 1)
       if (overlap > 0 && overlap < 0.99) {
@@ -347,38 +351,41 @@ class Example implements EditorPlugin {
           blockId,
           blockName: this.getBlockName(engine, blockId),
           message: 'Element extends beyond page boundaries'
-        });
+        })
       }
     }
 
-    return issues;
+    return issues
   }
 
   private findObscuredText(
     engine: CreativeEngine,
     page: number
   ): ValidationIssue[] {
-    const issues: ValidationIssue[] = [];
-    const children = engine.block.getChildren(page);
-    const textBlocks = engine.block.findByType('text');
+    const issues: ValidationIssue[] = []
+    const children = engine.block.getChildren(page)
+    const textBlocks = engine.block.findByType('text')
 
     for (const textId of textBlocks) {
-      if (!engine.block.isValid(textId)) continue;
+      if (!engine.block.isValid(textId))
+        continue
 
-      const textIndex = children.indexOf(textId);
-      if (textIndex === -1) continue;
+      const textIndex = children.indexOf(textId)
+      if (textIndex === -1)
+        continue
 
       // Elements later in children array are rendered on top
-      const blocksAbove = children.slice(textIndex + 1);
+      const blocksAbove = children.slice(textIndex + 1)
 
       for (const aboveId of blocksAbove) {
         // Skip text blocks - they don't typically obscure other text
-        if (engine.block.getType(aboveId) === '//ly.img.ubq/text') continue;
+        if (engine.block.getType(aboveId) === '//ly.img.ubq/text')
+          continue
 
         const overlap = this.calculateOverlap(
           this.getBoundingBox(engine, textId),
           this.getBoundingBox(engine, aboveId)
-        );
+        )
 
         if (overlap > 0) {
           // Text is obscured by element above it
@@ -388,21 +395,22 @@ class Example implements EditorPlugin {
             blockId: textId,
             blockName: this.getBlockName(engine, textId),
             message: 'Text may be partially hidden by overlapping elements'
-          });
-          break;
+          })
+          break
         }
       }
     }
 
-    return issues;
+    return issues
   }
 
   private findUnfilledPlaceholders(engine: CreativeEngine): ValidationIssue[] {
-    const issues: ValidationIssue[] = [];
-    const placeholders = engine.block.findAllPlaceholders();
+    const issues: ValidationIssue[] = []
+    const placeholders = engine.block.findAllPlaceholders()
 
     for (const blockId of placeholders) {
-      if (!engine.block.isValid(blockId)) continue;
+      if (!engine.block.isValid(blockId))
+        continue
 
       if (!this.isPlaceholderFilled(engine, blockId)) {
         issues.push({
@@ -411,51 +419,52 @@ class Example implements EditorPlugin {
           blockId,
           blockName: this.getBlockName(engine, blockId),
           message: 'Placeholder has not been filled with content'
-        });
+        })
       }
     }
 
-    return issues;
+    return issues
   }
 
   private isPlaceholderFilled(
     engine: CreativeEngine,
     blockId: number
   ): boolean {
-    const fillId = engine.block.getFill(blockId);
-    if (!fillId || !engine.block.isValid(fillId)) return false;
+    const fillId = engine.block.getFill(blockId)
+    if (!fillId || !engine.block.isValid(fillId))
+      return false
 
-    const fillType = engine.block.getType(fillId);
+    const fillType = engine.block.getType(fillId)
 
     // Check image fill - empty URI means unfilled placeholder
     if (fillType === '//ly.img.ubq/fill/image') {
-      const imageUri = engine.block.getString(fillId, 'fill/image/imageFileURI');
-      return imageUri !== '' && imageUri !== undefined;
+      const imageUri = engine.block.getString(fillId, 'fill/image/imageFileURI')
+      return imageUri !== '' && imageUri !== undefined
     }
 
     // Other fill types are considered filled
-    return true;
+    return true
   }
 
   private validateDesign(engine: CreativeEngine): ValidationResult {
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
-    const outsideIssues = this.findOutsideBlocks(engine, page);
-    const protrudingIssues = this.findProtrudingBlocks(engine, page);
-    const obscuredIssues = this.findObscuredText(engine, page);
-    const placeholderIssues = this.findUnfilledPlaceholders(engine);
+    const outsideIssues = this.findOutsideBlocks(engine, page)
+    const protrudingIssues = this.findProtrudingBlocks(engine, page)
+    const obscuredIssues = this.findObscuredText(engine, page)
+    const placeholderIssues = this.findUnfilledPlaceholders(engine)
 
     const allIssues = [
       ...outsideIssues,
       ...protrudingIssues,
       ...obscuredIssues,
       ...placeholderIssues
-    ];
+    ]
 
     return {
-      errors: allIssues.filter((i) => i.severity === 'error'),
-      warnings: allIssues.filter((i) => i.severity === 'warning')
-    };
+      errors: allIssues.filter(i => i.severity === 'error'),
+      warnings: allIssues.filter(i => i.severity === 'warning')
+    }
   }
 
   private overrideExportAction(
@@ -465,18 +474,18 @@ class Example implements EditorPlugin {
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
       id: 'ly.img.actions.navigationBar',
       children: ['ly.img.exportImage.navigationBar']
-    });
+    })
 
-    const exportDesign = cesdk.actions.get('exportDesign');
+    const exportDesign = cesdk.actions.get('exportDesign')
 
     cesdk.actions.register('exportDesign', async () => {
-      const result = this.validateDesign(engine);
-      const hasErrors = result.errors.length > 0;
-      const hasWarnings = result.warnings.length > 0;
+      const result = this.validateDesign(engine)
+      const hasErrors = result.errors.length > 0
+      const hasWarnings = result.warnings.length > 0
 
       // Log all issues to console for debugging
       if (hasErrors || hasWarnings) {
-        console.log('Validation Results:', result);
+        console.log('Validation Results:', result)
       }
 
       // Block export for errors
@@ -485,14 +494,14 @@ class Example implements EditorPlugin {
           message: `${result.errors.length} error(s) found - export blocked`,
           type: 'error',
           duration: 'long'
-        });
+        })
 
         // Select first problematic block
-        const firstError = result.errors[0];
+        const firstError = result.errors[0]
         if (engine.block.isValid(firstError.blockId)) {
-          engine.block.select(firstError.blockId);
+          engine.block.select(firstError.blockId)
         }
-        return;
+        return
       }
 
       // Show warning but allow export
@@ -501,16 +510,16 @@ class Example implements EditorPlugin {
           message: `${result.warnings.length} warning(s) found - proceeding with export`,
           type: 'warning',
           duration: 'medium'
-        });
+        })
       }
 
       // Proceed with export
-      exportDesign();
-    });
+      exportDesign()
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide demonstrates how to detect elements outside the page, find protruding content, identify obscured text, and integrate validation into the export workflow.
@@ -520,11 +529,11 @@ This guide demonstrates how to detect elements outside the page, find protruding
 To detect spatial issues, we need to get the bounding box of elements in global coordinates. The `getGlobalBoundingBox*` methods return positions that account for all transformations:
 
 ```typescript highlight-get-bounding-box
-const x = engine.block.getGlobalBoundingBoxX(blockId);
-const y = engine.block.getGlobalBoundingBoxY(blockId);
-const width = engine.block.getGlobalBoundingBoxWidth(blockId);
-const height = engine.block.getGlobalBoundingBoxHeight(blockId);
-return [x, y, x + width, y + height];
+const x = engine.block.getGlobalBoundingBoxX(blockId)
+const y = engine.block.getGlobalBoundingBoxY(blockId)
+const width = engine.block.getGlobalBoundingBoxWidth(blockId)
+const height = engine.block.getGlobalBoundingBoxHeight(blockId)
+return [x, y, x + width, y + height]
 ```
 
 This returns coordinates as `[x1, y1, x2, y2]` representing the top-left and bottom-right corners of the element. The overlap between element and page bounds is calculated as the intersection area divided by the element's total area. An overlap of 0 means completely outside, while 1 (100%) means fully inside.
@@ -563,8 +572,8 @@ An overlap between 0% and 100% indicates the element is partially inside the pag
 Text hidden behind other elements may be unreadable in the final export. First, get the stacking order and all text blocks:
 
 ```typescript highlight-find-obscured-text
-const children = engine.block.getChildren(page);
-const textBlocks = engine.block.findByType('text');
+const children = engine.block.getChildren(page)
+const textBlocks = engine.block.findByType('text')
 ```
 
 The `getChildren()` method returns blocks in stacking order - elements later in the array are rendered on top. For each text block, check if any non-text element above it overlaps with its bounds:
@@ -593,22 +602,23 @@ We skip text-on-text comparisons since transparent text backgrounds don't typica
 Placeholders mark areas where users must add content before export. First, find all placeholder blocks in the design:
 
 ```typescript highlight-find-placeholders
-const placeholders = engine.block.findAllPlaceholders();
+const placeholders = engine.block.findAllPlaceholders()
 ```
 
 Then inspect each placeholder's fill to determine if content has been added. Get the fill block and check its type to determine the validation logic:
 
 ```typescript highlight-check-placeholder-filled
-    const fillId = engine.block.getFill(blockId);
-    if (!fillId || !engine.block.isValid(fillId)) return false;
+const fillId = engine.block.getFill(blockId)
+if (!fillId || !engine.block.isValid(fillId))
+  return false
 
-    const fillType = engine.block.getType(fillId);
+const fillType = engine.block.getType(fillId)
 
-    // Check image fill - empty URI means unfilled placeholder
-    if (fillType === '//ly.img.ubq/fill/image') {
-      const imageUri = engine.block.getString(fillId, 'fill/image/imageFileURI');
-      return imageUri !== '' && imageUri !== undefined;
-    }
+// Check image fill - empty URI means unfilled placeholder
+if (fillType === '//ly.img.ubq/fill/image') {
+  const imageUri = engine.block.getString(fillId, 'fill/image/imageFileURI')
+  return imageUri !== '' && imageUri !== undefined
+}
 ```
 
 For image placeholders, check if the `fill/image/imageFileURI` property has a value. An empty or undefined URI indicates the placeholder hasn't been filled. Unfilled placeholders are treated as errors that block export, ensuring users complete all required content before exporting.
@@ -618,44 +628,44 @@ For image placeholders, check if the `fill/image/imageFileURI` property has a va
 Intercept the navigation bar export action using `cesdk.actions.get()` and `cesdk.actions.register()`. The action ID `'exportDesign'` controls the export button in the CE.SDK interface:
 
 ```typescript highlight-override-export-action
-    cesdk.actions.register('exportDesign', async () => {
-      const result = this.validateDesign(engine);
-      const hasErrors = result.errors.length > 0;
-      const hasWarnings = result.warnings.length > 0;
+cesdk.actions.register('exportDesign', async () => {
+  const result = this.validateDesign(engine)
+  const hasErrors = result.errors.length > 0
+  const hasWarnings = result.warnings.length > 0
 
-      // Log all issues to console for debugging
-      if (hasErrors || hasWarnings) {
-        console.log('Validation Results:', result);
-      }
+  // Log all issues to console for debugging
+  if (hasErrors || hasWarnings) {
+    console.log('Validation Results:', result)
+  }
 
-      // Block export for errors
-      if (hasErrors) {
-        cesdk.ui.showNotification({
-          message: `${result.errors.length} error(s) found - export blocked`,
-          type: 'error',
-          duration: 'long'
-        });
+  // Block export for errors
+  if (hasErrors) {
+    cesdk.ui.showNotification({
+      message: `${result.errors.length} error(s) found - export blocked`,
+      type: 'error',
+      duration: 'long'
+    })
 
-        // Select first problematic block
-        const firstError = result.errors[0];
-        if (engine.block.isValid(firstError.blockId)) {
-          engine.block.select(firstError.blockId);
-        }
-        return;
-      }
+    // Select first problematic block
+    const firstError = result.errors[0]
+    if (engine.block.isValid(firstError.blockId)) {
+      engine.block.select(firstError.blockId)
+    }
+    return
+  }
 
-      // Show warning but allow export
-      if (hasWarnings) {
-        cesdk.ui.showNotification({
-          message: `${result.warnings.length} warning(s) found - proceeding with export`,
-          type: 'warning',
-          duration: 'medium'
-        });
-      }
+  // Show warning but allow export
+  if (hasWarnings) {
+    cesdk.ui.showNotification({
+      message: `${result.warnings.length} warning(s) found - proceeding with export`,
+      type: 'warning',
+      duration: 'medium'
+    })
+  }
 
-      // Proceed with export
-      exportDesign();
-    });
+  // Proceed with export
+  exportDesign()
+})
 ```
 
 This override runs validation before export, shows notifications for errors or warnings, and selects the first problematic block to help users locate issues. Export proceeds only when validation passes.

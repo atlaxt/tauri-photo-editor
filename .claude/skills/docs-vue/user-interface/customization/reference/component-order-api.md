@@ -65,16 +65,16 @@ Matchers specify which components to target in `updateOrderComponent`, `removeOr
 
 ```javascript
 // Position-based
-cesdk.ui.removeOrderComponent({ in: 'ly.img.dock', match: 'first' });
+cesdk.ui.removeOrderComponent({ in: 'ly.img.dock', match: 'first' })
 
 // Glob pattern
-cesdk.ui.removeOrderComponent({ in: 'ly.img.dock', match: 'ly.img.*' });
+cesdk.ui.removeOrderComponent({ in: 'ly.img.dock', match: 'ly.img.*' })
 
 // Predicate function
 cesdk.ui.removeOrderComponent({
   in: 'ly.img.dock',
-  match: (component) => component.id.includes('separator')
-});
+  match: component => component.id.includes('separator')
+})
 ```
 
 ### Edit Mode Context
@@ -85,7 +85,7 @@ Use the `when` option to create conditional orderings that apply only in specifi
 cesdk.ui.setComponentOrder(
   { in: 'ly.img.inspector.bar', when: { editMode: 'Text' } },
   ['ly.img.text.typeFace.inspectorBar', 'ly.img.text.bold.inspectorBar']
-);
+)
 ```
 
 Available edit modes include: `'Transform'` (default), `'Text'`, `'Crop'`, `'Trim'`, and custom values.
@@ -99,13 +99,13 @@ Use glob patterns in the `in` option to target multiple areas with one call:
 cesdk.ui.updateOrderComponent(
   { in: '*', match: 'ly.img.separator' },
   { disabled: true }
-);
+)
 
 // Target all bar-type areas
 cesdk.ui.removeOrderComponent({
   in: 'ly.img.*.bar',
   match: 'ly.img.spacer'
-});
+})
 ```
 
 ## Method Reference
@@ -134,19 +134,19 @@ cesdk.ui.getComponentOrder<A extends UIArea>(
 
 ```javascript
 // Get dock order
-const dockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' });
+const dockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
 
 // Get canvas bar top order
 const canvasBarTop = cesdk.ui.getComponentOrder({
   in: 'ly.img.canvas.bar',
   at: 'top'
-});
+})
 
 // Get order for specific edit mode
 const textInspector = cesdk.ui.getComponentOrder({
   in: 'ly.img.inspector.bar',
   when: { editMode: 'Text' }
-});
+})
 ```
 
 ### setComponentOrder()
@@ -178,19 +178,19 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   'my.custom.button',
   'ly.img.separator',
   'ly.img.assetLibrary.dock'
-]);
+])
 
 // Set canvas bar with position
 cesdk.ui.setComponentOrder(
   { in: 'ly.img.canvas.bar', at: 'top' },
   ['ly.img.settings.canvasBar']
-);
+)
 
 // Conditional order for Text edit mode
 cesdk.ui.setComponentOrder(
   { in: 'ly.img.inspector.bar', when: { editMode: 'Text' } },
   ['ly.img.text.typeFace.inspectorBar', 'ly.img.text.fontSize.inspectorBar']
-);
+)
 ```
 
 ### insertOrderComponent()
@@ -224,31 +224,31 @@ cesdk.ui.insertOrderComponent<A extends UIArea>(
 
 ```javascript
 // Append to end (default)
-cesdk.ui.insertOrderComponent({ in: 'ly.img.dock' }, 'my.button');
+cesdk.ui.insertOrderComponent({ in: 'ly.img.dock' }, 'my.button')
 
 // Insert multiple at once
 cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', after: 'ly.img.spacer' },
   ['my.button.1', 'my.button.2', 'my.button.3']
-);
+)
 
 // Insert before a component
 cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', before: 'ly.img.separator' },
   'my.button'
-);
+)
 
 // Insert at start
 cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', position: 'start' },
   'my.first.button'
-);
+)
 
 // Insert at specific index
 cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', position: 2 },
   'my.third.button'
-);
+)
 
 // Insert with inline configuration
 cesdk.ui.insertOrderComponent(
@@ -260,7 +260,7 @@ cesdk.ui.insertOrderComponent(
     icon: '@imgly/Download',
     onClick: async () => { /* export logic */ }
   }
-);
+)
 ```
 
 ### updateOrderComponent()
@@ -293,25 +293,25 @@ cesdk.ui.updateOrderComponent<A extends UIAreaSpecifier>(
 cesdk.ui.updateOrderComponent(
   { in: 'ly.img.dock', match: 'ly.img.separator' },
   { key: 'my-separator' }
-);
+)
 
 // Update by glob pattern
 cesdk.ui.updateOrderComponent(
   { in: 'ly.img.dock', match: 'ly.img.*' },
   { disabled: true }
-);
+)
 
 // Update using function
 cesdk.ui.updateOrderComponent(
   { in: 'ly.img.inspector.bar', match: 'first' },
-  (component) => ({ key: `${component.id}-modified` })
-);
+  component => ({ key: `${component.id}-modified` })
+)
 
 // Update across all areas
 const results = cesdk.ui.updateOrderComponent(
   { in: '*', match: 'ly.img.separator' },
   { key: 'global-sep' }
-);
+)
 ```
 
 ### removeOrderComponent()
@@ -342,25 +342,25 @@ cesdk.ui.removeOrderComponent<A extends UIAreaSpecifier>(
 cesdk.ui.removeOrderComponent({
   in: 'ly.img.dock',
   match: 'ly.img.separator'
-});
+})
 
 // Remove by position
 cesdk.ui.removeOrderComponent({
   in: 'ly.img.inspector.bar',
   match: 'last'
-});
+})
 
 // Remove by glob pattern
 cesdk.ui.removeOrderComponent({
   in: 'ly.img.dock',
   match: 'ly.img.*'
-});
+})
 
 // Remove from all areas
 const results = cesdk.ui.removeOrderComponent({
   in: '*',
   match: 'ly.img.separator'
-});
+})
 ```
 
 ## TypeScript Types Reference
@@ -369,42 +369,42 @@ Key types exported from CE.SDK for working with the Component Order API:
 
 ```typescript
 // UI Areas
-type UIArea =
-  | 'ly.img.dock'
-  | 'ly.img.inspector.bar'
-  | 'ly.img.canvas.menu'
-  | 'ly.img.navigation.bar'
-  | 'ly.img.canvas.bar';
+type UIArea
+  = | 'ly.img.dock'
+    | 'ly.img.inspector.bar'
+    | 'ly.img.canvas.menu'
+    | 'ly.img.navigation.bar'
+    | 'ly.img.canvas.bar'
 
 // Component matchers
-type ComponentMatcher<C> =
-  | 'first'
-  | 'last'
-  | number
-  | string              // exact ID or glob pattern
-  | Partial<C>          // object match
-  | ((c: C, i: number) => boolean);  // predicate
+type ComponentMatcher<C>
+  = | 'first'
+    | 'last'
+    | number
+    | string // exact ID or glob pattern
+    | Partial<C> // object match
+    | ((c: C, i: number) => boolean) // predicate
 
 // Order context for conditional ordering
 interface OrderContext {
-  editMode?: string;    // 'Transform', 'Text', 'Crop', 'Trim', 'Vector', etc.
+  editMode?: string // 'Transform', 'Text', 'Crop', 'Trim', 'Vector', etc.
 }
 
 // Result types
 interface InsertResult<A> {
-  inserted: boolean;
-  insertedCount: number;
-  order: OrderComponentFor<A>[];
+  inserted: boolean
+  insertedCount: number
+  order: OrderComponentFor<A>[]
 }
 
 interface UpdateResult<A> {
-  updated: number;
-  order: OrderComponentFor<A>[];
+  updated: number
+  order: OrderComponentFor<A>[]
 }
 
 interface RemoveResult<A> {
-  removed: number;
-  order: OrderComponentFor<A>[];
+  removed: number
+  order: OrderComponentFor<A>[]
 }
 ```
 
@@ -416,10 +416,10 @@ When targeting `'ly.img.canvas.bar'`, you must specify `at: 'top'` or `at: 'bott
 
 ```javascript
 // Correct
-cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' });
+cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.bar', at: 'top' })
 
 // Error
-cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.bar' });
+cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.bar' })
 ```
 
 ### "Invalid UI area"
@@ -440,10 +440,10 @@ When using `before` or `after` in `insertOrderComponent`, if the matcher doesn't
 const result = cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', after: 'non.existent.component' },
   'my.button'
-);
+)
 
 if (!result.inserted) {
-  console.warn('Insert failed - matcher found no components');
+  console.warn('Insert failed - matcher found no components')
 }
 ```
 

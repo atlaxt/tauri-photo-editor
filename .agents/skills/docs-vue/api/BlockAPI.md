@@ -156,23 +156,23 @@ saveToArchive(blocks: DesignBlockId[]): Promise<Blob>
 Creates a new block of a given type.
 ```javascript
 // Create a new text block
-const text = engine.block.create('text');
-const page = engine.scene.getCurrentPage();
-engine.block.appendChild(page, text);
+const text = engine.block.create('text')
+const page = engine.scene.getCurrentPage()
+engine.block.appendChild(page, text)
 // Create a new image block
-const image = engine.block.create('graphic');
-engine.block.setShape(image, engine.block.createShape('rect'));
-const imageFill = engine.block.createFill('image');
-engine.block.setFill(image, imageFill);
-engine.block.setString(imageFill, 'fill/image/imageFileURI', 'https://img.ly/static/ubq_samples/sample_1.jpg');
-engine.block.appendChild(page, image);
+const image = engine.block.create('graphic')
+engine.block.setShape(image, engine.block.createShape('rect'))
+const imageFill = engine.block.createFill('image')
+engine.block.setFill(image, imageFill)
+engine.block.setString(imageFill, 'fill/image/imageFileURI', 'https://img.ly/static/ubq_samples/sample_1.jpg')
+engine.block.appendChild(page, image)
 // Create a new video block
-const video = engine.block.create('graphic');
-engine.block.setShape(video, engine.block.createShape('rect'));
-const videoFill = engine.block.createFill('video');
-engine.block.setString(videoFill, 'fill/video/fileURI', 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4');
-engine.block.setFill(video, videoFill);
-engine.block.appendChild(page, video);
+const video = engine.block.create('graphic')
+engine.block.setShape(video, engine.block.createShape('rect'))
+const videoFill = engine.block.createFill('video')
+engine.block.setString(videoFill, 'fill/video/fileURI', 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4')
+engine.block.setFill(video, videoFill)
+engine.block.appendChild(page, video)
 ```
 
 ```typescript
@@ -231,9 +231,9 @@ Create, configure, and manage block fills, including solid colors, gradients, an
 
 Creates a new fill block.
 ```javascript
-const solidColoFill = engine.block.createFill('color');
+const solidColoFill = engine.block.createFill('color')
 // Longhand fill types are also supported
-const imageFill = engine.block.createFill('//ly.img.ubq/fill/image');
+const imageFill = engine.block.createFill('//ly.img.ubq/fill/image')
 ```
 
 ```typescript
@@ -275,7 +275,7 @@ supportsContentFillMode(id: DesignBlockId): boolean
 
 Sets the content fill mode of a block.
 ```javascript
-engine.block.setContentFillMode(image, 'Cover');
+engine.block.setContentFillMode(image, 'Cover')
 ```
 
 ```typescript
@@ -290,7 +290,7 @@ setContentFillMode(id: DesignBlockId, mode: ContentFillMode): void
 
 Gets the content fill mode of a block.
 ```javascript
-engine.block.getContentFillMode(image);
+engine.block.getContentFillMode(image)
 ```
 
 ```typescript
@@ -309,7 +309,7 @@ Sets the color stops for a gradient property.
 engine.block.setGradientColorStops(gradientFill, 'fill/gradient/colors', [
   { color: { r: 1.0, g: 0.8, b: 0.2, a: 1.0 }, stop: 0 },
   { color: { r: 0.3, g: 0.4, b: 0.7, a: 1.0 }, stop: 1 }
-]);
+])
 ```
 
 ```typescript
@@ -342,7 +342,7 @@ getGradientColorStops(id: DesignBlockId, property: string): GradientColorStop[]
 
 Gets the source set from a block property.
 ```javascript
-const sourceSet = engine.block.getSourceSet(imageFill, 'fill/image/sourceSet');
+const sourceSet = engine.block.getSourceSet(imageFill, 'fill/image/sourceSet')
 ```
 
 ```typescript
@@ -364,7 +364,7 @@ engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', [{
   uri: 'https://example.com/sample.jpg',
   width: 800,
   height: 600
-}]);
+}])
 ```
 
 ```typescript
@@ -381,7 +381,7 @@ setSourceSet(id: DesignBlockId, property: SourceSetPropertyName, sourceSet: Sour
 Adds an image file URI to a source set property.
 If an image with the same width already exists in the source set, it will be replaced.
 ```javascript
-await engine.block.addImageFileURIToSourceSet(imageFill, 'fill/image/sourceSet', 'https://example.com/sample.jpg');
+await engine.block.addImageFileURIToSourceSet(imageFill, 'fill/image/sourceSet', 'https://example.com/sample.jpg')
 ```
 
 ```typescript
@@ -400,7 +400,7 @@ addImageFileURIToSourceSet(id: DesignBlockId, property: SourceSetPropertyName, u
 Adds a video file URI to a source set property.
 If a video with the same width already exists in the source set, it will be replaced.
 ```javascript
-await engine.block.addVideoFileURIToSourceSet(videoFill, 'fill/video/sourceSet', 'https://example.com/sample.mp4');
+await engine.block.addVideoFileURIToSourceSet(videoFill, 'fill/video/sourceSet', 'https://example.com/sample.mp4')
 ```
 
 ```typescript
@@ -510,7 +510,7 @@ supportsFill(id: DesignBlockId): boolean
 
 Checks if the fill of a block is enabled.
 ```javascript
-engine.block.isFillEnabled(block);
+engine.block.isFillEnabled(block)
 ```
 
 ```typescript
@@ -526,7 +526,7 @@ isFillEnabled(id: DesignBlockId): boolean
 
 Enables or disables the fill of a block.
 ```javascript
-engine.block.setFillEnabled(block, false);
+engine.block.setFillEnabled(block, false)
 ```
 
 ```typescript
@@ -597,8 +597,8 @@ getFillSolidColor(id: DesignBlockId): RGBA
 
 Gets the number of available audio tracks in a video fill block.
 ```javascript
-const trackCount = engine.block.getAudioTrackCountFromVideo(videoBlock);
-console.log(`Video has ${trackCount} audio tracks`);
+const trackCount = engine.block.getAudioTrackCountFromVideo(videoBlock)
+console.log(`Video has ${trackCount} audio tracks`)
 ```
 
 ```typescript
@@ -661,17 +661,17 @@ createAudiosFromVideo(videoFillBlock: DesignBlockId, options?: AudioFromVideoOpt
 Gets information about all audio tracks from a video fill block.
 ```javascript
 // Get information about all audio tracks
-const trackInfos = engine.block.getAudioInfoFromVideo(videoFillBlock);
-console.log(`Video has ${trackInfos.length} audio tracks`);
+const trackInfos = engine.block.getAudioInfoFromVideo(videoFillBlock)
+console.log(`Video has ${trackInfos.length} audio tracks`)
 // Display track information
 trackInfos.forEach((track, index) => {
-  console.log(`Track ${index}: ${track.channels} channels, ${track.sampleRate}Hz, ${track.language}`);
-});
+  console.log(`Track ${index}: ${track.channels} channels, ${track.sampleRate}Hz, ${track.language}`)
+})
 // Use track info to create audio blocks selectively
-const englishTracks = trackInfos.filter(track => track.language === 'eng');
+const englishTracks = trackInfos.filter(track => track.language === 'eng')
 const audioBlocks = englishTracks.map(track =>
   engine.block.createAudioFromVideo(videoFillBlock, track.trackIndex)
-);
+)
 ```
 
 ```typescript
@@ -1028,7 +1028,7 @@ getPlaybackTime(id: DesignBlockId): number
 Enables or disables solo playback for a block.
 When enabled, only this block's content will play while the rest of the scene remains paused.
 ```javascript
-engine.block.setSoloPlaybackEnabled(videoFill, true);
+engine.block.setSoloPlaybackEnabled(videoFill, true)
 ```
 
 ```typescript
@@ -1043,7 +1043,7 @@ setSoloPlaybackEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if solo playback is enabled for a block.
 ```javascript
-engine.block.isSoloPlaybackEnabled(videoFill);
+engine.block.isSoloPlaybackEnabled(videoFill)
 ```
 
 ```typescript
@@ -1489,7 +1489,7 @@ isVisibleAtCurrentPlaybackTime(id: DesignBlockId): boolean
 Gets the current state of a block.
 A block's state is determined by its own state and that of its shape, fill, and effects.
 ```javascript
-const state = engine.block.getState(block);
+const state = engine.block.getState(block)
 ```
 
 ```typescript
@@ -1505,9 +1505,9 @@ getState(id: DesignBlockId): BlockState
 
 Sets the state of a block.
 ```javascript
-engine.block.setState(video, {type: 'Pending', progress: 0.5});
-engine.block.setState(page, {type: 'Ready'});
-engine.block.setState(image, {type: 'Error', error: 'ImageDecoding'});
+engine.block.setState(video, { type: 'Pending', progress: 0.5 })
+engine.block.setState(page, { type: 'Ready' })
+engine.block.setState(image, { type: 'Error', error: 'ImageDecoding' })
 ```
 
 ```typescript
@@ -1526,7 +1526,7 @@ Get and set a block's 'kind' identifier for custom categorization.
 
 Gets the kind of a given block.
 ```javascript
-const kind = engine.block.getKind(block);
+const kind = engine.block.getKind(block)
 ```
 
 ```typescript
@@ -1542,7 +1542,7 @@ getKind(id: DesignBlockId): string
 
 Sets the kind of a given block, a custom string for categorization of blocks.
 ```javascript
-engine.block.setKind(text, 'title');
+engine.block.setKind(text, 'title')
 ```
 
 ```typescript
@@ -1662,8 +1662,8 @@ Subscribes to state changes for a set of blocks.
 The state is determined by the block and its associated shape, fill, and effects.
 ```javascript
 const unsubscribe = engine.block.onStateChanged([], (blocks) => {
-  blocks.forEach(block => console.log(block));
-});
+  blocks.forEach(block => console.log(block))
+})
 ```
 
 ```typescript
@@ -1719,7 +1719,7 @@ group(ids: DesignBlockId[]): DesignBlockId
 
 Ungroups a group block, releasing its children.
 ```javascript
-engine.block.ungroup(group);
+engine.block.ungroup(group)
 ```
 
 ```typescript
@@ -1734,7 +1734,7 @@ ungroup(id: DesignBlockId): void
 Changes selection to a block within a selected group.
 Nothing happens if the target is not a group.
 ```javascript
-engine.block.enterGroup(group);
+engine.block.enterGroup(group)
 ```
 
 ```typescript
@@ -1749,7 +1749,7 @@ enterGroup(id: DesignBlockId): void
 Changes selection from a block to its parent group.
 Nothing happens if the block is not part of a group.
 ```javascript
-engine.block.exitGroup(member1);
+engine.block.exitGroup(member1)
 ```
 
 ```typescript
@@ -1828,7 +1828,7 @@ findByType(type: ObjectType): DesignBlockId[]
 
 Finds all blocks with a given kind.
 ```javascript
-const allTitles = engine.block.findByKind('title');
+const allTitles = engine.block.findByKind('title')
 ```
 
 ```typescript
@@ -1868,9 +1868,9 @@ Create and configure shape blocks and geometric forms.
 
 Creates a new shape block of a given type.
 ```javascript
-const star = engine.block.createShape('star');
+const star = engine.block.createShape('star')
 // Longhand shape types are also supported
-const rect = engine.block.createShape('//ly.img.ubq/shape/rect');
+const rect = engine.block.createShape('//ly.img.ubq/shape/rect')
 ```
 
 ```typescript
@@ -2175,7 +2175,7 @@ getBackgroundColorRGBA(id: DesignBlockId): RGBA
 
 Enables or disables the background of a block.
 ```javascript
-engine.block.setBackgroundColorEnabled(block, true);
+engine.block.setBackgroundColorEnabled(block, true)
 ```
 
 ```typescript
@@ -2190,7 +2190,7 @@ setBackgroundColorEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the background of a block is enabled.
 ```javascript
-const backgroundColorIsEnabled = engine.block.isBackgroundColorEnabled(block);
+const backgroundColorIsEnabled = engine.block.isBackgroundColorEnabled(block)
 ```
 
 ```typescript
@@ -2289,7 +2289,7 @@ getPositionYMode(id: DesignBlockId): PositionYMode
 Sets the X position of a block.
 The position refers to the block's local space, relative to its parent with the origin at the top left.
 ```javascript
-engine.block.setPositionX(block, 0.25);
+engine.block.setPositionX(block, 0.25)
 ```
 
 ```typescript
@@ -2304,7 +2304,7 @@ setPositionX(id: DesignBlockId, value: number): void
 
 Sets the mode for the block's X position.
 ```javascript
-engine.block.setPositionXMode(block, 'Percent');
+engine.block.setPositionXMode(block, 'Percent')
 ```
 
 ```typescript
@@ -2320,7 +2320,7 @@ setPositionXMode(id: DesignBlockId, mode: PositionXMode): void
 Sets the Y position of a block.
 The position refers to the block's local space, relative to its parent with the origin at the top left.
 ```javascript
-engine.block.setPositionY(block, 0.25);
+engine.block.setPositionY(block, 0.25)
 ```
 
 ```typescript
@@ -2335,7 +2335,7 @@ setPositionY(id: DesignBlockId, value: number): void
 
 Sets the mode for the block's Y position.
 ```javascript
-engine.block.setPositionYMode(block, 'Absolute');
+engine.block.setPositionYMode(block, 'Absolute')
 ```
 
 ```typescript
@@ -2476,7 +2476,7 @@ setRotation(id: DesignBlockId, radians: number): void
 
 Gets the width of a block in the current width mode.
 ```javascript
-const width = engine.block.getWidth(block);
+const width = engine.block.getWidth(block)
 ```
 
 ```typescript
@@ -2492,7 +2492,7 @@ getWidth(id: DesignBlockId): number
 
 Gets the mode for the block's width.
 ```javascript
-const widthMode = engine.block.getWidthMode(block);
+const widthMode = engine.block.getWidthMode(block)
 ```
 
 ```typescript
@@ -2508,7 +2508,7 @@ getWidthMode(id: DesignBlockId): WidthMode
 
 Gets the height of a block in the current height mode.
 ```javascript
-const height = engine.block.getHeight(block);
+const height = engine.block.getHeight(block)
 ```
 
 ```typescript
@@ -2524,7 +2524,7 @@ getHeight(id: DesignBlockId): number
 
 Gets the mode for the block's height.
 ```javascript
-const heightMode = engine.block.getHeightMode(block);
+const heightMode = engine.block.getHeightMode(block)
 ```
 
 ```typescript
@@ -2541,7 +2541,7 @@ getHeightMode(id: DesignBlockId): HeightMode
 Sets the width of a block in the current width mode.
 If the crop is maintained, the crop values will be automatically adjusted.
 ```javascript
-engine.block.setWidth(block, 2.5, true);
+engine.block.setWidth(block, 2.5, true)
 ```
 
 ```typescript
@@ -2557,7 +2557,7 @@ setWidth(id: DesignBlockId, value: number, maintainCrop?: boolean): void
 
 Sets the mode for the block's width.
 ```javascript
-engine.block.setWidthMode(block, 'Percent');
+engine.block.setWidthMode(block, 'Percent')
 ```
 
 ```typescript
@@ -2573,8 +2573,8 @@ setWidthMode(id: DesignBlockId, mode: WidthMode): void
 Sets the height of a block in the current height mode.
 If the crop is maintained, the crop values will be automatically adjusted.
 ```javascript
-engine.block.setHeight(block, 0.5);
-engine.block.setHeight(block, 2.5, true);
+engine.block.setHeight(block, 0.5)
+engine.block.setHeight(block, 2.5, true)
 ```
 
 ```typescript
@@ -2590,7 +2590,7 @@ setHeight(id: DesignBlockId, value: number, maintainCrop?: boolean): void
 
 Sets the mode for the block's height.
 ```javascript
-engine.block.setHeightMode(block, 'Percent');
+engine.block.setHeightMode(block, 'Percent')
 ```
 
 ```typescript
@@ -2606,7 +2606,7 @@ setHeightMode(id: DesignBlockId, mode: HeightMode): void
 Gets the final calculated X position of a block's frame.
 The position is only available after an internal update loop.
 ```javascript
-const frameX = engine.block.getFrameX(block);
+const frameX = engine.block.getFrameX(block)
 ```
 
 ```typescript
@@ -2623,7 +2623,7 @@ getFrameX(id: DesignBlockId): number
 Gets the final calculated Y position of a block's frame.
 The position is only available after an internal update loop.
 ```javascript
-const frameY = engine.block.getFrameY(block);
+const frameY = engine.block.getFrameY(block)
 ```
 
 ```typescript
@@ -2640,7 +2640,7 @@ getFrameY(id: DesignBlockId): number
 Gets the final calculated width of a block's frame.
 The width is only available after an internal update loop.
 ```javascript
-const frameWidth = engine.block.getFrameWidth(block);
+const frameWidth = engine.block.getFrameWidth(block)
 ```
 
 ```typescript
@@ -2657,7 +2657,7 @@ getFrameWidth(id: DesignBlockId): number
 Gets the final calculated height of a block's frame.
 The height is only available after an internal update loop.
 ```javascript
-const frameHeight = engine.block.getFrameHeight(block);
+const frameHeight = engine.block.getFrameHeight(block)
 ```
 
 ```typescript
@@ -2674,7 +2674,7 @@ getFrameHeight(id: DesignBlockId): number
 Gets the X position of the block's global bounding box.
 The position is in the scene's global coordinate space, with the origin at the top left.
 ```javascript
-const globalX = engine.block.getGlobalBoundingBoxX(block);
+const globalX = engine.block.getGlobalBoundingBoxX(block)
 ```
 
 ```typescript
@@ -2691,7 +2691,7 @@ getGlobalBoundingBoxX(id: DesignBlockId): number
 Gets the Y position of the block's global bounding box.
 The position is in the scene's global coordinate space, with the origin at the top left.
 ```javascript
-const globalY = engine.block.getGlobalBoundingBoxY(block);
+const globalY = engine.block.getGlobalBoundingBoxY(block)
 ```
 
 ```typescript
@@ -2708,7 +2708,7 @@ getGlobalBoundingBoxY(id: DesignBlockId): number
 Gets the width of the block's global bounding box.
 The width is in the scene's global coordinate space.
 ```javascript
-const globalWidth = engine.block.getGlobalBoundingBoxWidth(block);
+const globalWidth = engine.block.getGlobalBoundingBoxWidth(block)
 ```
 
 ```typescript
@@ -2725,7 +2725,7 @@ getGlobalBoundingBoxWidth(id: DesignBlockId): number
 Gets the height of the block's global bounding box.
 The height is in the scene's global coordinate space.
 ```javascript
-const globalHeight = engine.block.getGlobalBoundingBoxHeight(block);
+const globalHeight = engine.block.getGlobalBoundingBoxHeight(block)
 ```
 
 ```typescript
@@ -2741,7 +2741,7 @@ getGlobalBoundingBoxHeight(id: DesignBlockId): number
 
 Gets the screen-space bounding box for a set of blocks.
 ```javascript
-const boundingBox = engine.block.getScreenSpaceBoundingBoxXYWH([block]);
+const boundingBox = engine.block.getScreenSpaceBoundingBoxXYWH([block])
 ```
 
 ```typescript
@@ -2841,7 +2841,7 @@ This updates the position, size and style properties (e.g. stroke width) of
 the block and its children around the specified anchor point.
 ```javascript
 // Scale a block to double its size, anchored at the center.
-engine.block.scale(block, 2.0, 0.5, 0.5);
+engine.block.scale(block, 2.0, 0.5, 0.5)
 ```
 
 ```typescript
@@ -3149,7 +3149,7 @@ getEnumValues<T = string>(enumProperty: string): T[]
 
 Sets a boolean property on a block.
 ```javascript
-engine.block.setBool(scene, 'scene/aspectRatioLock', false);
+engine.block.setBool(scene, 'scene/aspectRatioLock', false)
 ```
 
 ```typescript
@@ -3165,7 +3165,7 @@ setBool(id: DesignBlockId, property: BoolPropertyName, value: boolean): void
 
 Gets a boolean property from a block.
 ```javascript
-engine.block.getBool(scene, 'scene/aspectRatioLock');
+engine.block.getBool(scene, 'scene/aspectRatioLock')
 ```
 
 ```typescript
@@ -3182,7 +3182,7 @@ getBool(id: DesignBlockId, property: BoolPropertyName): boolean
 
 Sets an integer property on a block.
 ```javascript
-engine.block.setInt(starShape, 'shape/star/points', points + 2);
+engine.block.setInt(starShape, 'shape/star/points', points + 2)
 ```
 
 ```typescript
@@ -3198,7 +3198,7 @@ setInt(id: DesignBlockId, property: IntPropertyName, value: number): void
 
 Gets an integer property from a block.
 ```javascript
-engine.block.setInt(starShape, 'shape/star/points', points + 2);
+engine.block.setInt(starShape, 'shape/star/points', points + 2)
 ```
 
 ```typescript
@@ -3215,8 +3215,8 @@ getInt(id: DesignBlockId, property: IntPropertyName): number
 
 Sets a float property on a block.
 ```javascript
-engine.block.setFloat(text, "text/letterSpacing", 0.2);
-engine.block.setFloat(text, "text/lineHeight", 1.2);
+engine.block.setFloat(text, 'text/letterSpacing', 0.2)
+engine.block.setFloat(text, 'text/lineHeight', 1.2)
 ```
 
 ```typescript
@@ -3232,7 +3232,7 @@ setFloat(id: DesignBlockId, property: FloatPropertyName, value: number): void
 
 Gets a float property from a block.
 ```javascript
-engine.block.getFloat(starShape, 'shape/star/innerDiameter');
+engine.block.getFloat(starShape, 'shape/star/innerDiameter')
 ```
 
 ```typescript
@@ -3249,7 +3249,7 @@ getFloat(id: DesignBlockId, property: FloatPropertyName): number
 
 Sets a double-precision float property on a block.
 ```javascript
-engine.block.setDouble(audio, 'playback/duration', 1.0);
+engine.block.setDouble(audio, 'playback/duration', 1.0)
 ```
 
 ```typescript
@@ -3265,7 +3265,7 @@ setDouble(id: DesignBlockId, property: DoublePropertyName, value: number): void
 
 Gets a double-precision float property from a block.
 ```javascript
-engine.block.getDouble(audio, 'playback/duration');
+engine.block.getDouble(audio, 'playback/duration')
 ```
 
 ```typescript
@@ -3282,8 +3282,8 @@ getDouble(id: DesignBlockId, property: DoublePropertyName): number
 
 Sets a string property on a block.
 ```javascript
-engine.block.setString(text, 'text/text', 'Hello World');
-engine.block.setString(imageFill, 'fill/image/imageFileURI', 'https://example.com/sample.jpg');
+engine.block.setString(text, 'text/text', 'Hello World')
+engine.block.setString(imageFill, 'fill/image/imageFileURI', 'https://example.com/sample.jpg')
 ```
 
 ```typescript
@@ -3299,8 +3299,8 @@ setString(id: DesignBlockId, property: StringPropertyName, value: string): void
 
 Gets a string property from a block.
 ```javascript
-engine.block.getString(text, 'text/text');
-engine.block.getString(imageFill, 'fill/image/imageFileURI');
+engine.block.getString(text, 'text/text')
+engine.block.getString(imageFill, 'fill/image/imageFileURI')
 ```
 
 ```typescript
@@ -3318,7 +3318,7 @@ getString(id: DesignBlockId, property: StringPropertyName): string
 Sets a color property on a block.
 ```javascript
 // Set the block's fill color to white.
-engine.block.setColor(colorFill, 'fill/color/value', { r: 1, g: 1, b: 1, a: 1 });
+engine.block.setColor(colorFill, 'fill/color/value', { r: 1, g: 1, b: 1, a: 1 })
 ```
 
 ```typescript
@@ -3334,7 +3334,7 @@ setColor(id: DesignBlockId, property: ColorPropertyName, value: Color): void
 
 Gets a color property from a block.
 ```javascript
-engine.block.getColor(colorFill, 'fill/color/value');
+engine.block.getColor(colorFill, 'fill/color/value')
 ```
 
 ```typescript
@@ -3423,8 +3423,8 @@ getColorSpotTint(id: DesignBlockId, property: string): number
 
 Sets an enum property on a block.
 ```javascript
-engine.block.setEnum(text, 'text/horizontalAlignment', 'Center');
-engine.block.setEnum(text, 'text/verticalAlignment', 'Center');
+engine.block.setEnum(text, 'text/horizontalAlignment', 'Center')
+engine.block.setEnum(text, 'text/verticalAlignment', 'Center')
 ```
 
 ```typescript
@@ -3440,8 +3440,8 @@ setEnum<T extends keyof BlockEnumType>(id: DesignBlockId, property: T, value: Bl
 
 Gets an enum property from a block.
 ```javascript
-engine.block.getEnum(text, 'text/horizontalAlignment');
-engine.block.getEnum(text, 'text/verticalAlignment');
+engine.block.getEnum(text, 'text/horizontalAlignment')
+engine.block.getEnum(text, 'text/verticalAlignment')
 ```
 
 ```typescript
@@ -3475,7 +3475,7 @@ hasCrop(id: DesignBlockId): boolean
 
 Checks if a block supports cropping.
 ```javascript
-engine.block.supportsCrop(image);
+engine.block.supportsCrop(image)
 ```
 
 ```typescript
@@ -3491,7 +3491,7 @@ supportsCrop(id: DesignBlockId): boolean
 
 Sets the horizontal crop scale of a block.
 ```javascript
-engine.block.setCropScaleX(image, 2.0);
+engine.block.setCropScaleX(image, 2.0)
 ```
 
 ```typescript
@@ -3506,7 +3506,7 @@ setCropScaleX(id: DesignBlockId, scaleX: number): void
 
 Sets the vertical crop scale of a block.
 ```javascript
-engine.block.setCropScaleY(image, 1.5);
+engine.block.setCropScaleY(image, 1.5)
 ```
 
 ```typescript
@@ -3521,7 +3521,7 @@ setCropScaleY(id: DesignBlockId, scaleY: number): void
 
 Sets the crop rotation of a block in radians.
 ```javascript
-engine.block.setCropRotation(image, Math.PI);
+engine.block.setCropRotation(image, Math.PI)
 ```
 
 ```typescript
@@ -3537,7 +3537,7 @@ setCropRotation(id: DesignBlockId, rotation: number): void
 Sets the uniform crop scale ratio of a block.
 This scales the content up or down from the center of the crop frame.
 ```javascript
-engine.block.setCropScaleRatio(image, 3.0);
+engine.block.setCropScaleRatio(image, 3.0)
 ```
 
 ```typescript
@@ -3552,7 +3552,7 @@ setCropScaleRatio(id: DesignBlockId, scaleRatio: number): void
 
 Sets the horizontal crop translation of a block in percentage of the crop frame width.
 ```javascript
-engine.block.setCropTranslationX(image, -1.0);
+engine.block.setCropTranslationX(image, -1.0)
 ```
 
 ```typescript
@@ -3567,7 +3567,7 @@ setCropTranslationX(id: DesignBlockId, translationX: number): void
 
 Sets the vertical crop translation of a block in percentage of the crop frame height.
 ```javascript
-engine.block.setCropTranslationY(image, 1.0);
+engine.block.setCropTranslationY(image, 1.0)
 ```
 
 ```typescript
@@ -3583,7 +3583,7 @@ setCropTranslationY(id: DesignBlockId, translationY: number): void
 Resets the crop of a block to its default state.
 The block's content fill mode is set to 'Cover'.
 ```javascript
-engine.block.resetCrop(image);
+engine.block.resetCrop(image)
 ```
 
 ```typescript
@@ -3597,7 +3597,7 @@ resetCrop(id: DesignBlockId): void
 
 Gets the horizontal crop scale of a block.
 ```javascript
-const scaleX = engine.block.getCropScaleX(image);
+const scaleX = engine.block.getCropScaleX(image)
 ```
 
 ```typescript
@@ -3613,7 +3613,7 @@ getCropScaleX(id: DesignBlockId): number
 
 Gets the vertical crop scale of a block.
 ```javascript
-const scaleY = engine.block.getCropScaleY(image);
+const scaleY = engine.block.getCropScaleY(image)
 ```
 
 ```typescript
@@ -3629,7 +3629,7 @@ getCropScaleY(id: DesignBlockId): number
 
 Gets the crop rotation of a block in radians.
 ```javascript
-const cropRotation = engine.block.getCropRotation(image);
+const cropRotation = engine.block.getCropRotation(image)
 ```
 
 ```typescript
@@ -3645,7 +3645,7 @@ getCropRotation(id: DesignBlockId): number
 
 Gets the uniform crop scale ratio of a block.
 ```javascript
-const cropScaleRatio = engine.block.getCropScaleRatio(image);
+const cropScaleRatio = engine.block.getCropScaleRatio(image)
 ```
 
 ```typescript
@@ -3661,7 +3661,7 @@ getCropScaleRatio(id: DesignBlockId): number
 
 Gets the horizontal crop translation of a block in percentage of the crop frame width.
 ```javascript
-const cropTranslationX = engine.block.getCropTranslationX(image);
+const cropTranslationX = engine.block.getCropTranslationX(image)
 ```
 
 ```typescript
@@ -3677,7 +3677,7 @@ getCropTranslationX(id: DesignBlockId): number
 
 Gets the vertical crop translation of a block in percentage of the crop frame height.
 ```javascript
-const cropTranslationY = engine.block.getCropTranslationY(image);
+const cropTranslationY = engine.block.getCropTranslationY(image)
 ```
 
 ```typescript
@@ -3693,7 +3693,7 @@ getCropTranslationY(id: DesignBlockId): number
 
 Adjusts the crop position and scale of the given image block to fill its crop frame, while maintaining the position and size of the crop frame.
 ```javascript
-const adjustedScaleRatio = engine.block.adjustCropToFillFrame(image, 1.0);
+const adjustedScaleRatio = engine.block.adjustCropToFillFrame(image, 1.0)
 ```
 
 ```typescript
@@ -3710,7 +3710,7 @@ adjustCropToFillFrame(id: DesignBlockId, minScaleRatio: number): number
 
 Flips the content horizontally within its crop frame.
 ```javascript
-engine.block.flipCropHorizontal(image);
+engine.block.flipCropHorizontal(image)
 ```
 
 ```typescript
@@ -3724,7 +3724,7 @@ flipCropHorizontal(id: DesignBlockId): void
 
 Flips the content vertically within its crop frame.
 ```javascript
-engine.block.flipCropVertical(image);
+engine.block.flipCropVertical(image)
 ```
 
 ```typescript
@@ -3739,7 +3739,7 @@ flipCropVertical(id: DesignBlockId): void
 Checks if the crop aspect ratio is locked for a block.
 When locked, crop handles will maintain the current aspect ratio during resize.
 ```javascript
-const isLocked = engine.block.isCropAspectRatioLocked(block);
+const isLocked = engine.block.isCropAspectRatioLocked(block)
 ```
 
 ```typescript
@@ -3757,7 +3757,7 @@ Sets whether the crop aspect ratio should be locked for a block.
 When enabled, crop handles will maintain the current aspect ratio.
 When disabled, free resizing is allowed.
 ```javascript
-engine.block.setCropAspectRatioLocked(block, true);
+engine.block.setCropAspectRatioLocked(block, true)
 ```
 
 ```typescript
@@ -3878,7 +3878,7 @@ hasEffectEnabled(effectId: DesignBlockId): boolean
 
 Sets the enabled state of an effect block.
 ```javascript
-engine.block.setEffectEnabled(effects[0], false);
+engine.block.setEffectEnabled(effects[0], false)
 ```
 
 ```typescript
@@ -3893,7 +3893,7 @@ setEffectEnabled(effectId: DesignBlockId, enabled: boolean): void
 
 Queries if an effect block is enabled.
 ```javascript
-engine.block.isEffectEnabled(effects[0]);
+engine.block.isEffectEnabled(effects[0])
 ```
 
 ```typescript
@@ -3977,7 +3977,7 @@ getBlur(id: DesignBlockId): DesignBlockId
 
 Enables or disables the blur effect on a block.
 ```javascript
-engine.block.setBlurEnabled(block, true);
+engine.block.setBlurEnabled(block, true)
 ```
 
 ```typescript
@@ -3992,7 +3992,7 @@ setBlurEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if blur is enabled for a block.
 ```javascript
-const isBlurEnabled = engine.block.isBlurEnabled(block);
+const isBlurEnabled = engine.block.isBlurEnabled(block)
 ```
 
 ```typescript
@@ -4038,7 +4038,7 @@ supportsStroke(id: DesignBlockId): boolean
 
 Enables or disables the stroke of a block.
 ```javascript
-engine.block.setStrokeEnabled(block, true);
+engine.block.setStrokeEnabled(block, true)
 ```
 
 ```typescript
@@ -4053,7 +4053,7 @@ setStrokeEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the stroke of a block is enabled.
 ```javascript
-const strokeIsEnabled = engine.block.isStrokeEnabled(block);
+const strokeIsEnabled = engine.block.isStrokeEnabled(block)
 ```
 
 ```typescript
@@ -4252,7 +4252,7 @@ supportsDropShadow(id: DesignBlockId): boolean
 
 Enables or disables the drop shadow of a block.
 ```javascript
-engine.block.setDropShadowEnabled(block, true);
+engine.block.setDropShadowEnabled(block, true)
 ```
 
 ```typescript
@@ -4267,7 +4267,7 @@ setDropShadowEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the drop shadow of a block is enabled.
 ```javascript
-const dropShadowIsEnabled = engine.block.isDropShadowEnabled(block);
+const dropShadowIsEnabled = engine.block.isDropShadowEnabled(block)
 ```
 
 ```typescript
@@ -4514,8 +4514,8 @@ Create, edit, and style text content.
 
 Replaces a range of text in a text block.
 ```javascript
-engine.block.replaceText(text, 'Hello World');
-engine.block.replaceText(text, 'Alex', 6, 11);
+engine.block.replaceText(text, 'Hello World')
+engine.block.replaceText(text, 'Alex', 6, 11)
 ```
 
 ```typescript
@@ -4532,7 +4532,7 @@ replaceText(id: DesignBlockId, text: string, from?: number, to?: number): void
 
 Removes a range of text from a text block.
 ```javascript
-engine.block.removeText(text, 0, 6);
+engine.block.removeText(text, 0, 6)
 ```
 
 ```typescript
@@ -4548,7 +4548,7 @@ removeText(id: DesignBlockId, from?: number, to?: number): void
 
 Sets the color for a range of text.
 ```javascript
-engine.block.setTextColor(text, { r: 0.0, g: 0.0, b: 0.0, a: 1.0 }, 1, 4);
+engine.block.setTextColor(text, { r: 0.0, g: 0.0, b: 0.0, a: 1.0 }, 1, 4)
 ```
 
 ```typescript
@@ -4565,7 +4565,7 @@ setTextColor(id: DesignBlockId, color: Color, from?: number, to?: number): void
 
 Gets the unique colors within a range of text.
 ```javascript
-const colorsInRange = engine.block.getTextColors(text, 2, 5);
+const colorsInRange = engine.block.getTextColors(text, 2, 5)
 ```
 
 ```typescript
@@ -4583,7 +4583,7 @@ getTextColors(id: DesignBlockId, from?: number, to?: number): Array<Color>
 
 Sets the font weight for a range of text.
 ```javascript
-engine.block.setTextFontWeight(text, 'bold', 0, 5);
+engine.block.setTextFontWeight(text, 'bold', 0, 5)
 ```
 
 ```typescript
@@ -4600,7 +4600,7 @@ setTextFontWeight(id: DesignBlockId, fontWeight: FontWeight, from?: number, to?:
 
 Gets the unique font weights within a range of text.
 ```javascript
-const fontWeights = engine.block.getTextFontWeights(text, 0, 6);
+const fontWeights = engine.block.getTextFontWeights(text, 0, 6)
 ```
 
 ```typescript
@@ -4619,10 +4619,10 @@ getTextFontWeights(id: DesignBlockId, from?: number, to?: number): FontWeight[]
 Sets the font size for a range of text.
 ```javascript
 // With numeric fontSize (in points)
-engine.block.setTextFontSize(text, 12, 0, 5);
+engine.block.setTextFontSize(text, 12, 0, 5)
 // With font size and options object
-engine.block.setTextFontSize(text, 16, { unit: 'Pixel' });
-engine.block.setTextFontSize(text, 24, { unit: 'Point', from: 0, to: 10 });
+engine.block.setTextFontSize(text, 16, { unit: 'Pixel' })
+engine.block.setTextFontSize(text, 24, { unit: 'Point', from: 0, to: 10 })
 ```
 
 ```typescript
@@ -4661,7 +4661,7 @@ getTextFontSizes(id: DesignBlockId, options?: TextFontSizeOptions): number[]
 
 Sets the font style for a range of text.
 ```javascript
-engine.block.setTextFontStyle(text, 'italic', 0, 5);
+engine.block.setTextFontStyle(text, 'italic', 0, 5)
 ```
 
 ```typescript
@@ -4678,7 +4678,7 @@ setTextFontStyle(id: DesignBlockId, fontStyle: FontStyle, from?: number, to?: nu
 
 Gets the unique font styles within a range of text.
 ```javascript
-const fontStyles = engine.block.getTextFontStyles(text);
+const fontStyles = engine.block.getTextFontStyles(text)
 ```
 
 ```typescript
@@ -4696,7 +4696,7 @@ getTextFontStyles(id: DesignBlockId, from?: number, to?: number): FontStyle[]
 
 Gets the unique text cases within a range of text.
 ```javascript
-const textCases = engine.block.getTextCases(text);
+const textCases = engine.block.getTextCases(text)
 ```
 
 ```typescript
@@ -4714,7 +4714,7 @@ getTextCases(id: DesignBlockId, from?: number, to?: number): TextCase[]
 
 Sets the text case for a range of text.
 ```javascript
-engine.block.setTextCase(text, 'Titlecase');
+engine.block.setTextCase(text, 'Titlecase')
 ```
 
 ```typescript
@@ -4733,7 +4733,7 @@ Gets the unique text decoration configurations within a range of text.
 Each element of the returned array is a decoration configuration representing
 a unique combination of lines, style, color, and thickness found in the range.
 ```javascript
-const decorations = engine.block.getTextDecorations(text);
+const decorations = engine.block.getTextDecorations(text)
 // e.g., [{ lines: ['None'] }, { lines: ['Underline'], style: 'Dashed' }]
 ```
 
@@ -4754,10 +4754,10 @@ Sets the text decoration for a range of text.
 The config specifies which decoration lines, style, underline color, thickness, and offset to apply.
 Use `{ lines: ['None'] }` to remove all decorations.
 ```javascript
-engine.block.setTextDecoration(text, { lines: ['Underline'] });
-engine.block.setTextDecoration(text, { lines: ['Underline', 'Strikethrough'], style: 'Dashed' });
-engine.block.setTextDecoration(text, { lines: ['Overline'], style: 'Wavy', underlineThickness: 2.0 });
-engine.block.setTextDecoration(text, { lines: ['None'] }); // Remove decorations
+engine.block.setTextDecoration(text, { lines: ['Underline'] })
+engine.block.setTextDecoration(text, { lines: ['Underline', 'Strikethrough'], style: 'Dashed' })
+engine.block.setTextDecoration(text, { lines: ['Overline'], style: 'Wavy', underlineThickness: 2.0 })
+engine.block.setTextDecoration(text, { lines: ['None'] }) // Remove decorations
 ```
 
 ```typescript
@@ -4777,7 +4777,7 @@ If any part of the range does not have underline, the entire range gets underlin
 If the entire range already has underline, it is removed.
 Other decoration lines (strikethrough, overline) on each text run are preserved.
 ```javascript
-engine.block.toggleTextDecorationUnderline(text);
+engine.block.toggleTextDecorationUnderline(text)
 ```
 
 ```typescript
@@ -4796,7 +4796,7 @@ If any part of the range does not have strikethrough, the entire range gets stri
 If the entire range already has strikethrough, it is removed.
 Other decoration lines (underline, overline) on each text run are preserved.
 ```javascript
-engine.block.toggleTextDecorationStrikethrough(text);
+engine.block.toggleTextDecorationStrikethrough(text)
 ```
 
 ```typescript
@@ -4815,7 +4815,7 @@ If any part of the range does not have overline, the entire range gets overline.
 If the entire range already has overline, it is removed.
 Other decoration lines (underline, strikethrough) on each text run are preserved.
 ```javascript
-engine.block.toggleTextDecorationOverline(text);
+engine.block.toggleTextDecorationOverline(text)
 ```
 
 ```typescript
@@ -4831,7 +4831,7 @@ toggleTextDecorationOverline(id: DesignBlockId, from?: number, to?: number): voi
 
 Gets the list style for a specific paragraph of a text block.
 ```javascript
-const listStyle = engine.block.getTextListStyle(text, 0);
+const listStyle = engine.block.getTextListStyle(text, 0)
 ```
 
 ```typescript
@@ -4848,8 +4848,8 @@ getTextListStyle(id: DesignBlockId, paragraphIndex: number): ListStyle
 
 Sets the list style for a specific paragraph or all paragraphs of a text block.
 ```javascript
-engine.block.setTextListStyle(text, 'Unordered');
-engine.block.setTextListStyle(text, 'Ordered', 0, 2);
+engine.block.setTextListStyle(text, 'Unordered')
+engine.block.setTextListStyle(text, 'Ordered', 0, 2)
 ```
 
 ```typescript
@@ -4868,7 +4868,7 @@ setTextListStyle(id: DesignBlockId, listStyle: ListStyle, paragraphIndex?: numbe
 
 Gets the list nesting level for a specific paragraph of a text block.
 ```javascript
-const listLevel = engine.block.getTextListLevel(text, 0);
+const listLevel = engine.block.getTextListLevel(text, 0)
 ```
 
 ```typescript
@@ -4885,8 +4885,8 @@ getTextListLevel(id: DesignBlockId, paragraphIndex: number): number
 
 Sets the list nesting level for a specific paragraph or all paragraphs of a text block.
 ```javascript
-engine.block.setTextListLevel(text, 1);
-engine.block.setTextListLevel(text, 2, 0);
+engine.block.setTextListLevel(text, 1)
+engine.block.setTextListLevel(text, 2, 0)
 ```
 
 ```typescript
@@ -4922,7 +4922,7 @@ getTextParagraphIndices(id: DesignBlockId, from?: number, to?: number): number[]
 Checks if the bold font weight can be toggled for a range of text.
 Returns true if any part of the range is not bold and the bold font is available.
 ```javascript
-const canToggleBold = engine.block.canToggleBoldFont(text);
+const canToggleBold = engine.block.canToggleBoldFont(text)
 ```
 
 ```typescript
@@ -4941,7 +4941,7 @@ canToggleBoldFont(id: DesignBlockId, from?: number, to?: number): boolean
 Checks if the italic font style can be toggled for a range of text.
 Returns true if any part of the range is not italic and the italic font is available.
 ```javascript
-const canToggleItalic = engine.block.canToggleItalicFont(text);
+const canToggleItalic = engine.block.canToggleItalicFont(text)
 ```
 
 ```typescript
@@ -4960,7 +4960,7 @@ canToggleItalicFont(id: DesignBlockId, from?: number, to?: number): boolean
 Toggles the font weight of a text range between bold and normal.
 If any part of the range is not bold, the entire range becomes bold. If the entire range is already bold, it becomes normal.
 ```javascript
-engine.block.toggleBoldFont(text);
+engine.block.toggleBoldFont(text)
 ```
 
 ```typescript
@@ -4977,7 +4977,7 @@ toggleBoldFont(id: DesignBlockId, from?: number, to?: number): void
 Toggles the font style of a text range between italic and normal.
 If any part of the range is not italic, the entire range becomes italic. If the entire range is already italic, it becomes normal.
 ```javascript
-engine.block.toggleItalicFont(text);
+engine.block.toggleItalicFont(text)
 ```
 
 ```typescript
@@ -4994,7 +4994,7 @@ toggleItalicFont(id: DesignBlockId, from?: number, to?: number): void
 Sets the font and typeface for an entire text block.
 Existing formatting is reset.
 ```javascript
-engine.block.setFont(text, font.uri, typeface);
+engine.block.setFont(text, font.uri, typeface)
 ```
 
 ```typescript
@@ -5011,7 +5011,7 @@ setFont(id: DesignBlockId, fontFileUri: string, typeface: Typeface): void
 Sets the typeface for a range of text.
 The current formatting is retained as much as possible.
 ```javascript
-engine.block.setTypeface(text, typeface, 2, 5);
+engine.block.setTypeface(text, typeface, 2, 5)
 ```
 
 ```typescript
@@ -5029,7 +5029,7 @@ setTypeface(id: DesignBlockId, typeface: Typeface, from?: number, to?: number): 
 Gets the base typeface of a text block.
 This does not return the typefaces of individual text runs.
 ```javascript
-const defaultTypeface = engine.block.getTypeface(text);
+const defaultTypeface = engine.block.getTypeface(text)
 ```
 
 ```typescript
@@ -5045,7 +5045,7 @@ getTypeface(id: DesignBlockId): Typeface
 
 Gets the unique typefaces within a range of text.
 ```javascript
-const currentTypefaces = engine.block.getTypefaces(text);
+const currentTypefaces = engine.block.getTypefaces(text)
 ```
 
 ```typescript
@@ -5064,7 +5064,7 @@ getTypefaces(id: DesignBlockId, from?: number, to?: number): Typeface[]
 Gets the current text cursor or selection range.
 Returns the UTF-16 indices of the selected range of the text block that is currently being edited.
 ```javascript
-const selectedRange = engine.block.getTextCursorRange();
+const selectedRange = engine.block.getTextCursorRange()
 ```
 
 ```typescript
@@ -5088,7 +5088,7 @@ setTextCursorRange(range: Range): void
 
 Gets the number of visible lines in a text block.
 ```javascript
-const lineCount = engine.block.getTextVisibleLineCount(text);
+const lineCount = engine.block.getTextVisibleLineCount(text)
 ```
 
 ```typescript
@@ -5105,7 +5105,7 @@ getTextVisibleLineCount(id: DesignBlockId): number
 Gets the global bounding box of a visible line of text.
 The values are in the scene's global coordinate space.
 ```javascript
-const lineBoundingBox = engine.block.getTextVisibleLineGlobalBoundingBoxXYWH(text, 0);
+const lineBoundingBox = engine.block.getTextVisibleLineGlobalBoundingBoxXYWH(text, 0)
 ```
 
 ```typescript
@@ -5156,7 +5156,7 @@ Manage placeholder functionality, controls, and behavior.
 Enables or disables the placeholder function for a block.
 When set to `true`, the given block becomes selectable by users and its placeholder capabilities are enabled in Adopter mode.
 ```javascript
-engine.block.setPlaceholderEnabled(block, true);
+engine.block.setPlaceholderEnabled(block, true)
 ```
 
 ```typescript
@@ -5171,7 +5171,7 @@ setPlaceholderEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the placeholder function for a block is enabled and can be selected by users in Adopter mode.
 ```javascript
-const placeholderIsEnabled = engine.block.isPlaceholderEnabled(block);
+const placeholderIsEnabled = engine.block.isPlaceholderEnabled(block)
 ```
 
 ```typescript
@@ -5200,7 +5200,7 @@ hasPlaceholderBehavior(id: DesignBlockId): boolean
 
 Checks if a block supports placeholder behavior.
 ```javascript
-const placeholderBehaviorSupported = engine.block.supportsPlaceholderBehavior(block);
+const placeholderBehaviorSupported = engine.block.supportsPlaceholderBehavior(block)
 ```
 
 ```typescript
@@ -5217,7 +5217,7 @@ supportsPlaceholderBehavior(id: DesignBlockId): boolean
 Enables or disables the placeholder behavior for a block.
 When its fill block is set to `true`, an image block will act as a placeholder, showing a control overlay and a replacement button.
 ```javascript
-engine.block.setPlaceholderBehaviorEnabled(block, true);
+engine.block.setPlaceholderBehaviorEnabled(block, true)
 ```
 
 ```typescript
@@ -5232,7 +5232,7 @@ setPlaceholderBehaviorEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the placeholder behavior for a block is enabled.
 ```javascript
-engine.block.setPlaceholderBehaviorEnabled(block, true);
+engine.block.setPlaceholderBehaviorEnabled(block, true)
 ```
 
 ```typescript
@@ -5274,7 +5274,7 @@ supportsPlaceholderControls(id: DesignBlockId): boolean
 
 Enables or disables the placeholder overlay pattern.
 ```javascript
-engine.block.setPlaceholderControlsOverlayEnabled(block, true);
+engine.block.setPlaceholderControlsOverlayEnabled(block, true)
 ```
 
 ```typescript
@@ -5289,7 +5289,7 @@ setPlaceholderControlsOverlayEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the placeholder overlay pattern is enabled.
 ```javascript
-const overlayEnabled = engine.block.isPlaceholderControlsOverlayEnabled(block);
+const overlayEnabled = engine.block.isPlaceholderControlsOverlayEnabled(block)
 ```
 
 ```typescript
@@ -5305,7 +5305,7 @@ isPlaceholderControlsOverlayEnabled(id: DesignBlockId): boolean
 
 Enables or disables the placeholder button.
 ```javascript
-engine.block.setPlaceholderControlsButtonEnabled(block, true);
+engine.block.setPlaceholderControlsButtonEnabled(block, true)
 ```
 
 ```typescript
@@ -5320,7 +5320,7 @@ setPlaceholderControlsButtonEnabled(id: DesignBlockId, enabled: boolean): void
 
 Checks if the placeholder button is enabled.
 ```javascript
-const buttonEnabled = engine.block.isPlaceholderControlsButtonEnabled(block);
+const buttonEnabled = engine.block.isPlaceholderControlsButtonEnabled(block)
 ```
 
 ```typescript
@@ -5410,7 +5410,7 @@ Manage permissions and capabilities per block.
 Enables or disables a scope for a block.
 ```javascript
 // Allow the user to move the image block.
-engine.block.setScopeEnabled(image, 'layer/move', true);
+engine.block.setScopeEnabled(image, 'layer/move', true)
 ```
 
 ```typescript
@@ -5426,7 +5426,7 @@ setScopeEnabled(id: DesignBlockId, key: Scope, enabled: boolean): void
 
 Checks if a scope is enabled for a block.
 ```javascript
-engine.block.isScopeEnabled(image, 'layer/move');
+engine.block.isScopeEnabled(image, 'layer/move')
 ```
 
 ```typescript
@@ -5444,7 +5444,7 @@ isScopeEnabled(id: DesignBlockId, key: Scope): boolean
 Checks if an operation is allowed by a block's scopes.
 ```javascript
 // This will return true when the global scope is set to 'Defer'.
-engine.block.isAllowedByScope(image, 'layer/move');
+engine.block.isAllowedByScope(image, 'layer/move')
 ```
 
 ```typescript
@@ -5465,7 +5465,7 @@ Splits a block at the specified time.
 The original block will be trimmed to end at the split time, and the returned duplicate
 will start at the split time and continue to the original end time.
 ```javascript
-const duplicate = engine.block.split(video, 10.0);
+const duplicate = engine.block.split(video, 10.0)
 ```
 
 ```typescript

@@ -23,7 +23,7 @@ Configure emoji rendering in CE.SDK text blocks using a dedicated emoji font for
 Emojis are Unicode characters representing pictographic symbols. They can be single code points (😀), multi-character sequences (flags like 🇩🇪), ZWJ-joined combinations (👨‍👩‍👧), or skin tone variants (👋🏽). CE.SDK renders text to canvas for precise layout control, which bypasses browser font fallback. This means CE.SDK must explicitly provide an emoji font—it uses Noto Color Emoji by default.
 
 ```typescript file=@cesdk_web_examples/guides-text-emojis-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Emojis Guide
@@ -52,22 +52,22 @@ import packageJson from './package.json';
  * - Creating text blocks with emojis
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -78,29 +78,29 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // CE.SDK uses Noto Color Emoji by default for consistent cross-platform rendering
     // Get the current emoji font URI
     const defaultEmojiFontUri = engine.editor.getSetting(
       'defaultEmojiFontFileUri'
-    );
-    console.log('Default emoji font URI:', defaultEmojiFontUri);
+    )
+    console.log('Default emoji font URI:', defaultEmojiFontUri)
 
     // You can set a custom emoji font if needed
     // engine.editor.setSetting(
@@ -112,72 +112,72 @@ class Example implements EditorPlugin {
     // which is already configured in CE.SDK
 
     // Create a text block with emoji content
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(page, textBlock);
+    const textBlock = engine.block.create('text')
+    engine.block.appendChild(page, textBlock)
 
     // Set text content with emojis
-    engine.block.replaceText(textBlock, 'Hello World! 🎉🚀✨');
+    engine.block.replaceText(textBlock, 'Hello World! 🎉🚀✨')
 
     // Configure text appearance
-    engine.block.setTextFontSize(textBlock, 64);
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
+    engine.block.setTextFontSize(textBlock, 64)
+    engine.block.setWidthMode(textBlock, 'Auto')
+    engine.block.setHeightMode(textBlock, 'Auto')
 
     // Position the text block
-    engine.block.setPositionX(textBlock, 50);
-    engine.block.setPositionY(textBlock, 100);
+    engine.block.setPositionX(textBlock, 50)
+    engine.block.setPositionY(textBlock, 100)
 
     // Create additional text blocks demonstrating various emoji types
 
     // Single emoji characters
-    const singleEmojis = engine.block.create('text');
-    engine.block.appendChild(page, singleEmojis);
-    engine.block.replaceText(singleEmojis, 'Single emojis: 😀 👍 ❤️ ⭐');
-    engine.block.setTextFontSize(singleEmojis, 36);
-    engine.block.setWidthMode(singleEmojis, 'Auto');
-    engine.block.setHeightMode(singleEmojis, 'Auto');
-    engine.block.setPositionX(singleEmojis, 50);
-    engine.block.setPositionY(singleEmojis, 200);
+    const singleEmojis = engine.block.create('text')
+    engine.block.appendChild(page, singleEmojis)
+    engine.block.replaceText(singleEmojis, 'Single emojis: 😀 👍 ❤️ ⭐')
+    engine.block.setTextFontSize(singleEmojis, 36)
+    engine.block.setWidthMode(singleEmojis, 'Auto')
+    engine.block.setHeightMode(singleEmojis, 'Auto')
+    engine.block.setPositionX(singleEmojis, 50)
+    engine.block.setPositionY(singleEmojis, 200)
 
     // Flag emojis (multi-character sequences)
-    const flagEmojis = engine.block.create('text');
-    engine.block.appendChild(page, flagEmojis);
-    engine.block.replaceText(flagEmojis, 'Flags: 🇩🇪 🇺🇸 🇯🇵 🇬🇧');
-    engine.block.setTextFontSize(flagEmojis, 36);
-    engine.block.setWidthMode(flagEmojis, 'Auto');
-    engine.block.setHeightMode(flagEmojis, 'Auto');
-    engine.block.setPositionX(flagEmojis, 50);
-    engine.block.setPositionY(flagEmojis, 270);
+    const flagEmojis = engine.block.create('text')
+    engine.block.appendChild(page, flagEmojis)
+    engine.block.replaceText(flagEmojis, 'Flags: 🇩🇪 🇺🇸 🇯🇵 🇬🇧')
+    engine.block.setTextFontSize(flagEmojis, 36)
+    engine.block.setWidthMode(flagEmojis, 'Auto')
+    engine.block.setHeightMode(flagEmojis, 'Auto')
+    engine.block.setPositionX(flagEmojis, 50)
+    engine.block.setPositionY(flagEmojis, 270)
 
     // ZWJ (Zero Width Joiner) sequences
-    const familyEmojis = engine.block.create('text');
-    engine.block.appendChild(page, familyEmojis);
-    engine.block.replaceText(familyEmojis, 'Families: 👨‍👩‍👧 👨‍👩‍👦‍👦 👩‍👦');
-    engine.block.setTextFontSize(familyEmojis, 36);
-    engine.block.setWidthMode(familyEmojis, 'Auto');
-    engine.block.setHeightMode(familyEmojis, 'Auto');
-    engine.block.setPositionX(familyEmojis, 50);
-    engine.block.setPositionY(familyEmojis, 340);
+    const familyEmojis = engine.block.create('text')
+    engine.block.appendChild(page, familyEmojis)
+    engine.block.replaceText(familyEmojis, 'Families: 👨‍👩‍👧 👨‍👩‍👦‍👦 👩‍👦')
+    engine.block.setTextFontSize(familyEmojis, 36)
+    engine.block.setWidthMode(familyEmojis, 'Auto')
+    engine.block.setHeightMode(familyEmojis, 'Auto')
+    engine.block.setPositionX(familyEmojis, 50)
+    engine.block.setPositionY(familyEmojis, 340)
 
     // Skin tone variants
-    const skinToneEmojis = engine.block.create('text');
-    engine.block.appendChild(page, skinToneEmojis);
-    engine.block.replaceText(skinToneEmojis, 'Skin tones: 👋 👋🏻 👋🏽 👋🏿');
-    engine.block.setTextFontSize(skinToneEmojis, 36);
-    engine.block.setWidthMode(skinToneEmojis, 'Auto');
-    engine.block.setHeightMode(skinToneEmojis, 'Auto');
-    engine.block.setPositionX(skinToneEmojis, 50);
-    engine.block.setPositionY(skinToneEmojis, 410);
+    const skinToneEmojis = engine.block.create('text')
+    engine.block.appendChild(page, skinToneEmojis)
+    engine.block.replaceText(skinToneEmojis, 'Skin tones: 👋 👋🏻 👋🏽 👋🏿')
+    engine.block.setTextFontSize(skinToneEmojis, 36)
+    engine.block.setWidthMode(skinToneEmojis, 'Auto')
+    engine.block.setHeightMode(skinToneEmojis, 'Auto')
+    engine.block.setPositionX(skinToneEmojis, 50)
+    engine.block.setPositionY(skinToneEmojis, 410)
 
     // Zoom to show all content
-    engine.scene.zoomToBlock(page, { padding: 40 });
+    engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Select the main text block to show it in the inspector
-    engine.block.setSelected(textBlock, true);
+    engine.block.setSelected(textBlock, true)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers understanding the default emoji font, configuring a custom emoji font, and adding text with emojis programmatically.
@@ -193,8 +193,8 @@ We retrieve the current emoji font URI using `engine.editor.getSetting()`:
 // Get the current emoji font URI
 const defaultEmojiFontUri = engine.editor.getSetting(
   'defaultEmojiFontFileUri'
-);
-console.log('Default emoji font URI:', defaultEmojiFontUri);
+)
+console.log('Default emoji font URI:', defaultEmojiFontUri)
 ```
 
 ## Configuring the Emoji Font
@@ -202,14 +202,14 @@ console.log('Default emoji font URI:', defaultEmojiFontUri);
 We can change the emoji font using `engine.editor.setSetting()`. The URI can point to any accessible URL, CDN, or local file containing an emoji font.
 
 ```typescript highlight-configure-emoji-font
-    // You can set a custom emoji font if needed
-    // engine.editor.setSetting(
-    //   'defaultEmojiFontFileUri',
-    //   'https://your-cdn.com/fonts/CustomEmoji.ttf'
-    // );
+// You can set a custom emoji font if needed
+// engine.editor.setSetting(
+//   'defaultEmojiFontFileUri',
+//   'https://your-cdn.com/fonts/CustomEmoji.ttf'
+// );
 
-    // For this guide, we use the default Noto Color Emoji font
-    // which is already configured in CE.SDK
+// For this guide, we use the default Noto Color Emoji font
+// which is already configured in CE.SDK
 ```
 
 ## Adding Emojis to Text Blocks
@@ -217,67 +217,67 @@ We can change the emoji font using `engine.editor.setSetting()`. The URI can poi
 We create text blocks and add emoji content using `engine.block.replaceText()`. Emojis are inserted directly as Unicode characters:
 
 ```typescript highlight-create-text-with-emojis
-    // Create a text block with emoji content
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(page, textBlock);
+// Create a text block with emoji content
+const textBlock = engine.block.create('text')
+engine.block.appendChild(page, textBlock)
 
-    // Set text content with emojis
-    engine.block.replaceText(textBlock, 'Hello World! 🎉🚀✨');
+// Set text content with emojis
+engine.block.replaceText(textBlock, 'Hello World! 🎉🚀✨')
 
-    // Configure text appearance
-    engine.block.setTextFontSize(textBlock, 64);
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
+// Configure text appearance
+engine.block.setTextFontSize(textBlock, 64)
+engine.block.setWidthMode(textBlock, 'Auto')
+engine.block.setHeightMode(textBlock, 'Auto')
 
-    // Position the text block
-    engine.block.setPositionX(textBlock, 50);
-    engine.block.setPositionY(textBlock, 100);
+// Position the text block
+engine.block.setPositionX(textBlock, 50)
+engine.block.setPositionY(textBlock, 100)
 ```
 
 CE.SDK handles all emoji types automatically—single characters, flag sequences, ZWJ combinations, and skin tone variants:
 
 ```typescript highlight-emoji-examples
-    // Create additional text blocks demonstrating various emoji types
+// Create additional text blocks demonstrating various emoji types
 
-    // Single emoji characters
-    const singleEmojis = engine.block.create('text');
-    engine.block.appendChild(page, singleEmojis);
-    engine.block.replaceText(singleEmojis, 'Single emojis: 😀 👍 ❤️ ⭐');
-    engine.block.setTextFontSize(singleEmojis, 36);
-    engine.block.setWidthMode(singleEmojis, 'Auto');
-    engine.block.setHeightMode(singleEmojis, 'Auto');
-    engine.block.setPositionX(singleEmojis, 50);
-    engine.block.setPositionY(singleEmojis, 200);
+// Single emoji characters
+const singleEmojis = engine.block.create('text')
+engine.block.appendChild(page, singleEmojis)
+engine.block.replaceText(singleEmojis, 'Single emojis: 😀 👍 ❤️ ⭐')
+engine.block.setTextFontSize(singleEmojis, 36)
+engine.block.setWidthMode(singleEmojis, 'Auto')
+engine.block.setHeightMode(singleEmojis, 'Auto')
+engine.block.setPositionX(singleEmojis, 50)
+engine.block.setPositionY(singleEmojis, 200)
 
-    // Flag emojis (multi-character sequences)
-    const flagEmojis = engine.block.create('text');
-    engine.block.appendChild(page, flagEmojis);
-    engine.block.replaceText(flagEmojis, 'Flags: 🇩🇪 🇺🇸 🇯🇵 🇬🇧');
-    engine.block.setTextFontSize(flagEmojis, 36);
-    engine.block.setWidthMode(flagEmojis, 'Auto');
-    engine.block.setHeightMode(flagEmojis, 'Auto');
-    engine.block.setPositionX(flagEmojis, 50);
-    engine.block.setPositionY(flagEmojis, 270);
+// Flag emojis (multi-character sequences)
+const flagEmojis = engine.block.create('text')
+engine.block.appendChild(page, flagEmojis)
+engine.block.replaceText(flagEmojis, 'Flags: 🇩🇪 🇺🇸 🇯🇵 🇬🇧')
+engine.block.setTextFontSize(flagEmojis, 36)
+engine.block.setWidthMode(flagEmojis, 'Auto')
+engine.block.setHeightMode(flagEmojis, 'Auto')
+engine.block.setPositionX(flagEmojis, 50)
+engine.block.setPositionY(flagEmojis, 270)
 
-    // ZWJ (Zero Width Joiner) sequences
-    const familyEmojis = engine.block.create('text');
-    engine.block.appendChild(page, familyEmojis);
-    engine.block.replaceText(familyEmojis, 'Families: 👨‍👩‍👧 👨‍👩‍👦‍👦 👩‍👦');
-    engine.block.setTextFontSize(familyEmojis, 36);
-    engine.block.setWidthMode(familyEmojis, 'Auto');
-    engine.block.setHeightMode(familyEmojis, 'Auto');
-    engine.block.setPositionX(familyEmojis, 50);
-    engine.block.setPositionY(familyEmojis, 340);
+// ZWJ (Zero Width Joiner) sequences
+const familyEmojis = engine.block.create('text')
+engine.block.appendChild(page, familyEmojis)
+engine.block.replaceText(familyEmojis, 'Families: 👨‍👩‍👧 👨‍👩‍👦‍👦 👩‍👦')
+engine.block.setTextFontSize(familyEmojis, 36)
+engine.block.setWidthMode(familyEmojis, 'Auto')
+engine.block.setHeightMode(familyEmojis, 'Auto')
+engine.block.setPositionX(familyEmojis, 50)
+engine.block.setPositionY(familyEmojis, 340)
 
-    // Skin tone variants
-    const skinToneEmojis = engine.block.create('text');
-    engine.block.appendChild(page, skinToneEmojis);
-    engine.block.replaceText(skinToneEmojis, 'Skin tones: 👋 👋🏻 👋🏽 👋🏿');
-    engine.block.setTextFontSize(skinToneEmojis, 36);
-    engine.block.setWidthMode(skinToneEmojis, 'Auto');
-    engine.block.setHeightMode(skinToneEmojis, 'Auto');
-    engine.block.setPositionX(skinToneEmojis, 50);
-    engine.block.setPositionY(skinToneEmojis, 410);
+// Skin tone variants
+const skinToneEmojis = engine.block.create('text')
+engine.block.appendChild(page, skinToneEmojis)
+engine.block.replaceText(skinToneEmojis, 'Skin tones: 👋 👋🏻 👋🏽 👋🏿')
+engine.block.setTextFontSize(skinToneEmojis, 36)
+engine.block.setWidthMode(skinToneEmojis, 'Auto')
+engine.block.setHeightMode(skinToneEmojis, 'Auto')
+engine.block.setPositionX(skinToneEmojis, 50)
+engine.block.setPositionY(skinToneEmojis, 410)
 ```
 
 ## The `forceSystemEmojis` Setting

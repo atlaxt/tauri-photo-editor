@@ -23,7 +23,7 @@ Apply entrance, exit, and loop animations to design blocks using the available a
 CE.SDK organizes animations into three categories: entrance (In), exit (Out), and loop. Each category determines when the animation plays during the block's lifecycle. This guide demonstrates different animation types and their configurable properties.
 
 ```typescript file=@cesdk_web_examples/guides-animation-types-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,10 +40,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Supported Animation Types Guide
@@ -55,27 +55,27 @@ import { calculateGridLayout } from './utils';
  * - Animation property configuration
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -85,9 +85,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -101,58 +101,58 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
-    const scene = engine.scene.get()!;
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : scene;
+    const scene = engine.scene.get()!
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : scene
 
     // Set white background color
     if (!engine.block.supportsFill(page) || !engine.block.getFill(page)) {
-      const fill = engine.block.createFill('color');
-      engine.block.setFill(page, fill);
+      const fill = engine.block.createFill('color')
+      engine.block.setFill(page, fill)
     }
-    const pageFill = engine.block.getFill(page)!;
+    const pageFill = engine.block.getFill(page)!
     engine.block.setColor(pageFill, 'fill/color/value', {
       r: 1.0,
       g: 1.0,
       b: 1.0,
       a: 1.0
-    });
+    })
 
     // Calculate grid layout for 6 demonstration blocks
-    const pageWidth = engine.block.getWidth(page)!;
-    const pageHeight = engine.block.getHeight(page)!;
-    const layout = calculateGridLayout(pageWidth, pageHeight, 6);
-    const { blockWidth, blockHeight, getPosition } = layout;
+    const pageWidth = engine.block.getWidth(page)!
+    const pageHeight = engine.block.getHeight(page)!
+    const layout = calculateGridLayout(pageWidth, pageHeight, 6)
+    const { blockWidth, blockHeight, getPosition } = layout
 
     // Helper to create an image block
     const createImageBlock = async (index: number, imageUrl: string) => {
-      const graphic = engine.block.create('graphic');
-      const imageFill = engine.block.createFill('image');
-      engine.block.setString(imageFill, 'fill/image/imageFileURI', imageUrl);
-      engine.block.setFill(graphic, imageFill);
-      engine.block.setShape(graphic, engine.block.createShape('rect'));
-      engine.block.setWidth(graphic, blockWidth);
-      engine.block.setHeight(graphic, blockHeight);
-      const pos = getPosition(index);
-      engine.block.setPositionX(graphic, pos.x);
-      engine.block.setPositionY(graphic, pos.y);
-      engine.block.appendChild(page, graphic);
-      return graphic;
-    };
+      const graphic = engine.block.create('graphic')
+      const imageFill = engine.block.createFill('image')
+      engine.block.setString(imageFill, 'fill/image/imageFileURI', imageUrl)
+      engine.block.setFill(graphic, imageFill)
+      engine.block.setShape(graphic, engine.block.createShape('rect'))
+      engine.block.setWidth(graphic, blockWidth)
+      engine.block.setHeight(graphic, blockHeight)
+      const pos = getPosition(index)
+      engine.block.setPositionX(graphic, pos.x)
+      engine.block.setPositionY(graphic, pos.y)
+      engine.block.appendChild(page, graphic)
+      return graphic
+    }
 
     // Sample images for demonstration
     const imageUrls = [
@@ -162,100 +162,100 @@ class Example implements EditorPlugin {
       'https://img.ly/static/ubq_samples/sample_4.jpg',
       'https://img.ly/static/ubq_samples/sample_5.jpg',
       'https://img.ly/static/ubq_samples/sample_6.jpg'
-    ];
+    ]
 
     // Block 1: Slide entrance animation with direction
-    const block1 = await createImageBlock(0, imageUrls[0]);
+    const block1 = await createImageBlock(0, imageUrls[0])
 
     // Create a slide animation that enters from the left
-    const slideAnimation = engine.block.createAnimation('slide');
-    engine.block.setInAnimation(block1, slideAnimation);
-    engine.block.setDuration(slideAnimation, 1.0);
+    const slideAnimation = engine.block.createAnimation('slide')
+    engine.block.setInAnimation(block1, slideAnimation)
+    engine.block.setDuration(slideAnimation, 1.0)
     // Direction in radians: 0=right, PI/2=bottom, PI=left, 3*PI/2=top
-    engine.block.setFloat(slideAnimation, 'animation/slide/direction', Math.PI);
-    engine.block.setEnum(slideAnimation, 'animationEasing', 'EaseOut');
+    engine.block.setFloat(slideAnimation, 'animation/slide/direction', Math.PI)
+    engine.block.setEnum(slideAnimation, 'animationEasing', 'EaseOut')
 
     // Block 2: Fade animation with easing
-    const block2 = await createImageBlock(1, imageUrls[1]);
+    const block2 = await createImageBlock(1, imageUrls[1])
 
     // Create a fade entrance animation
-    const fadeAnimation = engine.block.createAnimation('fade');
-    engine.block.setInAnimation(block2, fadeAnimation);
-    engine.block.setDuration(fadeAnimation, 1.0);
-    engine.block.setEnum(fadeAnimation, 'animationEasing', 'EaseInOut');
+    const fadeAnimation = engine.block.createAnimation('fade')
+    engine.block.setInAnimation(block2, fadeAnimation)
+    engine.block.setDuration(fadeAnimation, 1.0)
+    engine.block.setEnum(fadeAnimation, 'animationEasing', 'EaseInOut')
 
     // Block 3: Zoom animation
-    const block3 = await createImageBlock(2, imageUrls[2]);
+    const block3 = await createImageBlock(2, imageUrls[2])
 
     // Create a zoom animation with fade effect
-    const zoomAnimation = engine.block.createAnimation('zoom');
-    engine.block.setInAnimation(block3, zoomAnimation);
-    engine.block.setDuration(zoomAnimation, 1.0);
-    engine.block.setBool(zoomAnimation, 'animation/zoom/fade', true);
+    const zoomAnimation = engine.block.createAnimation('zoom')
+    engine.block.setInAnimation(block3, zoomAnimation)
+    engine.block.setDuration(zoomAnimation, 1.0)
+    engine.block.setBool(zoomAnimation, 'animation/zoom/fade', true)
 
     // Block 4: Exit animation
-    const block4 = await createImageBlock(3, imageUrls[3]);
+    const block4 = await createImageBlock(3, imageUrls[3])
 
     // Create entrance and exit animations
-    const wipeIn = engine.block.createAnimation('wipe');
-    engine.block.setInAnimation(block4, wipeIn);
-    engine.block.setDuration(wipeIn, 1.0);
-    engine.block.setEnum(wipeIn, 'animation/wipe/direction', 'Right');
+    const wipeIn = engine.block.createAnimation('wipe')
+    engine.block.setInAnimation(block4, wipeIn)
+    engine.block.setDuration(wipeIn, 1.0)
+    engine.block.setEnum(wipeIn, 'animation/wipe/direction', 'Right')
 
     // Exit animation plays before block disappears
-    const fadeOut = engine.block.createAnimation('fade');
-    engine.block.setOutAnimation(block4, fadeOut);
-    engine.block.setDuration(fadeOut, 1.0);
-    engine.block.setEnum(fadeOut, 'animationEasing', 'EaseIn');
+    const fadeOut = engine.block.createAnimation('fade')
+    engine.block.setOutAnimation(block4, fadeOut)
+    engine.block.setDuration(fadeOut, 1.0)
+    engine.block.setEnum(fadeOut, 'animationEasing', 'EaseIn')
 
     // Block 5: Loop animation
-    const block5 = await createImageBlock(4, imageUrls[4]);
+    const block5 = await createImageBlock(4, imageUrls[4])
 
     // Create a breathing loop animation
-    const breathingLoop = engine.block.createAnimation('breathing_loop');
-    engine.block.setLoopAnimation(block5, breathingLoop);
-    engine.block.setDuration(breathingLoop, 2.0);
+    const breathingLoop = engine.block.createAnimation('breathing_loop')
+    engine.block.setLoopAnimation(block5, breathingLoop)
+    engine.block.setDuration(breathingLoop, 2.0)
     // Intensity: 0 = 1.25x max scale, 1 = 2.5x max scale
     engine.block.setFloat(
       breathingLoop,
       'animation/breathing_loop/intensity',
       0.3
-    );
+    )
 
     // Block 6: Combined animations
-    const block6 = await createImageBlock(5, imageUrls[5]);
+    const block6 = await createImageBlock(5, imageUrls[5])
 
     // Apply entrance, exit, and loop animations together
-    const spinIn = engine.block.createAnimation('spin');
-    engine.block.setInAnimation(block6, spinIn);
-    engine.block.setDuration(spinIn, 1.0);
-    engine.block.setEnum(spinIn, 'animation/spin/direction', 'Clockwise');
-    engine.block.setFloat(spinIn, 'animation/spin/intensity', 0.5);
+    const spinIn = engine.block.createAnimation('spin')
+    engine.block.setInAnimation(block6, spinIn)
+    engine.block.setDuration(spinIn, 1.0)
+    engine.block.setEnum(spinIn, 'animation/spin/direction', 'Clockwise')
+    engine.block.setFloat(spinIn, 'animation/spin/intensity', 0.5)
 
-    const blurOut = engine.block.createAnimation('blur');
-    engine.block.setOutAnimation(block6, blurOut);
-    engine.block.setDuration(blurOut, 1.0);
+    const blurOut = engine.block.createAnimation('blur')
+    engine.block.setOutAnimation(block6, blurOut)
+    engine.block.setDuration(blurOut, 1.0)
 
-    const swayLoop = engine.block.createAnimation('sway_loop');
-    engine.block.setLoopAnimation(block6, swayLoop);
-    engine.block.setDuration(swayLoop, 1.5);
+    const swayLoop = engine.block.createAnimation('sway_loop')
+    engine.block.setLoopAnimation(block6, swayLoop)
+    engine.block.setDuration(swayLoop, 1.5)
 
     // Discover available properties for any animation
-    const properties = engine.block.findAllProperties(slideAnimation);
-    // eslint-disable-next-line no-console
-    console.log('Slide animation properties:', properties);
+    const properties = engine.block.findAllProperties(slideAnimation)
+
+    console.log('Slide animation properties:', properties)
 
     // Query available easing options
-    const easingOptions = engine.block.getEnumValues('animationEasing');
-    // eslint-disable-next-line no-console
-    console.log('Available easing options:', easingOptions);
+    const easingOptions = engine.block.getEnumValues('animationEasing')
+
+    console.log('Available easing options:', easingOptions)
 
     // Set initial playback time to see animations
-    engine.block.setPlaybackTime(page, 1.9);
+    engine.block.setPlaybackTime(page, 1.9)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers applying entrance animations (slide, fade, zoom), exit animations, loop animations, and configuring animation properties like direction, easing, and intensity.
@@ -270,12 +270,12 @@ The slide animation moves a block in from a specified direction. The `direction`
 
 ```typescript highlight-entrance-slide
 // Create a slide animation that enters from the left
-const slideAnimation = engine.block.createAnimation('slide');
-engine.block.setInAnimation(block1, slideAnimation);
-engine.block.setDuration(slideAnimation, 1.0);
+const slideAnimation = engine.block.createAnimation('slide')
+engine.block.setInAnimation(block1, slideAnimation)
+engine.block.setDuration(slideAnimation, 1.0)
 // Direction in radians: 0=right, PI/2=bottom, PI=left, 3*PI/2=top
-engine.block.setFloat(slideAnimation, 'animation/slide/direction', Math.PI);
-engine.block.setEnum(slideAnimation, 'animationEasing', 'EaseOut');
+engine.block.setFloat(slideAnimation, 'animation/slide/direction', Math.PI)
+engine.block.setEnum(slideAnimation, 'animationEasing', 'EaseOut')
 ```
 
 ### Fade Animation
@@ -284,10 +284,10 @@ The fade animation transitions opacity from invisible to fully visible. Easing c
 
 ```typescript highlight-entrance-fade
 // Create a fade entrance animation
-const fadeAnimation = engine.block.createAnimation('fade');
-engine.block.setInAnimation(block2, fadeAnimation);
-engine.block.setDuration(fadeAnimation, 1.0);
-engine.block.setEnum(fadeAnimation, 'animationEasing', 'EaseInOut');
+const fadeAnimation = engine.block.createAnimation('fade')
+engine.block.setInAnimation(block2, fadeAnimation)
+engine.block.setDuration(fadeAnimation, 1.0)
+engine.block.setEnum(fadeAnimation, 'animationEasing', 'EaseInOut')
 ```
 
 ### Zoom Animation
@@ -296,10 +296,10 @@ The zoom animation scales the block from a smaller size to its final dimensions.
 
 ```typescript highlight-entrance-zoom
 // Create a zoom animation with fade effect
-const zoomAnimation = engine.block.createAnimation('zoom');
-engine.block.setInAnimation(block3, zoomAnimation);
-engine.block.setDuration(zoomAnimation, 1.0);
-engine.block.setBool(zoomAnimation, 'animation/zoom/fade', true);
+const zoomAnimation = engine.block.createAnimation('zoom')
+engine.block.setInAnimation(block3, zoomAnimation)
+engine.block.setDuration(zoomAnimation, 1.0)
+engine.block.setBool(zoomAnimation, 'animation/zoom/fade', true)
 ```
 
 Other entrance animation types include:
@@ -315,17 +315,17 @@ Other entrance animation types include:
 Exit animations define how a block leaves the screen. We use `setOutAnimation()` to attach them. CE.SDK prevents overlap between entrance and exit durations automatically.
 
 ```typescript highlight-exit-animation
-    // Create entrance and exit animations
-    const wipeIn = engine.block.createAnimation('wipe');
-    engine.block.setInAnimation(block4, wipeIn);
-    engine.block.setDuration(wipeIn, 1.0);
-    engine.block.setEnum(wipeIn, 'animation/wipe/direction', 'Right');
+// Create entrance and exit animations
+const wipeIn = engine.block.createAnimation('wipe')
+engine.block.setInAnimation(block4, wipeIn)
+engine.block.setDuration(wipeIn, 1.0)
+engine.block.setEnum(wipeIn, 'animation/wipe/direction', 'Right')
 
-    // Exit animation plays before block disappears
-    const fadeOut = engine.block.createAnimation('fade');
-    engine.block.setOutAnimation(block4, fadeOut);
-    engine.block.setDuration(fadeOut, 1.0);
-    engine.block.setEnum(fadeOut, 'animationEasing', 'EaseIn');
+// Exit animation plays before block disappears
+const fadeOut = engine.block.createAnimation('fade')
+engine.block.setOutAnimation(block4, fadeOut)
+engine.block.setDuration(fadeOut, 1.0)
+engine.block.setEnum(fadeOut, 'animationEasing', 'EaseIn')
 ```
 
 In this example, a wipe entrance transitions to a fade exit. Mirror entrance effects for visual consistency, or use contrasting effects for emphasis.
@@ -336,15 +336,15 @@ Loop animations run continuously while the block is visible. They can combine wi
 
 ```typescript highlight-loop-animation
 // Create a breathing loop animation
-const breathingLoop = engine.block.createAnimation('breathing_loop');
-engine.block.setLoopAnimation(block5, breathingLoop);
-engine.block.setDuration(breathingLoop, 2.0);
+const breathingLoop = engine.block.createAnimation('breathing_loop')
+engine.block.setLoopAnimation(block5, breathingLoop)
+engine.block.setDuration(breathingLoop, 2.0)
 // Intensity: 0 = 1.25x max scale, 1 = 2.5x max scale
 engine.block.setFloat(
   breathingLoop,
   'animation/breathing_loop/intensity',
   0.3
-);
+)
 ```
 
 The duration controls each cycle length. Loop animation types include:
@@ -363,20 +363,20 @@ The duration controls each cycle length. Loop animation types include:
 A single block can have entrance, exit, and loop animations running together. The loop animation runs throughout the block's visibility while entrance and exit animations play at the appropriate times.
 
 ```typescript highlight-combined-animations
-    // Apply entrance, exit, and loop animations together
-    const spinIn = engine.block.createAnimation('spin');
-    engine.block.setInAnimation(block6, spinIn);
-    engine.block.setDuration(spinIn, 1.0);
-    engine.block.setEnum(spinIn, 'animation/spin/direction', 'Clockwise');
-    engine.block.setFloat(spinIn, 'animation/spin/intensity', 0.5);
+// Apply entrance, exit, and loop animations together
+const spinIn = engine.block.createAnimation('spin')
+engine.block.setInAnimation(block6, spinIn)
+engine.block.setDuration(spinIn, 1.0)
+engine.block.setEnum(spinIn, 'animation/spin/direction', 'Clockwise')
+engine.block.setFloat(spinIn, 'animation/spin/intensity', 0.5)
 
-    const blurOut = engine.block.createAnimation('blur');
-    engine.block.setOutAnimation(block6, blurOut);
-    engine.block.setDuration(blurOut, 1.0);
+const blurOut = engine.block.createAnimation('blur')
+engine.block.setOutAnimation(block6, blurOut)
+engine.block.setDuration(blurOut, 1.0)
 
-    const swayLoop = engine.block.createAnimation('sway_loop');
-    engine.block.setLoopAnimation(block6, swayLoop);
-    engine.block.setDuration(swayLoop, 1.5);
+const swayLoop = engine.block.createAnimation('sway_loop')
+engine.block.setLoopAnimation(block6, swayLoop)
+engine.block.setDuration(swayLoop, 1.5)
 ```
 
 ## Configuring Animation Properties
@@ -384,15 +384,15 @@ A single block can have entrance, exit, and loop animations running together. Th
 Each animation type has specific configurable properties. We use `findAllProperties()` to discover available properties and `getEnumValues()` to query options for enum properties.
 
 ```typescript highlight-discover-properties
-    // Discover available properties for any animation
-    const properties = engine.block.findAllProperties(slideAnimation);
-    // eslint-disable-next-line no-console
-    console.log('Slide animation properties:', properties);
+// Discover available properties for any animation
+const properties = engine.block.findAllProperties(slideAnimation)
 
-    // Query available easing options
-    const easingOptions = engine.block.getEnumValues('animationEasing');
-    // eslint-disable-next-line no-console
-    console.log('Available easing options:', easingOptions);
+console.log('Slide animation properties:', properties)
+
+// Query available easing options
+const easingOptions = engine.block.getEnumValues('animationEasing')
+
+console.log('Available easing options:', easingOptions)
 ```
 
 Common configurable properties include:

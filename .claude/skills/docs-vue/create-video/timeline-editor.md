@@ -62,23 +62,23 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource,
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
 
 // Add default asset source plugins
-await cesdk.addPlugin(new BlurAssetSource());
-await cesdk.addPlugin(new ColorPaletteAssetSource());
-await cesdk.addPlugin(new CropPresetsAssetSource());
-await cesdk.addPlugin(new EffectsAssetSource());
-await cesdk.addPlugin(new FiltersAssetSource());
-await cesdk.addPlugin(new PagePresetsAssetSource());
-await cesdk.addPlugin(new StickerAssetSource());
-await cesdk.addPlugin(new TextAssetSource());
-await cesdk.addPlugin(new TextComponentAssetSource());
-await cesdk.addPlugin(new TypefaceAssetSource());
-await cesdk.addPlugin(new VectorShapeAssetSource());
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
 // Add demo and upload sources
-await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
 await cesdk.addPlugin(
   new DemoAssetSources({
     include: [
@@ -88,9 +88,9 @@ await cesdk.addPlugin(
       'ly.img.video.*'
     ]
   })
-);
+)
 
-await cesdk.actions.run('scene.create');
+await cesdk.actions.run('scene.create')
 ```
 
 This tells the CreativeEditor:
@@ -559,10 +559,9 @@ The following example detects the scene state:
 ```ts
 // Disable split control when nothing is selected
 cesdk.feature.set('ly.img.video.controls.split', ({ engine }) => {
-  const selected = engine.block.findAllSelected();
-  return selected.length === 1;
-});
-
+  const selected = engine.block.findAllSelected()
+  return selected.length === 1
+})
 ```
 
 ### Feature Reference

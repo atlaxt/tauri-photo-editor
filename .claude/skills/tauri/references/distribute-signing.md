@@ -36,7 +36,7 @@ Code signing is required (or strongly recommended) for store distribution and to
 
 ## Key Points
 
-- **Never** commit private keys or passwords; use env vars or CI secrets. Use **TAURI_SIGNING_*** and **APPLE_*** env vars for automation.
+- **Never** commit private keys or passwords; use env vars or CI secrets. Use **TAURI_SIGNING_***and **APPLE_*** env vars for automation.
 - Match certificate type to distribution path (e.g. Developer ID for direct macOS download; Apple Distribution for App Store).
 
 <!--

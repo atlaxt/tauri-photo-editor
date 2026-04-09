@@ -26,7 +26,7 @@ Starting from a blank canvas lets you build new designs without pre-existing con
 > * [Load a Scene](./open-the-editor/load-scene.md) — Resume editing a previously saved design
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-blank-canvas-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -42,19 +42,19 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ========================================
     // Create an Empty Scene
@@ -62,23 +62,23 @@ class Example implements EditorPlugin {
     // Create a new empty scene with a page of specific dimensions
     engine.scene.create('VerticalStack', {
       page: { size: { width: 800, height: 600 } }
-    });
+    })
 
     // Find the page that was automatically created
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
 
     // ========================================
     // Enable Auto-Fit Zoom
     // ========================================
     // Enable auto-fit zoom to keep the page visible when resizing
     // This continuously adjusts the zoom level to fit the page horizontally
-    engine.scene.zoomToBlock(page);
-    engine.scene.enableZoomAutoFit(page, 'Horizontal', 40, 40);
+    engine.scene.zoomToBlock(page)
+    engine.scene.enableZoomAutoFit(page, 'Horizontal', 40, 40)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create an empty scene with custom page dimensions and configure the viewport for editing.
@@ -91,7 +91,7 @@ We call `engine.scene.create()` to create a new design scene. We pass the layout
 // Create a new empty scene with a page of specific dimensions
 engine.scene.create('VerticalStack', {
   page: { size: { width: 800, height: 600 } }
-});
+})
 ```
 
 The first parameter specifies the scene layout. Use `'Free'` for independent page positioning, `'VerticalStack'` or `'HorizontalStack'` for aligned layouts. The options object configures the initial page with a size in design units.
@@ -103,8 +103,8 @@ For interactive editing, we enable auto-fit zoom to keep the page visible when t
 ```typescript highlight-zoom
 // Enable auto-fit zoom to keep the page visible when resizing
 // This continuously adjusts the zoom level to fit the page horizontally
-engine.scene.zoomToBlock(page);
-engine.scene.enableZoomAutoFit(page, 'Horizontal', 40, 40);
+engine.scene.zoomToBlock(page)
+engine.scene.enableZoomAutoFit(page, 'Horizontal', 40, 40)
 ```
 
 The `enableZoomAutoFit()` method continuously adjusts the zoom level to fit the specified block. Use `'Horizontal'` to fit the width, `'Vertical'` to fit the height, or `'Both'` to fit both dimensions. The padding parameters add space around the content.

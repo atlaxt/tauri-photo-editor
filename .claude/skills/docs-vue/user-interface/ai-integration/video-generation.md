@@ -24,7 +24,7 @@ videos from text or animating static images.
 The video generation plugin creates videos from text descriptions (text-to-video) or animates static images (image-to-video). Use models like Minimax Video, Pixverse, Kling Video, and ByteDance Seedance.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ai-integration-video-generation-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,33 +41,33 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import AiApps from '@imgly/plugin-ai-apps-web';
-import FalAiVideo from '@imgly/plugin-ai-video-generation-web/fal-ai';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import AiApps from '@imgly/plugin-ai-apps-web'
+import FalAiVideo from '@imgly/plugin-ai-video-generation-web/fal-ai'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -77,9 +77,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -93,12 +93,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
@@ -106,12 +106,12 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
     // Configure the AI video generation plugin
     // NOTE: In production, provide a secure proxy URL that forwards
     // requests to fal.ai API with your API key
-    const proxyUrl = 'https://your-proxy-server.com/api/fal-ai';
+    const proxyUrl = 'https://your-proxy-server.com/api/fal-ai'
 
     // Configure video generation with all available providers using AiApps
     await cesdk.addPlugin(
@@ -141,13 +141,13 @@ class Example implements EditorPlugin {
         // Perfect for testing and development
         dryRun: true
       })
-    );
+    )
 
     // Reorder dock to show AI Apps button prominently
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       'ly.img.ai.apps.dock',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Customize UI labels for AI video generation features
     // This demonstrates how to customize the i18n system
@@ -156,7 +156,7 @@ class Example implements EditorPlugin {
         'ly.img.plugin-ai-video-generation-web.fal-ai/minimax/video-01-live.property.prompt':
           '🎬 Describe Your Video'
       }
-    });
+    })
 
     // Alternative: Configure with single video generation provider
     /*
@@ -178,11 +178,11 @@ class Example implements EditorPlugin {
 
     // Open the AI Apps panel to make the video generation features visible
 
-    cesdk.ui.openPanel('ly.img.ai.apps');
+    cesdk.ui.openPanel('ly.img.ai.apps')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers installing the plugin, configuring AI providers, setting up text-to-video and image-to-video, customizing parameters, and testing with dry-run mode.
@@ -192,8 +192,8 @@ This guide covers installing the plugin, configuring AI providers, setting up te
 Import the plugin and provider modules from the video generation package.
 
 ```typescript highlight-install
-import AiApps from '@imgly/plugin-ai-apps-web';
-import FalAiVideo from '@imgly/plugin-ai-video-generation-web/fal-ai';
+import AiApps from '@imgly/plugin-ai-apps-web'
+import FalAiVideo from '@imgly/plugin-ai-video-generation-web/fal-ai'
 ```
 
 Install `@imgly/plugin-ai-video-generation-web` to access the VideoGeneration plugin and fal.ai provider modules:
@@ -241,7 +241,7 @@ await cesdk.addPlugin(
     } as any),
     dryRun: true
   } as any)
-);
+)
 ```
 
 We configure MinimaxVideo01Live for text-to-video and MinimaxVideo01LiveImageToVideo for image-to-video, enable prompt optimization, and set dry-run mode for testing without API calls.
@@ -262,7 +262,7 @@ VideoGeneration({
       prompt_optimizer: { default: true },
     },
   }),
-});
+})
 ```
 
 The prompt optimizer enhances text descriptions for better video results.
@@ -275,7 +275,7 @@ Animate static images by configuring image-to-video providers. Choose from Minim
 VideoGeneration({
   text2video: FalAiVideo.MinimaxVideo01Live({ proxyUrl: '...' }),
   image2video: FalAiVideo.MinimaxVideo01LiveImageToVideo({ proxyUrl: '...' }),
-});
+})
 ```
 
 Users can upload images and the AI generates animated video sequences.
@@ -291,7 +291,7 @@ FalAiVideo.KlingVideoV21MasterTextToVideo({
     aspect_ratio: { default: '16:9' },
     duration: { default: '5s' },
   },
-});
+})
 ```
 
 Different models support different parameter combinations. Check model documentation for available options.
@@ -321,7 +321,7 @@ VideoGeneration({
     FalAiVideo.Veo31FirstLastFrameToVideo({ proxyUrl: '...' }),
     FalAiVideo.Veo31FastFirstLastFrameToVideo({ proxyUrl: '...' }),
   ],
-});
+})
 ```
 
 Multiple providers trigger automatic provider and model selection in the UI.
@@ -335,13 +335,13 @@ Control which features appear in the UI using the Feature API.
 cesdk.feature.enable(
   'ly.img.plugin-ai-video-generation-web.providerSelect',
   false,
-);
+)
 
 // Disable model selection
 cesdk.feature.enable(
   'ly.img.plugin-ai-video-generation-web.modelSelect',
   false,
-);
+)
 ```
 
 This restricts user choices when you want to enforce specific models.
@@ -358,7 +358,7 @@ cesdk.i18n.setTranslations({
     'ly.img.plugin-ai-video-generation-web.fal-ai/minimax/video-01-live.property.prompt':
       '🎬 Describe Your Video'
   }
-});
+})
 ```
 
 The example demonstrates customizing the prompt input placeholder for the Minimax video generation model. Use provider-specific keys for individual models or generic keys to apply across all providers. You can also add translations for multiple languages by including additional language codes like `es`, `de`, or `fr`.
@@ -371,17 +371,17 @@ Intercept generation requests and responses with middleware functions. Use middl
 import {
   loggingMiddleware,
   rateLimitMiddleware,
-} from '@imgly/plugin-ai-generation-web';
+} from '@imgly/plugin-ai-generation-web'
 
-const logging = loggingMiddleware();
-const rateLimit = rateLimitMiddleware({ maxRequests: 5, windowMs: 60000 });
+const logging = loggingMiddleware()
+const rateLimit = rateLimitMiddleware({ maxRequests: 5, windowMs: 60000 })
 
 await cesdk.addPlugin(
   VideoGeneration({
     text2video: FalAiVideo.MinimaxVideo01Live({ proxyUrl: '...' }),
     middleware: [logging, rateLimit],
   }),
-);
+)
 ```
 
 Video generation typically takes longer than image generation, so adjust rate limits accordingly.
@@ -398,7 +398,7 @@ await cesdk.addPlugin(
     }) as any,
     dryRun: true, // Simulate generation without API calls
   } as any),
-);
+)
 ```
 
 Dry-run mode helps during development and testing by avoiding API costs while verifying integration.
@@ -413,10 +413,10 @@ const videoHistorySources = [
   'fal-ai/minimax/video-01-live.history',
   'fal-ai/kling-video/v2.1/master/text-to-video.history',
   'fal-ai/pixverse/v3.5/text-to-video.history',
-];
+]
 
 // Query video assets
-const videos = engine.asset.findAssets('video');
+const videos = engine.asset.findAssets('video')
 ```
 
 Video generation history integrates with the asset library for easy access.

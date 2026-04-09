@@ -15,13 +15,13 @@ CE.SDK offers three npm packages:
 **@cesdk/cesdk-js**: Full package with Editor UI and Engine. Initialize with `CreativeEditorSDK.create()` and access the Engine via `cesdk.engine`. Use this when users edit designs visually while your code handles background tasks.
 
 ```javascript
-import CreativeEditorSDK from '@cesdk/cesdk-js';
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 
 const cesdk = await CreativeEditorSDK.create('#container', {
   // license: 'YOUR_CESDK_LICENSE_KEY',
-});
+})
 
-const engine = cesdk.engine;
+const engine = cesdk.engine
 ```
 
 **@cesdk/engine**: Engine-only package without UI. Smaller bundle size. Initialize with `CreativeEngine.init()`. Use for browser automation, custom UIs, or hidden Engine instances.
@@ -55,23 +55,23 @@ Common patterns:
 Run a second, invisible Engine alongside your main UI for background processing:
 
 ```javascript
-import CreativeEngine from '@cesdk/engine';
+import CreativeEngine from '@cesdk/engine'
 
 // Main editor with UI
-const cesdk = await CreativeEditorSDK.create('#container', config);
+const cesdk = await CreativeEditorSDK.create('#container', config)
 
 // Hidden engine for background work
 const backgroundEngine = await CreativeEngine.init({
   // license: 'YOUR_CESDK_LICENSE_KEY',
-});
+})
 
 async function generateThumbnail(sceneData) {
-  await backgroundEngine.scene.loadFromString(sceneData);
-  const page = backgroundEngine.scene.getPages()[0];
+  await backgroundEngine.scene.loadFromString(sceneData)
+  const page = backgroundEngine.scene.getPages()[0]
   return await backgroundEngine.block.export(page, 'image/jpeg', {
     targetWidth: 200,
     targetHeight: 200,
-  });
+  })
 }
 ```
 
@@ -80,7 +80,7 @@ async function generateThumbnail(sceneData) {
 Each Engine instance consumes memory. Dispose instances when done:
 
 ```javascript
-backgroundEngine.dispose();
+backgroundEngine.dispose()
 ```
 
 For resource-intensive tasks like high-resolution exports, consider server-side processing with `@cesdk/node`.

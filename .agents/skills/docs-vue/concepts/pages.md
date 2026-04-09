@@ -23,7 +23,7 @@ Pages define the format of your designs—every graphic block, text element, and
 Pages provide the canvas and frame for your designs. Whether you're building a multi-page document, a social media carousel, or a video composition, understanding how pages work will help you with structuring your content correctly.
 
 ```typescript file=@cesdk_web_examples/guides-concepts-pages-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Pages Guide
@@ -54,134 +54,134 @@ import packageJson from './package.json';
  * - Navigating between pages
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a scene with VerticalStack layout for multi-page designs
-    engine.scene.create('VerticalStack');
+    engine.scene.create('VerticalStack')
 
     // Get the stack container to configure spacing
-    const [stack] = engine.block.findByType('stack');
-    engine.block.setFloat(stack, 'stack/spacing', 20);
-    engine.block.setBool(stack, 'stack/spacingInScreenspace', true);
+    const [stack] = engine.block.findByType('stack')
+    engine.block.setFloat(stack, 'stack/spacing', 20)
+    engine.block.setBool(stack, 'stack/spacingInScreenspace', true)
 
     // Get the scene to set page dimensions
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (scene === null) {
-      throw new Error('No scene available');
+      throw new Error('No scene available')
     }
 
     // Set page dimensions at the scene level (all pages share these dimensions)
-    engine.block.setFloat(scene, 'scene/pageDimensions/width', 800);
-    engine.block.setFloat(scene, 'scene/pageDimensions/height', 600);
+    engine.block.setFloat(scene, 'scene/pageDimensions/width', 800)
+    engine.block.setFloat(scene, 'scene/pageDimensions/height', 600)
 
     // Create the first page and set its dimensions
-    const firstPage = engine.block.create('page');
-    engine.block.setWidth(firstPage, 800);
-    engine.block.setHeight(firstPage, 600);
-    engine.block.appendChild(stack, firstPage);
+    const firstPage = engine.block.create('page')
+    engine.block.setWidth(firstPage, 800)
+    engine.block.setHeight(firstPage, 600)
+    engine.block.appendChild(stack, firstPage)
 
     // Create the second page with the same dimensions
-    const secondPage = engine.block.create('page');
-    engine.block.setWidth(secondPage, 800);
-    engine.block.setHeight(secondPage, 600);
-    engine.block.appendChild(stack, secondPage);
+    const secondPage = engine.block.create('page')
+    engine.block.setWidth(secondPage, 800)
+    engine.block.setHeight(secondPage, 600)
+    engine.block.appendChild(stack, secondPage)
 
     // Add an image block to the first page
-    const imageBlock = engine.block.create('graphic');
-    engine.block.appendChild(firstPage, imageBlock);
+    const imageBlock = engine.block.create('graphic')
+    engine.block.appendChild(firstPage, imageBlock)
 
     // Create a rect shape for the graphic block
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(imageBlock, rectShape)
 
     // Configure size and position after appending to the page
-    engine.block.setWidth(imageBlock, 400);
-    engine.block.setHeight(imageBlock, 300);
-    engine.block.setPositionX(imageBlock, 200);
-    engine.block.setPositionY(imageBlock, 150);
+    engine.block.setWidth(imageBlock, 400)
+    engine.block.setHeight(imageBlock, 300)
+    engine.block.setPositionX(imageBlock, 200)
+    engine.block.setPositionY(imageBlock, 150)
 
     // Create and configure the image fill
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
+    )
+    engine.block.setFill(imageBlock, imageFill)
 
     // Add a text block to the second page
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(secondPage, textBlock);
+    const textBlock = engine.block.create('text')
+    engine.block.appendChild(secondPage, textBlock)
 
     // Configure text properties after appending to the page
-    engine.block.replaceText(textBlock, 'Page 2');
-    engine.block.setTextFontSize(textBlock, 48);
-    engine.block.setTextColor(textBlock, { r: 0.2, g: 0.2, b: 0.2, a: 1.0 });
-    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
+    engine.block.replaceText(textBlock, 'Page 2')
+    engine.block.setTextFontSize(textBlock, 48)
+    engine.block.setTextColor(textBlock, { r: 0.2, g: 0.2, b: 0.2, a: 1.0 })
+    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidthMode(textBlock, 'Auto')
+    engine.block.setHeightMode(textBlock, 'Auto')
 
     // Center the text on the page
-    const textWidth = engine.block.getFrameWidth(textBlock);
-    const textHeight = engine.block.getFrameHeight(textBlock);
-    engine.block.setPositionX(textBlock, (800 - textWidth) / 2);
-    engine.block.setPositionY(textBlock, (600 - textHeight) / 2);
+    const textWidth = engine.block.getFrameWidth(textBlock)
+    const textHeight = engine.block.getFrameHeight(textBlock)
+    engine.block.setPositionX(textBlock, (800 - textWidth) / 2)
+    engine.block.setPositionY(textBlock, (600 - textHeight) / 2)
 
     // Configure page properties on the first page
     // Enable and set margins for print bleed
-    engine.block.setBool(firstPage, 'page/marginEnabled', true);
-    engine.block.setFloat(firstPage, 'page/margin/top', 10);
-    engine.block.setFloat(firstPage, 'page/margin/bottom', 10);
-    engine.block.setFloat(firstPage, 'page/margin/left', 10);
-    engine.block.setFloat(firstPage, 'page/margin/right', 10);
+    engine.block.setBool(firstPage, 'page/marginEnabled', true)
+    engine.block.setFloat(firstPage, 'page/margin/top', 10)
+    engine.block.setFloat(firstPage, 'page/margin/bottom', 10)
+    engine.block.setFloat(firstPage, 'page/margin/left', 10)
+    engine.block.setFloat(firstPage, 'page/margin/right', 10)
 
     // Set a custom title template for the first page
-    engine.block.setString(firstPage, 'page/titleTemplate', 'Cover');
+    engine.block.setString(firstPage, 'page/titleTemplate', 'Cover')
 
     // Set a custom title template for the second page
-    engine.block.setString(secondPage, 'page/titleTemplate', 'Content');
+    engine.block.setString(secondPage, 'page/titleTemplate', 'Content')
 
     // Set a background fill on the second page
-    const colorFill = engine.block.createFill('color');
+    const colorFill = engine.block.createFill('color')
     engine.block.setColor(colorFill, 'fill/color/value', {
       r: 0.95,
       g: 0.95,
       b: 1.0,
       a: 1.0
-    });
-    engine.block.setFill(secondPage, colorFill);
+    })
+    engine.block.setFill(secondPage, colorFill)
 
     // Demonstrate finding pages
-    const allPages = engine.scene.getPages();
-    console.log('All pages:', allPages);
-    console.log('Number of pages:', allPages.length);
+    const allPages = engine.scene.getPages()
+    console.log('All pages:', allPages)
+    console.log('Number of pages:', allPages.length)
 
     // Get the current page (nearest to viewport center or containing selection)
-    const currentPage = engine.scene.getCurrentPage();
-    console.log('Current page:', currentPage);
+    const currentPage = engine.scene.getCurrentPage()
+    console.log('Current page:', currentPage)
 
     // Alternative: Find pages using block API
-    const pagesByType = engine.block.findByType('page');
-    console.log('Pages found by type:', pagesByType);
+    const pagesByType = engine.block.findByType('page')
+    console.log('Pages found by type:', pagesByType)
 
     // Select the first page and zoom to fit
-    engine.block.select(firstPage);
-    engine.scene.enableZoomAutoFit(firstPage, 'Both');
+    engine.block.select(firstPage)
+    engine.scene.enableZoomAutoFit(firstPage, 'Both')
 
-    console.log('Pages guide initialized with a 2-page design.');
+    console.log('Pages guide initialized with a 2-page design.')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers:
@@ -197,74 +197,74 @@ This guide covers:
 In CE.SDK, content follows a strict hierarchy: a **scene** contains **pages**, and pages contain **content blocks**. Only blocks attached to a page are rendered on the canvas.
 
 ```typescript highlight=highlight-create-scene
-    // Create a scene with VerticalStack layout for multi-page designs
-    engine.scene.create('VerticalStack');
+// Create a scene with VerticalStack layout for multi-page designs
+engine.scene.create('VerticalStack')
 
-    // Get the stack container to configure spacing
-    const [stack] = engine.block.findByType('stack');
-    engine.block.setFloat(stack, 'stack/spacing', 20);
-    engine.block.setBool(stack, 'stack/spacingInScreenspace', true);
+// Get the stack container to configure spacing
+const [stack] = engine.block.findByType('stack')
+engine.block.setFloat(stack, 'stack/spacing', 20)
+engine.block.setBool(stack, 'stack/spacingInScreenspace', true)
 ```
 
 When you create a scene with a layout mode like `VerticalStack`, pages are automatically arranged according to that mode. Create pages using `engine.block.create('page')`, set their dimensions with `setWidth()` and `setHeight()`, then attach them to the scene (or its stack container) with `engine.block.appendChild()`.
 
 ```typescript highlight=highlight-create-pages
-    // Create the first page and set its dimensions
-    const firstPage = engine.block.create('page');
-    engine.block.setWidth(firstPage, 800);
-    engine.block.setHeight(firstPage, 600);
-    engine.block.appendChild(stack, firstPage);
+// Create the first page and set its dimensions
+const firstPage = engine.block.create('page')
+engine.block.setWidth(firstPage, 800)
+engine.block.setHeight(firstPage, 600)
+engine.block.appendChild(stack, firstPage)
 
-    // Create the second page with the same dimensions
-    const secondPage = engine.block.create('page');
-    engine.block.setWidth(secondPage, 800);
-    engine.block.setHeight(secondPage, 600);
-    engine.block.appendChild(stack, secondPage);
+// Create the second page with the same dimensions
+const secondPage = engine.block.create('page')
+engine.block.setWidth(secondPage, 800)
+engine.block.setHeight(secondPage, 600)
+engine.block.appendChild(stack, secondPage)
 ```
 
 Content blocks must be added as children of a page to render. For graphic blocks, set both a shape and a fill for content to display. Append blocks to the page before configuring their properties.
 
 ```typescript highlight=highlight-add-content
-    // Add an image block to the first page
-    const imageBlock = engine.block.create('graphic');
-    engine.block.appendChild(firstPage, imageBlock);
+// Add an image block to the first page
+const imageBlock = engine.block.create('graphic')
+engine.block.appendChild(firstPage, imageBlock)
 
-    // Create a rect shape for the graphic block
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
+// Create a rect shape for the graphic block
+const rectShape = engine.block.createShape('rect')
+engine.block.setShape(imageBlock, rectShape)
 
-    // Configure size and position after appending to the page
-    engine.block.setWidth(imageBlock, 400);
-    engine.block.setHeight(imageBlock, 300);
-    engine.block.setPositionX(imageBlock, 200);
-    engine.block.setPositionY(imageBlock, 150);
+// Configure size and position after appending to the page
+engine.block.setWidth(imageBlock, 400)
+engine.block.setHeight(imageBlock, 300)
+engine.block.setPositionX(imageBlock, 200)
+engine.block.setPositionY(imageBlock, 150)
 
-    // Create and configure the image fill
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
+// Create and configure the image fill
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://img.ly/static/ubq_samples/sample_1.jpg'
+)
+engine.block.setFill(imageBlock, imageFill)
 
-    // Add a text block to the second page
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(secondPage, textBlock);
+// Add a text block to the second page
+const textBlock = engine.block.create('text')
+engine.block.appendChild(secondPage, textBlock)
 
-    // Configure text properties after appending to the page
-    engine.block.replaceText(textBlock, 'Page 2');
-    engine.block.setTextFontSize(textBlock, 48);
-    engine.block.setTextColor(textBlock, { r: 0.2, g: 0.2, b: 0.2, a: 1.0 });
-    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidthMode(textBlock, 'Auto');
-    engine.block.setHeightMode(textBlock, 'Auto');
+// Configure text properties after appending to the page
+engine.block.replaceText(textBlock, 'Page 2')
+engine.block.setTextFontSize(textBlock, 48)
+engine.block.setTextColor(textBlock, { r: 0.2, g: 0.2, b: 0.2, a: 1.0 })
+engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center')
+engine.block.setWidthMode(textBlock, 'Auto')
+engine.block.setHeightMode(textBlock, 'Auto')
 
-    // Center the text on the page
-    const textWidth = engine.block.getFrameWidth(textBlock);
-    const textHeight = engine.block.getFrameHeight(textBlock);
-    engine.block.setPositionX(textBlock, (800 - textWidth) / 2);
-    engine.block.setPositionY(textBlock, (600 - textHeight) / 2);
+// Center the text on the page
+const textWidth = engine.block.getFrameWidth(textBlock)
+const textHeight = engine.block.getFrameHeight(textBlock)
+engine.block.setPositionX(textBlock, (800 - textWidth) / 2)
+engine.block.setPositionY(textBlock, (600 - textHeight) / 2)
 ```
 
 ## Page Dimensions and Consistency
@@ -272,15 +272,15 @@ Content blocks must be added as children of a page to render. For graphic blocks
 The CE.SDK engine supports pages with different dimensions. When using stacked layout modes (VerticalStack, HorizontalStack), the Editor UI expects all pages to share the same size. However, with the `Free` layout mode, you can set different dimensions for each page in the UI.
 
 ```typescript highlight=highlight-set-dimensions
-    // Get the scene to set page dimensions
-    const scene = engine.scene.get();
-    if (scene === null) {
-      throw new Error('No scene available');
-    }
+// Get the scene to set page dimensions
+const scene = engine.scene.get()
+if (scene === null) {
+  throw new Error('No scene available')
+}
 
-    // Set page dimensions at the scene level (all pages share these dimensions)
-    engine.block.setFloat(scene, 'scene/pageDimensions/width', 800);
-    engine.block.setFloat(scene, 'scene/pageDimensions/height', 600);
+// Set page dimensions at the scene level (all pages share these dimensions)
+engine.block.setFloat(scene, 'scene/pageDimensions/width', 800)
+engine.block.setFloat(scene, 'scene/pageDimensions/height', 600)
 ```
 
 You can set default page dimensions at the scene level using `engine.block.setFloat()` with `scene/pageDimensions/width` and `scene/pageDimensions/height`. The `scene/aspectRatioLock` property controls whether changing one dimension automatically adjusts the other. Individual pages can also have their dimensions set directly with `setWidth()` and `setHeight()`.
@@ -290,18 +290,18 @@ You can set default page dimensions at the scene level using `engine.block.setFl
 CE.SDK provides several methods to locate and navigate between pages in your scene.
 
 ```typescript highlight=highlight-find-pages
-    // Demonstrate finding pages
-    const allPages = engine.scene.getPages();
-    console.log('All pages:', allPages);
-    console.log('Number of pages:', allPages.length);
+// Demonstrate finding pages
+const allPages = engine.scene.getPages()
+console.log('All pages:', allPages)
+console.log('Number of pages:', allPages.length)
 
-    // Get the current page (nearest to viewport center or containing selection)
-    const currentPage = engine.scene.getCurrentPage();
-    console.log('Current page:', currentPage);
+// Get the current page (nearest to viewport center or containing selection)
+const currentPage = engine.scene.getCurrentPage()
+console.log('Current page:', currentPage)
 
-    // Alternative: Find pages using block API
-    const pagesByType = engine.block.findByType('page');
-    console.log('Pages found by type:', pagesByType);
+// Alternative: Find pages using block API
+const pagesByType = engine.block.findByType('page')
+console.log('Pages found by type:', pagesByType)
 ```
 
 Use these methods based on your needs:
@@ -320,19 +320,19 @@ Each page has its own properties that control its appearance and behavior. These
 Page margins define bleed areas useful for print designs. Enable margins and configure each side individually:
 
 ```typescript highlight=highlight-page-properties
-    // Configure page properties on the first page
-    // Enable and set margins for print bleed
-    engine.block.setBool(firstPage, 'page/marginEnabled', true);
-    engine.block.setFloat(firstPage, 'page/margin/top', 10);
-    engine.block.setFloat(firstPage, 'page/margin/bottom', 10);
-    engine.block.setFloat(firstPage, 'page/margin/left', 10);
-    engine.block.setFloat(firstPage, 'page/margin/right', 10);
+// Configure page properties on the first page
+// Enable and set margins for print bleed
+engine.block.setBool(firstPage, 'page/marginEnabled', true)
+engine.block.setFloat(firstPage, 'page/margin/top', 10)
+engine.block.setFloat(firstPage, 'page/margin/bottom', 10)
+engine.block.setFloat(firstPage, 'page/margin/left', 10)
+engine.block.setFloat(firstPage, 'page/margin/right', 10)
 
-    // Set a custom title template for the first page
-    engine.block.setString(firstPage, 'page/titleTemplate', 'Cover');
+// Set a custom title template for the first page
+engine.block.setString(firstPage, 'page/titleTemplate', 'Cover')
 
-    // Set a custom title template for the second page
-    engine.block.setString(secondPage, 'page/titleTemplate', 'Content');
+// Set a custom title template for the second page
+engine.block.setString(secondPage, 'page/titleTemplate', 'Content')
 ```
 
 Set `page/marginEnabled` to `true` to enable margins, then use `page/margin/top`, `page/margin/bottom`, `page/margin/left`, and `page/margin/right` to configure each side.
@@ -349,14 +349,14 @@ Pages support fills for background colors or images using the standard fill syst
 
 ```typescript highlight=highlight-page-background
 // Set a background fill on the second page
-const colorFill = engine.block.createFill('color');
+const colorFill = engine.block.createFill('color')
 engine.block.setColor(colorFill, 'fill/color/value', {
   r: 0.95,
   g: 0.95,
   b: 1.0,
   a: 1.0
-});
-engine.block.setFill(secondPage, colorFill);
+})
+engine.block.setFill(secondPage, colorFill)
 ```
 
 Create a fill using `engine.block.createFill('color')` or `engine.block.createFill('image')`, configure its properties, then apply it to the page with `engine.block.setFill(page, fill)`.

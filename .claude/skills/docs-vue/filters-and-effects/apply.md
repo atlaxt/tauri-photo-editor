@@ -24,7 +24,7 @@ design elements using CE.SDK's visual effects system.
 While CE.SDK uses a unified effect API for both filters and effects, they serve different purposes. **Filters** typically apply color transformations like LUT filters and duotone, while **effects** apply visual modifications such as blur, pixelize, vignette, and image adjustments. You can combine multiple effects on a single element, creating complex visual treatments by stacking them in a customizable order.
 
 ```typescript file=@cesdk_web_examples/guides-filters-and-effects-apply-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,10 +40,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
-import { calculateGridLayout, hexToRgba } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout, hexToRgba } from './utils'
 
 /**
  * CE.SDK Plugin: Filters and Effects Guide
@@ -57,22 +57,22 @@ import { calculateGridLayout, hexToRgba } from './utils';
  * - Managing effect stacks
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -83,137 +83,137 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Enable effects and filters in the inspector panel using the Feature API
-    cesdk.feature.enable('ly.img.effect'); // Enable all effects
-    cesdk.feature.enable('ly.img.filter'); // Enable all filters
-    cesdk.feature.enable('ly.img.blur'); // Enable blur effect
-    cesdk.feature.enable('ly.img.adjustment'); // Enable adjustments
+    cesdk.feature.enable('ly.img.effect') // Enable all effects
+    cesdk.feature.enable('ly.img.filter') // Enable all filters
+    cesdk.feature.enable('ly.img.blur') // Enable blur effect
+    cesdk.feature.enable('ly.img.adjustment') // Enable adjustments
 
     // Calculate responsive grid layout based on page dimensions
-    const layout = calculateGridLayout(pageWidth, pageHeight, 9);
-    const { blockWidth, blockHeight, getPosition } = layout;
+    const layout = calculateGridLayout(pageWidth, pageHeight, 9)
+    const { blockWidth, blockHeight, getPosition } = layout
 
     // Use a sample image URL (this will load from demo assets)
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Query available LUT and Duotone filters from asset sources
     // These filters are provided by the demo asset sources loaded above
     const lutResults = await engine.asset.findAssets('ly.img.filter', {
       page: 0,
       perPage: 10
-    });
+    })
     const duotoneResults = await engine.asset.findAssets('ly.img.filter', {
       page: 0,
       perPage: 10
-    });
+    })
 
-    const lutAssets = lutResults.assets;
-    const duotoneAssets = duotoneResults.assets;
+    const lutAssets = lutResults.assets
+    const duotoneAssets = duotoneResults.assets
 
     // Pattern #2: Use Convenience APIs - addImage() simplifies block creation
     // Create a sample block to demonstrate effect support checking
-    const blockSize = { width: blockWidth, height: blockHeight };
+    const blockSize = { width: blockWidth, height: blockHeight }
     const sampleBlock = await engine.block.addImage(imageUri, {
       size: blockSize
-    });
-    engine.block.appendChild(page, sampleBlock);
+    })
+    engine.block.appendChild(page, sampleBlock)
 
     // Check if a block supports effects
-    const supportsEffects = engine.block.supportsEffects(sampleBlock);
-    // eslint-disable-next-line no-console
-    console.log('Block supports effects:', supportsEffects); // true for graphics
+    const supportsEffects = engine.block.supportsEffects(sampleBlock)
+
+    console.log('Block supports effects:', supportsEffects) // true for graphics
 
     // Page blocks don't support effects
-    const pageSupportsEffects = engine.block.supportsEffects(page);
-    // eslint-disable-next-line no-console
-    console.log('Page supports effects:', pageSupportsEffects); // false
+    const pageSupportsEffects = engine.block.supportsEffects(page)
+
+    console.log('Page supports effects:', pageSupportsEffects) // false
 
     // Select this block so effects panel is visible
-    engine.block.setSelected(sampleBlock, true);
+    engine.block.setSelected(sampleBlock, true)
 
     // Pattern #1: Demonstrate Individual Before Combined
     // Create a separate image block for blur demonstration
     const blurImageBlock = await engine.block.addImage(imageUri, {
       size: blockSize
-    });
-    engine.block.appendChild(page, blurImageBlock);
+    })
+    engine.block.appendChild(page, blurImageBlock)
 
     // Create and apply a blur effect
-    const blurEffect = engine.block.createEffect('extrude_blur');
-    engine.block.appendEffect(blurImageBlock, blurEffect);
+    const blurEffect = engine.block.createEffect('extrude_blur')
+    engine.block.appendEffect(blurImageBlock, blurEffect)
 
     // Adjust blur intensity
-    engine.block.setFloat(blurEffect, 'effect/extrude_blur/amount', 0.5);
+    engine.block.setFloat(blurEffect, 'effect/extrude_blur/amount', 0.5)
 
     // Create a separate image block for adjustments demonstration
     const adjustmentsImageBlock = await engine.block.addImage(imageUri, {
       size: blockSize
-    });
-    engine.block.appendChild(page, adjustmentsImageBlock);
+    })
+    engine.block.appendChild(page, adjustmentsImageBlock)
 
     // Create adjustments effect for brightness and contrast
-    const adjustmentsEffect = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(adjustmentsImageBlock, adjustmentsEffect);
+    const adjustmentsEffect = engine.block.createEffect('adjustments')
+    engine.block.appendEffect(adjustmentsImageBlock, adjustmentsEffect)
 
     // Find all available properties for this effect
-    const adjustmentProperties =
-      engine.block.findAllProperties(adjustmentsEffect);
-    // eslint-disable-next-line no-console
-    console.log('Available adjustment properties:', adjustmentProperties);
+    const adjustmentProperties
+      = engine.block.findAllProperties(adjustmentsEffect)
+
+    console.log('Available adjustment properties:', adjustmentProperties)
 
     // Set brightness, contrast, and saturation
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/brightness',
       0.2
-    );
+    )
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/contrast',
       0.15
-    );
+    )
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/saturation',
       0.1
-    );
+    )
 
     // Demonstrate LUT filters by applying the first 2 from asset library
     // These filters are fetched from the demo asset sources (Grid positions 3-4)
-    const lutImageBlocks = [];
+    const lutImageBlocks = []
     for (let i = 0; i < Math.min(2, lutAssets.length); i++) {
-      const lutAsset = lutAssets[i];
+      const lutAsset = lutAssets[i]
 
       const lutImageBlock = await engine.block.addImage(imageUri, {
         size: blockSize
-      });
-      engine.block.appendChild(page, lutImageBlock);
-      lutImageBlocks.push(lutImageBlock);
+      })
+      engine.block.appendChild(page, lutImageBlock)
+      lutImageBlocks.push(lutImageBlock)
 
       // Create LUT filter effect using the full effect type URI
       const lutEffect = engine.block.createEffect(
         '//ly.img.ubq/effect/lut_filter'
-      );
+      )
 
       // Use asset metadata for LUT configuration
       // The asset provides the LUT file URI and grid dimensions
@@ -221,69 +221,69 @@ class Example implements EditorPlugin {
         lutEffect,
         'effect/lut_filter/lutFileURI',
         lutAsset.meta?.uri as string
-      );
+      )
       engine.block.setInt(
         lutEffect,
         'effect/lut_filter/horizontalTileCount',
-        parseInt(lutAsset.meta?.horizontalTileCount as string, 10)
-      );
+        Number.parseInt(lutAsset.meta?.horizontalTileCount as string, 10)
+      )
       engine.block.setInt(
         lutEffect,
         'effect/lut_filter/verticalTileCount',
-        parseInt(lutAsset.meta?.verticalTileCount as string, 10)
-      );
-      engine.block.setFloat(lutEffect, 'effect/lut_filter/intensity', 0.85);
+        Number.parseInt(lutAsset.meta?.verticalTileCount as string, 10)
+      )
+      engine.block.setFloat(lutEffect, 'effect/lut_filter/intensity', 0.85)
 
-      engine.block.appendEffect(lutImageBlock, lutEffect);
+      engine.block.appendEffect(lutImageBlock, lutEffect)
     }
 
     // Demonstrate Duotone filters by applying the first 2 from asset library
     // Duotone filters create artistic two-color treatments (Grid positions 5-6)
-    const duotoneImageBlocks = [];
+    const duotoneImageBlocks = []
     for (let i = 0; i < Math.min(2, duotoneAssets.length); i++) {
-      const duotoneAsset = duotoneAssets[i];
+      const duotoneAsset = duotoneAssets[i]
 
       const duotoneImageBlock = await engine.block.addImage(imageUri, {
         size: blockSize
-      });
-      engine.block.appendChild(page, duotoneImageBlock);
-      duotoneImageBlocks.push(duotoneImageBlock);
+      })
+      engine.block.appendChild(page, duotoneImageBlock)
+      duotoneImageBlocks.push(duotoneImageBlock)
 
       // Create Duotone filter effect using the full effect type URI
       const duotoneEffect = engine.block.createEffect(
         '//ly.img.ubq/effect/duotone_filter'
-      );
+      )
 
       // Convert hex colors from asset metadata to RGBA (0-1 range)
-      const darkColor = hexToRgba(duotoneAsset.meta?.darkColor as string);
+      const darkColor = hexToRgba(duotoneAsset.meta?.darkColor as string)
       engine.block.setColor(
         duotoneEffect,
         'effect/duotone_filter/darkColor',
         darkColor
-      );
+      )
 
-      const lightColor = hexToRgba(duotoneAsset.meta?.lightColor as string);
+      const lightColor = hexToRgba(duotoneAsset.meta?.lightColor as string)
       engine.block.setColor(
         duotoneEffect,
         'effect/duotone_filter/lightColor',
         lightColor
-      );
+      )
 
       engine.block.setFloat(
         duotoneEffect,
         'effect/duotone_filter/intensity',
         0.8
-      );
+      )
 
-      engine.block.appendEffect(duotoneImageBlock, duotoneEffect);
+      engine.block.appendEffect(duotoneImageBlock, duotoneEffect)
     }
 
     // Pattern #5: Progressive Complexity - now combining multiple effects
     // Create a separate image block to demonstrate combining multiple effects (Grid position 7)
     const combinedImageBlock = await engine.block.addImage(imageUri, {
       size: blockSize
-    });
-    engine.block.appendChild(page, combinedImageBlock);
+    })
+    engine.block.appendChild(page, combinedImageBlock)
 
     // Apply effects in order - the stack will contain:
     // 1. adjustments (brightness/contrast) - applied first
@@ -291,81 +291,81 @@ class Example implements EditorPlugin {
     // 3. duotone (color tinting) - applied third
     // 4. pixelize - applied last
 
-    const combinedAdjustments = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(combinedImageBlock, combinedAdjustments);
+    const combinedAdjustments = engine.block.createEffect('adjustments')
+    engine.block.appendEffect(combinedImageBlock, combinedAdjustments)
     engine.block.setFloat(
       combinedAdjustments,
       'effect/adjustments/brightness',
       0.2
-    );
+    )
     engine.block.setFloat(
       combinedAdjustments,
       'effect/adjustments/contrast',
       0.15
-    );
+    )
 
-    const combinedBlur = engine.block.createEffect('extrude_blur');
-    engine.block.appendEffect(combinedImageBlock, combinedBlur);
-    engine.block.setFloat(combinedBlur, 'effect/extrude_blur/amount', 0.3);
+    const combinedBlur = engine.block.createEffect('extrude_blur')
+    engine.block.appendEffect(combinedImageBlock, combinedBlur)
+    engine.block.setFloat(combinedBlur, 'effect/extrude_blur/amount', 0.3)
 
-    const combinedDuotone = engine.block.createEffect('duotone_filter');
-    engine.block.appendEffect(combinedImageBlock, combinedDuotone);
+    const combinedDuotone = engine.block.createEffect('duotone_filter')
+    engine.block.appendEffect(combinedImageBlock, combinedDuotone)
     engine.block.setColor(combinedDuotone, 'duotone_filter/darkColor', {
       r: 0.1,
       g: 0.2,
       b: 0.4,
       a: 1.0
-    });
+    })
     engine.block.setColor(combinedDuotone, 'duotone_filter/lightColor', {
       r: 0.9,
       g: 0.8,
       b: 0.6,
       a: 1.0
-    });
-    engine.block.setFloat(combinedDuotone, 'duotone_filter/intensity', 0.6);
+    })
+    engine.block.setFloat(combinedDuotone, 'duotone_filter/intensity', 0.6)
 
-    const pixelizeEffect = engine.block.createEffect('pixelize');
-    engine.block.appendEffect(combinedImageBlock, pixelizeEffect);
-    engine.block.setInt(pixelizeEffect, 'pixelize/horizontalPixelSize', 8);
-    engine.block.setInt(pixelizeEffect, 'pixelize/verticalPixelSize', 8);
+    const pixelizeEffect = engine.block.createEffect('pixelize')
+    engine.block.appendEffect(combinedImageBlock, pixelizeEffect)
+    engine.block.setInt(pixelizeEffect, 'pixelize/horizontalPixelSize', 8)
+    engine.block.setInt(pixelizeEffect, 'pixelize/verticalPixelSize', 8)
 
     // Get all effects applied to the combined block
-    const effects = engine.block.getEffects(combinedImageBlock);
-    // eslint-disable-next-line no-console
-    console.log('Applied effects:', effects);
+    const effects = engine.block.getEffects(combinedImageBlock)
+
+    console.log('Applied effects:', effects)
 
     // Access properties of specific effects
     effects.forEach((effect, index) => {
-      const effectType = engine.block.getType(effect);
-      const isEnabled = engine.block.isEffectEnabled(effect);
-      // eslint-disable-next-line no-console
-      console.log(`Effect ${index}: ${effectType}, enabled: ${isEnabled}`);
-    });
+      const effectType = engine.block.getType(effect)
+      const isEnabled = engine.block.isEffectEnabled(effect)
+
+      console.log(`Effect ${index}: ${effectType}, enabled: ${isEnabled}`)
+    })
 
     // Check if effect is enabled
-    const isBlurEnabled = engine.block.isEffectEnabled(combinedBlur);
-    // eslint-disable-next-line no-console
-    console.log('Blur effect is enabled:', isBlurEnabled);
+    const isBlurEnabled = engine.block.isEffectEnabled(combinedBlur)
+
+    console.log('Blur effect is enabled:', isBlurEnabled)
 
     // Create a temporary block to demonstrate effect removal
     const tempBlock = await engine.block.addImage(imageUri, {
       size: blockSize
-    });
-    engine.block.appendChild(page, tempBlock);
+    })
+    engine.block.appendChild(page, tempBlock)
 
-    const tempEffect = engine.block.createEffect('pixelize');
-    engine.block.appendEffect(tempBlock, tempEffect);
-    engine.block.setInt(tempEffect, 'pixelize/horizontalPixelSize', 12);
+    const tempEffect = engine.block.createEffect('pixelize')
+    engine.block.appendEffect(tempBlock, tempEffect)
+    engine.block.setInt(tempEffect, 'pixelize/horizontalPixelSize', 12)
 
     // Remove the effect
-    const tempEffects = engine.block.getEffects(tempBlock);
-    const effectIndex = tempEffects.indexOf(tempEffect);
+    const tempEffects = engine.block.getEffects(tempBlock)
+    const effectIndex = tempEffects.indexOf(tempEffect)
     if (effectIndex !== -1) {
-      engine.block.removeEffect(tempBlock, effectIndex);
+      engine.block.removeEffect(tempBlock, effectIndex)
     }
 
     // Destroy the removed effect to free memory
-    engine.block.destroy(tempEffect);
+    engine.block.destroy(tempEffect)
 
     // ===== Position all blocks in grid layout =====
     const blocks = [
@@ -376,37 +376,36 @@ class Example implements EditorPlugin {
       ...duotoneImageBlocks, // Positions 5-6
       combinedImageBlock, // Position 7
       tempBlock // Position 8
-    ];
+    ]
 
     blocks.forEach((block, index) => {
-      const pos = getPosition(index);
-      engine.block.setPositionX(block, pos.x);
-      engine.block.setPositionY(block, pos.y);
-    });
+      const pos = getPosition(index)
+      engine.block.setPositionX(block, pos.x)
+      engine.block.setPositionY(block, pos.y)
+    })
 
     // Apply same effects to multiple blocks
-    const allGraphics = engine.block.findByType('graphic');
+    const allGraphics = engine.block.findByType('graphic')
 
     allGraphics.forEach((graphic) => {
       if (engine.block.supportsEffects(graphic)) {
         // Only apply to blocks that don't already have effects
-        const existingEffects = engine.block.getEffects(graphic);
+        const existingEffects = engine.block.getEffects(graphic)
         if (existingEffects.length === 0) {
-          const effect = engine.block.createEffect('adjustments');
-          engine.block.appendEffect(graphic, effect);
-          engine.block.setFloat(effect, 'effect/adjustments/brightness', 0.1);
+          const effect = engine.block.createEffect('adjustments')
+          engine.block.appendEffect(graphic, effect)
+          engine.block.setFloat(effect, 'effect/adjustments/brightness', 0.1)
         }
       }
-    });
+    })
 
-    // eslint-disable-next-line no-console
     console.log(
       'Effects guide initialized. Select any image to see effects panel.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to enable the built-in effects panel for interactive editing and how to apply and manage effects programmatically using the block API.
@@ -419,10 +418,10 @@ To give users access to effects in the inspector panel, we enable the effects fe
 
 ```typescript highlight-enable-effects-features
 // Enable effects and filters in the inspector panel using the Feature API
-cesdk.feature.enable('ly.img.effect'); // Enable all effects
-cesdk.feature.enable('ly.img.filter'); // Enable all filters
-cesdk.feature.enable('ly.img.blur'); // Enable blur effect
-cesdk.feature.enable('ly.img.adjustment'); // Enable adjustments
+cesdk.feature.enable('ly.img.effect') // Enable all effects
+cesdk.feature.enable('ly.img.filter') // Enable all filters
+cesdk.feature.enable('ly.img.blur') // Enable blur effect
+cesdk.feature.enable('ly.img.adjustment') // Enable adjustments
 ```
 
 The Feature API controls which capabilities are available to users. By enabling `ly.img.effect` and `ly.img.filter`, the inspector panel displays effect and filter options when users select compatible blocks. You can also enable specific effects individually like `ly.img.blur` or `ly.img.adjustment` for more granular control.
@@ -454,42 +453,42 @@ This interactive approach is perfect for creative exploration and allows users t
 For applications that need to apply effects programmatically—whether for automation, batch processing, or dynamic user experiences—we start by setting up CE.SDK with the proper configuration.
 
 ```typescript highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  page: { width: 800, height: 600, unit: 'Pixel' }
+})
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+const pageWidth = engine.block.getWidth(page)
+const pageHeight = engine.block.getHeight(page)
 ```
 
 This initializes the full CE.SDK interface with the effects panel enabled, giving you both UI and API access to the effects system.
@@ -499,26 +498,26 @@ This initializes the full CE.SDK interface with the effects panel enabled, givin
 Before applying effects to a block, we check whether it supports them. Not all block types can have effects applied—for example, page blocks and scene blocks do not support effects.
 
 ```typescript highlight-check-effect-support
-    // Pattern #2: Use Convenience APIs - addImage() simplifies block creation
-    // Create a sample block to demonstrate effect support checking
-    const blockSize = { width: blockWidth, height: blockHeight };
-    const sampleBlock = await engine.block.addImage(imageUri, {
-      size: blockSize
-    });
-    engine.block.appendChild(page, sampleBlock);
+// Pattern #2: Use Convenience APIs - addImage() simplifies block creation
+// Create a sample block to demonstrate effect support checking
+const blockSize = { width: blockWidth, height: blockHeight }
+const sampleBlock = await engine.block.addImage(imageUri, {
+  size: blockSize
+})
+engine.block.appendChild(page, sampleBlock)
 
-    // Check if a block supports effects
-    const supportsEffects = engine.block.supportsEffects(sampleBlock);
-    // eslint-disable-next-line no-console
-    console.log('Block supports effects:', supportsEffects); // true for graphics
+// Check if a block supports effects
+const supportsEffects = engine.block.supportsEffects(sampleBlock)
 
-    // Page blocks don't support effects
-    const pageSupportsEffects = engine.block.supportsEffects(page);
-    // eslint-disable-next-line no-console
-    console.log('Page supports effects:', pageSupportsEffects); // false
+console.log('Block supports effects:', supportsEffects) // true for graphics
 
-    // Select this block so effects panel is visible
-    engine.block.setSelected(sampleBlock, true);
+// Page blocks don't support effects
+const pageSupportsEffects = engine.block.supportsEffects(page)
+
+console.log('Page supports effects:', pageSupportsEffects) // false
+
+// Select this block so effects panel is visible
+engine.block.setSelected(sampleBlock, true)
 ```
 
 Effect support is available for:
@@ -542,19 +541,19 @@ Once we've confirmed a block supports effects, we can create and apply effects u
 > time-based properties.
 
 ```typescript highlight-apply-basic-effects
-    // Pattern #1: Demonstrate Individual Before Combined
-    // Create a separate image block for blur demonstration
-    const blurImageBlock = await engine.block.addImage(imageUri, {
-      size: blockSize
-    });
-    engine.block.appendChild(page, blurImageBlock);
+// Pattern #1: Demonstrate Individual Before Combined
+// Create a separate image block for blur demonstration
+const blurImageBlock = await engine.block.addImage(imageUri, {
+  size: blockSize
+})
+engine.block.appendChild(page, blurImageBlock)
 
-    // Create and apply a blur effect
-    const blurEffect = engine.block.createEffect('extrude_blur');
-    engine.block.appendEffect(blurImageBlock, blurEffect);
+// Create and apply a blur effect
+const blurEffect = engine.block.createEffect('extrude_blur')
+engine.block.appendEffect(blurImageBlock, blurEffect)
 
-    // Adjust blur intensity
-    engine.block.setFloat(blurEffect, 'effect/extrude_blur/amount', 0.5);
+// Adjust blur intensity
+engine.block.setFloat(blurEffect, 'effect/extrude_blur/amount', 0.5)
 ```
 
 CE.SDK provides several built-in effect types:
@@ -577,38 +576,38 @@ Each effect type has its own set of configurable properties that control its vis
 After creating an effect, we can customize its appearance by setting properties. Each effect exposes different parameters depending on its type and capabilities.
 
 ```typescript highlight-configure-effect-parameters
-    // Create a separate image block for adjustments demonstration
-    const adjustmentsImageBlock = await engine.block.addImage(imageUri, {
-      size: blockSize
-    });
-    engine.block.appendChild(page, adjustmentsImageBlock);
+// Create a separate image block for adjustments demonstration
+const adjustmentsImageBlock = await engine.block.addImage(imageUri, {
+  size: blockSize
+})
+engine.block.appendChild(page, adjustmentsImageBlock)
 
-    // Create adjustments effect for brightness and contrast
-    const adjustmentsEffect = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(adjustmentsImageBlock, adjustmentsEffect);
+// Create adjustments effect for brightness and contrast
+const adjustmentsEffect = engine.block.createEffect('adjustments')
+engine.block.appendEffect(adjustmentsImageBlock, adjustmentsEffect)
 
-    // Find all available properties for this effect
-    const adjustmentProperties =
-      engine.block.findAllProperties(adjustmentsEffect);
-    // eslint-disable-next-line no-console
-    console.log('Available adjustment properties:', adjustmentProperties);
+// Find all available properties for this effect
+const adjustmentProperties
+  = engine.block.findAllProperties(adjustmentsEffect)
 
-    // Set brightness, contrast, and saturation
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/brightness',
-      0.2
-    );
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/contrast',
-      0.15
-    );
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/saturation',
-      0.1
-    );
+console.log('Available adjustment properties:', adjustmentProperties)
+
+// Set brightness, contrast, and saturation
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/brightness',
+  0.2
+)
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/contrast',
+  0.15
+)
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/saturation',
+  0.1
+)
 ```
 
 CE.SDK provides typed setter methods for different parameter types:
@@ -627,44 +626,44 @@ LUT (Look-Up Table) filters apply professional color grading by transforming col
 The example demonstrates querying LUT filters from the asset library using `engine.asset.findAssets('ly.img.filter')`, then applying them using metadata from the asset results. This approach matches how CE.SDK's built-in filter panel works.
 
 ```typescript highlight-apply-lut-filter
-    // Demonstrate LUT filters by applying the first 2 from asset library
-    // These filters are fetched from the demo asset sources (Grid positions 3-4)
-    const lutImageBlocks = [];
-    for (let i = 0; i < Math.min(2, lutAssets.length); i++) {
-      const lutAsset = lutAssets[i];
+// Demonstrate LUT filters by applying the first 2 from asset library
+// These filters are fetched from the demo asset sources (Grid positions 3-4)
+const lutImageBlocks = []
+for (let i = 0; i < Math.min(2, lutAssets.length); i++) {
+  const lutAsset = lutAssets[i]
 
-      const lutImageBlock = await engine.block.addImage(imageUri, {
-        size: blockSize
-      });
-      engine.block.appendChild(page, lutImageBlock);
-      lutImageBlocks.push(lutImageBlock);
+  const lutImageBlock = await engine.block.addImage(imageUri, {
+    size: blockSize
+  })
+  engine.block.appendChild(page, lutImageBlock)
+  lutImageBlocks.push(lutImageBlock)
 
-      // Create LUT filter effect using the full effect type URI
-      const lutEffect = engine.block.createEffect(
-        '//ly.img.ubq/effect/lut_filter'
-      );
+  // Create LUT filter effect using the full effect type URI
+  const lutEffect = engine.block.createEffect(
+    '//ly.img.ubq/effect/lut_filter'
+  )
 
-      // Use asset metadata for LUT configuration
-      // The asset provides the LUT file URI and grid dimensions
-      engine.block.setString(
-        lutEffect,
-        'effect/lut_filter/lutFileURI',
-        lutAsset.meta?.uri as string
-      );
-      engine.block.setInt(
-        lutEffect,
-        'effect/lut_filter/horizontalTileCount',
-        parseInt(lutAsset.meta?.horizontalTileCount as string, 10)
-      );
-      engine.block.setInt(
-        lutEffect,
-        'effect/lut_filter/verticalTileCount',
-        parseInt(lutAsset.meta?.verticalTileCount as string, 10)
-      );
-      engine.block.setFloat(lutEffect, 'effect/lut_filter/intensity', 0.85);
+  // Use asset metadata for LUT configuration
+  // The asset provides the LUT file URI and grid dimensions
+  engine.block.setString(
+    lutEffect,
+    'effect/lut_filter/lutFileURI',
+    lutAsset.meta?.uri as string
+  )
+  engine.block.setInt(
+    lutEffect,
+    'effect/lut_filter/horizontalTileCount',
+    Number.parseInt(lutAsset.meta?.horizontalTileCount as string, 10)
+  )
+  engine.block.setInt(
+    lutEffect,
+    'effect/lut_filter/verticalTileCount',
+    Number.parseInt(lutAsset.meta?.verticalTileCount as string, 10)
+  )
+  engine.block.setFloat(lutEffect, 'effect/lut_filter/intensity', 0.85)
 
-      engine.block.appendEffect(lutImageBlock, lutEffect);
-    }
+  engine.block.appendEffect(lutImageBlock, lutEffect)
+}
 ```
 
 LUT filters are ideal for:
@@ -683,46 +682,46 @@ Duotone filters create artistic two-color effects by mapping image tones to two 
 The example queries duotone filters from the asset library, then applies them using color metadata. The `hexToRgba` utility converts hex color values from asset metadata to RGBA format required by the `setColorRGBA` API.
 
 ```typescript highlight-apply-duotone-filter
-    // Demonstrate Duotone filters by applying the first 2 from asset library
-    // Duotone filters create artistic two-color treatments (Grid positions 5-6)
-    const duotoneImageBlocks = [];
-    for (let i = 0; i < Math.min(2, duotoneAssets.length); i++) {
-      const duotoneAsset = duotoneAssets[i];
+// Demonstrate Duotone filters by applying the first 2 from asset library
+// Duotone filters create artistic two-color treatments (Grid positions 5-6)
+const duotoneImageBlocks = []
+for (let i = 0; i < Math.min(2, duotoneAssets.length); i++) {
+  const duotoneAsset = duotoneAssets[i]
 
-      const duotoneImageBlock = await engine.block.addImage(imageUri, {
-        size: blockSize
-      });
-      engine.block.appendChild(page, duotoneImageBlock);
-      duotoneImageBlocks.push(duotoneImageBlock);
+  const duotoneImageBlock = await engine.block.addImage(imageUri, {
+    size: blockSize
+  })
+  engine.block.appendChild(page, duotoneImageBlock)
+  duotoneImageBlocks.push(duotoneImageBlock)
 
-      // Create Duotone filter effect using the full effect type URI
-      const duotoneEffect = engine.block.createEffect(
-        '//ly.img.ubq/effect/duotone_filter'
-      );
+  // Create Duotone filter effect using the full effect type URI
+  const duotoneEffect = engine.block.createEffect(
+    '//ly.img.ubq/effect/duotone_filter'
+  )
 
-      // Convert hex colors from asset metadata to RGBA (0-1 range)
-      const darkColor = hexToRgba(duotoneAsset.meta?.darkColor as string);
-      engine.block.setColor(
-        duotoneEffect,
-        'effect/duotone_filter/darkColor',
-        darkColor
-      );
+  // Convert hex colors from asset metadata to RGBA (0-1 range)
+  const darkColor = hexToRgba(duotoneAsset.meta?.darkColor as string)
+  engine.block.setColor(
+    duotoneEffect,
+    'effect/duotone_filter/darkColor',
+    darkColor
+  )
 
-      const lightColor = hexToRgba(duotoneAsset.meta?.lightColor as string);
-      engine.block.setColor(
-        duotoneEffect,
-        'effect/duotone_filter/lightColor',
-        lightColor
-      );
+  const lightColor = hexToRgba(duotoneAsset.meta?.lightColor as string)
+  engine.block.setColor(
+    duotoneEffect,
+    'effect/duotone_filter/lightColor',
+    lightColor
+  )
 
-      engine.block.setFloat(
-        duotoneEffect,
-        'effect/duotone_filter/intensity',
-        0.8
-      );
+  engine.block.setFloat(
+    duotoneEffect,
+    'effect/duotone_filter/intensity',
+    0.8
+  )
 
-      engine.block.appendEffect(duotoneImageBlock, duotoneEffect);
-    }
+  engine.block.appendEffect(duotoneImageBlock, duotoneEffect)
+}
 ```
 
 Duotone filters work by:
@@ -745,56 +744,56 @@ One of the most powerful features of CE.SDK's effect system is the ability to st
 > without this separation.
 
 ```typescript highlight-combine-multiple-effects
-    // Pattern #5: Progressive Complexity - now combining multiple effects
-    // Create a separate image block to demonstrate combining multiple effects (Grid position 7)
-    const combinedImageBlock = await engine.block.addImage(imageUri, {
-      size: blockSize
-    });
-    engine.block.appendChild(page, combinedImageBlock);
+// Pattern #5: Progressive Complexity - now combining multiple effects
+// Create a separate image block to demonstrate combining multiple effects (Grid position 7)
+const combinedImageBlock = await engine.block.addImage(imageUri, {
+  size: blockSize
+})
+engine.block.appendChild(page, combinedImageBlock)
 
-    // Apply effects in order - the stack will contain:
-    // 1. adjustments (brightness/contrast) - applied first
-    // 2. blur - applied second
-    // 3. duotone (color tinting) - applied third
-    // 4. pixelize - applied last
+// Apply effects in order - the stack will contain:
+// 1. adjustments (brightness/contrast) - applied first
+// 2. blur - applied second
+// 3. duotone (color tinting) - applied third
+// 4. pixelize - applied last
 
-    const combinedAdjustments = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(combinedImageBlock, combinedAdjustments);
-    engine.block.setFloat(
-      combinedAdjustments,
-      'effect/adjustments/brightness',
-      0.2
-    );
-    engine.block.setFloat(
-      combinedAdjustments,
-      'effect/adjustments/contrast',
-      0.15
-    );
+const combinedAdjustments = engine.block.createEffect('adjustments')
+engine.block.appendEffect(combinedImageBlock, combinedAdjustments)
+engine.block.setFloat(
+  combinedAdjustments,
+  'effect/adjustments/brightness',
+  0.2
+)
+engine.block.setFloat(
+  combinedAdjustments,
+  'effect/adjustments/contrast',
+  0.15
+)
 
-    const combinedBlur = engine.block.createEffect('extrude_blur');
-    engine.block.appendEffect(combinedImageBlock, combinedBlur);
-    engine.block.setFloat(combinedBlur, 'effect/extrude_blur/amount', 0.3);
+const combinedBlur = engine.block.createEffect('extrude_blur')
+engine.block.appendEffect(combinedImageBlock, combinedBlur)
+engine.block.setFloat(combinedBlur, 'effect/extrude_blur/amount', 0.3)
 
-    const combinedDuotone = engine.block.createEffect('duotone_filter');
-    engine.block.appendEffect(combinedImageBlock, combinedDuotone);
-    engine.block.setColor(combinedDuotone, 'duotone_filter/darkColor', {
-      r: 0.1,
-      g: 0.2,
-      b: 0.4,
-      a: 1.0
-    });
-    engine.block.setColor(combinedDuotone, 'duotone_filter/lightColor', {
-      r: 0.9,
-      g: 0.8,
-      b: 0.6,
-      a: 1.0
-    });
-    engine.block.setFloat(combinedDuotone, 'duotone_filter/intensity', 0.6);
+const combinedDuotone = engine.block.createEffect('duotone_filter')
+engine.block.appendEffect(combinedImageBlock, combinedDuotone)
+engine.block.setColor(combinedDuotone, 'duotone_filter/darkColor', {
+  r: 0.1,
+  g: 0.2,
+  b: 0.4,
+  a: 1.0
+})
+engine.block.setColor(combinedDuotone, 'duotone_filter/lightColor', {
+  r: 0.9,
+  g: 0.8,
+  b: 0.6,
+  a: 1.0
+})
+engine.block.setFloat(combinedDuotone, 'duotone_filter/intensity', 0.6)
 
-    const pixelizeEffect = engine.block.createEffect('pixelize');
-    engine.block.appendEffect(combinedImageBlock, pixelizeEffect);
-    engine.block.setInt(pixelizeEffect, 'pixelize/horizontalPixelSize', 8);
-    engine.block.setInt(pixelizeEffect, 'pixelize/verticalPixelSize', 8);
+const pixelizeEffect = engine.block.createEffect('pixelize')
+engine.block.appendEffect(combinedImageBlock, pixelizeEffect)
+engine.block.setInt(pixelizeEffect, 'pixelize/horizontalPixelSize', 8)
+engine.block.setInt(pixelizeEffect, 'pixelize/verticalPixelSize', 8)
 ```
 
 **Effect ordering matters**: Effects are applied from the bottom of the stack to the top. In this example:
@@ -813,18 +812,18 @@ Experiment with different orderings to achieve the desired visual result—chang
 We can retrieve all effects applied to a block and inspect their properties. This is useful for building effect management interfaces or debugging effect configurations.
 
 ```typescript highlight-list-effects
-    // Get all effects applied to the combined block
-    const effects = engine.block.getEffects(combinedImageBlock);
-    // eslint-disable-next-line no-console
-    console.log('Applied effects:', effects);
+// Get all effects applied to the combined block
+const effects = engine.block.getEffects(combinedImageBlock)
 
-    // Access properties of specific effects
-    effects.forEach((effect, index) => {
-      const effectType = engine.block.getType(effect);
-      const isEnabled = engine.block.isEffectEnabled(effect);
-      // eslint-disable-next-line no-console
-      console.log(`Effect ${index}: ${effectType}, enabled: ${isEnabled}`);
-    });
+console.log('Applied effects:', effects)
+
+// Access properties of specific effects
+effects.forEach((effect, index) => {
+  const effectType = engine.block.getType(effect)
+  const isEnabled = engine.block.isEffectEnabled(effect)
+
+  console.log(`Effect ${index}: ${effectType}, enabled: ${isEnabled}`)
+})
 ```
 
 This allows you to iterate through all applied effects, read their properties, and make modifications as needed.
@@ -835,9 +834,9 @@ CE.SDK allows you to temporarily toggle effects on and off without removing them
 
 ```typescript highlight-enable-disable-effects
 // Check if effect is enabled
-const isBlurEnabled = engine.block.isEffectEnabled(combinedBlur);
-// eslint-disable-next-line no-console
-console.log('Blur effect is enabled:', isBlurEnabled);
+const isBlurEnabled = engine.block.isEffectEnabled(combinedBlur)
+
+console.log('Blur effect is enabled:', isBlurEnabled)
 ```
 
 When you disable an effect, it remains attached to the block but won't be rendered until you enable it again. This preserves all effect parameters while giving you full control over when the effect is applied.
@@ -849,25 +848,25 @@ You can use this feature to create interactive preview modes, implement undo-lik
 When you no longer need an effect, you can remove it from the effect stack and free its resources. Always destroy effects that are no longer in use to prevent memory leaks.
 
 ```typescript highlight-remove-effects
-    // Create a temporary block to demonstrate effect removal
-    const tempBlock = await engine.block.addImage(imageUri, {
-      size: blockSize
-    });
-    engine.block.appendChild(page, tempBlock);
+// Create a temporary block to demonstrate effect removal
+const tempBlock = await engine.block.addImage(imageUri, {
+  size: blockSize
+})
+engine.block.appendChild(page, tempBlock)
 
-    const tempEffect = engine.block.createEffect('pixelize');
-    engine.block.appendEffect(tempBlock, tempEffect);
-    engine.block.setInt(tempEffect, 'pixelize/horizontalPixelSize', 12);
+const tempEffect = engine.block.createEffect('pixelize')
+engine.block.appendEffect(tempBlock, tempEffect)
+engine.block.setInt(tempEffect, 'pixelize/horizontalPixelSize', 12)
 
-    // Remove the effect
-    const tempEffects = engine.block.getEffects(tempBlock);
-    const effectIndex = tempEffects.indexOf(tempEffect);
-    if (effectIndex !== -1) {
-      engine.block.removeEffect(tempBlock, effectIndex);
-    }
+// Remove the effect
+const tempEffects = engine.block.getEffects(tempBlock)
+const effectIndex = tempEffects.indexOf(tempEffect)
+if (effectIndex !== -1) {
+  engine.block.removeEffect(tempBlock, effectIndex)
+}
 
-    // Destroy the removed effect to free memory
-    engine.block.destroy(tempEffect);
+// Destroy the removed effect to free memory
+engine.block.destroy(tempEffect)
 ```
 
 The `removeEffect()` method takes an index position, so you can remove effects selectively from any position in the stack. After removal, destroy the effect instance to ensure proper cleanup.
@@ -879,20 +878,20 @@ The `removeEffect()` method takes an index position, so you can remove effects s
 For applications that need to apply the same effects to multiple elements, we can iterate through a collection of blocks and apply effects efficiently.
 
 ```typescript highlight-batch-processing
-    // Apply same effects to multiple blocks
-    const allGraphics = engine.block.findByType('graphic');
+// Apply same effects to multiple blocks
+const allGraphics = engine.block.findByType('graphic')
 
-    allGraphics.forEach((graphic) => {
-      if (engine.block.supportsEffects(graphic)) {
-        // Only apply to blocks that don't already have effects
-        const existingEffects = engine.block.getEffects(graphic);
-        if (existingEffects.length === 0) {
-          const effect = engine.block.createEffect('adjustments');
-          engine.block.appendEffect(graphic, effect);
-          engine.block.setFloat(effect, 'effect/adjustments/brightness', 0.1);
-        }
-      }
-    });
+allGraphics.forEach((graphic) => {
+  if (engine.block.supportsEffects(graphic)) {
+    // Only apply to blocks that don't already have effects
+    const existingEffects = engine.block.getEffects(graphic)
+    if (existingEffects.length === 0) {
+      const effect = engine.block.createEffect('adjustments')
+      engine.block.appendEffect(graphic, effect)
+      engine.block.setFloat(effect, 'effect/adjustments/brightness', 0.1)
+    }
+  }
+})
 ```
 
 When batch processing, check effect support before creating effects to avoid unnecessary work. You can also reuse effect instances when applying the same configuration to multiple blocks, though be careful to destroy them properly when done.
@@ -916,24 +915,24 @@ Creating reusable effect presets allows you to maintain consistent styling acros
 // Create a reusable preset function
 async function applyVintagePreset(engine: CreativeEngine, imageBlock: number) {
   // Apply LUT filter
-  const lutEffect = engine.block.createEffect('lut_filter');
+  const lutEffect = engine.block.createEffect('lut_filter')
   engine.block.setString(
     lutEffect,
     'lut_filter/lutFileURI',
     'https://img.ly/static/ubq_luts/vintage.png',
-  );
-  engine.block.appendEffect(imageBlock, lutEffect);
+  )
+  engine.block.appendEffect(imageBlock, lutEffect)
 
   // Add vignette
-  const vignetteEffect = engine.block.createEffect('vignette');
-  engine.block.setFloat(vignetteEffect, 'vignette/intensity', 0.5);
-  engine.block.appendEffect(imageBlock, vignetteEffect);
+  const vignetteEffect = engine.block.createEffect('vignette')
+  engine.block.setFloat(vignetteEffect, 'vignette/intensity', 0.5)
+  engine.block.appendEffect(imageBlock, vignetteEffect)
 
-  return { lutEffect, vignetteEffect };
+  return { lutEffect, vignetteEffect }
 }
 
 // Use the preset
-const effects = await applyVintagePreset(engine, myImageBlock);
+const effects = await applyVintagePreset(engine, myImageBlock)
 ```
 
 Preset strategies include:

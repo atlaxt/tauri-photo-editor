@@ -24,7 +24,7 @@ and programmatic split API to create independent segments.
 Clip splitting divides one block into two at a specified time. The original block ends at the split point; a new block starts there. Both blocks reference the same source media with independent timing. This differs from trimming, which adjusts a single block's playback range without creating new blocks.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-split-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,10 +41,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Split Video Guide
@@ -58,27 +58,27 @@ import { calculateGridLayout } from './utils';
  * - Split and delete workflow
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -88,9 +88,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -104,12 +104,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
@@ -117,198 +117,193 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const scene = engine.scene.get();
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : scene;
+    const engine = cesdk.engine
+    const scene = engine.scene.get()
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : scene
 
     // Calculate responsive grid layout based on page dimensions
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const layout = calculateGridLayout(pageWidth, pageHeight, 6);
-    const { blockWidth, blockHeight, getPosition } = layout;
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const layout = calculateGridLayout(pageWidth, pageHeight, 6)
+    const { blockWidth, blockHeight, getPosition } = layout
 
     // Get a video from demo asset sources
     const videoAssets = await engine.asset.findAssets('ly.img.video', {
       page: 0,
       perPage: 1
-    });
-    const videoUri =
-      videoAssets.assets[0]?.payload?.sourceSet?.[0]?.uri ??
-      'https://img.ly/static/ubq_video_samples/bbb.mp4';
+    })
+    const videoUri
+      = videoAssets.assets[0]?.payload?.sourceSet?.[0]?.uri
+        ?? 'https://img.ly/static/ubq_video_samples/bbb.mp4'
 
     // Create a video block to demonstrate basic splitting
     const basicSplitVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
     // Get the video fill and load resource to access duration
-    const basicFill = engine.block.getFill(basicSplitVideo);
-    await engine.block.forceLoadAVResource(basicFill);
+    const basicFill = engine.block.getFill(basicSplitVideo)
+    await engine.block.forceLoadAVResource(basicFill)
 
     // Set block duration for the timeline
-    engine.block.setDuration(basicSplitVideo, 10.0);
+    engine.block.setDuration(basicSplitVideo, 10.0)
 
     // Split the video block at 5 seconds
     // Returns the ID of the newly created block (second segment)
-    const splitResultBlock = engine.block.split(basicSplitVideo, 5.0);
+    const splitResultBlock = engine.block.split(basicSplitVideo, 5.0)
 
-    // eslint-disable-next-line no-console
     console.log(
       `Basic split - Original block: ${basicSplitVideo}, New block: ${splitResultBlock}`
-    );
+    )
 
     // Create another video block to demonstrate split options
     const optionsSplitVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const optionsFill = engine.block.getFill(optionsSplitVideo);
-    await engine.block.forceLoadAVResource(optionsFill);
-    engine.block.setDuration(optionsSplitVideo, 10.0);
+    const optionsFill = engine.block.getFill(optionsSplitVideo)
+    await engine.block.forceLoadAVResource(optionsFill)
+    engine.block.setDuration(optionsSplitVideo, 10.0)
 
     // Split with custom options
     const optionsSplitResult = engine.block.split(optionsSplitVideo, 4.0, {
       attachToParent: true, // Attach new block to same parent (default: true)
       createParentTrackIfNeeded: false, // Don't create track if needed (default: false)
       selectNewBlock: false // Don't select the new block (default: true)
-    });
+    })
 
-    // eslint-disable-next-line no-console
     console.log(
       `Split with options - New block: ${optionsSplitResult}, selectNewBlock: false`
-    );
+    )
 
     // Create a video block to demonstrate playhead-based splitting
     const playheadSplitVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const playheadFill = engine.block.getFill(playheadSplitVideo);
-    await engine.block.forceLoadAVResource(playheadFill);
-    engine.block.setDuration(playheadSplitVideo, 10.0);
+    const playheadFill = engine.block.getFill(playheadSplitVideo)
+    await engine.block.forceLoadAVResource(playheadFill)
+    engine.block.setDuration(playheadSplitVideo, 10.0)
 
     // Get the clip's start time on the timeline
-    const clipStartTime = engine.block.getTimeOffset(playheadSplitVideo);
+    const clipStartTime = engine.block.getTimeOffset(playheadSplitVideo)
 
     // Simulate a playhead position (in a real app, use engine.block.getPlaybackTime(page))
-    const simulatedPlayheadTime = clipStartTime + 3.0;
+    const simulatedPlayheadTime = clipStartTime + 3.0
 
     // Calculate split time relative to the clip
-    const splitTime = simulatedPlayheadTime - clipStartTime;
+    const splitTime = simulatedPlayheadTime - clipStartTime
 
     // Perform the split at the calculated time
     const playheadSplitResult = engine.block.split(
       playheadSplitVideo,
       splitTime
-    );
+    )
 
-    // eslint-disable-next-line no-console
     console.log(
       `Playhead split - Split at ${splitTime}s into clip, New block: ${playheadSplitResult}`
-    );
+    )
 
     // Create a video block to examine split results
     const resultsSplitVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const resultsFill = engine.block.getFill(resultsSplitVideo);
-    await engine.block.forceLoadAVResource(resultsFill);
-    engine.block.setDuration(resultsSplitVideo, 10.0);
+    const resultsFill = engine.block.getFill(resultsSplitVideo)
+    await engine.block.forceLoadAVResource(resultsFill)
+    engine.block.setDuration(resultsSplitVideo, 10.0)
 
     // Get trim values before split
-    const originalTrimOffset = engine.block.getTrimOffset(resultsFill);
-    const originalTrimLength = engine.block.getTrimLength(resultsFill);
+    const originalTrimOffset = engine.block.getTrimOffset(resultsFill)
+    const originalTrimLength = engine.block.getTrimLength(resultsFill)
 
     // Split at 6 seconds
-    const resultsNewBlock = engine.block.split(resultsSplitVideo, 6.0);
-    const newBlockFill = engine.block.getFill(resultsNewBlock);
+    const resultsNewBlock = engine.block.split(resultsSplitVideo, 6.0)
+    const newBlockFill = engine.block.getFill(resultsNewBlock)
 
     // Examine trim properties after split
-    const originalAfterSplitOffset = engine.block.getTrimOffset(resultsFill);
-    const originalAfterSplitLength = engine.block.getTrimLength(resultsFill);
-    const newBlockTrimOffset = engine.block.getTrimOffset(newBlockFill);
-    const newBlockTrimLength = engine.block.getTrimLength(newBlockFill);
+    const originalAfterSplitOffset = engine.block.getTrimOffset(resultsFill)
+    const originalAfterSplitLength = engine.block.getTrimLength(resultsFill)
+    const newBlockTrimOffset = engine.block.getTrimOffset(newBlockFill)
+    const newBlockTrimLength = engine.block.getTrimLength(newBlockFill)
 
-    // eslint-disable-next-line no-console
-    console.log('Split results:');
-    // eslint-disable-next-line no-console
+    console.log('Split results:')
+
     console.log(
       `  Original before: offset=${originalTrimOffset}, length=${originalTrimLength}`
-    );
-    // eslint-disable-next-line no-console
+    )
+
     console.log(
       `  Original after: offset=${originalAfterSplitOffset}, length=${originalAfterSplitLength}`
-    );
-    // eslint-disable-next-line no-console
+    )
+
     console.log(
       `  New block: offset=${newBlockTrimOffset}, length=${newBlockTrimLength}`
-    );
+    )
 
     // Create a video block to demonstrate split-and-delete workflow
     const deleteWorkflowVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const deleteFill = engine.block.getFill(deleteWorkflowVideo);
-    await engine.block.forceLoadAVResource(deleteFill);
-    engine.block.setDuration(deleteWorkflowVideo, 10.0);
+    const deleteFill = engine.block.getFill(deleteWorkflowVideo)
+    await engine.block.forceLoadAVResource(deleteFill)
+    engine.block.setDuration(deleteWorkflowVideo, 10.0)
 
     // Remove middle section: split at start of section to remove (2s)
-    const middleBlock = engine.block.split(deleteWorkflowVideo, 2.0);
+    const middleBlock = engine.block.split(deleteWorkflowVideo, 2.0)
 
     // Split again at the end of the section to remove (at 3s into middle block = 5s total)
-    const endBlock = engine.block.split(middleBlock, 3.0);
+    const endBlock = engine.block.split(middleBlock, 3.0)
 
     // Delete the middle segment
-    engine.block.destroy(middleBlock);
+    engine.block.destroy(middleBlock)
 
-    // eslint-disable-next-line no-console
     console.log(
       `Split and delete - Removed middle 3s section, kept blocks: ${deleteWorkflowVideo}, ${endBlock}`
-    );
+    )
 
     // Create a video block to demonstrate split time validation
     const validateVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const validateFill = engine.block.getFill(validateVideo);
-    await engine.block.forceLoadAVResource(validateFill);
-    engine.block.setDuration(validateVideo, 8.0);
+    const validateFill = engine.block.getFill(validateVideo)
+    await engine.block.forceLoadAVResource(validateFill)
+    engine.block.setDuration(validateVideo, 8.0)
 
     // Get block duration to validate split time
-    const blockDuration = engine.block.getDuration(validateVideo);
-    const desiredSplitTime = 4.0;
+    const blockDuration = engine.block.getDuration(validateVideo)
+    const desiredSplitTime = 4.0
 
     // Validate split time is within bounds (must be > 0 and < duration)
     if (desiredSplitTime > 0 && desiredSplitTime < blockDuration) {
       const validatedSplitResult = engine.block.split(
         validateVideo,
         desiredSplitTime
-      );
-      // eslint-disable-next-line no-console
+      )
+
       console.log(
         `Validated split - Duration: ${blockDuration}s, Split at: ${desiredSplitTime}s, New block: ${validatedSplitResult}`
-      );
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('Split time out of range');
+      )
+    }
+    else {
+      console.log('Split time out of range')
     }
 
     // ===== Position all blocks in grid layout =====
@@ -320,37 +315,37 @@ class Example implements EditorPlugin {
       optionsSplitResult,
       playheadSplitVideo,
       playheadSplitResult
-    ];
+    ]
 
     blocks.forEach((block, index) => {
-      const pos = getPosition(index);
-      engine.block.setPositionX(block, pos.x);
-      engine.block.setPositionY(block, pos.y);
-    });
+      const pos = getPosition(index)
+      engine.block.setPositionX(block, pos.x)
+      engine.block.setPositionY(block, pos.y)
+    })
 
     // Select first block so timeline controls are visible
-    engine.block.setSelected(basicSplitVideo, true);
+    engine.block.setSelected(basicSplitVideo, true)
 
     // Set playback time to 8 seconds for hero image
-    engine.block.setPlaybackTime(page, 8.0);
+    engine.block.setPlaybackTime(page, 8.0)
 
     // Start playback automatically when the example loads
     try {
-      engine.block.setPlaying(page, true);
-      // eslint-disable-next-line no-console
+      engine.block.setPlaying(page, true)
+
       console.log(
         'Video split guide initialized. Playback started. Use timeline to see split results.'
-      );
-    } catch (error) {
-      // eslint-disable-next-line no-console
+      )
+    }
+    catch (error) {
       console.log(
         'Video split guide initialized. Click play button to start playback.'
-      );
+      )
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use the built-in timeline UI for visual splitting and how to split clips programmatically using the Engine API.
@@ -372,28 +367,27 @@ For applications that need to split clips programmatically—whether for automat
 Split a block by providing the block ID and the split time in seconds. The time parameter is relative to the block's own time range, accounting for the block's time offset.
 
 ```typescript highlight-basic-split
-    // Create a video block to demonstrate basic splitting
-    const basicSplitVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a video block to demonstrate basic splitting
+const basicSplitVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    // Get the video fill and load resource to access duration
-    const basicFill = engine.block.getFill(basicSplitVideo);
-    await engine.block.forceLoadAVResource(basicFill);
+// Get the video fill and load resource to access duration
+const basicFill = engine.block.getFill(basicSplitVideo)
+await engine.block.forceLoadAVResource(basicFill)
 
-    // Set block duration for the timeline
-    engine.block.setDuration(basicSplitVideo, 10.0);
+// Set block duration for the timeline
+engine.block.setDuration(basicSplitVideo, 10.0)
 
-    // Split the video block at 5 seconds
-    // Returns the ID of the newly created block (second segment)
-    const splitResultBlock = engine.block.split(basicSplitVideo, 5.0);
+// Split the video block at 5 seconds
+// Returns the ID of the newly created block (second segment)
+const splitResultBlock = engine.block.split(basicSplitVideo, 5.0)
 
-    // eslint-disable-next-line no-console
-    console.log(
-      `Basic split - Original block: ${basicSplitVideo}, New block: ${splitResultBlock}`
-    );
+console.log(
+  `Basic split - Original block: ${basicSplitVideo}, New block: ${splitResultBlock}`
+)
 ```
 
 The `split()` method returns the ID of the newly created block. The original block becomes the first segment (before the split point), and the returned block is the second segment (after the split point).
@@ -407,28 +401,27 @@ The `SplitOptions` object controls split behavior with three optional properties
 - **`selectNewBlock`** (default: `true`): Whether to select the newly created block after splitting
 
 ```typescript highlight-split-options
-    // Create another video block to demonstrate split options
-    const optionsSplitVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create another video block to demonstrate split options
+const optionsSplitVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const optionsFill = engine.block.getFill(optionsSplitVideo);
-    await engine.block.forceLoadAVResource(optionsFill);
-    engine.block.setDuration(optionsSplitVideo, 10.0);
+const optionsFill = engine.block.getFill(optionsSplitVideo)
+await engine.block.forceLoadAVResource(optionsFill)
+engine.block.setDuration(optionsSplitVideo, 10.0)
 
-    // Split with custom options
-    const optionsSplitResult = engine.block.split(optionsSplitVideo, 4.0, {
-      attachToParent: true, // Attach new block to same parent (default: true)
-      createParentTrackIfNeeded: false, // Don't create track if needed (default: false)
-      selectNewBlock: false // Don't select the new block (default: true)
-    });
+// Split with custom options
+const optionsSplitResult = engine.block.split(optionsSplitVideo, 4.0, {
+  attachToParent: true, // Attach new block to same parent (default: true)
+  createParentTrackIfNeeded: false, // Don't create track if needed (default: false)
+  selectNewBlock: false // Don't select the new block (default: true)
+})
 
-    // eslint-disable-next-line no-console
-    console.log(
-      `Split with options - New block: ${optionsSplitResult}, selectNewBlock: false`
-    );
+console.log(
+  `Split with options - New block: ${optionsSplitResult}, selectNewBlock: false`
+)
 ```
 
 Use `selectNewBlock: false` when splitting multiple clips programmatically to avoid changing selection state between operations.
@@ -438,36 +431,35 @@ Use `selectNewBlock: false` when splitting multiple clips programmatically to av
 To implement playhead-based splitting like the built-in UI, get the current playback time from the page and convert it to block-relative time.
 
 ```typescript highlight-split-at-playhead
-    // Create a video block to demonstrate playhead-based splitting
-    const playheadSplitVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a video block to demonstrate playhead-based splitting
+const playheadSplitVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const playheadFill = engine.block.getFill(playheadSplitVideo);
-    await engine.block.forceLoadAVResource(playheadFill);
-    engine.block.setDuration(playheadSplitVideo, 10.0);
+const playheadFill = engine.block.getFill(playheadSplitVideo)
+await engine.block.forceLoadAVResource(playheadFill)
+engine.block.setDuration(playheadSplitVideo, 10.0)
 
-    // Get the clip's start time on the timeline
-    const clipStartTime = engine.block.getTimeOffset(playheadSplitVideo);
+// Get the clip's start time on the timeline
+const clipStartTime = engine.block.getTimeOffset(playheadSplitVideo)
 
-    // Simulate a playhead position (in a real app, use engine.block.getPlaybackTime(page))
-    const simulatedPlayheadTime = clipStartTime + 3.0;
+// Simulate a playhead position (in a real app, use engine.block.getPlaybackTime(page))
+const simulatedPlayheadTime = clipStartTime + 3.0
 
-    // Calculate split time relative to the clip
-    const splitTime = simulatedPlayheadTime - clipStartTime;
+// Calculate split time relative to the clip
+const splitTime = simulatedPlayheadTime - clipStartTime
 
-    // Perform the split at the calculated time
-    const playheadSplitResult = engine.block.split(
-      playheadSplitVideo,
-      splitTime
-    );
+// Perform the split at the calculated time
+const playheadSplitResult = engine.block.split(
+  playheadSplitVideo,
+  splitTime
+)
 
-    // eslint-disable-next-line no-console
-    console.log(
-      `Playhead split - Split at ${splitTime}s into clip, New block: ${playheadSplitResult}`
-    );
+console.log(
+  `Playhead split - Split at ${splitTime}s into clip, New block: ${playheadSplitResult}`
+)
 ```
 
 The playhead position from `getPlaybackTime(page)` is in absolute playback time. Subtract the clip's `getTimeOffset()` to convert to block-relative time before passing to `split()`.
@@ -479,45 +471,44 @@ After a split operation, both the original and new blocks are configured with up
 ### Trim Properties After Split
 
 ```typescript highlight-split-results
-    // Create a video block to examine split results
-    const resultsSplitVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a video block to examine split results
+const resultsSplitVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const resultsFill = engine.block.getFill(resultsSplitVideo);
-    await engine.block.forceLoadAVResource(resultsFill);
-    engine.block.setDuration(resultsSplitVideo, 10.0);
+const resultsFill = engine.block.getFill(resultsSplitVideo)
+await engine.block.forceLoadAVResource(resultsFill)
+engine.block.setDuration(resultsSplitVideo, 10.0)
 
-    // Get trim values before split
-    const originalTrimOffset = engine.block.getTrimOffset(resultsFill);
-    const originalTrimLength = engine.block.getTrimLength(resultsFill);
+// Get trim values before split
+const originalTrimOffset = engine.block.getTrimOffset(resultsFill)
+const originalTrimLength = engine.block.getTrimLength(resultsFill)
 
-    // Split at 6 seconds
-    const resultsNewBlock = engine.block.split(resultsSplitVideo, 6.0);
-    const newBlockFill = engine.block.getFill(resultsNewBlock);
+// Split at 6 seconds
+const resultsNewBlock = engine.block.split(resultsSplitVideo, 6.0)
+const newBlockFill = engine.block.getFill(resultsNewBlock)
 
-    // Examine trim properties after split
-    const originalAfterSplitOffset = engine.block.getTrimOffset(resultsFill);
-    const originalAfterSplitLength = engine.block.getTrimLength(resultsFill);
-    const newBlockTrimOffset = engine.block.getTrimOffset(newBlockFill);
-    const newBlockTrimLength = engine.block.getTrimLength(newBlockFill);
+// Examine trim properties after split
+const originalAfterSplitOffset = engine.block.getTrimOffset(resultsFill)
+const originalAfterSplitLength = engine.block.getTrimLength(resultsFill)
+const newBlockTrimOffset = engine.block.getTrimOffset(newBlockFill)
+const newBlockTrimLength = engine.block.getTrimLength(newBlockFill)
 
-    // eslint-disable-next-line no-console
-    console.log('Split results:');
-    // eslint-disable-next-line no-console
-    console.log(
-      `  Original before: offset=${originalTrimOffset}, length=${originalTrimLength}`
-    );
-    // eslint-disable-next-line no-console
-    console.log(
-      `  Original after: offset=${originalAfterSplitOffset}, length=${originalAfterSplitLength}`
-    );
-    // eslint-disable-next-line no-console
-    console.log(
-      `  New block: offset=${newBlockTrimOffset}, length=${newBlockTrimLength}`
-    );
+console.log('Split results:')
+
+console.log(
+  `  Original before: offset=${originalTrimOffset}, length=${originalTrimLength}`
+)
+
+console.log(
+  `  Original after: offset=${originalAfterSplitOffset}, length=${originalAfterSplitLength}`
+)
+
+console.log(
+  `  New block: offset=${newBlockTrimOffset}, length=${newBlockTrimLength}`
+)
 ```
 
 The original block keeps its trim offset unchanged, but its trim length is reduced to the split point. The new block has its trim offset advanced by the split time and trim length set to cover the remaining duration. Both blocks reference the same source media—splitting is non-destructive.
@@ -531,30 +522,29 @@ The original block keeps its `getTimeOffset()`. When `attachToParent` is true, t
 Remove a middle section from a clip by splitting at both boundaries and deleting the middle segment.
 
 ```typescript highlight-split-and-delete
-    // Create a video block to demonstrate split-and-delete workflow
-    const deleteWorkflowVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a video block to demonstrate split-and-delete workflow
+const deleteWorkflowVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const deleteFill = engine.block.getFill(deleteWorkflowVideo);
-    await engine.block.forceLoadAVResource(deleteFill);
-    engine.block.setDuration(deleteWorkflowVideo, 10.0);
+const deleteFill = engine.block.getFill(deleteWorkflowVideo)
+await engine.block.forceLoadAVResource(deleteFill)
+engine.block.setDuration(deleteWorkflowVideo, 10.0)
 
-    // Remove middle section: split at start of section to remove (2s)
-    const middleBlock = engine.block.split(deleteWorkflowVideo, 2.0);
+// Remove middle section: split at start of section to remove (2s)
+const middleBlock = engine.block.split(deleteWorkflowVideo, 2.0)
 
-    // Split again at the end of the section to remove (at 3s into middle block = 5s total)
-    const endBlock = engine.block.split(middleBlock, 3.0);
+// Split again at the end of the section to remove (at 3s into middle block = 5s total)
+const endBlock = engine.block.split(middleBlock, 3.0)
 
-    // Delete the middle segment
-    engine.block.destroy(middleBlock);
+// Delete the middle segment
+engine.block.destroy(middleBlock)
 
-    // eslint-disable-next-line no-console
-    console.log(
-      `Split and delete - Removed middle 3s section, kept blocks: ${deleteWorkflowVideo}, ${endBlock}`
-    );
+console.log(
+  `Split and delete - Removed middle 3s section, kept blocks: ${deleteWorkflowVideo}, ${endBlock}`
+)
 ```
 
 This workflow is useful for removing unwanted sections, such as cutting out pauses, mistakes, or irrelevant portions from a recording.
@@ -564,35 +554,35 @@ This workflow is useful for removing unwanted sections, such as cutting out paus
 Always validate that the split time is within valid bounds before calling `split()`. The split time must be greater than 0 and less than the block's duration.
 
 ```typescript highlight-validate-split-time
-    // Create a video block to demonstrate split time validation
-    const validateVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a video block to demonstrate split time validation
+const validateVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const validateFill = engine.block.getFill(validateVideo);
-    await engine.block.forceLoadAVResource(validateFill);
-    engine.block.setDuration(validateVideo, 8.0);
+const validateFill = engine.block.getFill(validateVideo)
+await engine.block.forceLoadAVResource(validateFill)
+engine.block.setDuration(validateVideo, 8.0)
 
-    // Get block duration to validate split time
-    const blockDuration = engine.block.getDuration(validateVideo);
-    const desiredSplitTime = 4.0;
+// Get block duration to validate split time
+const blockDuration = engine.block.getDuration(validateVideo)
+const desiredSplitTime = 4.0
 
-    // Validate split time is within bounds (must be > 0 and < duration)
-    if (desiredSplitTime > 0 && desiredSplitTime < blockDuration) {
-      const validatedSplitResult = engine.block.split(
-        validateVideo,
-        desiredSplitTime
-      );
-      // eslint-disable-next-line no-console
-      console.log(
-        `Validated split - Duration: ${blockDuration}s, Split at: ${desiredSplitTime}s, New block: ${validatedSplitResult}`
-      );
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('Split time out of range');
-    }
+// Validate split time is within bounds (must be > 0 and < duration)
+if (desiredSplitTime > 0 && desiredSplitTime < blockDuration) {
+  const validatedSplitResult = engine.block.split(
+    validateVideo,
+    desiredSplitTime
+  )
+
+  console.log(
+    `Validated split - Duration: ${blockDuration}s, Split at: ${desiredSplitTime}s, New block: ${validatedSplitResult}`
+  )
+}
+else {
+  console.log('Split time out of range')
+}
 ```
 
 Attempting to split at an invalid time (at the beginning, end, or outside the block's duration) will fail or produce unexpected results.

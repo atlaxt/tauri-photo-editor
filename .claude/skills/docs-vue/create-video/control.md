@@ -23,7 +23,7 @@ Play, pause, seek, and preview audio and video content programmatically using CE
 CE.SDK provides playback control for audio and video through the Block API. Playback state, seeking, and solo preview are controlled programmatically. Resources must be loaded before accessing metadata like duration and dimensions.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-control-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,30 +40,30 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -73,9 +73,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -89,79 +89,79 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the page and set to 16:9 landscape for video
-    const page = engine.block.findByType('page')[0]!;
+    const page = engine.block.findByType('page')[0]!
 
     // Create a track for video blocks
-    const track = engine.block.create('track');
-    engine.block.appendChild(page, track);
+    const track = engine.block.create('track')
+    engine.block.appendChild(page, track)
 
     // Create a video block and add it to the track
-    const videoUri = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
-    const videoBlock = engine.block.create('graphic');
-    engine.block.setShape(videoBlock, engine.block.createShape('rect'));
-    engine.block.setWidth(videoBlock, 1920);
-    engine.block.setHeight(videoBlock, 1080);
+    const videoUri = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
+    const videoBlock = engine.block.create('graphic')
+    engine.block.setShape(videoBlock, engine.block.createShape('rect'))
+    engine.block.setWidth(videoBlock, 1920)
+    engine.block.setHeight(videoBlock, 1080)
 
     // Create and configure video fill
-    const videoFill = engine.block.createFill('video');
-    engine.block.setString(videoFill, 'fill/video/fileURI', videoUri);
-    engine.block.setFill(videoBlock, videoFill);
+    const videoFill = engine.block.createFill('video')
+    engine.block.setString(videoFill, 'fill/video/fileURI', videoUri)
+    engine.block.setFill(videoBlock, videoFill)
 
     // Add to track and set duration
-    engine.block.appendChild(track, videoBlock);
-    engine.block.setDuration(videoBlock, 10);
+    engine.block.appendChild(track, videoBlock)
+    engine.block.setDuration(videoBlock, 10)
 
-    await engine.block.forceLoadAVResource(videoFill);
+    await engine.block.forceLoadAVResource(videoFill)
 
-    const videoWidth = engine.block.getVideoWidth(videoFill);
-    const videoHeight = engine.block.getVideoHeight(videoFill);
-    const totalDuration = engine.block.getAVResourceTotalDuration(videoFill);
-    console.log(`Video dimensions: ${videoWidth}x${videoHeight}`);
-    console.log(`Total duration: ${totalDuration}s`);
+    const videoWidth = engine.block.getVideoWidth(videoFill)
+    const videoHeight = engine.block.getVideoHeight(videoFill)
+    const totalDuration = engine.block.getAVResourceTotalDuration(videoFill)
+    console.log(`Video dimensions: ${videoWidth}x${videoHeight}`)
+    console.log(`Total duration: ${totalDuration}s`)
 
     if (engine.block.supportsPlaybackControl(page)) {
-      console.log(`Is playing: ${engine.block.isPlaying(page)}`);
-      engine.block.setPlaying(page, true);
+      console.log(`Is playing: ${engine.block.isPlaying(page)}`)
+      engine.block.setPlaying(page, true)
     }
 
     if (engine.block.supportsPlaybackTime(page)) {
-      engine.block.setPlaybackTime(page, 1.0);
-      console.log(`Playback time: ${engine.block.getPlaybackTime(page)}s`);
+      engine.block.setPlaybackTime(page, 1.0)
+      console.log(`Playback time: ${engine.block.getPlaybackTime(page)}s`)
     }
 
     console.log(
       `Visible at current time: ${engine.block.isVisibleAtCurrentPlaybackTime(
         videoBlock
       )}`
-    );
+    )
 
-    engine.block.setSoloPlaybackEnabled(videoFill, true);
+    engine.block.setSoloPlaybackEnabled(videoFill, true)
     console.log(
       `Solo enabled: ${engine.block.isSoloPlaybackEnabled(videoFill)}`
-    );
-    engine.block.setSoloPlaybackEnabled(videoFill, false);
+    )
+    engine.block.setSoloPlaybackEnabled(videoFill, false)
 
     // Select the video block for inspection
-    engine.block.select(videoBlock);
+    engine.block.select(videoBlock)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to play and pause media, seek to specific positions, preview individual blocks with solo mode, check visibility at playback time, and access video resource metadata.
@@ -171,7 +171,7 @@ This guide covers how to play and pause media, seek to specific positions, previ
 Media resource metadata is unavailable until the resource is loaded. Call `forceLoadAVResource` on the video fill to ensure dimensions and duration are accessible.
 
 ```typescript highlight=highlight-force-load
-await engine.block.forceLoadAVResource(videoFill);
+await engine.block.forceLoadAVResource(videoFill)
 ```
 
 Without loading the resource first, accessing properties like duration or dimensions throws an error.
@@ -181,9 +181,9 @@ Without loading the resource first, accessing properties like duration or dimens
 Once the resource is loaded, query the video dimensions and total duration.
 
 ```typescript highlight=highlight-get-metadata
-const videoWidth = engine.block.getVideoWidth(videoFill);
-const videoHeight = engine.block.getVideoHeight(videoFill);
-const totalDuration = engine.block.getAVResourceTotalDuration(videoFill);
+const videoWidth = engine.block.getVideoWidth(videoFill)
+const videoHeight = engine.block.getVideoHeight(videoFill)
+const totalDuration = engine.block.getAVResourceTotalDuration(videoFill)
 ```
 
 The `getVideoWidth` and `getVideoHeight` methods return the original video dimensions in pixels. The `getAVResourceTotalDuration` method returns the full duration of the source media in seconds.
@@ -194,8 +194,8 @@ Check if the block supports playback control using `supportsPlaybackControl`, th
 
 ```typescript highlight=highlight-playback-control
 if (engine.block.supportsPlaybackControl(page)) {
-  console.log(`Is playing: ${engine.block.isPlaying(page)}`);
-  engine.block.setPlaying(page, true);
+  console.log(`Is playing: ${engine.block.isPlaying(page)}`)
+  engine.block.setPlaying(page, true)
 }
 ```
 
@@ -207,8 +207,8 @@ To jump to a specific playback position, use `setPlaybackTime`. First, check if 
 
 ```typescript highlight=highlight-seeking
 if (engine.block.supportsPlaybackTime(page)) {
-  engine.block.setPlaybackTime(page, 1.0);
-  console.log(`Playback time: ${engine.block.getPlaybackTime(page)}s`);
+  engine.block.setPlaybackTime(page, 1.0)
+  console.log(`Playback time: ${engine.block.getPlaybackTime(page)}s`)
 }
 ```
 
@@ -223,7 +223,7 @@ console.log(
   `Visible at current time: ${engine.block.isVisibleAtCurrentPlaybackTime(
     videoBlock
   )}`
-);
+)
 ```
 
 ## Solo Playback
@@ -231,11 +231,11 @@ console.log(
 Solo playback allows you to preview an individual block while the rest of the scene stays frozen. Enable it on a video fill or audio block with `setSoloPlaybackEnabled`.
 
 ```typescript highlight=highlight-solo-playback
-engine.block.setSoloPlaybackEnabled(videoFill, true);
+engine.block.setSoloPlaybackEnabled(videoFill, true)
 console.log(
   `Solo enabled: ${engine.block.isSoloPlaybackEnabled(videoFill)}`
-);
-engine.block.setSoloPlaybackEnabled(videoFill, false);
+)
+engine.block.setSoloPlaybackEnabled(videoFill, false)
 ```
 
 Enabling solo on one block automatically disables it on all others. This is useful for previewing a specific clip without affecting the overall scene playback.

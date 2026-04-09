@@ -27,9 +27,7 @@ import type {
   AssetDefinition,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -44,8 +42,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 // Define color assets for each color space type
 const colors: AssetDefinition[] = [
@@ -107,25 +107,25 @@ const colors: AssetDefinition[] = [
       }
     }
   }
-];
+]
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a local asset source and add each color
-    const sourceId = 'my-brand-colors';
-    engine.asset.addLocalSource(sourceId);
+    const sourceId = 'my-brand-colors'
+    engine.asset.addLocalSource(sourceId)
 
     for (const color of colors) {
-      await engine.asset.addAssetToSource(sourceId, color);
+      await engine.asset.addAssetToSource(sourceId, color)
     }
 
     // Set labels for the color library using i18n
@@ -133,20 +133,20 @@ class Example implements EditorPlugin {
       en: {
         'libraries.my-brand-colors.label': 'Brand Colors'
       }
-    });
+    })
 
     // Configure the color picker to show custom colors first, then defaults
     cesdk.ui.updateAssetLibraryEntry('ly.img.color.palette', {
       sourceIds: ['my-brand-colors', 'ly.img.color.palette']
-    });
+    })
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -157,72 +157,72 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Configure the color picker to show custom colors alongside the defaults
     cesdk.ui.updateAssetLibraryEntry('ly.img.colors', {
       sourceIds: ['my-brand-colors', 'ly.img.color.palette']
-    });
+    })
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
     // Set up the page with dimensions
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Apply a soft cream background to the page fill
     // This complements the Brand Blue rectangle
-    const pageFill = engine.block.getFill(page);
+    const pageFill = engine.block.getFill(page)
     engine.block.setColor(pageFill, 'fill/color/value', {
       r: 0.98,
       g: 0.96,
       b: 0.92,
       a: 1.0
-    });
+    })
 
     // Create a graphic block with Brand Blue from the custom palette
-    const block = engine.block.create('//ly.img.ubq/graphic');
+    const block = engine.block.create('//ly.img.ubq/graphic')
     engine.block.setShape(
       block,
       engine.block.createShape('//ly.img.ubq/shape/rect')
-    );
-    const fill = engine.block.createFill('//ly.img.ubq/fill/color');
+    )
+    const fill = engine.block.createFill('//ly.img.ubq/fill/color')
     // Use Brand Blue from our custom palette
     engine.block.setColor(fill, 'fill/color/value', {
       r: 0.2,
       g: 0.4,
       b: 0.8,
       a: 1.0
-    });
-    engine.block.setFill(block, fill);
-    engine.block.setWidth(block, 200);
-    engine.block.setHeight(block, 200);
+    })
+    engine.block.setFill(block, fill)
+    engine.block.setWidth(block, 200)
+    engine.block.setHeight(block, 200)
 
     // Center the block on the page
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    engine.block.setPositionX(block, (pageWidth - 200) / 2);
-    engine.block.setPositionY(block, (pageHeight - 200) / 2);
-    engine.block.appendChild(page, block);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    engine.block.setPositionX(block, (pageWidth - 200) / 2)
+    engine.block.setPositionY(block, (pageHeight - 200) / 2)
+    engine.block.appendChild(page, block)
 
     // Select the block and open the fill inspector to show the color picker
-    engine.block.select(block);
-    cesdk.ui.openPanel('//ly.img.panel/inspector/fill');
+    engine.block.select(block)
+    cesdk.ui.openPanel('//ly.img.panel/inspector/fill')
 
-    console.log('Create Color Palette example loaded successfully');
+    console.log('Create Color Palette example loaded successfully')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to define colors in different color spaces, create and configure color libraries, set custom labels, and control the display order in the color picker.
@@ -296,7 +296,7 @@ const colors: AssetDefinition[] = [
       }
     }
   }
-];
+]
 ```
 
 The example defines four colors demonstrating different color spaces. The first two colors—"Brand Blue" and "Brand Coral"—use sRGB for screen display.
@@ -318,13 +318,13 @@ The "Metallic Gold" color demonstrates the spot color format, using a custom ink
 We create a local asset source using `engine.asset.addLocalSource()` with a unique source ID. Then we add each color asset using `engine.asset.addAssetToSource()`.
 
 ```typescript highlight=highlight-add-library
-    // Create a local asset source and add each color
-    const sourceId = 'my-brand-colors';
-    engine.asset.addLocalSource(sourceId);
+// Create a local asset source and add each color
+const sourceId = 'my-brand-colors'
+engine.asset.addLocalSource(sourceId)
 
-    for (const color of colors) {
-      await engine.asset.addAssetToSource(sourceId, color);
-    }
+for (const color of colors) {
+  await engine.asset.addAssetToSource(sourceId, color)
+}
 ```
 
 The source ID `'my-brand-colors'` identifies this library throughout the application. You can create multiple libraries with different source IDs to organize colors by purpose—for example, separate libraries for brand colors, print colors, and seasonal palettes.
@@ -339,7 +339,7 @@ cesdk.i18n.setTranslations({
   en: {
     'libraries.my-brand-colors.label': 'Brand Colors'
   }
-});
+})
 ```
 
 The label "Brand Colors" appears as the section header in the color picker. You can provide translations for multiple locales by adding additional language keys to the translations object.
@@ -352,7 +352,7 @@ We control which libraries appear in the color picker and their display order us
 // Configure the color picker to show custom colors first, then defaults
 cesdk.ui.updateAssetLibraryEntry('ly.img.color.palette', {
   sourceIds: ['my-brand-colors', 'ly.img.color.palette']
-});
+})
 ```
 
 The special source ID `'ly.img.color.palette'` represents CE.SDK's built-in default color palette. Include it in the array to show the default colors alongside your custom library. Remove it from the array to hide the default palette entirely.
@@ -362,7 +362,7 @@ The special source ID `'ly.img.color.palette'` represents CE.SDK's built-in defa
 You can remove individual colors from a library using `engine.asset.removeAssetFromSource()` with the source ID and the color's asset ID.
 
 ```typescript
-engine.asset.removeAssetFromSource('my-brand-colors', 'brand-blue');
+engine.asset.removeAssetFromSource('my-brand-colors', 'brand-blue')
 ```
 
 This removes the color from the library immediately. The color picker updates to reflect the change the next time it renders.

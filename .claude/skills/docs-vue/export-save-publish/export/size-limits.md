@@ -23,7 +23,7 @@ Configure size limits to balance quality and performance in CE.SDK applications.
 CE.SDK processes images and videos client-side, which means size limits depend on the user's GPU capabilities and available memory. Understanding and configuring these limits helps you build applications that deliver high-quality results while maintaining smooth performance across different devices.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-size-limits-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,22 +68,22 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Add export image action to navigation bar
     cesdk.ui.insertOrderComponent(
@@ -92,14 +92,14 @@ class Example implements EditorPlugin {
         id: 'ly.img.actions.navigationBar',
         children: ['ly.img.exportImage.navigationBar']
       }
-    );
+    )
 
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // ===== Section 1: Reading Current maxImageSize =====
     // Get the current maxImageSize setting
-    const currentMaxSize = engine.editor.getSetting('maxImageSize');
-    console.log('Current maxImageSize:', currentMaxSize);
+    const currentMaxSize = engine.editor.getSetting('maxImageSize')
+    console.log('Current maxImageSize:', currentMaxSize)
     // Default is 4096 pixels
 
     // ===== Section 2: Setting Different maxImageSize Values =====
@@ -107,7 +107,7 @@ class Example implements EditorPlugin {
     // This must be set BEFORE loading images to ensure they're downscaled
 
     // Low memory devices (mobile, tablets) - use 2048 for safety
-    engine.editor.setSetting('maxImageSize', 2048);
+    engine.editor.setSetting('maxImageSize', 2048)
 
     // High quality (professional workflows, desktop)
     // engine.editor.setSetting('maxImageSize', 8192);
@@ -115,15 +115,15 @@ class Example implements EditorPlugin {
     console.log(
       'Updated maxImageSize:',
       engine.editor.getSetting('maxImageSize')
-    );
+    )
 
     // ===== Section 3: Observing Settings Changes =====
     // Subscribe to settings changes to update UI when maxImageSize changes
     engine.editor.onSettingsChanged(() => {
-      const newMaxSize = engine.editor.getSetting('maxImageSize');
-      console.log('maxImageSize changed to:', newMaxSize);
+      const newMaxSize = engine.editor.getSetting('maxImageSize')
+      console.log('maxImageSize changed to:', newMaxSize)
       // In a real app, update UI here to reflect the new setting
-    });
+    })
 
     // The subscription returns an unsubscribe function if you need to clean up later
     // const unsubscribe = engine.editor.onSettingsChanged(() => { ... });
@@ -131,18 +131,18 @@ class Example implements EditorPlugin {
 
     // ===== Section 4: GPU Capability Detection (Web) =====
     // Query GPU max texture size to understand export limits
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+    const canvas = document.createElement('canvas')
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
 
     if (gl) {
-      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-      console.log('GPU Max Texture Size:', maxTextureSize);
+      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
+      console.log('GPU Max Texture Size:', maxTextureSize)
       console.log(
         'Safe export dimensions: up to',
         maxTextureSize,
         '×',
         maxTextureSize
-      );
+      )
 
       // Most modern GPUs support 4096×4096 to 16384×16384
       // Safe baseline is 4096×4096 for universal compatibility
@@ -151,28 +151,28 @@ class Example implements EditorPlugin {
     // ===== Section 5: Pre-Export Size Validation =====
     // Calculate actual export dimensions including all content
     // Get bounding box of all content to check actual export size
-    const allBlocks = engine.block.findByType('//ly.img.ubq/graphic');
-    let maxRight = 0;
-    let maxBottom = 0;
+    const allBlocks = engine.block.findByType('//ly.img.ubq/graphic')
+    let maxRight = 0
+    let maxBottom = 0
 
     allBlocks.forEach((blockId) => {
-      const x = engine.block.getPositionX(blockId);
-      const y = engine.block.getPositionY(blockId);
-      const width = engine.block.getWidth(blockId);
-      const height = engine.block.getHeight(blockId);
-      maxRight = Math.max(maxRight, x + width);
-      maxBottom = Math.max(maxBottom, y + height);
-    });
+      const x = engine.block.getPositionX(blockId)
+      const y = engine.block.getPositionY(blockId)
+      const width = engine.block.getWidth(blockId)
+      const height = engine.block.getHeight(blockId)
+      maxRight = Math.max(maxRight, x + width)
+      maxBottom = Math.max(maxBottom, y + height)
+    })
 
-    const exportWidth = Math.max(engine.block.getWidth(page), maxRight);
-    const exportHeight = Math.max(engine.block.getHeight(page), maxBottom);
+    const exportWidth = Math.max(engine.block.getWidth(page), maxRight)
+    const exportHeight = Math.max(engine.block.getHeight(page), maxBottom)
 
-    console.log('Export dimensions:', exportWidth, '×', exportHeight);
+    console.log('Export dimensions:', exportWidth, '×', exportHeight)
 
     if (gl) {
-      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
       // Use conservative limit (50% of max) for actual VRAM availability
-      const safeTextureSize = Math.floor(maxTextureSize * 0.5);
+      const safeTextureSize = Math.floor(maxTextureSize * 0.5)
 
       if (exportWidth > safeTextureSize || exportHeight > safeTextureSize) {
         cesdk.ui.showNotification({
@@ -180,12 +180,13 @@ class Example implements EditorPlugin {
           message: `Export dimensions (${Math.round(exportWidth)}×${Math.round(
             exportHeight
           )}) exceed safe GPU limit (${safeTextureSize}×${safeTextureSize})`
-        });
-      } else {
+        })
+      }
+      else {
         cesdk.ui.showNotification({
           type: 'success',
           message: 'Export dimensions are within safe limits'
-        });
+        })
       }
     }
 
@@ -196,68 +197,69 @@ class Example implements EditorPlugin {
       // const blob = await engine.block.export(page, 'image/png');
 
       // If export fails, catch and handle the error
-      console.log('Export would proceed here with proper error handling');
-    } catch (error) {
-      console.error('Export failed:', error);
+      console.log('Export would proceed here with proper error handling')
+    }
+    catch (error) {
+      console.error('Export failed:', error)
 
       // Check if error is size-related
       if (
-        error instanceof Error &&
-        (error.message.includes('texture') ||
-          error.message.includes('size') ||
-          error.message.includes('memory'))
+        error instanceof Error
+        && (error.message.includes('texture')
+          || error.message.includes('size')
+          || error.message.includes('memory'))
       ) {
-        console.error('Size-related export error detected');
-        console.error('Suggested remediation:');
-        console.error('1. Reduce output dimensions');
-        console.error('2. Decrease maxImageSize setting');
-        console.error('3. Use export compression options');
+        console.error('Size-related export error detected')
+        console.error('Suggested remediation:')
+        console.error('1. Reduce output dimensions')
+        console.error('2. Decrease maxImageSize setting')
+        console.error('3. Use export compression options')
       }
     }
 
     // Add an image to the page for demonstration
     // Note: NOT specifying size here - let maxImageSize control the texture loading
-    const imageBlock = await engine.block.addImage(imageUri);
-    engine.block.appendChild(page, imageBlock);
+    const imageBlock = await engine.block.addImage(imageUri)
+    engine.block.appendChild(page, imageBlock)
 
     // Fit image to page dimensions
-    engine.block.setWidth(imageBlock, 800);
-    engine.block.setHeight(imageBlock, 600);
+    engine.block.setWidth(imageBlock, 800)
+    engine.block.setHeight(imageBlock, 600)
 
     // Position image to fill the page (already matches page dimensions)
-    engine.block.setPositionX(imageBlock, 0);
-    engine.block.setPositionY(imageBlock, 0);
+    engine.block.setPositionX(imageBlock, 0)
+    engine.block.setPositionY(imageBlock, 0)
 
     // Zoom to fit the content
-    engine.scene.zoomToBlock(page, { padding: 40 });
+    engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Display information in console
-    console.log('=== Size Limits Configuration Summary ===');
+    console.log('=== Size Limits Configuration Summary ===')
     console.log(
       'Current maxImageSize:',
       engine.editor.getSetting('maxImageSize')
-    );
+    )
     console.log(
       'Page dimensions:',
       engine.block.getWidth(page),
       '×',
       engine.block.getHeight(page)
-    );
+    )
     console.log(
       'Image dimensions:',
       engine.block.getWidth(imageBlock),
       '×',
       engine.block.getHeight(imageBlock)
-    );
+    )
 
     if (gl) {
-      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-      console.log('GPU max texture size:', maxTextureSize);
+      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
+      console.log('GPU max texture size:', maxTextureSize)
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to configure the `maxImageSize` setting, query GPU capabilities, validate export dimensions, and handle size-related errors gracefully.
@@ -278,8 +280,8 @@ To check what `maxImageSize` value is currently configured:
 
 ```typescript highlight-get-max-image-size
 // Get the current maxImageSize setting
-const currentMaxSize = engine.editor.getSetting('maxImageSize');
-console.log('Current maxImageSize:', currentMaxSize);
+const currentMaxSize = engine.editor.getSetting('maxImageSize')
+console.log('Current maxImageSize:', currentMaxSize)
 // Default is 4096 pixels
 ```
 
@@ -290,19 +292,19 @@ This returns the maximum size in pixels as an integer value (e.g., `4096` for th
 Configure `maxImageSize` to minimize memory usage on constrained devices:
 
 ```typescript highlight-set-max-image-size
-    // Configure maxImageSize for different use cases
-    // This must be set BEFORE loading images to ensure they're downscaled
+// Configure maxImageSize for different use cases
+// This must be set BEFORE loading images to ensure they're downscaled
 
-    // Low memory devices (mobile, tablets) - use 2048 for safety
-    engine.editor.setSetting('maxImageSize', 2048);
+// Low memory devices (mobile, tablets) - use 2048 for safety
+engine.editor.setSetting('maxImageSize', 2048)
 
-    // High quality (professional workflows, desktop)
-    // engine.editor.setSetting('maxImageSize', 8192);
+// High quality (professional workflows, desktop)
+// engine.editor.setSetting('maxImageSize', 8192);
 
-    console.log(
-      'Updated maxImageSize:',
-      engine.editor.getSetting('maxImageSize')
-    );
+console.log(
+  'Updated maxImageSize:',
+  engine.editor.getSetting('maxImageSize')
+)
 ```
 
 The setting takes effect immediately for newly loaded images. Images already loaded on the canvas retain their current resolution until reloaded.
@@ -312,16 +314,16 @@ The setting takes effect immediately for newly loaded images. Images already loa
 Subscribe to setting changes to update your UI when `maxImageSize` is modified:
 
 ```typescript highlight-observe-settings-changes
-    // Subscribe to settings changes to update UI when maxImageSize changes
-    engine.editor.onSettingsChanged(() => {
-      const newMaxSize = engine.editor.getSetting('maxImageSize');
-      console.log('maxImageSize changed to:', newMaxSize);
-      // In a real app, update UI here to reflect the new setting
-    });
+// Subscribe to settings changes to update UI when maxImageSize changes
+engine.editor.onSettingsChanged(() => {
+  const newMaxSize = engine.editor.getSetting('maxImageSize')
+  console.log('maxImageSize changed to:', newMaxSize)
+  // In a real app, update UI here to reflect the new setting
+})
 
-    // The subscription returns an unsubscribe function if you need to clean up later
-    // const unsubscribe = engine.editor.onSettingsChanged(() => { ... });
-    // unsubscribe(); // Call when no longer needed
+// The subscription returns an unsubscribe function if you need to clean up later
+// const unsubscribe = engine.editor.onSettingsChanged(() => { ... });
+// unsubscribe(); // Call when no longer needed
 ```
 
 This callback fires whenever any setting changes through the Settings API. You can use it to update quality indicators in your interface, recalculate memory estimates, or trigger asset reloading with the new size limit.
@@ -331,23 +333,23 @@ This callback fires whenever any setting changes through the Settings API. You c
 Modern browsers expose GPU capabilities through WebGL, allowing you to determine safe export dimensions for the user's hardware.
 
 ```typescript highlight-query-gpu-capabilities
-    // Query GPU max texture size to understand export limits
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+// Query GPU max texture size to understand export limits
+const canvas = document.createElement('canvas')
+const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
 
-    if (gl) {
-      const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-      console.log('GPU Max Texture Size:', maxTextureSize);
-      console.log(
-        'Safe export dimensions: up to',
-        maxTextureSize,
-        '×',
-        maxTextureSize
-      );
+if (gl) {
+  const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
+  console.log('GPU Max Texture Size:', maxTextureSize)
+  console.log(
+    'Safe export dimensions: up to',
+    maxTextureSize,
+    '×',
+    maxTextureSize
+  )
 
-      // Most modern GPUs support 4096×4096 to 16384×16384
-      // Safe baseline is 4096×4096 for universal compatibility
-    }
+  // Most modern GPUs support 4096×4096 to 16384×16384
+  // Safe baseline is 4096×4096 for universal compatibility
+}
 ```
 
 The `MAX_TEXTURE_SIZE` parameter returns the maximum width or height (in pixels) for a texture on the current GPU. Most modern GPUs support 4096×4096 to 16384×16384, while older or integrated GPUs may be limited to smaller dimensions.

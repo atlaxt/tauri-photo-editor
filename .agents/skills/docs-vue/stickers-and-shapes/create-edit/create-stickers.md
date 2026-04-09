@@ -23,7 +23,7 @@ Create stickers from images for use in your designs, perfect for adding icons, l
 Stickers are graphic blocks with image fills that cannot be recolored. They work well for icons, brand logos, emoji, and complex multi-color graphics. Unlike shapes (which use solid or gradient fills and can be recolored), stickers preserve the original colors and details of the source image.
 
 ```typescript file=@cesdk_web_examples/guides-stickers-and-shapes-create-stickers-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,27 +39,27 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({ include: ['ly.img.image.upload'] })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -70,84 +70,84 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 450, height: 250, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // ===== Section 1: Using Convenience API =====
     // Create sticker using the convenient addImage() method
     const sticker = await engine.block.addImage(
       'https://cdn.img.ly/assets/v4/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_grin.svg'
-    );
+    )
 
     // Set size and position (preserve aspect ratio)
-    const naturalWidth = engine.block.getWidth(sticker);
-    const naturalHeight = engine.block.getHeight(sticker);
-    const scale = 80 / Math.max(naturalWidth, naturalHeight);
-    engine.block.setWidth(sticker, naturalWidth * scale);
-    engine.block.setHeight(sticker, naturalHeight * scale);
-    engine.block.setPositionX(sticker, 95);
-    engine.block.setPositionY(sticker, 85);
+    const naturalWidth = engine.block.getWidth(sticker)
+    const naturalHeight = engine.block.getHeight(sticker)
+    const scale = 80 / Math.max(naturalWidth, naturalHeight)
+    engine.block.setWidth(sticker, naturalWidth * scale)
+    engine.block.setHeight(sticker, naturalHeight * scale)
+    engine.block.setPositionX(sticker, 95)
+    engine.block.setPositionY(sticker, 85)
 
     // Prevent cropping and mark as sticker
     if (engine.block.supportsContentFillMode(sticker)) {
-      engine.block.setContentFillMode(sticker, 'Contain');
+      engine.block.setContentFillMode(sticker, 'Contain')
     }
-    engine.block.setKind(sticker, 'Sticker');
+    engine.block.setKind(sticker, 'Sticker')
 
     // Add to scene
-    engine.block.appendChild(page, sticker);
+    engine.block.appendChild(page, sticker)
 
     // ===== Section 2: Manual Construction =====
     // Create sticker manually for fine-grained control
-    const manualSticker = engine.block.create('graphic');
+    const manualSticker = engine.block.create('graphic')
 
     // Set a shape (required for graphic blocks to be visible)
-    engine.block.setShape(manualSticker, engine.block.createShape('rect'));
+    engine.block.setShape(manualSticker, engine.block.createShape('rect'))
 
     // Create and apply image fill
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://cdn.img.ly/assets/v4/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_blush.svg'
-    );
-    engine.block.setFill(manualSticker, imageFill);
+    )
+    engine.block.setFill(manualSticker, imageFill)
 
     // Set size and position (preserve aspect ratio)
-    const manualWidth = engine.block.getWidth(manualSticker) || 100;
-    const manualHeight = engine.block.getHeight(manualSticker) || 100;
-    const manualScale = 80 / Math.max(manualWidth, manualHeight);
-    engine.block.setWidth(manualSticker, manualWidth * manualScale);
-    engine.block.setHeight(manualSticker, manualHeight * manualScale);
-    engine.block.setPositionX(manualSticker, 275);
-    engine.block.setPositionY(manualSticker, 85);
+    const manualWidth = engine.block.getWidth(manualSticker) || 100
+    const manualHeight = engine.block.getHeight(manualSticker) || 100
+    const manualScale = 80 / Math.max(manualWidth, manualHeight)
+    engine.block.setWidth(manualSticker, manualWidth * manualScale)
+    engine.block.setHeight(manualSticker, manualHeight * manualScale)
+    engine.block.setPositionX(manualSticker, 275)
+    engine.block.setPositionY(manualSticker, 85)
 
     // Prevent cropping and mark as sticker
     if (engine.block.supportsContentFillMode(manualSticker)) {
-      engine.block.setContentFillMode(manualSticker, 'Contain');
+      engine.block.setContentFillMode(manualSticker, 'Contain')
     }
-    engine.block.setKind(manualSticker, 'Sticker');
+    engine.block.setKind(manualSticker, 'Sticker')
 
     // Add to scene
-    engine.block.appendChild(page, manualSticker);
+    engine.block.appendChild(page, manualSticker)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Creating Stickers from Images
@@ -155,28 +155,28 @@ export default Example;
 We use `engine.block.addImage()` to create stickers quickly. This method creates the graphic block and image fill in one call. After creation, we read the natural dimensions, calculate a scale factor to preserve aspect ratio, and apply the scaled size. We also set the position, content fill mode, and mark it as 'Sticker' for proper editor behavior.
 
 ```typescript highlight-convenience-api
-    // Create sticker using the convenient addImage() method
-    const sticker = await engine.block.addImage(
-      'https://cdn.img.ly/assets/v4/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_grin.svg'
-    );
+// Create sticker using the convenient addImage() method
+const sticker = await engine.block.addImage(
+  'https://cdn.img.ly/assets/v4/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_grin.svg'
+)
 
-    // Set size and position (preserve aspect ratio)
-    const naturalWidth = engine.block.getWidth(sticker);
-    const naturalHeight = engine.block.getHeight(sticker);
-    const scale = 80 / Math.max(naturalWidth, naturalHeight);
-    engine.block.setWidth(sticker, naturalWidth * scale);
-    engine.block.setHeight(sticker, naturalHeight * scale);
-    engine.block.setPositionX(sticker, 95);
-    engine.block.setPositionY(sticker, 85);
+// Set size and position (preserve aspect ratio)
+const naturalWidth = engine.block.getWidth(sticker)
+const naturalHeight = engine.block.getHeight(sticker)
+const scale = 80 / Math.max(naturalWidth, naturalHeight)
+engine.block.setWidth(sticker, naturalWidth * scale)
+engine.block.setHeight(sticker, naturalHeight * scale)
+engine.block.setPositionX(sticker, 95)
+engine.block.setPositionY(sticker, 85)
 
-    // Prevent cropping and mark as sticker
-    if (engine.block.supportsContentFillMode(sticker)) {
-      engine.block.setContentFillMode(sticker, 'Contain');
-    }
-    engine.block.setKind(sticker, 'Sticker');
+// Prevent cropping and mark as sticker
+if (engine.block.supportsContentFillMode(sticker)) {
+  engine.block.setContentFillMode(sticker, 'Contain')
+}
+engine.block.setKind(sticker, 'Sticker')
 
-    // Add to scene
-    engine.block.appendChild(page, sticker);
+// Add to scene
+engine.block.appendChild(page, sticker)
 ```
 
 We preserve aspect ratio by scaling the natural dimensions proportionally. The 'Contain' fill mode ensures the entire image displays without cropping. Setting the kind to 'Sticker' prevents recoloring and provides appropriate editor controls.
@@ -186,38 +186,38 @@ We preserve aspect ratio by scaling the natural dimensions proportionally. The '
 For fine-grained control, we build stickers step by step using separate API calls. We create the graphic block, set a shape (required for visibility), create an image fill, and apply it to the block. We preserve aspect ratio by reading natural dimensions and scaling proportionally.
 
 ```typescript highlight-manual-construction
-    // Create sticker manually for fine-grained control
-    const manualSticker = engine.block.create('graphic');
+// Create sticker manually for fine-grained control
+const manualSticker = engine.block.create('graphic')
 
-    // Set a shape (required for graphic blocks to be visible)
-    engine.block.setShape(manualSticker, engine.block.createShape('rect'));
+// Set a shape (required for graphic blocks to be visible)
+engine.block.setShape(manualSticker, engine.block.createShape('rect'))
 
-    // Create and apply image fill
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
-      imageFill,
-      'fill/image/imageFileURI',
-      'https://cdn.img.ly/assets/v4/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_blush.svg'
-    );
-    engine.block.setFill(manualSticker, imageFill);
+// Create and apply image fill
+const imageFill = engine.block.createFill('image')
+engine.block.setString(
+  imageFill,
+  'fill/image/imageFileURI',
+  'https://cdn.img.ly/assets/v4/ly.img.sticker/images/emoticons/imgly_sticker_emoticons_blush.svg'
+)
+engine.block.setFill(manualSticker, imageFill)
 
-    // Set size and position (preserve aspect ratio)
-    const manualWidth = engine.block.getWidth(manualSticker) || 100;
-    const manualHeight = engine.block.getHeight(manualSticker) || 100;
-    const manualScale = 80 / Math.max(manualWidth, manualHeight);
-    engine.block.setWidth(manualSticker, manualWidth * manualScale);
-    engine.block.setHeight(manualSticker, manualHeight * manualScale);
-    engine.block.setPositionX(manualSticker, 275);
-    engine.block.setPositionY(manualSticker, 85);
+// Set size and position (preserve aspect ratio)
+const manualWidth = engine.block.getWidth(manualSticker) || 100
+const manualHeight = engine.block.getHeight(manualSticker) || 100
+const manualScale = 80 / Math.max(manualWidth, manualHeight)
+engine.block.setWidth(manualSticker, manualWidth * manualScale)
+engine.block.setHeight(manualSticker, manualHeight * manualScale)
+engine.block.setPositionX(manualSticker, 275)
+engine.block.setPositionY(manualSticker, 85)
 
-    // Prevent cropping and mark as sticker
-    if (engine.block.supportsContentFillMode(manualSticker)) {
-      engine.block.setContentFillMode(manualSticker, 'Contain');
-    }
-    engine.block.setKind(manualSticker, 'Sticker');
+// Prevent cropping and mark as sticker
+if (engine.block.supportsContentFillMode(manualSticker)) {
+  engine.block.setContentFillMode(manualSticker, 'Contain')
+}
+engine.block.setKind(manualSticker, 'Sticker')
 
-    // Add to scene
-    engine.block.appendChild(page, manualSticker);
+// Add to scene
+engine.block.appendChild(page, manualSticker)
 ```
 
 This approach works well when we need to configure multiple properties or reuse fills across blocks.

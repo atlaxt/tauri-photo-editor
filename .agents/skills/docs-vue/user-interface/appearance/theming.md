@@ -25,7 +25,7 @@ or application design.
 CE.SDK provides comprehensive theming capabilities at two levels: built-in themes for immediate use, and a complete CSS theming API for detailed brand-specific styling. This guide demonstrates how to use each approach to customize the editor's appearance.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-appearance-theming-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 const GREEN_OLIVE_THEME_CSS = `
 .ubq-public[data-ubq-theme='light'][data-ubq-scale='normal'] {
@@ -58,7 +58,7 @@ const GREEN_OLIVE_THEME_CSS = `
   --ubq-interactive-accent-hover: hsl(135, 50%, 43%) !important;
   --ubq-interactive-accent-pressed: hsl(135, 55%, 38%) !important;
 }
-`;
+`
 
 /**
  * CE.SDK Plugin: Theming Guide
@@ -70,62 +70,62 @@ const GREEN_OLIVE_THEME_CSS = `
  * - Custom theme via CSS custom properties
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Set the theme to light, dark, or system
     // 'system' automatically follows the user's OS theme preference
-    cesdk.ui.setTheme('light');
+    cesdk.ui.setTheme('light')
 
     // Set a fixed scale: 'normal', 'large', or 'modern' (default)
     // - normal: Standard UI scaling for desktop
     // - large: Increased sizes for accessibility and touch devices
     // - modern: Modern theme with refined visual design
-    cesdk.ui.setScale('normal');
+    cesdk.ui.setScale('normal')
 
     // Apply custom green/olive theme after CE.SDK initialization
-    const style = document.createElement('style');
-    style.textContent = GREEN_OLIVE_THEME_CSS;
-    document.head.appendChild(style);
+    const style = document.createElement('style')
+    style.textContent = GREEN_OLIVE_THEME_CSS
+    document.head.appendChild(style)
 
     // Force theme refresh to pick up custom colors
-    cesdk.ui.setTheme('dark');
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    cesdk.ui.setTheme('light');
+    cesdk.ui.setTheme('dark')
+    await new Promise(resolve => setTimeout(resolve, 100))
+    cesdk.ui.setTheme('light')
 
     // Or use a dynamic scale based on viewport and device
     cesdk.ui.setScale(({ containerWidth, isTouch }) => {
       // Use large scale for small screens or touch devices
       if ((containerWidth && containerWidth < 600) || isTouch) {
-        return 'large';
+        return 'large'
       }
       // Use normal scale for larger screens
-      return 'normal';
-    });
+      return 'normal'
+    })
 
     // Get the current active theme
-    const currentTheme = cesdk.ui.getTheme(); // Returns 'light' or 'dark'
-    // eslint-disable-next-line no-console
-    console.log('Current theme:', currentTheme);
+    const currentTheme = cesdk.ui.getTheme() // Returns 'light' or 'dark'
+
+    console.log('Current theme:', currentTheme)
 
     // Get the current scale setting
-    const currentScale = cesdk.ui.getScale(); // Returns scale or callback function
-    // eslint-disable-next-line no-console
-    console.log('Current scale:', currentScale);
+    const currentScale = cesdk.ui.getScale() // Returns scale or callback function
+
+    console.log('Current scale:', currentScale)
 
     // Create a design scene    await cesdk.addPlugin(new DesignEditorConfig());
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -136,39 +136,39 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
-    const engine = cesdk.engine;
+    })
+    const engine = cesdk.engine
 
     // Get the page
-    const pages = engine.block.findByType('page');
-    const page = pages[0];
+    const pages = engine.block.findByType('page')
+    const page = pages[0]
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Add a visual element to demonstrate the theme
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Add an image to show theme effects
     const imageBlock = await engine.block.addImage(imageUri, {
       x: 100,
       y: 100,
       size: { width: 600, height: 400 }
-    });
+    })
 
-    engine.block.appendChild(page, imageBlock);
+    engine.block.appendChild(page, imageBlock)
 
     // Note: The custom theme defined in custom-theme.css will automatically apply
     // when the theme/scale combination matches the CSS selectors
@@ -176,7 +176,7 @@ class Example implements EditorPlugin {
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Built-in Themes and Scales
@@ -190,7 +190,7 @@ Use `cesdk.ui.setTheme()` to switch between light, dark, or system themes. The s
 ```typescript highlight-set-theme
 // Set the theme to light, dark, or system
 // 'system' automatically follows the user's OS theme preference
-cesdk.ui.setTheme('light');
+cesdk.ui.setTheme('light')
 ```
 
 By default, the light theme is active. When you set the theme to `'system'`, CE.SDK automatically adapts to the user's OS preference and updates whenever the system theme changes.
@@ -200,15 +200,15 @@ By default, the light theme is active. When you set the theme to `'system'`, CE.
 To determine which theme is currently active, use `cesdk.ui.getTheme()`:
 
 ```typescript highlight-get-theme
-    // Get the current active theme
-    const currentTheme = cesdk.ui.getTheme(); // Returns 'light' or 'dark'
-    // eslint-disable-next-line no-console
-    console.log('Current theme:', currentTheme);
+// Get the current active theme
+const currentTheme = cesdk.ui.getTheme() // Returns 'light' or 'dark'
 
-    // Get the current scale setting
-    const currentScale = cesdk.ui.getScale(); // Returns scale or callback function
-    // eslint-disable-next-line no-console
-    console.log('Current scale:', currentScale);
+console.log('Current theme:', currentTheme)
+
+// Get the current scale setting
+const currentScale = cesdk.ui.getScale() // Returns scale or callback function
+
+console.log('Current scale:', currentScale)
 ```
 
 This method always returns either `'light'` or `'dark'`, never `'system'`. When the system theme is configured, `getTheme()` returns the resolved theme based on the current OS preference.
@@ -222,7 +222,7 @@ CE.SDK supports three scale modes that affect UI element sizes, spacing, and typ
 // - normal: Standard UI scaling for desktop
 // - large: Increased sizes for accessibility and touch devices
 // - modern: Modern theme with refined visual design
-cesdk.ui.setScale('normal');
+cesdk.ui.setScale('normal')
 ```
 
 The scale modes offer different visual experiences:
@@ -240,11 +240,11 @@ For responsive designs, you can provide a callback function that returns the app
 cesdk.ui.setScale(({ containerWidth, isTouch }) => {
   // Use large scale for small screens or touch devices
   if ((containerWidth && containerWidth < 600) || isTouch) {
-    return 'large';
+    return 'large'
   }
   // Use normal scale for larger screens
-  return 'normal';
-});
+  return 'normal'
+})
 ```
 
 The callback receives an object with two properties:
@@ -459,8 +459,8 @@ Quick reference for all theming-related APIs:
 
 ```typescript
 type ScaleCallback = (context: {
-  containerWidth: number;
-  isTouch: boolean;
+  containerWidth: number
+  isTouch: boolean
 }) => 'normal' | 'large' | 'modern'
 ```
 

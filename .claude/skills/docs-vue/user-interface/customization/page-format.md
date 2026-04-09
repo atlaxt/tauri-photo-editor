@@ -21,7 +21,7 @@ CE.SDK includes a built-in page format selector in the resize panel that lets us
 > - [Live demo](https://img.ly/docs/cesdk/examples/guides-user-interface-customization-page-format-browser/)
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-page-format-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -37,9 +37,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Page Format Customization Guide
@@ -52,22 +52,22 @@ import packageJson from './package.json';
  * - Controlling orientation behavior
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -78,20 +78,20 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Create a local asset source to hold custom page formats
-    engine.asset.addLocalSource('my-custom-formats');
+    engine.asset.addLocalSource('my-custom-formats')
 
     // Add print formats using millimeter dimensions
     engine.asset.addAssetToSource('my-custom-formats', {
@@ -106,7 +106,7 @@ class Example implements EditorPlugin {
         }
       },
       meta: { default: 'true' }
-    });
+    })
     engine.asset.addAssetToSource('my-custom-formats', {
       id: 'a5-landscape',
       label: { en: 'A5 Landscape' },
@@ -118,7 +118,7 @@ class Example implements EditorPlugin {
           designUnit: 'Millimeter'
         }
       }
-    });
+    })
 
     // Add digital format using pixel dimensions
     engine.asset.addAssetToSource('my-custom-formats', {
@@ -133,7 +133,7 @@ class Example implements EditorPlugin {
         }
       },
       meta: { fixedOrientation: 'true' }
-    });
+    })
 
     // Add format using inch dimensions
     engine.asset.addAssetToSource('my-custom-formats', {
@@ -147,35 +147,35 @@ class Example implements EditorPlugin {
           designUnit: 'Inch'
         }
       }
-    });
+    })
 
     // Register custom formats with the page format selector
     cesdk.ui.updateAssetLibraryEntry('ly.img.pagePresets', {
       sourceIds: ['my-custom-formats']
-    });
+    })
 
     // Register middleware to apply formats to existing pages instead of creating new ones
     engine.asset.registerApplyMiddleware(async (sourceId, asset) => {
       if (sourceId === 'my-custom-formats') {
-        const pages = engine.block.findByType('page');
+        const pages = engine.block.findByType('page')
         if (pages.length > 0) {
-          await engine.asset.applyToBlock(sourceId, asset, pages[0]);
-          await engine.scene.zoomToBlock(pages[0]);
+          await engine.asset.applyToBlock(sourceId, asset, pages[0])
+          await engine.scene.zoomToBlock(pages[0])
         }
-        return true;
+        return true
       }
-      return false;
-    });
+      return false
+    })
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Zoom to fit the page in the viewport
-    const pages = engine.block.findByType('page');
+    const pages = engine.block.findByType('page')
     if (pages.length > 0) {
       await engine.scene.zoomToBlock(pages[0], {
         padding: {
@@ -184,15 +184,15 @@ class Example implements EditorPlugin {
           right: 40,
           bottom: 40
         }
-      });
+      })
     }
 
     // Open the page resize panel on startup
-    cesdk.ui.openPanel('//ly.img.panel/inspector/pageResize');
+    cesdk.ui.openPanel('//ly.img.panel/inspector/pageResize')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create custom page format presets, configure dimensions using different design units, and register formats with the built-in resize panel.
@@ -208,32 +208,32 @@ To display custom formats in this panel, you register them with the `ly.img.page
 Before adding custom formats, we load the default CE.SDK asset sources to ensure the editor has access to standard assets.
 
 ```typescript highlight-add-default-sources
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 ```
 
 ## Creating a Custom Page Format Source
@@ -242,7 +242,7 @@ We create a local asset source to hold our custom page formats. Each format is a
 
 ```typescript highlight-create-local-source
 // Create a local asset source to hold custom page formats
-engine.asset.addLocalSource('my-custom-formats');
+engine.asset.addLocalSource('my-custom-formats')
 ```
 
 ## Adding Page Format Assets
@@ -277,7 +277,7 @@ engine.asset.addAssetToSource('my-custom-formats', {
     }
   },
   meta: { default: 'true' }
-});
+})
 engine.asset.addAssetToSource('my-custom-formats', {
   id: 'a5-landscape',
   label: { en: 'A5 Landscape' },
@@ -289,7 +289,7 @@ engine.asset.addAssetToSource('my-custom-formats', {
       designUnit: 'Millimeter'
     }
   }
-});
+})
 ```
 
 ### Using Pixel Dimensions
@@ -310,7 +310,7 @@ engine.asset.addAssetToSource('my-custom-formats', {
     }
   },
   meta: { fixedOrientation: 'true' }
-});
+})
 ```
 
 ### Using Inch Dimensions
@@ -330,7 +330,7 @@ engine.asset.addAssetToSource('my-custom-formats', {
       designUnit: 'Inch'
     }
   }
-});
+})
 ```
 
 ## Registering Custom Sources with the UI
@@ -341,7 +341,7 @@ We use `updateAssetLibraryEntry` to configure which sources appear in the page f
 // Register custom formats with the page format selector
 cesdk.ui.updateAssetLibraryEntry('ly.img.pagePresets', {
   sourceIds: ['my-custom-formats']
-});
+})
 ```
 
 By specifying only our custom source ID, we replace the default formats entirely. To keep the default formats alongside custom ones, include `'ly.img.page.presets'` in the `sourceIds` array:
@@ -349,7 +349,7 @@ By specifying only our custom source ID, we replace the default formats entirely
 ```typescript
 cesdk.ui.updateAssetLibraryEntry('ly.img.pagePresets', {
   sourceIds: ['ly.img.page.presets', 'my-custom-formats']
-});
+})
 ```
 
 ## Applying Formats to Existing Pages
@@ -360,15 +360,15 @@ By default, applying a page format from the resize panel creates a new page with
 // Register middleware to apply formats to existing pages instead of creating new ones
 engine.asset.registerApplyMiddleware(async (sourceId, asset) => {
   if (sourceId === 'my-custom-formats') {
-    const pages = engine.block.findByType('page');
+    const pages = engine.block.findByType('page')
     if (pages.length > 0) {
-      await engine.asset.applyToBlock(sourceId, asset, pages[0]);
-      await engine.scene.zoomToBlock(pages[0]);
+      await engine.asset.applyToBlock(sourceId, asset, pages[0])
+      await engine.scene.zoomToBlock(pages[0])
     }
-    return true;
+    return true
   }
-  return false;
-});
+  return false
+})
 ```
 
 The middleware checks if the applied asset comes from your custom format source. If so, it applies the format to the first page using `applyToBlock` instead of creating a new page. After applying, it zooms to show the updated page dimensions.
@@ -389,7 +389,7 @@ await cesdk.actions.run('scene.create', {
     sourceId: 'ly.img.page.presets',
     assetId: 'ly.img.page.presets.print.iso.a6.landscape'
   }
-});
+})
 ```
 
 ## Opening the Resize Panel on Startup
@@ -398,7 +398,7 @@ To give users immediate access to page formats when the editor loads, we open th
 
 ```typescript highlight-open-resize-panel
 // Open the page resize panel on startup
-cesdk.ui.openPanel('//ly.img.panel/inspector/pageResize');
+cesdk.ui.openPanel('//ly.img.panel/inspector/pageResize')
 ```
 
 ## Troubleshooting

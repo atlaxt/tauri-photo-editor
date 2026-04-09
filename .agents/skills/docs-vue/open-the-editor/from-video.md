@@ -23,8 +23,8 @@ Open CE.SDK with a video as the starting point for editing. The scene dimensions
 CE.SDK creates video editing scenes from a single video URL using `engine.scene.createFromVideo()`. This approach works well for video trimmers, overlay editors, or processing uploaded video files.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-from-video-browser/browser.ts reference-only
-import type CreativeEngine from '@cesdk/cesdk-js/cesdk-engine';
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
+import type CreativeEngine from '@cesdk/cesdk-js/cesdk-engine'
 import {
   BlurAssetSource,
   CaptionPresetsAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 // ===== Handle Different Video Sources =====
 // Helper function to create a scene from a blob (e.g., file upload)
@@ -51,33 +51,33 @@ async function createSceneFromBlob(
   engine: CreativeEngine,
   blob: Blob
 ): Promise<number> {
-  const objectURL = URL.createObjectURL(blob);
-  const scene = await engine.scene.createFromVideo(objectURL);
+  const objectURL = URL.createObjectURL(blob)
+  const scene = await engine.scene.createFromVideo(objectURL)
   // Note: Don't revoke the URL immediately - the engine needs it for rendering
   // Only revoke when the scene is no longer needed
-  return scene;
+  return scene
 }
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -87,9 +87,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -103,51 +103,51 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // ===== Create a Scene from a Video URL =====
     // Video URL to create the scene from
-    const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
+    const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
 
     // Create a scene from the video
     // The scene dimensions match the video resolution
     // Timeline mode is automatically enabled
-    const scene = await engine.scene.createFromVideo(videoUrl);
+    const scene = await engine.scene.createFromVideo(videoUrl)
 
     // ===== Work with the Video Block =====
     // Find the video block that was created
     // The video is placed inside a graphic block
-    const graphicBlocks = engine.block.findByType('graphic');
-    const videoBlock = graphicBlocks[0];
+    const graphicBlocks = engine.block.findByType('graphic')
+    const videoBlock = graphicBlocks[0]
 
     // Modify video block properties
     // For example, adjust opacity
-    engine.block.setOpacity(videoBlock, 0.95);
+    engine.block.setOpacity(videoBlock, 0.95)
 
     // ===== Control Video Playback =====
     // Get the video duration
-    const duration = engine.block.getDuration(scene);
+    const duration = engine.block.getDuration(scene)
 
     // Set playback position to 2 seconds
-    const page = engine.block.findByType('page')[0];
-    engine.block.setPlaybackTime(page, 2);
+    const page = engine.block.findByType('page')[0]
+    engine.block.setPlaybackTime(page, 2)
 
     // Start video playback
     // engine.block.setPlaying(scene, true);
 
     // Zoom to show the video
-    await engine.scene.zoomToBlock(page);
+    await engine.scene.zoomToBlock(page)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create scenes from video files and control video playback.
@@ -157,13 +157,13 @@ This guide covers how to create scenes from video files and control video playba
 Pass a video URL to `engine.scene.createFromVideo()` to load the video and create a scene with matching dimensions.
 
 ```typescript highlight-create-from-video
-    // Video URL to create the scene from
-    const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
+// Video URL to create the scene from
+const videoUrl = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
 
-    // Create a scene from the video
-    // The scene dimensions match the video resolution
-    // Timeline mode is automatically enabled
-    const scene = await engine.scene.createFromVideo(videoUrl);
+// Create a scene from the video
+// The scene dimensions match the video resolution
+// Timeline mode is automatically enabled
+const scene = await engine.scene.createFromVideo(videoUrl)
 ```
 
 The scene uses pixel design units and includes a time-based structure. Page dimensions match the video resolution automatically.
@@ -173,14 +173,14 @@ The scene uses pixel design units and includes a time-based structure. Page dime
 After creating the scene, locate the video block to modify its properties.
 
 ```typescript highlight-find-video-block
-    // Find the video block that was created
-    // The video is placed inside a graphic block
-    const graphicBlocks = engine.block.findByType('graphic');
-    const videoBlock = graphicBlocks[0];
+// Find the video block that was created
+// The video is placed inside a graphic block
+const graphicBlocks = engine.block.findByType('graphic')
+const videoBlock = graphicBlocks[0]
 
-    // Modify video block properties
-    // For example, adjust opacity
-    engine.block.setOpacity(videoBlock, 0.95);
+// Modify video block properties
+// For example, adjust opacity
+engine.block.setOpacity(videoBlock, 0.95)
 ```
 
 The video is placed inside a graphic block. Use `engine.block.findByType('graphic')` to find it. You can modify properties like opacity, position, or apply effects using the Block API.
@@ -190,15 +190,15 @@ The video is placed inside a graphic block. Use `engine.block.findByType('graphi
 Use playback controls to start, stop, and seek within the video.
 
 ```typescript highlight-control-playback
-    // Get the video duration
-    const duration = engine.block.getDuration(scene);
+// Get the video duration
+const duration = engine.block.getDuration(scene)
 
-    // Set playback position to 2 seconds
-    const page = engine.block.findByType('page')[0];
-    engine.block.setPlaybackTime(page, 2);
+// Set playback position to 2 seconds
+const page = engine.block.findByType('page')[0]
+engine.block.setPlaybackTime(page, 2)
 
-    // Start video playback
-    // engine.block.setPlaying(scene, true);
+// Start video playback
+// engine.block.setPlaying(scene, true);
 ```
 
 Call `engine.block.setPlaying()` on the scene to start or stop playback. Use `engine.block.setPlaybackTime()` to jump to a specific position and `engine.block.getDuration()` to get the total video length.
@@ -214,11 +214,11 @@ async function createSceneFromBlob(
   engine: CreativeEngine,
   blob: Blob
 ): Promise<number> {
-  const objectURL = URL.createObjectURL(blob);
-  const scene = await engine.scene.createFromVideo(objectURL);
+  const objectURL = URL.createObjectURL(blob)
+  const scene = await engine.scene.createFromVideo(objectURL)
   // Note: Don't revoke the URL immediately - the engine needs it for rendering
   // Only revoke when the scene is no longer needed
-  return scene;
+  return scene
 }
 ```
 

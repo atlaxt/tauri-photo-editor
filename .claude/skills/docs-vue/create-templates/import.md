@@ -23,7 +23,7 @@ Load design templates into CE.SDK from archive URLs, scene URLs, and serialized 
 Templates are pre-designed scenes that provide starting points for user projects. CE.SDK supports loading templates from archive URLs with bundled assets, remote scene URLs, or serialized strings stored in databases.
 
 ```typescript file=@cesdk_web_examples/guides-create-templates-import-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,19 +38,19 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js/plugins'
 // Import scene file as string for loadFromString demonstration
-import businessCardSceneString from './assets/business-card.scene?raw';
+import businessCardSceneString from './assets/business-card.scene?raw'
+import { DesignEditorConfig } from './design-editor/plugin'
+
+import packageJson from './package.json'
 
 // Template sources
-const fashionAdArchiveUrl =
-  'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip';
+const fashionAdArchiveUrl
+  = 'https://cdn.img.ly/assets/templates/starterkits/16-9-fashion-ad.zip'
 
-const postcardSceneUrl =
-  'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene';
+const postcardSceneUrl
+  = 'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
 
 /**
  * CE.SDK Plugin: Import Templates
@@ -61,20 +61,20 @@ const postcardSceneUrl =
  * - Serialized strings (imported scene content)
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (cesdk == null) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -85,33 +85,33 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load template from a scene file URL
-    await engine.scene.loadFromURL(postcardSceneUrl);
+    await engine.scene.loadFromURL(postcardSceneUrl)
 
     // Zoom viewport to fit the loaded scene
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (scene != null) {
-      await engine.scene.zoomToBlock(scene, { padding: 40 });
+      await engine.scene.zoomToBlock(scene, { padding: 40 })
     }
 
     // Verify the loaded scene
-    const loadedScene = engine.scene.get();
+    const loadedScene = engine.scene.get()
     if (loadedScene != null) {
-      const pages = engine.scene.getPages();
-      // eslint-disable-next-line no-console
-      console.log(`Template loaded with ${pages.length} page(s)`);
+      const pages = engine.scene.getPages()
+
+      console.log(`Template loaded with ${pages.length} page(s)`)
     }
 
     // Configure navigation bar with template loading buttons
@@ -126,10 +126,10 @@ class Example implements EditorPlugin {
         variant: 'regular',
         onClick: async () => {
           // Load template from archive URL (bundled assets)
-          await engine.scene.loadFromArchiveURL(fashionAdArchiveUrl);
-          const s = engine.scene.get();
+          await engine.scene.loadFromArchiveURL(fashionAdArchiveUrl)
+          const s = engine.scene.get()
           if (s != null) {
-            await engine.scene.zoomToBlock(s, { padding: 40 });
+            await engine.scene.zoomToBlock(s, { padding: 40 })
           }
         }
       },
@@ -141,10 +141,10 @@ class Example implements EditorPlugin {
         variant: 'regular',
         onClick: async () => {
           // Load template from scene URL
-          await engine.scene.loadFromURL(postcardSceneUrl);
-          const s = engine.scene.get();
+          await engine.scene.loadFromURL(postcardSceneUrl)
+          const s = engine.scene.get()
           if (s != null) {
-            await engine.scene.zoomToBlock(s, { padding: 40 });
+            await engine.scene.zoomToBlock(s, { padding: 40 })
           }
         }
       },
@@ -156,18 +156,18 @@ class Example implements EditorPlugin {
         variant: 'regular',
         onClick: async () => {
           // Load template from serialized string
-          await engine.scene.loadFromString(businessCardSceneString);
-          const s = engine.scene.get();
+          await engine.scene.loadFromString(businessCardSceneString)
+          const s = engine.scene.get()
           if (s != null) {
-            await engine.scene.zoomToBlock(s, { padding: 40 });
+            await engine.scene.zoomToBlock(s, { padding: 40 })
           }
         }
       }
-    ]);
+    ])
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to load templates from archives, URLs, and strings, and work with the loaded content.
@@ -178,7 +178,7 @@ Load a template from an archive URL using `loadFromArchiveURL()`. Archives are `
 
 ```typescript highlight=highlight-load-from-archive
 // Load template from archive URL (bundled assets)
-await engine.scene.loadFromArchiveURL(fashionAdArchiveUrl);
+await engine.scene.loadFromArchiveURL(fashionAdArchiveUrl)
 ```
 
 ## Load from URL
@@ -187,7 +187,7 @@ Load a template from a remote `.scene` file URL using `loadFromURL()`. The scene
 
 ```typescript highlight=highlight-load-from-url
 // Load template from a scene file URL
-await engine.scene.loadFromURL(postcardSceneUrl);
+await engine.scene.loadFromURL(postcardSceneUrl)
 ```
 
 ## Load from String
@@ -196,7 +196,7 @@ For templates stored in databases or received from APIs, load from a serialized 
 
 ```typescript highlight=highlight-load-from-string
 // Load template from serialized string
-await engine.scene.loadFromString(businessCardSceneString);
+await engine.scene.loadFromString(businessCardSceneString)
 ```
 
 ## Working with the Loaded Scene
@@ -209,11 +209,11 @@ Use `engine.scene.get()` to retrieve the scene block and `engine.scene.getPages(
 
 ```typescript highlight=highlight-get-scene
 // Verify the loaded scene
-const loadedScene = engine.scene.get();
+const loadedScene = engine.scene.get()
 if (loadedScene != null) {
-  const pages = engine.scene.getPages();
-  // eslint-disable-next-line no-console
-  console.log(`Template loaded with ${pages.length} page(s)`);
+  const pages = engine.scene.getPages()
+
+  console.log(`Template loaded with ${pages.length} page(s)`)
 }
 ```
 
@@ -223,9 +223,9 @@ Fit the loaded template in the viewport using `zoomToBlock()` with optional padd
 
 ```typescript highlight=highlight-zoom-to-scene
 // Zoom viewport to fit the loaded scene
-const scene = engine.scene.get();
+const scene = engine.scene.get()
 if (scene != null) {
-  await engine.scene.zoomToBlock(scene, { padding: 40 });
+  await engine.scene.zoomToBlock(scene, { padding: 40 })
 }
 ```
 

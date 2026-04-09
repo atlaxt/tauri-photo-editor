@@ -23,8 +23,9 @@ Build a custom AI-powered image generation provider for CE.SDK using the `@imgly
 This guide walks you through creating an image generation provider that connects to your own AI service. You'll learn about the provider interface, OpenAPI schema-based input configuration, quick actions, middleware patterns, and CE.SDK integration.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ai-integration-custom-provider-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
+import type CreativeEditorSDK from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -39,34 +40,33 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
 import {
   CommonProviderConfiguration,
   ImageOutput,
-  Provider,
   loggingMiddleware,
+  Provider,
   uploadMiddleware
-} from '@imgly/plugin-ai-generation-web';
-import ImageGeneration from '@imgly/plugin-ai-image-generation-web';
-import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-import apiSchema from './myApiSchema.json';
+} from '@imgly/plugin-ai-generation-web'
+import ImageGeneration from '@imgly/plugin-ai-image-generation-web'
+import { DesignEditorConfig } from './design-editor/plugin'
+import apiSchema from './myApiSchema.json'
+import packageJson from './package.json'
 
 // Define your input type based on your schema
 interface MyProviderInput {
-  prompt: string;
-  width: number;
-  height: number;
-  style: string;
-  image_url?: string; // For image-to-image operations
+  prompt: string
+  width: number
+  height: number
+  style: string
+  image_url?: string // For image-to-image operations
 }
 
 // Define provider configuration interface extending CommonProviderConfiguration
 interface MyProviderConfiguration
   extends CommonProviderConfiguration<MyProviderInput, ImageOutput> {
   // Add any provider-specific configuration here
-  customApiKey?: string;
+  customApiKey?: string
 }
 
 // Mock API function that simulates image generation
@@ -76,7 +76,7 @@ async function mockGenerateImage(
   _abortSignal?: AbortSignal
 ): Promise<{ imageUrl: string }> {
   // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise(resolve => setTimeout(resolve, 1500))
 
   // Return real demo image URLs based on the style
   const sampleImages: Record<string, string> = {
@@ -88,18 +88,18 @@ async function mockGenerateImage(
       'https://cdn.img.ly/assets/demo/v3/ly.img.image/images/sample_3.jpg',
     painting:
       'https://cdn.img.ly/assets/demo/v3/ly.img.image/images/sample_4.jpg'
-  };
+  }
 
   return {
     imageUrl: sampleImages[input.style] || sampleImages.photorealistic
-  };
+  }
 }
 
 // Create a function that returns your provider
 export function MyImageProvider(
   _config: MyProviderConfiguration
 ): (context: {
-  cesdk: CreativeEditorSDK;
+  cesdk: CreativeEditorSDK
 }) => Promise<Provider<'image', MyProviderInput, ImageOutput>> {
   // Return a function that returns the provider
   return async ({ cesdk: _cesdk }) => {
@@ -113,7 +113,7 @@ export function MyImageProvider(
 
       // Initialize your provider
       initialize: async () => {
-        console.log('Initializing my image provider');
+        console.log('Initializing my image provider')
         // Any setup needed (e.g., API client initialization)
       },
 
@@ -127,7 +127,7 @@ export function MyImageProvider(
           orderExtensionKeyword: 'x-order-properties', // Used to control property display order
 
           // Convert API input to block parameters
-          getBlockInput: async (input) => ({
+          getBlockInput: async input => ({
             image: {
               width: input.width || 512,
               height: input.height || 512,
@@ -141,7 +141,7 @@ export function MyImageProvider(
           supported: {
             // Map quick action IDs to provider input transformations
             'ly.img.editImage': {
-              mapInput: (quickActionInput) => ({
+              mapInput: quickActionInput => ({
                 prompt: quickActionInput.prompt,
                 image_url: quickActionInput.uri,
                 width: 512,
@@ -150,7 +150,7 @@ export function MyImageProvider(
               })
             },
             'ly.img.swapBackground': {
-              mapInput: (quickActionInput) => ({
+              mapInput: quickActionInput => ({
                 prompt: quickActionInput.prompt,
                 image_url: quickActionInput.uri,
                 width: 512,
@@ -159,7 +159,7 @@ export function MyImageProvider(
               })
             },
             'ly.img.createVariant': {
-              mapInput: (quickActionInput) => ({
+              mapInput: quickActionInput => ({
                 prompt: quickActionInput.prompt,
                 image_url: quickActionInput.uri,
                 width: 512,
@@ -168,7 +168,7 @@ export function MyImageProvider(
               })
             },
             'ly.img.styleTransfer': {
-              mapInput: (quickActionInput) => ({
+              mapInput: quickActionInput => ({
                 prompt: quickActionInput.style,
                 image_url: quickActionInput.uri,
                 width: 512,
@@ -195,24 +195,25 @@ export function MyImageProvider(
           uploadMiddleware(async (output: ImageOutput) => {
             // In production, upload the image to your server
             // For this example, we just return the output as-is
-            console.log('Upload middleware: Processing output', output.url);
-            return output;
+            console.log('Upload middleware: Processing output', output.url)
+            return output
           }),
           // Custom error handling middleware
           async (input, options, next) => {
             try {
-              return await next(input, options);
-            } catch (error: any) {
+              return await next(input, options)
+            }
+            catch (error: any) {
               // Prevent default error notification
-              options.preventDefault();
+              options.preventDefault()
 
               // Show custom error notification
               options.cesdk?.ui.showNotification({
                 type: 'error',
                 message: `Image generation failed: ${error.message}`
-              });
+              })
 
-              throw error;
+              throw error
             }
           }
         ],
@@ -225,7 +226,7 @@ export function MyImageProvider(
           },
           error: {
             show: true,
-            message: (context) => `Generation failed: ${context.error}`
+            message: context => `Generation failed: ${context.error}`
           }
         },
 
@@ -235,41 +236,42 @@ export function MyImageProvider(
             // Use mock API for demonstration
             // In production, replace with actual API call:
             // const response = await fetch(config.proxyUrl, { ... });
-            const data = await mockGenerateImage(input, abortSignal);
+            const data = await mockGenerateImage(input, abortSignal)
 
             // Return the image URL
             return {
               kind: 'image',
               url: data.imageUrl
-            };
-          } catch (error) {
-            console.error('Image generation failed:', error);
-            throw error;
+            }
+          }
+          catch (error) {
+            console.error('Image generation failed:', error)
+            throw error
           }
         }
       }
-    };
+    }
 
-    return provider;
-  };
+    return provider
+  }
 }
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -280,29 +282,29 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // Add translations for the custom provider
     cesdk.i18n.setTranslations({
       en: {
         'panel.my-image-provider.generate': 'Generate Image'
       }
-    });
+    })
 
     // Add your image generation provider
     await cesdk.addPlugin(
@@ -318,16 +320,16 @@ class Example implements EditorPlugin {
         },
         debug: true
       })
-    );
+    )
 
     // Add the dock component to open the AI image generation panel
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       'ly.img.ai.image-generation.dock',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Open the AI Image Generation panel
-    cesdk.ui.openPanel('ly.img.ai.image-generation');
+    cesdk.ui.openPanel('ly.img.ai.image-generation')
   }
 }
 
@@ -337,17 +339,17 @@ function configureFeatures(cesdk: CreativeEditorSDK) {
   cesdk.feature.enable(
     'ly.img.plugin-ai-image-generation-web.providerSelect',
     false
-  );
+  )
   // Enable text-to-image generation
-  cesdk.feature.enable('ly.img.plugin-ai-image-generation-web.fromText', true);
+  cesdk.feature.enable('ly.img.plugin-ai-image-generation-web.fromText', true)
   // Disable image-to-image generation
   cesdk.feature.enable(
     'ly.img.plugin-ai-image-generation-web.fromImage',
     false
-  );
+  )
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers:
@@ -386,11 +388,11 @@ Then import the packages in your TypeScript file:
 import {
   CommonProviderConfiguration,
   ImageOutput,
-  Provider,
   loggingMiddleware,
+  Provider,
   uploadMiddleware
-} from '@imgly/plugin-ai-generation-web';
-import ImageGeneration from '@imgly/plugin-ai-image-generation-web';
+} from '@imgly/plugin-ai-generation-web'
+import ImageGeneration from '@imgly/plugin-ai-image-generation-web'
 ```
 
 ## Understanding the Provider Interface
@@ -475,7 +477,7 @@ Key concepts in the schema:
 Import the schema in your provider:
 
 ```typescript highlight-schema
-import apiSchema from './myApiSchema.json';
+import apiSchema from './myApiSchema.json'
 ```
 
 ## Understanding CommonProviderConfiguration
@@ -487,7 +489,7 @@ Before creating your provider, understand the `CommonProviderConfiguration` inte
 interface MyProviderConfiguration
   extends CommonProviderConfiguration<MyProviderInput, ImageOutput> {
   // Add any provider-specific configuration here
-  customApiKey?: string;
+  customApiKey?: string
 }
 ```
 
@@ -523,11 +525,11 @@ Define TypeScript interfaces for your provider's input and configuration:
 ```typescript highlight-input-types
 // Define your input type based on your schema
 interface MyProviderInput {
-  prompt: string;
-  width: number;
-  height: number;
-  style: string;
-  image_url?: string; // For image-to-image operations
+  prompt: string
+  width: number
+  height: number
+  style: string
+  image_url?: string // For image-to-image operations
 }
 ```
 
@@ -742,24 +744,25 @@ notification: {
 The generate function is the core of your provider—it calls your AI API and returns the result:
 
 ```typescript highlight-generate
-        // The core generation function
-        generate: async (input, { abortSignal }) => {
-          try {
-            // Use mock API for demonstration
-            // In production, replace with actual API call:
-            // const response = await fetch(config.proxyUrl, { ... });
-            const data = await mockGenerateImage(input, abortSignal);
+// The core generation function
+generate: async (input, { abortSignal }) => {
+  try {
+    // Use mock API for demonstration
+    // In production, replace with actual API call:
+    // const response = await fetch(config.proxyUrl, { ... });
+    const data = await mockGenerateImage(input, abortSignal)
 
-            // Return the image URL
-            return {
-              kind: 'image',
-              url: data.imageUrl
-            };
-          } catch (error) {
-            console.error('Image generation failed:', error);
-            throw error;
-          }
-        }
+    // Return the image URL
+    return {
+      kind: 'image',
+      url: data.imageUrl
+    }
+  }
+  catch (error) {
+    console.error('Image generation failed:', error)
+    throw error
+  }
+}
 ```
 
 In production, replace the mock API call with actual requests to your image generation service.
@@ -783,7 +786,7 @@ await cesdk.addPlugin(
     },
     debug: true
   })
-);
+)
 ```
 
 Add the dock component to make the panel accessible:
@@ -793,7 +796,7 @@ Add the dock component to make the panel accessible:
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   'ly.img.ai.image-generation.dock',
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-]);
+])
 ```
 
 ## Controlling Features with Feature API
@@ -805,14 +808,14 @@ Control which UI elements and features are available to users:
 cesdk.feature.enable(
   'ly.img.plugin-ai-image-generation-web.providerSelect',
   false
-);
+)
 // Enable text-to-image generation
-cesdk.feature.enable('ly.img.plugin-ai-image-generation-web.fromText', true);
+cesdk.feature.enable('ly.img.plugin-ai-image-generation-web.fromText', true)
 // Disable image-to-image generation
 cesdk.feature.enable(
   'ly.img.plugin-ai-image-generation-web.fromImage',
   false
-);
+)
 ```
 
 Available feature flags:

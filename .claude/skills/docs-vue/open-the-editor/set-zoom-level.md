@@ -25,8 +25,7 @@ can also customize the navigation bar with your own zoom controls.
 The zoom level is a ratio where 1.0 equals one design pixel per screen pixel. A zoom level of 2.0 makes content appear twice as large on screen, while 0.5 makes it appear half as large.
 
 ```typescript file=@cesdk_web_examples/guides-open-the-editor-set-zoom-level-browser/src/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
-import packageJson from '../package.json';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   CaptionPresetsAssetSource,
@@ -41,54 +40,55 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from '../design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from '../design-editor/plugin'
+import packageJson from '../package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Load asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: ['ly.img.image.*']
       })
-    );
-    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } });
+    )
+    await cesdk.actions.run('scene.create', { page: { sourceId: 'ly.img.page.presets', assetId: 'ly.img.page.presets.print.iso.a6.landscape' } })
 
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Set a specific zoom level (value 0.15 = 15%, 1.0 = 100%)
-    engine.scene.setZoomLevel(0.15);
+    engine.scene.setZoomLevel(0.15)
 
     // Enable auto-fit to keep content visible within the viewport
     // Parameters: block, fitMode, paddingTop, paddingRight, paddingBottom, paddingLeft
-    engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20);
+    engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20)
 
     // Configure navigation bar with custom zoom buttons
     // This replaces the default zoom controls
@@ -100,7 +100,7 @@ class Example implements EditorPlugin {
         label: 'Zoom 15%',
         icon: '@imgly/ZoomOut',
         onClick: () => {
-          engine.scene.setZoomLevel(0.15);
+          engine.scene.setZoomLevel(0.15)
         }
       },
       {
@@ -109,7 +109,7 @@ class Example implements EditorPlugin {
         label: 'Zoom 42%',
         icon: '@imgly/Zoom',
         onClick: () => {
-          engine.scene.setZoomLevel(0.42);
+          engine.scene.setZoomLevel(0.42)
         }
       },
       {
@@ -118,7 +118,7 @@ class Example implements EditorPlugin {
         label: 'Zoom 90%',
         icon: '@imgly/ZoomIn',
         onClick: () => {
-          engine.scene.setZoomLevel(0.9);
+          engine.scene.setZoomLevel(0.9)
         }
       },
       {
@@ -127,20 +127,20 @@ class Example implements EditorPlugin {
         label: 'Auto-Fit',
         icon: '@imgly/Fit',
         onClick: () => {
-          engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20);
+          engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20)
         }
       }
-    ]);
+    ])
 
     // Zoom to show a specific block with smooth animation
     await engine.scene.zoomToBlock(page, {
       padding: 40,
       animate: { duration: 0.3, easing: 'EaseOut' }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Understanding the Zoom APIs
@@ -157,7 +157,7 @@ Use `engine.scene.setZoomLevel()` to set a specific zoom level. The value is a r
 
 ```typescript highlight-set-zoom-level
 // Set a specific zoom level (value 0.15 = 15%, 1.0 = 100%)
-engine.scene.setZoomLevel(0.15);
+engine.scene.setZoomLevel(0.15)
 ```
 
 ### Auto-Fit Zoom
@@ -171,7 +171,7 @@ Use `engine.scene.enableZoomAutoFit()` to continuously adjust zoom to fit a bloc
 ```typescript highlight-auto-fit
 // Enable auto-fit to keep content visible within the viewport
 // Parameters: block, fitMode, paddingTop, paddingRight, paddingBottom, paddingLeft
-engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20);
+engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20)
 ```
 
 When auto-fit is enabled, the viewport automatically adjusts when the block changes size. Calling `setZoomLevel()` or `zoomToBlock()` disables auto-fit.
@@ -185,7 +185,7 @@ Use `engine.scene.zoomToBlock()` to focus the viewport on a specific block with 
 await engine.scene.zoomToBlock(page, {
   padding: 40,
   animate: { duration: 0.3, easing: 'EaseOut' }
-});
+})
 ```
 
 ## Built-in Zoom Controls
@@ -215,7 +215,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
     label: 'Zoom 15%',
     icon: '@imgly/ZoomOut',
     onClick: () => {
-      engine.scene.setZoomLevel(0.15);
+      engine.scene.setZoomLevel(0.15)
     }
   },
   {
@@ -224,7 +224,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
     label: 'Zoom 42%',
     icon: '@imgly/Zoom',
     onClick: () => {
-      engine.scene.setZoomLevel(0.42);
+      engine.scene.setZoomLevel(0.42)
     }
   },
   {
@@ -233,7 +233,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
     label: 'Zoom 90%',
     icon: '@imgly/ZoomIn',
     onClick: () => {
-      engine.scene.setZoomLevel(0.9);
+      engine.scene.setZoomLevel(0.9)
     }
   },
   {
@@ -242,10 +242,10 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
     label: 'Auto-Fit',
     icon: '@imgly/Fit',
     onClick: () => {
-      engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20);
+      engine.scene.enableZoomAutoFit(page, 'Both', 20, 20, 20, 20)
     }
   }
-]);
+])
 ```
 
 Each action button requires:

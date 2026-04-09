@@ -23,7 +23,7 @@ Save and serialize designs in CE.SDK for later retrieval, sharing, or storage us
 CE.SDK provides two formats for persisting designs. Choose the format based on your storage and portability requirements.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-save-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,9 +38,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Save Designs Guide
@@ -51,21 +51,21 @@ import packageJson from './package.json';
  * - Using built-in save actions and customization
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (cesdk == null) {
-      throw new Error('CE.SDK instance is required');
+      throw new Error('CE.SDK instance is required')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -76,68 +76,68 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
+    )
 
-    const page = engine.scene.getCurrentPage();
+    const page = engine.scene.getCurrentPage()
     if (page == null) {
-      throw new Error('No page found in scene');
+      throw new Error('No page found in scene')
     }
-    engine.scene.zoomToBlock(page, { padding: 40 });
+    engine.scene.zoomToBlock(page, { padding: 40 })
 
     cesdk.actions.register('saveScene', async () => {
-      const sceneString = await engine.scene.saveToString();
+      const sceneString = await engine.scene.saveToString()
       // Send to your backend API
-      console.log('Custom save:', sceneString.length, 'bytes');
-    });
+      console.log('Custom save:', sceneString.length, 'bytes')
+    })
 
     // Button: Save Scene & Download
     const handleSaveScene = async () => {
-      const sceneString = await engine.scene.saveToString();
+      const sceneString = await engine.scene.saveToString()
       const sceneBlob = new Blob([sceneString], {
         type: 'application/octet-stream'
-      });
-      await cesdk.utils.downloadFile(sceneBlob, 'application/octet-stream');
+      })
+      await cesdk.utils.downloadFile(sceneBlob, 'application/octet-stream')
       cesdk.ui.showNotification({
         message: `Scene downloaded (${(sceneString.length / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Button: Save to Archive & Download
     const handleSaveToArchive = async () => {
-      const archiveBlob = await engine.scene.saveToArchive();
-      await cesdk.utils.downloadFile(archiveBlob, 'application/zip');
+      const archiveBlob = await engine.scene.saveToArchive()
+      await cesdk.utils.downloadFile(archiveBlob, 'application/zip')
       cesdk.ui.showNotification({
         message: `Archive downloaded (${(archiveBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     const handleLoadScene = async () => {
-      await cesdk.actions.run('importScene', { format: 'scene' });
-    };
+      await cesdk.actions.run('importScene', { format: 'scene' })
+    }
 
     const handleLoadArchive = async () => {
-      await cesdk.actions.run('importScene', { format: 'archive' });
-      const loadedPage = engine.scene.getCurrentPage();
+      await cesdk.actions.run('importScene', { format: 'archive' })
+      const loadedPage = engine.scene.getCurrentPage()
       if (loadedPage != null) {
-        engine.scene.zoomToBlock(loadedPage, { padding: 40 });
+        engine.scene.zoomToBlock(loadedPage, { padding: 40 })
       }
-    };
+    }
 
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
       id: 'ly.img.actions.navigationBar',
@@ -171,11 +171,11 @@ class Example implements EditorPlugin {
           onClick: handleLoadArchive
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Save Format Comparison
@@ -194,7 +194,7 @@ export default Example;
 Serialize the current scene to a Base64-encoded string suitable for database storage.
 
 ```typescript highlight=highlight-save-to-string
-const sceneString = await engine.scene.saveToString();
+const sceneString = await engine.scene.saveToString()
 ```
 
 The string contains the complete scene structure but references assets by their original URLs.
@@ -204,7 +204,7 @@ The string contains the complete scene structure but references assets by their 
 Create a self-contained ZIP file with the scene and all embedded assets.
 
 ```typescript highlight=highlight-save-to-archive
-const archiveBlob = await engine.scene.saveToArchive();
+const archiveBlob = await engine.scene.saveToArchive()
 ```
 
 The archive includes all pages, elements, and asset data in a single portable file.
@@ -220,7 +220,7 @@ const compressed = await cesdk.engine.scene.saveToString({
     format: 'Zstd',
     level: 'Default'
   }
-});
+})
 ```
 
 **Compression Formats:**
@@ -245,14 +245,14 @@ For scene strings, convert to a Blob first:
 ```typescript highlight=highlight-download-scene
 const sceneBlob = new Blob([sceneString], {
   type: 'application/octet-stream'
-});
-await cesdk.utils.downloadFile(sceneBlob, 'application/octet-stream');
+})
+await cesdk.utils.downloadFile(sceneBlob, 'application/octet-stream')
 ```
 
 For archive blobs, pass directly to the download utility:
 
 ```typescript highlight=highlight-download-archive
-await cesdk.utils.downloadFile(archiveBlob, 'application/zip');
+await cesdk.utils.downloadFile(archiveBlob, 'application/zip')
 ```
 
 This utility handles creating and revoking object URLs automatically.
@@ -262,9 +262,9 @@ This utility handles creating and revoking object URLs automatically.
 Use the built-in `importScene` action to open a file picker for `.scene` files. This restores a previously saved design from its serialized string format.
 
 ```typescript highlight=highlight-load-scene
-const handleLoadScene = async () => {
-  await cesdk.actions.run('importScene', { format: 'scene' });
-};
+async function handleLoadScene() {
+  await cesdk.actions.run('importScene', { format: 'scene' })
+}
 ```
 
 Scene files are lightweight but require the original asset URLs to remain accessible.
@@ -289,7 +289,7 @@ CE.SDK includes a built-in `saveScene` action that integrates with the navigatio
 Trigger the default save behavior programmatically using `actions.run()`:
 
 ```typescript
-await cesdk.actions.run('saveScene');
+await cesdk.actions.run('saveScene')
 ```
 
 This executes the registered handler for `saveScene`, which by default downloads the scene file.
@@ -300,10 +300,10 @@ Override the default behavior by registering a custom handler:
 
 ```typescript highlight=highlight-register-custom-action
 cesdk.actions.register('saveScene', async () => {
-  const sceneString = await engine.scene.saveToString();
+  const sceneString = await engine.scene.saveToString()
   // Send to your backend API
-  console.log('Custom save:', sceneString.length, 'bytes');
-});
+  console.log('Custom save:', sceneString.length, 'bytes')
+})
 ```
 
 The registered handler runs when the built-in save button is clicked or when the action is triggered via `actions.run()`.

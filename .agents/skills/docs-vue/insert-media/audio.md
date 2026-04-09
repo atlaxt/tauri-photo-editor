@@ -24,7 +24,7 @@ background music, sound effects, and voiceovers.
 Audio blocks are time-based blocks that play sound alongside video content. Unlike video fills that attach to graphic blocks, audio blocks exist independently in the composition with their own duration, position, and volume controls.
 
 ```typescript file=@cesdk_web_examples/guides-insert-media-audio-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,9 +41,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Insert Audio Guide
@@ -56,26 +56,26 @@ import packageJson from './package.json';
  * - Querying and managing audio blocks
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -85,9 +85,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -101,85 +101,85 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.scene.getCurrentPage();
+    const engine = cesdk.engine
+    const page = engine.scene.getCurrentPage()
     if (page == null) {
-      throw new Error('No page found in scene');
+      throw new Error('No page found in scene')
     }
 
     // Set page duration for timeline
-    engine.block.setDuration(page, 30);
+    engine.block.setDuration(page, 30)
 
     // Create an audio block and set source
-    const audioUri =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a';
-    const audioBlock = engine.block.create('audio');
-    engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
-    engine.block.appendChild(page, audioBlock);
+    const audioUri
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.audio/audios/far_from_home.m4a'
+    const audioBlock = engine.block.create('audio')
+    engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
+    engine.block.appendChild(page, audioBlock)
 
     // Load audio resource to access duration
-    await engine.block.forceLoadAVResource(audioBlock);
-    const totalDuration = engine.block.getAVResourceTotalDuration(audioBlock);
-    console.log('Audio total duration:', totalDuration, 'seconds');
+    await engine.block.forceLoadAVResource(audioBlock)
+    const totalDuration = engine.block.getAVResourceTotalDuration(audioBlock)
+    console.log('Audio total duration:', totalDuration, 'seconds')
 
-    engine.block.setTimeOffset(audioBlock, 0);
-    engine.block.setDuration(audioBlock, Math.min(totalDuration, 30));
+    engine.block.setTimeOffset(audioBlock, 0)
+    engine.block.setDuration(audioBlock, Math.min(totalDuration, 30))
 
-    engine.block.setVolume(audioBlock, 0.8);
-    const currentVolume = engine.block.getVolume(audioBlock);
-    console.log('Audio volume:', currentVolume);
+    engine.block.setVolume(audioBlock, 0.8)
+    const currentVolume = engine.block.getVolume(audioBlock)
+    console.log('Audio volume:', currentVolume)
 
-    engine.block.setMuted(audioBlock, false);
-    const isMuted = engine.block.isMuted(audioBlock);
-    console.log('Audio muted:', isMuted);
+    engine.block.setMuted(audioBlock, false)
+    const isMuted = engine.block.isMuted(audioBlock)
+    console.log('Audio muted:', isMuted)
 
-    engine.block.setLooping(audioBlock, false);
-    const isLooping = engine.block.isLooping(audioBlock);
-    console.log('Audio looping:', isLooping);
+    engine.block.setLooping(audioBlock, false)
+    const isLooping = engine.block.isLooping(audioBlock)
+    console.log('Audio looping:', isLooping)
 
-    const allAudioBlocks = engine.block.findByType('audio');
-    console.log('Total audio blocks:', allAudioBlocks.length);
+    const allAudioBlocks = engine.block.findByType('audio')
+    console.log('Total audio blocks:', allAudioBlocks.length)
 
     // Log information about each audio block
     allAudioBlocks.forEach((block, index) => {
-      const uri = engine.block.getString(block, 'audio/fileURI');
-      const timeOffset = engine.block.getTimeOffset(block);
-      const duration = engine.block.getDuration(block);
-      const volume = engine.block.getVolume(block);
+      const uri = engine.block.getString(block, 'audio/fileURI')
+      const timeOffset = engine.block.getTimeOffset(block)
+      const duration = engine.block.getDuration(block)
+      const volume = engine.block.getVolume(block)
 
       console.log(`Audio block ${index + 1}:`, {
         uri: uri.split('/').pop(),
         timeOffset: `${timeOffset}s`,
         duration: `${duration}s`,
         volume: `${(volume * 100).toFixed(0)}%`
-      });
-    });
+      })
+    })
 
     // Create a second audio block to demonstrate removal
-    const tempAudioBlock = engine.block.create('audio');
-    engine.block.appendChild(page, tempAudioBlock);
+    const tempAudioBlock = engine.block.create('audio')
+    engine.block.appendChild(page, tempAudioBlock)
 
-    engine.block.destroy(tempAudioBlock);
+    engine.block.destroy(tempAudioBlock)
 
     console.log(
       'Insert Audio guide initialized. Open the timeline to see audio tracks.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating audio blocks, configuring time-based properties, controlling playback settings, and managing audio blocks in your scene.
@@ -189,9 +189,9 @@ This guide covers creating audio blocks, configuring time-based properties, cont
 We create audio blocks using `engine.block.create('audio')` and set the source file with the `audio/fileURI` property. Audio blocks must be appended to a page to become part of the composition.
 
 ```typescript highlight=highlight-create-audio
-const audioBlock = engine.block.create('audio');
-engine.block.setString(audioBlock, 'audio/fileURI', audioUri);
-engine.block.appendChild(page, audioBlock);
+const audioBlock = engine.block.create('audio')
+engine.block.setString(audioBlock, 'audio/fileURI', audioUri)
+engine.block.appendChild(page, audioBlock)
 ```
 
 CE.SDK supports WAV and MP4 audio formats (including `.m4a` files). The source URI can point to any accessible URL.
@@ -201,8 +201,8 @@ CE.SDK supports WAV and MP4 audio formats (including `.m4a` files). The source U
 Audio blocks have time-based properties that control when and how long they play. We use `setTimeOffset()` for the start position and `setDuration()` for playback length.
 
 ```typescript highlight=highlight-configure-timeline
-engine.block.setTimeOffset(audioBlock, 0);
-engine.block.setDuration(audioBlock, Math.min(totalDuration, 30));
+engine.block.setTimeOffset(audioBlock, 0)
+engine.block.setDuration(audioBlock, Math.min(totalDuration, 30))
 ```
 
 The `forceLoadAVResource()` method loads the audio file so we can access its total duration. Use `getAVResourceTotalDuration()` to get the full length of the source audio for timing calculations.
@@ -212,8 +212,8 @@ The `forceLoadAVResource()` method loads the audio file so we can access its tot
 We set volume using `setVolume()` with values from 0.0 (silent) to 1.0 (full volume). This affects both preview playback and the final exported output.
 
 ```typescript highlight=highlight-adjust-volume
-engine.block.setVolume(audioBlock, 0.8);
-const currentVolume = engine.block.getVolume(audioBlock);
+engine.block.setVolume(audioBlock, 0.8)
+const currentVolume = engine.block.getVolume(audioBlock)
 ```
 
 ## Muting Audio
@@ -221,8 +221,8 @@ const currentVolume = engine.block.getVolume(audioBlock);
 To temporarily silence audio without removing it, use `setMuted()`. This preserves all other properties while stopping sound output.
 
 ```typescript highlight=highlight-mute-audio
-engine.block.setMuted(audioBlock, false);
-const isMuted = engine.block.isMuted(audioBlock);
+engine.block.setMuted(audioBlock, false)
+const isMuted = engine.block.isMuted(audioBlock)
 ```
 
 ## Looping Audio
@@ -230,8 +230,8 @@ const isMuted = engine.block.isMuted(audioBlock);
 Enable continuous playback with `setLooping()`. When enabled, the audio repeats until the end of the block's duration in the composition.
 
 ```typescript highlight=highlight-loop-audio
-engine.block.setLooping(audioBlock, false);
-const isLooping = engine.block.isLooping(audioBlock);
+engine.block.setLooping(audioBlock, false)
+const isLooping = engine.block.isLooping(audioBlock)
 ```
 
 ## Finding Audio Blocks
@@ -239,7 +239,7 @@ const isLooping = engine.block.isLooping(audioBlock);
 Use `findByType('audio')` to retrieve all audio blocks in the scene. This is useful for building audio management interfaces or performing batch operations.
 
 ```typescript highlight=highlight-find-audio
-const allAudioBlocks = engine.block.findByType('audio');
+const allAudioBlocks = engine.block.findByType('audio')
 ```
 
 ## Removing Audio
@@ -247,7 +247,7 @@ const allAudioBlocks = engine.block.findByType('audio');
 To remove an audio block, call `destroy()`. This removes the block from the scene and frees its resources.
 
 ```typescript highlight=highlight-remove-audio
-engine.block.destroy(tempAudioBlock);
+engine.block.destroy(tempAudioBlock)
 ```
 
 ## API Reference

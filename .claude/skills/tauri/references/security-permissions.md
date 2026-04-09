@@ -19,11 +19,17 @@ Example (plugin permission):
 [[permission]]
 identifier = "read-files"
 description = "Enables file read commands without pre-configured paths."
-commands.allow = ["read_file", "read", "open"]
+
+commands.allow = [
+  "read_file",
+  "read",
+  "open"
+]
 
 [[permission]]
 identifier = "scope-home"
 description = "Permits access to top-level $HOME."
+
 [[scope.allow]]
 path = "$HOME/*"
 ```
@@ -36,7 +42,11 @@ Group multiple permissions under one identifier for easier use in capabilities:
 [[set]]
 identifier = "allow-home-read-extended"
 description = "Read $HOME and create directories."
-permissions = ["fs:read-files", "fs:scope-home", "fs:allow-mkdir"]
+permissions = [
+  "fs:read-files",
+  "fs:scope-home",
+  "fs:allow-mkdir"
+]
 ```
 
 In a capability, reference the set: `"permissions": ["allow-home-read-extended"]`.

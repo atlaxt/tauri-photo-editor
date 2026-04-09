@@ -23,7 +23,7 @@ Add asset library buttons to the CE.SDK dock using the built-in `ly.img.assetLib
 CE.SDK provides the `ly.img.assetLibrary.dock` component for adding buttons to the dock that open the asset library panel. This is the fastest way to give users access to specific asset categories without registering custom components.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-customization-quick-start-add-dock-buttons-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,25 +39,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -68,25 +68,25 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     // First, clear the default dock to demonstrate our custom dock
-    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, []);
+    cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [])
 
     // Add a Media button combining images and videos
     cesdk.ui.insertOrderComponent(
@@ -98,7 +98,7 @@ class Example implements EditorPlugin {
         label: 'Media',
         icon: '@imgly/Image'
       }
-    );
+    )
 
     // Add an Elements button for shapes and stickers
     cesdk.ui.insertOrderComponent(
@@ -110,7 +110,7 @@ class Example implements EditorPlugin {
         label: 'Elements',
         icon: '@imgly/Shapes'
       }
-    );
+    )
 
     // Add a Text button
     cesdk.ui.insertOrderComponent(
@@ -122,7 +122,7 @@ class Example implements EditorPlugin {
         label: 'Text',
         icon: '@imgly/Text'
       }
-    );
+    )
 
     // Add an Upload button with custom onClick handler
     cesdk.ui.insertOrderComponent({ in: 'ly.img.dock' }, [
@@ -135,19 +135,19 @@ class Example implements EditorPlugin {
         icon: '@imgly/Upload',
         onClick: () => {
           // Custom behavior instead of opening asset library
-          // eslint-disable-next-line no-console
-          console.log('Custom upload action triggered!');
+
+          console.log('Custom upload action triggered!')
           // In production: open your custom upload dialog
-          alert('Custom upload dialog would open here!');
+          alert('Custom upload dialog would open here!')
         }
       }
-    ]);
+    ])
 
     // Insert a separator between Elements and Text
     cesdk.ui.insertOrderComponent(
       { in: 'ly.img.dock', after: { key: 'elements' } },
       'ly.img.separator'
-    );
+    )
 
     // Insert a button at the beginning of the dock
     cesdk.ui.insertOrderComponent(
@@ -159,14 +159,13 @@ class Example implements EditorPlugin {
         label: 'Templates',
         icon: '@imgly/Template'
       }
-    );
+    )
 
-    // eslint-disable-next-line no-console
-    console.log('Add Dock Buttons example loaded successfully');
+    console.log('Add Dock Buttons example loaded successfully')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers adding single dock buttons, combining multiple asset categories, configuring button appearance, adding custom click handlers, and organizing buttons with separators and spacers.
@@ -186,7 +185,7 @@ cesdk.ui.insertOrderComponent(
     label: 'Media',
     icon: '@imgly/Image'
   }
-);
+)
 ```
 
 When clicked, this button opens the asset library panel showing both images and videos. The `key` property must be unique when using multiple dock buttons with the same component ID.
@@ -220,7 +219,7 @@ cesdk.ui.insertOrderComponent(
     label: 'Elements',
     icon: '@imgly/Shapes'
   }
-);
+)
 ```
 
 This example adds an Elements button that opens shapes and stickers when clicked.
@@ -241,13 +240,13 @@ cesdk.ui.insertOrderComponent({ in: 'ly.img.dock' }, [
     icon: '@imgly/Upload',
     onClick: () => {
       // Custom behavior instead of opening asset library
-      // eslint-disable-next-line no-console
-      console.log('Custom upload action triggered!');
+
+      console.log('Custom upload action triggered!')
       // In production: open your custom upload dialog
-      alert('Custom upload dialog would open here!');
+      alert('Custom upload dialog would open here!')
     }
   }
-]);
+])
 ```
 
 The `onClick` handler completely replaces the default behavior. In this example, clicking Upload triggers a custom dialog instead of opening the asset library panel. The `ly.img.spacer` component pushes the Upload button to the bottom of the dock.
@@ -276,7 +275,7 @@ Organize dock buttons with visual separators and flexible spacers.
 cesdk.ui.insertOrderComponent(
   { in: 'ly.img.dock', after: { key: 'elements' } },
   'ly.img.separator'
-);
+)
 ```
 
 You can insert separators between existing components using positional matchers like `after: { key: 'elements' }`.
@@ -302,7 +301,7 @@ cesdk.ui.insertOrderComponent(
     label: 'Templates',
     icon: '@imgly/Template'
   }
-);
+)
 ```
 
 The `before` and `after` options accept `'first'`, `'last'`, or a matcher object. Matcher objects can target components by `key` or `id`. See the [Component Order API](./user-interface/customization/reference/component-order-api.md) for all available matcher options.

@@ -23,7 +23,7 @@ Fine-tune images and design elements using CE.SDK's color adjustments system to 
 Color adjustments allow you to modify the visual appearance of images and graphics by changing properties like brightness, contrast, saturation, and color temperature. CE.SDK implements color adjustments as an "adjustments" effect type that you can apply to compatible blocks.
 
 ```typescript file=@cesdk_web_examples/guides-colors-adjust-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Adjust Colors Guide
@@ -54,22 +54,22 @@ import packageJson from './package.json';
  * - Applying different adjustment styles
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -80,182 +80,182 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
     // Enable adjustments in the inspector panel
-    cesdk.feature.enable('ly.img.adjustment');
+    cesdk.feature.enable('ly.img.adjustment')
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Create a sample image to demonstrate color adjustments
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Check if a block supports effects before applying adjustments
     const imageBlock = await engine.block.addImage(imageUri, {
       size: { width: 400, height: 300 }
-    });
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 200);
-    engine.block.setPositionY(imageBlock, 150);
+    })
+    engine.block.appendChild(page, imageBlock)
+    engine.block.setPositionX(imageBlock, 200)
+    engine.block.setPositionY(imageBlock, 150)
 
-    const supportsEffects = engine.block.supportsEffects(imageBlock);
-    console.log('Block supports effects:', supportsEffects);
+    const supportsEffects = engine.block.supportsEffects(imageBlock)
+    console.log('Block supports effects:', supportsEffects)
 
     // Create an adjustments effect
-    const adjustmentsEffect = engine.block.createEffect('adjustments');
+    const adjustmentsEffect = engine.block.createEffect('adjustments')
 
     // Attach the adjustments effect to the image block
-    engine.block.appendEffect(imageBlock, adjustmentsEffect);
+    engine.block.appendEffect(imageBlock, adjustmentsEffect)
 
     // Set brightness - positive values lighten, negative values darken
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/brightness',
       0.4
-    );
+    )
 
     // Set contrast - increases or decreases tonal range
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/contrast',
       0.35
-    );
+    )
 
     // Set saturation - increases or decreases color intensity
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/saturation',
       0.5
-    );
+    )
 
     // Set temperature - positive for warmer, negative for cooler tones
     engine.block.setFloat(
       adjustmentsEffect,
       'effect/adjustments/temperature',
       0.25
-    );
+    )
 
     // Read current adjustment values
     const brightness = engine.block.getFloat(
       adjustmentsEffect,
       'effect/adjustments/brightness'
-    );
-    console.log('Current brightness:', brightness);
+    )
+    console.log('Current brightness:', brightness)
 
     // Discover all available adjustment properties
-    const allProperties = engine.block.findAllProperties(adjustmentsEffect);
-    console.log('Available adjustment properties:', allProperties);
+    const allProperties = engine.block.findAllProperties(adjustmentsEffect)
+    console.log('Available adjustment properties:', allProperties)
 
     // Disable adjustments temporarily (effect remains attached)
-    engine.block.setEffectEnabled(adjustmentsEffect, false);
+    engine.block.setEffectEnabled(adjustmentsEffect, false)
     console.log(
       'Adjustments enabled:',
       engine.block.isEffectEnabled(adjustmentsEffect)
-    );
+    )
 
     // Re-enable adjustments
-    engine.block.setEffectEnabled(adjustmentsEffect, true);
+    engine.block.setEffectEnabled(adjustmentsEffect, true)
 
     // Create a second image to demonstrate a different adjustment style
     const secondImageBlock = await engine.block.addImage(imageUri, {
       size: { width: 200, height: 150 }
-    });
-    engine.block.appendChild(page, secondImageBlock);
-    engine.block.setPositionX(secondImageBlock, 50);
-    engine.block.setPositionY(secondImageBlock, 50);
+    })
+    engine.block.appendChild(page, secondImageBlock)
+    engine.block.setPositionX(secondImageBlock, 50)
+    engine.block.setPositionY(secondImageBlock, 50)
 
     // Apply a contrasting style: darker, high contrast, desaturated (moody look)
-    const combinedAdjustments = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(secondImageBlock, combinedAdjustments);
+    const combinedAdjustments = engine.block.createEffect('adjustments')
+    engine.block.appendEffect(secondImageBlock, combinedAdjustments)
     engine.block.setFloat(
       combinedAdjustments,
       'effect/adjustments/brightness',
       -0.15
-    );
+    )
     engine.block.setFloat(
       combinedAdjustments,
       'effect/adjustments/contrast',
       0.4
-    );
+    )
     engine.block.setFloat(
       combinedAdjustments,
       'effect/adjustments/saturation',
       -0.3
-    );
+    )
 
     // List all effects on the block
-    const effects = engine.block.getEffects(secondImageBlock);
-    console.log('Effects on second image:', effects.length);
+    const effects = engine.block.getEffects(secondImageBlock)
+    console.log('Effects on second image:', effects.length)
 
     // Demonstrate removing an effect
     const tempBlock = await engine.block.addImage(imageUri, {
       size: { width: 150, height: 100 }
-    });
-    engine.block.appendChild(page, tempBlock);
-    engine.block.setPositionX(tempBlock, 550);
-    engine.block.setPositionY(tempBlock, 50);
+    })
+    engine.block.appendChild(page, tempBlock)
+    engine.block.setPositionX(tempBlock, 550)
+    engine.block.setPositionY(tempBlock, 50)
 
-    const tempEffect = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(tempBlock, tempEffect);
-    engine.block.setFloat(tempEffect, 'effect/adjustments/brightness', 0.5);
+    const tempEffect = engine.block.createEffect('adjustments')
+    engine.block.appendEffect(tempBlock, tempEffect)
+    engine.block.setFloat(tempEffect, 'effect/adjustments/brightness', 0.5)
 
     // Remove the effect by index
-    const tempEffects = engine.block.getEffects(tempBlock);
-    const effectIndex = tempEffects.indexOf(tempEffect);
+    const tempEffects = engine.block.getEffects(tempBlock)
+    const effectIndex = tempEffects.indexOf(tempEffect)
     if (effectIndex !== -1) {
-      engine.block.removeEffect(tempBlock, effectIndex);
+      engine.block.removeEffect(tempBlock, effectIndex)
     }
 
     // Destroy the removed effect to free memory
-    engine.block.destroy(tempEffect);
+    engine.block.destroy(tempEffect)
 
     // Add refinement adjustments to demonstrate subtle enhancement properties
-    const refinementEffect = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(tempBlock, refinementEffect);
+    const refinementEffect = engine.block.createEffect('adjustments')
+    engine.block.appendEffect(tempBlock, refinementEffect)
 
     // Sharpness - enhances edge definition
     engine.block.setFloat(
       refinementEffect,
       'effect/adjustments/sharpness',
       0.4
-    );
+    )
 
     // Clarity - increases mid-tone contrast for more detail
-    engine.block.setFloat(refinementEffect, 'effect/adjustments/clarity', 0.35);
+    engine.block.setFloat(refinementEffect, 'effect/adjustments/clarity', 0.35)
 
     // Highlights - adjusts bright areas
     engine.block.setFloat(
       refinementEffect,
       'effect/adjustments/highlights',
       -0.2
-    );
+    )
 
     // Shadows - adjusts dark areas
-    engine.block.setFloat(refinementEffect, 'effect/adjustments/shadows', 0.3);
+    engine.block.setFloat(refinementEffect, 'effect/adjustments/shadows', 0.3)
 
     // Select the main image block to show adjustments panel
-    engine.block.select(imageBlock);
+    engine.block.select(imageBlock)
 
     console.log(
       'Color adjustments guide initialized. Select an image to see the adjustments panel.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use the built-in adjustments UI panel and how to apply color adjustments programmatically using the block API.
@@ -270,7 +270,7 @@ To give users access to adjustments in the inspector panel, we enable the adjust
 
 ```typescript highlight=highlight-feature-enable
 // Enable adjustments in the inspector panel
-cesdk.feature.enable('ly.img.adjustment');
+cesdk.feature.enable('ly.img.adjustment')
 ```
 
 With adjustments enabled, users can:
@@ -288,16 +288,16 @@ For applications that need to apply adjustments programmatically—whether for a
 Before applying adjustments, we verify the block supports effects. Not all block types support adjustments—for example, page blocks don't support effects directly, but image and graphic blocks do.
 
 ```typescript highlight=highlight-check-support
-    // Check if a block supports effects before applying adjustments
-    const imageBlock = await engine.block.addImage(imageUri, {
-      size: { width: 400, height: 300 }
-    });
-    engine.block.appendChild(page, imageBlock);
-    engine.block.setPositionX(imageBlock, 200);
-    engine.block.setPositionY(imageBlock, 150);
+// Check if a block supports effects before applying adjustments
+const imageBlock = await engine.block.addImage(imageUri, {
+  size: { width: 400, height: 300 }
+})
+engine.block.appendChild(page, imageBlock)
+engine.block.setPositionX(imageBlock, 200)
+engine.block.setPositionY(imageBlock, 150)
 
-    const supportsEffects = engine.block.supportsEffects(imageBlock);
-    console.log('Block supports effects:', supportsEffects);
+const supportsEffects = engine.block.supportsEffects(imageBlock)
+console.log('Block supports effects:', supportsEffects)
 ```
 
 ### Create and Apply Adjustments Effect
@@ -305,11 +305,11 @@ Before applying adjustments, we verify the block supports effects. Not all block
 Once we've confirmed a block supports effects, we create an adjustments effect and attach it to the block using `appendEffect()`.
 
 ```typescript highlight=highlight-create-adjustments
-    // Create an adjustments effect
-    const adjustmentsEffect = engine.block.createEffect('adjustments');
+// Create an adjustments effect
+const adjustmentsEffect = engine.block.createEffect('adjustments')
 
-    // Attach the adjustments effect to the image block
-    engine.block.appendEffect(imageBlock, adjustmentsEffect);
+// Attach the adjustments effect to the image block
+engine.block.appendEffect(imageBlock, adjustmentsEffect)
 ```
 
 Each block can have one adjustments effect in its effect stack. The adjustments effect provides access to all color adjustment properties through a single effect instance.
@@ -319,33 +319,33 @@ Each block can have one adjustments effect in its effect stack. The adjustments 
 We set individual adjustment values using `setFloat()` with the effect block ID and property path. Each property uses the `effect/adjustments/` prefix followed by the property name.
 
 ```typescript highlight=highlight-set-properties
-    // Set brightness - positive values lighten, negative values darken
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/brightness',
-      0.4
-    );
+// Set brightness - positive values lighten, negative values darken
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/brightness',
+  0.4
+)
 
-    // Set contrast - increases or decreases tonal range
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/contrast',
-      0.35
-    );
+// Set contrast - increases or decreases tonal range
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/contrast',
+  0.35
+)
 
-    // Set saturation - increases or decreases color intensity
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/saturation',
-      0.5
-    );
+// Set saturation - increases or decreases color intensity
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/saturation',
+  0.5
+)
 
-    // Set temperature - positive for warmer, negative for cooler tones
-    engine.block.setFloat(
-      adjustmentsEffect,
-      'effect/adjustments/temperature',
-      0.25
-    );
+// Set temperature - positive for warmer, negative for cooler tones
+engine.block.setFloat(
+  adjustmentsEffect,
+  'effect/adjustments/temperature',
+  0.25
+)
 ```
 
 CE.SDK provides the following adjustment properties:
@@ -372,16 +372,16 @@ All properties accept float values. Experiment with different values to achieve 
 We can read current adjustment values using `getFloat()` with the same property paths. Use `findAllProperties()` to discover all available properties on an adjustments effect.
 
 ```typescript highlight=highlight-read-values
-    // Read current adjustment values
-    const brightness = engine.block.getFloat(
-      adjustmentsEffect,
-      'effect/adjustments/brightness'
-    );
-    console.log('Current brightness:', brightness);
+// Read current adjustment values
+const brightness = engine.block.getFloat(
+  adjustmentsEffect,
+  'effect/adjustments/brightness'
+)
+console.log('Current brightness:', brightness)
 
-    // Discover all available adjustment properties
-    const allProperties = engine.block.findAllProperties(adjustmentsEffect);
-    console.log('Available adjustment properties:', allProperties);
+// Discover all available adjustment properties
+const allProperties = engine.block.findAllProperties(adjustmentsEffect)
+console.log('Available adjustment properties:', allProperties)
 ```
 
 This is useful for building custom UI controls or syncing adjustment values across your application.
@@ -391,15 +391,15 @@ This is useful for building custom UI controls or syncing adjustment values acro
 CE.SDK allows you to temporarily toggle adjustments on and off without removing them from the block. This is useful for before/after comparisons.
 
 ```typescript highlight=highlight-enable-disable
-    // Disable adjustments temporarily (effect remains attached)
-    engine.block.setEffectEnabled(adjustmentsEffect, false);
-    console.log(
-      'Adjustments enabled:',
-      engine.block.isEffectEnabled(adjustmentsEffect)
-    );
+// Disable adjustments temporarily (effect remains attached)
+engine.block.setEffectEnabled(adjustmentsEffect, false)
+console.log(
+  'Adjustments enabled:',
+  engine.block.isEffectEnabled(adjustmentsEffect)
+)
 
-    // Re-enable adjustments
-    engine.block.setEffectEnabled(adjustmentsEffect, true);
+// Re-enable adjustments
+engine.block.setEffectEnabled(adjustmentsEffect, true)
 ```
 
 When you disable an adjustments effect, it remains attached to the block but won't be rendered until you enable it again. This preserves all adjustment values while giving you control over when adjustments are applied.
@@ -409,36 +409,36 @@ When you disable an adjustments effect, it remains attached to the block but won
 You can apply different adjustment combinations to create distinct visual styles. This example demonstrates a contrasting moody look using negative brightness, high contrast, and desaturation.
 
 ```typescript highlight=highlight-combine-effects
-    // Create a second image to demonstrate a different adjustment style
-    const secondImageBlock = await engine.block.addImage(imageUri, {
-      size: { width: 200, height: 150 }
-    });
-    engine.block.appendChild(page, secondImageBlock);
-    engine.block.setPositionX(secondImageBlock, 50);
-    engine.block.setPositionY(secondImageBlock, 50);
+// Create a second image to demonstrate a different adjustment style
+const secondImageBlock = await engine.block.addImage(imageUri, {
+  size: { width: 200, height: 150 }
+})
+engine.block.appendChild(page, secondImageBlock)
+engine.block.setPositionX(secondImageBlock, 50)
+engine.block.setPositionY(secondImageBlock, 50)
 
-    // Apply a contrasting style: darker, high contrast, desaturated (moody look)
-    const combinedAdjustments = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(secondImageBlock, combinedAdjustments);
-    engine.block.setFloat(
-      combinedAdjustments,
-      'effect/adjustments/brightness',
-      -0.15
-    );
-    engine.block.setFloat(
-      combinedAdjustments,
-      'effect/adjustments/contrast',
-      0.4
-    );
-    engine.block.setFloat(
-      combinedAdjustments,
-      'effect/adjustments/saturation',
-      -0.3
-    );
+// Apply a contrasting style: darker, high contrast, desaturated (moody look)
+const combinedAdjustments = engine.block.createEffect('adjustments')
+engine.block.appendEffect(secondImageBlock, combinedAdjustments)
+engine.block.setFloat(
+  combinedAdjustments,
+  'effect/adjustments/brightness',
+  -0.15
+)
+engine.block.setFloat(
+  combinedAdjustments,
+  'effect/adjustments/contrast',
+  0.4
+)
+engine.block.setFloat(
+  combinedAdjustments,
+  'effect/adjustments/saturation',
+  -0.3
+)
 
-    // List all effects on the block
-    const effects = engine.block.getEffects(secondImageBlock);
-    console.log('Effects on second image:', effects.length);
+// List all effects on the block
+const effects = engine.block.getEffects(secondImageBlock)
+console.log('Effects on second image:', effects.length)
 ```
 
 By combining different adjustment properties, you can create warm and vibrant looks, cool and desaturated styles, or high-contrast dramatic effects.
@@ -448,29 +448,29 @@ By combining different adjustment properties, you can create warm and vibrant lo
 Beyond basic color corrections, CE.SDK provides refinement adjustments for fine-tuning image detail and tonal balance.
 
 ```typescript highlight=highlight-refinement-adjustments
-    // Add refinement adjustments to demonstrate subtle enhancement properties
-    const refinementEffect = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(tempBlock, refinementEffect);
+// Add refinement adjustments to demonstrate subtle enhancement properties
+const refinementEffect = engine.block.createEffect('adjustments')
+engine.block.appendEffect(tempBlock, refinementEffect)
 
-    // Sharpness - enhances edge definition
-    engine.block.setFloat(
-      refinementEffect,
-      'effect/adjustments/sharpness',
-      0.4
-    );
+// Sharpness - enhances edge definition
+engine.block.setFloat(
+  refinementEffect,
+  'effect/adjustments/sharpness',
+  0.4
+)
 
-    // Clarity - increases mid-tone contrast for more detail
-    engine.block.setFloat(refinementEffect, 'effect/adjustments/clarity', 0.35);
+// Clarity - increases mid-tone contrast for more detail
+engine.block.setFloat(refinementEffect, 'effect/adjustments/clarity', 0.35)
 
-    // Highlights - adjusts bright areas
-    engine.block.setFloat(
-      refinementEffect,
-      'effect/adjustments/highlights',
-      -0.2
-    );
+// Highlights - adjusts bright areas
+engine.block.setFloat(
+  refinementEffect,
+  'effect/adjustments/highlights',
+  -0.2
+)
 
-    // Shadows - adjusts dark areas
-    engine.block.setFloat(refinementEffect, 'effect/adjustments/shadows', 0.3);
+// Shadows - adjusts dark areas
+engine.block.setFloat(refinementEffect, 'effect/adjustments/shadows', 0.3)
 ```
 
 Refinement properties include:
@@ -489,27 +489,27 @@ These adjustments are particularly useful for enhancing photos or preparing imag
 When you no longer need adjustments, you can remove them from the effect stack and free resources. Always destroy effects that are no longer in use to prevent memory leaks.
 
 ```typescript highlight=highlight-remove-adjustments
-    // Demonstrate removing an effect
-    const tempBlock = await engine.block.addImage(imageUri, {
-      size: { width: 150, height: 100 }
-    });
-    engine.block.appendChild(page, tempBlock);
-    engine.block.setPositionX(tempBlock, 550);
-    engine.block.setPositionY(tempBlock, 50);
+// Demonstrate removing an effect
+const tempBlock = await engine.block.addImage(imageUri, {
+  size: { width: 150, height: 100 }
+})
+engine.block.appendChild(page, tempBlock)
+engine.block.setPositionX(tempBlock, 550)
+engine.block.setPositionY(tempBlock, 50)
 
-    const tempEffect = engine.block.createEffect('adjustments');
-    engine.block.appendEffect(tempBlock, tempEffect);
-    engine.block.setFloat(tempEffect, 'effect/adjustments/brightness', 0.5);
+const tempEffect = engine.block.createEffect('adjustments')
+engine.block.appendEffect(tempBlock, tempEffect)
+engine.block.setFloat(tempEffect, 'effect/adjustments/brightness', 0.5)
 
-    // Remove the effect by index
-    const tempEffects = engine.block.getEffects(tempBlock);
-    const effectIndex = tempEffects.indexOf(tempEffect);
-    if (effectIndex !== -1) {
-      engine.block.removeEffect(tempBlock, effectIndex);
-    }
+// Remove the effect by index
+const tempEffects = engine.block.getEffects(tempBlock)
+const effectIndex = tempEffects.indexOf(tempEffect)
+if (effectIndex !== -1) {
+  engine.block.removeEffect(tempBlock, effectIndex)
+}
 
-    // Destroy the removed effect to free memory
-    engine.block.destroy(tempEffect);
+// Destroy the removed effect to free memory
+engine.block.destroy(tempEffect)
 ```
 
 The `removeEffect()` method takes an index position. After removal, destroy the effect instance to ensure proper cleanup.

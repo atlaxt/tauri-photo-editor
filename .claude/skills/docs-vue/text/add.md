@@ -23,7 +23,7 @@ Create and configure text blocks in CE.SDK with custom fonts, rich text styling,
 Text blocks are fundamental design elements for displaying titles, captions, labels, and body text. CE.SDK provides a range-based styling system that allows different formatting within a single text block, enabling rich text with multiple colors, font weights, and styles.
 
 ```typescript file=@cesdk_web_examples/guides-text-add-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Browser Guide: Add Text
@@ -57,21 +57,21 @@ import packageJson from './package.json';
  */
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -82,49 +82,49 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 900, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Document layout settings
-    const margin = 40;
-    const fontSize = 80;
-    const lineSpacing = 100;
+    const margin = 40
+    const fontSize = 80
+    const lineSpacing = 100
 
     // Create a title text block
-    const titleBlock = engine.block.create('text');
-    engine.block.appendChild(page, titleBlock);
+    const titleBlock = engine.block.create('text')
+    engine.block.appendChild(page, titleBlock)
 
     // Set the text content using replaceText
-    engine.block.replaceText(titleBlock, 'Welcome to CE.SDK');
+    engine.block.replaceText(titleBlock, 'Welcome to CE.SDK')
 
     // Configure auto-sizing so the block adjusts to content
-    engine.block.setWidthMode(titleBlock, 'Auto');
-    engine.block.setHeightMode(titleBlock, 'Auto');
+    engine.block.setWidthMode(titleBlock, 'Auto')
+    engine.block.setHeightMode(titleBlock, 'Auto')
 
     // Position at top of document
-    engine.block.setPositionX(titleBlock, margin);
-    engine.block.setPositionY(titleBlock, margin);
+    engine.block.setPositionX(titleBlock, margin)
+    engine.block.setPositionY(titleBlock, margin)
 
     // Apply a custom font to the title
     // Font URIs point to hosted font files (TTF, OTF, WOFF, WOFF2)
-    const fontUri =
-      'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Caveat/Caveat-Bold.ttf';
+    const fontUri
+      = 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Caveat/Caveat-Bold.ttf'
     const typeface = {
       name: 'Caveat',
       fonts: [
@@ -135,23 +135,23 @@ class Example implements EditorPlugin {
           style: 'normal' as const
         }
       ]
-    };
-    engine.block.setFont(titleBlock, fontUri, typeface);
+    }
+    engine.block.setFont(titleBlock, fontUri, typeface)
 
     // Set font size (80pt for visibility)
-    engine.block.setTextFontSize(titleBlock, fontSize);
+    engine.block.setTextFontSize(titleBlock, fontSize)
 
     // Create a text block with rich text styling (multiple colors and weights)
-    const richTextBlock = engine.block.create('text');
-    engine.block.appendChild(page, richTextBlock);
-    engine.block.replaceText(richTextBlock, 'Rich text with colors and styles');
+    const richTextBlock = engine.block.create('text')
+    engine.block.appendChild(page, richTextBlock)
+    engine.block.replaceText(richTextBlock, 'Rich text with colors and styles')
 
     // Position below title
-    engine.block.setPositionX(richTextBlock, margin);
-    engine.block.setPositionY(richTextBlock, margin + lineSpacing);
-    engine.block.setWidthMode(richTextBlock, 'Auto');
-    engine.block.setHeightMode(richTextBlock, 'Auto');
-    engine.block.setTextFontSize(richTextBlock, fontSize);
+    engine.block.setPositionX(richTextBlock, margin)
+    engine.block.setPositionY(richTextBlock, margin + lineSpacing)
+    engine.block.setWidthMode(richTextBlock, 'Auto')
+    engine.block.setHeightMode(richTextBlock, 'Auto')
+    engine.block.setTextFontSize(richTextBlock, fontSize)
 
     // Apply different colors to specific ranges
     // "Rich" (0-4) in blue
@@ -160,7 +160,7 @@ class Example implements EditorPlugin {
       { r: 0.2, g: 0.4, b: 0.8, a: 1.0 },
       0,
       4
-    );
+    )
 
     // "text" (5-9) in green
     engine.block.setTextColor(
@@ -168,7 +168,7 @@ class Example implements EditorPlugin {
       { r: 0.2, g: 0.7, b: 0.3, a: 1.0 },
       5,
       9
-    );
+    )
 
     // "colors" (15-21) in orange
     engine.block.setTextColor(
@@ -176,7 +176,7 @@ class Example implements EditorPlugin {
       { r: 0.9, g: 0.5, b: 0.1, a: 1.0 },
       15,
       21
-    );
+    )
 
     // "styles" (26-32) in purple
     engine.block.setTextColor(
@@ -184,49 +184,49 @@ class Example implements EditorPlugin {
       { r: 0.6, g: 0.2, b: 0.8, a: 1.0 },
       26,
       32
-    );
+    )
 
     // Create a text block demonstrating auto-sizing with fixed width
-    const autoSizeBlock = engine.block.create('text');
-    engine.block.appendChild(page, autoSizeBlock);
-    engine.block.replaceText(autoSizeBlock, 'Auto-sizing text block');
+    const autoSizeBlock = engine.block.create('text')
+    engine.block.appendChild(page, autoSizeBlock)
+    engine.block.replaceText(autoSizeBlock, 'Auto-sizing text block')
 
     // Position below rich text
-    engine.block.setPositionX(autoSizeBlock, margin);
-    engine.block.setPositionY(autoSizeBlock, margin + lineSpacing * 2);
+    engine.block.setPositionX(autoSizeBlock, margin)
+    engine.block.setPositionY(autoSizeBlock, margin + lineSpacing * 2)
 
     // Set fixed width but auto height - text wraps and height adjusts
-    engine.block.setWidth(autoSizeBlock, pageWidth - margin * 2);
-    engine.block.setWidthMode(autoSizeBlock, 'Absolute');
-    engine.block.setHeightMode(autoSizeBlock, 'Auto');
-    engine.block.setTextFontSize(autoSizeBlock, fontSize);
+    engine.block.setWidth(autoSizeBlock, pageWidth - margin * 2)
+    engine.block.setWidthMode(autoSizeBlock, 'Absolute')
+    engine.block.setHeightMode(autoSizeBlock, 'Auto')
+    engine.block.setTextFontSize(autoSizeBlock, fontSize)
 
     // Create a text block demonstrating text case transformations
-    const caseBlock = engine.block.create('text');
-    engine.block.appendChild(page, caseBlock);
-    engine.block.replaceText(caseBlock, 'uppercase text');
+    const caseBlock = engine.block.create('text')
+    engine.block.appendChild(page, caseBlock)
+    engine.block.replaceText(caseBlock, 'uppercase text')
 
     // Position below auto-size block
-    engine.block.setPositionX(caseBlock, margin);
-    engine.block.setPositionY(caseBlock, margin + lineSpacing * 3);
-    engine.block.setWidthMode(caseBlock, 'Auto');
-    engine.block.setHeightMode(caseBlock, 'Auto');
-    engine.block.setTextFontSize(caseBlock, fontSize);
+    engine.block.setPositionX(caseBlock, margin)
+    engine.block.setPositionY(caseBlock, margin + lineSpacing * 3)
+    engine.block.setWidthMode(caseBlock, 'Auto')
+    engine.block.setHeightMode(caseBlock, 'Auto')
+    engine.block.setTextFontSize(caseBlock, fontSize)
 
     // Transform the entire text to uppercase without changing the source
-    engine.block.setTextCase(caseBlock, 'Uppercase');
+    engine.block.setTextCase(caseBlock, 'Uppercase')
 
     // Create a text block demonstrating bold/italic toggle
-    const toggleBlock = engine.block.create('text');
-    engine.block.appendChild(page, toggleBlock);
-    engine.block.replaceText(toggleBlock, 'Toggle Bold and Italic');
+    const toggleBlock = engine.block.create('text')
+    engine.block.appendChild(page, toggleBlock)
+    engine.block.replaceText(toggleBlock, 'Toggle Bold and Italic')
 
     // Position below case block
-    engine.block.setPositionX(toggleBlock, margin);
-    engine.block.setPositionY(toggleBlock, margin + lineSpacing * 4);
-    engine.block.setWidthMode(toggleBlock, 'Auto');
-    engine.block.setHeightMode(toggleBlock, 'Auto');
-    engine.block.setTextFontSize(toggleBlock, fontSize);
+    engine.block.setPositionX(toggleBlock, margin)
+    engine.block.setPositionY(toggleBlock, margin + lineSpacing * 4)
+    engine.block.setWidthMode(toggleBlock, 'Auto')
+    engine.block.setHeightMode(toggleBlock, 'Auto')
+    engine.block.setTextFontSize(toggleBlock, fontSize)
 
     // Set a font that supports bold/italic variants
     const robotoTypeface = {
@@ -251,65 +251,65 @@ class Example implements EditorPlugin {
           style: 'italic' as const
         }
       ]
-    };
+    }
     engine.block.setFont(
       toggleBlock,
       'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf',
       robotoTypeface
-    );
+    )
 
     // Toggle bold for "Bold" (7-11)
-    engine.block.toggleBoldFont(toggleBlock, 7, 11);
+    engine.block.toggleBoldFont(toggleBlock, 7, 11)
 
     // Toggle italic for "Italic" (16-22)
-    engine.block.toggleItalicFont(toggleBlock, 16, 22);
+    engine.block.toggleItalicFont(toggleBlock, 16, 22)
 
     // Create a text block to demonstrate text modification
-    const modifyBlock = engine.block.create('text');
-    engine.block.appendChild(page, modifyBlock);
-    engine.block.replaceText(modifyBlock, 'Hello World');
+    const modifyBlock = engine.block.create('text')
+    engine.block.appendChild(page, modifyBlock)
+    engine.block.replaceText(modifyBlock, 'Hello World')
 
     // Position below toggle block
-    engine.block.setPositionX(modifyBlock, margin);
-    engine.block.setPositionY(modifyBlock, margin + lineSpacing * 5);
-    engine.block.setWidthMode(modifyBlock, 'Auto');
-    engine.block.setHeightMode(modifyBlock, 'Auto');
-    engine.block.setTextFontSize(modifyBlock, fontSize);
+    engine.block.setPositionX(modifyBlock, margin)
+    engine.block.setPositionY(modifyBlock, margin + lineSpacing * 5)
+    engine.block.setWidthMode(modifyBlock, 'Auto')
+    engine.block.setHeightMode(modifyBlock, 'Auto')
+    engine.block.setTextFontSize(modifyBlock, fontSize)
 
     // Replace "World" with "CE.SDK" (range 6-11)
-    engine.block.replaceText(modifyBlock, 'CE.SDK', 6, 11);
+    engine.block.replaceText(modifyBlock, 'CE.SDK', 6, 11)
     // Result: "Hello CE.SDK"
 
     // Create a centered text block with custom spacing
-    const alignedBlock = engine.block.create('text');
-    engine.block.appendChild(page, alignedBlock);
-    engine.block.replaceText(alignedBlock, 'Centered Text\nWith Line Spacing');
+    const alignedBlock = engine.block.create('text')
+    engine.block.appendChild(page, alignedBlock)
+    engine.block.replaceText(alignedBlock, 'Centered Text\nWith Line Spacing')
 
     // Position at bottom of document
-    engine.block.setPositionX(alignedBlock, margin);
-    engine.block.setPositionY(alignedBlock, margin + lineSpacing * 6);
+    engine.block.setPositionX(alignedBlock, margin)
+    engine.block.setPositionY(alignedBlock, margin + lineSpacing * 6)
 
     // Set explicit dimensions for centered alignment
-    engine.block.setWidth(alignedBlock, pageWidth - margin * 2);
-    engine.block.setWidthMode(alignedBlock, 'Absolute');
-    engine.block.setHeightMode(alignedBlock, 'Auto');
-    engine.block.setTextFontSize(alignedBlock, fontSize);
+    engine.block.setWidth(alignedBlock, pageWidth - margin * 2)
+    engine.block.setWidthMode(alignedBlock, 'Absolute')
+    engine.block.setHeightMode(alignedBlock, 'Auto')
+    engine.block.setTextFontSize(alignedBlock, fontSize)
 
     // Set horizontal alignment to center
-    engine.block.setEnum(alignedBlock, 'text/horizontalAlignment', 'Center');
+    engine.block.setEnum(alignedBlock, 'text/horizontalAlignment', 'Center')
 
     // Adjust line height (1.5 = 150% of font size)
-    engine.block.setFloat(alignedBlock, 'text/lineHeight', 1.5);
+    engine.block.setFloat(alignedBlock, 'text/lineHeight', 1.5)
 
     // Adjust letter spacing (0.05 = 5% of font size)
-    engine.block.setFloat(alignedBlock, 'text/letterSpacing', 0.05);
+    engine.block.setFloat(alignedBlock, 'text/letterSpacing', 0.05)
 
     // Select the title block to show in the editor
-    engine.block.select(titleBlock);
+    engine.block.select(titleBlock)
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to create text blocks, apply fonts and typefaces, style text ranges with colors and weights, configure auto-sizing, and apply text transformations.
@@ -319,20 +319,20 @@ This guide covers how to create text blocks, apply fonts and typefaces, style te
 We create a text block using `engine.block.create('text')` and add it to the page hierarchy. The `replaceText()` method sets the initial content.
 
 ```typescript highlight-create-text
-    // Create a title text block
-    const titleBlock = engine.block.create('text');
-    engine.block.appendChild(page, titleBlock);
+// Create a title text block
+const titleBlock = engine.block.create('text')
+engine.block.appendChild(page, titleBlock)
 
-    // Set the text content using replaceText
-    engine.block.replaceText(titleBlock, 'Welcome to CE.SDK');
+// Set the text content using replaceText
+engine.block.replaceText(titleBlock, 'Welcome to CE.SDK')
 
-    // Configure auto-sizing so the block adjusts to content
-    engine.block.setWidthMode(titleBlock, 'Auto');
-    engine.block.setHeightMode(titleBlock, 'Auto');
+// Configure auto-sizing so the block adjusts to content
+engine.block.setWidthMode(titleBlock, 'Auto')
+engine.block.setHeightMode(titleBlock, 'Auto')
 
-    // Position at top of document
-    engine.block.setPositionX(titleBlock, margin);
-    engine.block.setPositionY(titleBlock, margin);
+// Position at top of document
+engine.block.setPositionX(titleBlock, margin)
+engine.block.setPositionY(titleBlock, margin)
 ```
 
 Text blocks default to auto-sizing, where both width and height adjust to fit the content. We position the block using `setPositionX()` and `setPositionY()`.
@@ -342,25 +342,25 @@ Text blocks default to auto-sizing, where both width and height adjust to fit th
 We set fonts for text blocks using `setFont()`, which requires a font file URI and a typeface configuration object. The typeface describes the font family and available variants.
 
 ```typescript highlight-set-font
-    // Apply a custom font to the title
-    // Font URIs point to hosted font files (TTF, OTF, WOFF, WOFF2)
-    const fontUri =
-      'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Caveat/Caveat-Bold.ttf';
-    const typeface = {
-      name: 'Caveat',
-      fonts: [
-        {
-          uri: fontUri,
-          subFamily: 'Bold',
-          weight: 'bold' as const,
-          style: 'normal' as const
-        }
-      ]
-    };
-    engine.block.setFont(titleBlock, fontUri, typeface);
+// Apply a custom font to the title
+// Font URIs point to hosted font files (TTF, OTF, WOFF, WOFF2)
+const fontUri
+  = 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Caveat/Caveat-Bold.ttf'
+const typeface = {
+  name: 'Caveat',
+  fonts: [
+    {
+      uri: fontUri,
+      subFamily: 'Bold',
+      weight: 'bold' as const,
+      style: 'normal' as const
+    }
+  ]
+}
+engine.block.setFont(titleBlock, fontUri, typeface)
 
-    // Set font size (80pt for visibility)
-    engine.block.setTextFontSize(titleBlock, fontSize);
+// Set font size (80pt for visibility)
+engine.block.setTextFontSize(titleBlock, fontSize)
 ```
 
 CE.SDK supports TTF, OTF, WOFF, and WOFF2 font formats. The typeface object includes a `name`, and a `fonts` array describing each variant with its URI, weight, style, and sub-family.
@@ -370,50 +370,50 @@ CE.SDK supports TTF, OTF, WOFF, and WOFF2 font formats. The typeface object incl
 We apply rich text formatting to specific character ranges using range-based APIs. Each method accepts start and end indices to target specific portions of the text.
 
 ```typescript highlight-rich-text-styling
-    // Create a text block with rich text styling (multiple colors and weights)
-    const richTextBlock = engine.block.create('text');
-    engine.block.appendChild(page, richTextBlock);
-    engine.block.replaceText(richTextBlock, 'Rich text with colors and styles');
+// Create a text block with rich text styling (multiple colors and weights)
+const richTextBlock = engine.block.create('text')
+engine.block.appendChild(page, richTextBlock)
+engine.block.replaceText(richTextBlock, 'Rich text with colors and styles')
 
-    // Position below title
-    engine.block.setPositionX(richTextBlock, margin);
-    engine.block.setPositionY(richTextBlock, margin + lineSpacing);
-    engine.block.setWidthMode(richTextBlock, 'Auto');
-    engine.block.setHeightMode(richTextBlock, 'Auto');
-    engine.block.setTextFontSize(richTextBlock, fontSize);
+// Position below title
+engine.block.setPositionX(richTextBlock, margin)
+engine.block.setPositionY(richTextBlock, margin + lineSpacing)
+engine.block.setWidthMode(richTextBlock, 'Auto')
+engine.block.setHeightMode(richTextBlock, 'Auto')
+engine.block.setTextFontSize(richTextBlock, fontSize)
 
-    // Apply different colors to specific ranges
-    // "Rich" (0-4) in blue
-    engine.block.setTextColor(
-      richTextBlock,
-      { r: 0.2, g: 0.4, b: 0.8, a: 1.0 },
-      0,
-      4
-    );
+// Apply different colors to specific ranges
+// "Rich" (0-4) in blue
+engine.block.setTextColor(
+  richTextBlock,
+  { r: 0.2, g: 0.4, b: 0.8, a: 1.0 },
+  0,
+  4
+)
 
-    // "text" (5-9) in green
-    engine.block.setTextColor(
-      richTextBlock,
-      { r: 0.2, g: 0.7, b: 0.3, a: 1.0 },
-      5,
-      9
-    );
+// "text" (5-9) in green
+engine.block.setTextColor(
+  richTextBlock,
+  { r: 0.2, g: 0.7, b: 0.3, a: 1.0 },
+  5,
+  9
+)
 
-    // "colors" (15-21) in orange
-    engine.block.setTextColor(
-      richTextBlock,
-      { r: 0.9, g: 0.5, b: 0.1, a: 1.0 },
-      15,
-      21
-    );
+// "colors" (15-21) in orange
+engine.block.setTextColor(
+  richTextBlock,
+  { r: 0.9, g: 0.5, b: 0.1, a: 1.0 },
+  15,
+  21
+)
 
-    // "styles" (26-32) in purple
-    engine.block.setTextColor(
-      richTextBlock,
-      { r: 0.6, g: 0.2, b: 0.8, a: 1.0 },
-      26,
-      32
-    );
+// "styles" (26-32) in purple
+engine.block.setTextColor(
+  richTextBlock,
+  { r: 0.6, g: 0.2, b: 0.8, a: 1.0 },
+  26,
+  32
+)
 ```
 
 The range indices use UTF-16 code unit positions. We can apply:
@@ -428,20 +428,20 @@ The range indices use UTF-16 code unit positions. We can apply:
 We control how text blocks resize using width and height modes. Setting `setHeightMode(block, 'Auto')` allows the block height to adjust based on content, while a fixed width causes text to wrap.
 
 ```typescript highlight-auto-sizing
-    // Create a text block demonstrating auto-sizing with fixed width
-    const autoSizeBlock = engine.block.create('text');
-    engine.block.appendChild(page, autoSizeBlock);
-    engine.block.replaceText(autoSizeBlock, 'Auto-sizing text block');
+// Create a text block demonstrating auto-sizing with fixed width
+const autoSizeBlock = engine.block.create('text')
+engine.block.appendChild(page, autoSizeBlock)
+engine.block.replaceText(autoSizeBlock, 'Auto-sizing text block')
 
-    // Position below rich text
-    engine.block.setPositionX(autoSizeBlock, margin);
-    engine.block.setPositionY(autoSizeBlock, margin + lineSpacing * 2);
+// Position below rich text
+engine.block.setPositionX(autoSizeBlock, margin)
+engine.block.setPositionY(autoSizeBlock, margin + lineSpacing * 2)
 
-    // Set fixed width but auto height - text wraps and height adjusts
-    engine.block.setWidth(autoSizeBlock, pageWidth - margin * 2);
-    engine.block.setWidthMode(autoSizeBlock, 'Absolute');
-    engine.block.setHeightMode(autoSizeBlock, 'Auto');
-    engine.block.setTextFontSize(autoSizeBlock, fontSize);
+// Set fixed width but auto height - text wraps and height adjusts
+engine.block.setWidth(autoSizeBlock, pageWidth - margin * 2)
+engine.block.setWidthMode(autoSizeBlock, 'Absolute')
+engine.block.setHeightMode(autoSizeBlock, 'Auto')
+engine.block.setTextFontSize(autoSizeBlock, fontSize)
 ```
 
 Available sizing modes include:
@@ -455,20 +455,20 @@ Available sizing modes include:
 We transform text appearance without changing the underlying content using `setTextCase()`. This applies visual transformations while preserving the original text.
 
 ```typescript highlight-text-case
-    // Create a text block demonstrating text case transformations
-    const caseBlock = engine.block.create('text');
-    engine.block.appendChild(page, caseBlock);
-    engine.block.replaceText(caseBlock, 'uppercase text');
+// Create a text block demonstrating text case transformations
+const caseBlock = engine.block.create('text')
+engine.block.appendChild(page, caseBlock)
+engine.block.replaceText(caseBlock, 'uppercase text')
 
-    // Position below auto-size block
-    engine.block.setPositionX(caseBlock, margin);
-    engine.block.setPositionY(caseBlock, margin + lineSpacing * 3);
-    engine.block.setWidthMode(caseBlock, 'Auto');
-    engine.block.setHeightMode(caseBlock, 'Auto');
-    engine.block.setTextFontSize(caseBlock, fontSize);
+// Position below auto-size block
+engine.block.setPositionX(caseBlock, margin)
+engine.block.setPositionY(caseBlock, margin + lineSpacing * 3)
+engine.block.setWidthMode(caseBlock, 'Auto')
+engine.block.setHeightMode(caseBlock, 'Auto')
+engine.block.setTextFontSize(caseBlock, fontSize)
 
-    // Transform the entire text to uppercase without changing the source
-    engine.block.setTextCase(caseBlock, 'Uppercase');
+// Transform the entire text to uppercase without changing the source
+engine.block.setTextCase(caseBlock, 'Uppercase')
 ```
 
 Available text cases include 'Normal', 'Uppercase', 'Lowercase', and 'Titlecase'.
@@ -478,29 +478,29 @@ Available text cases include 'Normal', 'Uppercase', 'Lowercase', and 'Titlecase'
 We configure text layout properties using `setEnum()` for alignment and `setFloat()` for spacing values.
 
 ```typescript highlight-text-alignment
-    // Create a centered text block with custom spacing
-    const alignedBlock = engine.block.create('text');
-    engine.block.appendChild(page, alignedBlock);
-    engine.block.replaceText(alignedBlock, 'Centered Text\nWith Line Spacing');
+// Create a centered text block with custom spacing
+const alignedBlock = engine.block.create('text')
+engine.block.appendChild(page, alignedBlock)
+engine.block.replaceText(alignedBlock, 'Centered Text\nWith Line Spacing')
 
-    // Position at bottom of document
-    engine.block.setPositionX(alignedBlock, margin);
-    engine.block.setPositionY(alignedBlock, margin + lineSpacing * 6);
+// Position at bottom of document
+engine.block.setPositionX(alignedBlock, margin)
+engine.block.setPositionY(alignedBlock, margin + lineSpacing * 6)
 
-    // Set explicit dimensions for centered alignment
-    engine.block.setWidth(alignedBlock, pageWidth - margin * 2);
-    engine.block.setWidthMode(alignedBlock, 'Absolute');
-    engine.block.setHeightMode(alignedBlock, 'Auto');
-    engine.block.setTextFontSize(alignedBlock, fontSize);
+// Set explicit dimensions for centered alignment
+engine.block.setWidth(alignedBlock, pageWidth - margin * 2)
+engine.block.setWidthMode(alignedBlock, 'Absolute')
+engine.block.setHeightMode(alignedBlock, 'Auto')
+engine.block.setTextFontSize(alignedBlock, fontSize)
 
-    // Set horizontal alignment to center
-    engine.block.setEnum(alignedBlock, 'text/horizontalAlignment', 'Center');
+// Set horizontal alignment to center
+engine.block.setEnum(alignedBlock, 'text/horizontalAlignment', 'Center')
 
-    // Adjust line height (1.5 = 150% of font size)
-    engine.block.setFloat(alignedBlock, 'text/lineHeight', 1.5);
+// Adjust line height (1.5 = 150% of font size)
+engine.block.setFloat(alignedBlock, 'text/lineHeight', 1.5)
 
-    // Adjust letter spacing (0.05 = 5% of font size)
-    engine.block.setFloat(alignedBlock, 'text/letterSpacing', 0.05);
+// Adjust letter spacing (0.05 = 5% of font size)
+engine.block.setFloat(alignedBlock, 'text/letterSpacing', 0.05)
 ```
 
 Horizontal alignment options include 'Left', 'Center', 'Right', and 'Auto'. Line height is a multiplier of the font size (1.5 = 150%), and letter spacing is a proportion of the font size.
@@ -510,53 +510,53 @@ Horizontal alignment options include 'Left', 'Center', 'Right', and 'Auto'. Line
 We use convenience methods to toggle bold and italic formatting. These methods switch between the normal and formatted states.
 
 ```typescript highlight-toggle-bold-italic
-    // Create a text block demonstrating bold/italic toggle
-    const toggleBlock = engine.block.create('text');
-    engine.block.appendChild(page, toggleBlock);
-    engine.block.replaceText(toggleBlock, 'Toggle Bold and Italic');
+// Create a text block demonstrating bold/italic toggle
+const toggleBlock = engine.block.create('text')
+engine.block.appendChild(page, toggleBlock)
+engine.block.replaceText(toggleBlock, 'Toggle Bold and Italic')
 
-    // Position below case block
-    engine.block.setPositionX(toggleBlock, margin);
-    engine.block.setPositionY(toggleBlock, margin + lineSpacing * 4);
-    engine.block.setWidthMode(toggleBlock, 'Auto');
-    engine.block.setHeightMode(toggleBlock, 'Auto');
-    engine.block.setTextFontSize(toggleBlock, fontSize);
+// Position below case block
+engine.block.setPositionX(toggleBlock, margin)
+engine.block.setPositionY(toggleBlock, margin + lineSpacing * 4)
+engine.block.setWidthMode(toggleBlock, 'Auto')
+engine.block.setHeightMode(toggleBlock, 'Auto')
+engine.block.setTextFontSize(toggleBlock, fontSize)
 
-    // Set a font that supports bold/italic variants
-    const robotoTypeface = {
-      name: 'Roboto',
-      fonts: [
-        {
-          uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf',
-          subFamily: 'Regular',
-          weight: 'normal' as const,
-          style: 'normal' as const
-        },
-        {
-          uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Bold.ttf',
-          subFamily: 'Bold',
-          weight: 'bold' as const,
-          style: 'normal' as const
-        },
-        {
-          uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Italic.ttf',
-          subFamily: 'Italic',
-          weight: 'normal' as const,
-          style: 'italic' as const
-        }
-      ]
-    };
-    engine.block.setFont(
-      toggleBlock,
-      'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf',
-      robotoTypeface
-    );
+// Set a font that supports bold/italic variants
+const robotoTypeface = {
+  name: 'Roboto',
+  fonts: [
+    {
+      uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf',
+      subFamily: 'Regular',
+      weight: 'normal' as const,
+      style: 'normal' as const
+    },
+    {
+      uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Bold.ttf',
+      subFamily: 'Bold',
+      weight: 'bold' as const,
+      style: 'normal' as const
+    },
+    {
+      uri: 'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Italic.ttf',
+      subFamily: 'Italic',
+      weight: 'normal' as const,
+      style: 'italic' as const
+    }
+  ]
+}
+engine.block.setFont(
+  toggleBlock,
+  'https://cdn.img.ly/packages/imgly/cesdk-js/latest/assets/extensions/ly.img.cesdk.fonts/fonts/Roboto/Roboto-Regular.ttf',
+  robotoTypeface
+)
 
-    // Toggle bold for "Bold" (7-11)
-    engine.block.toggleBoldFont(toggleBlock, 7, 11);
+// Toggle bold for "Bold" (7-11)
+engine.block.toggleBoldFont(toggleBlock, 7, 11)
 
-    // Toggle italic for "Italic" (16-22)
-    engine.block.toggleItalicFont(toggleBlock, 16, 22);
+// Toggle italic for "Italic" (16-22)
+engine.block.toggleItalicFont(toggleBlock, 16, 22)
 ```
 
 The `toggleBoldFont()` and `toggleItalicFont()` methods check if the font supports the variant before toggling. Use `canToggleBoldFont()` and `canToggleItalicFont()` to verify availability.
@@ -566,21 +566,21 @@ The `toggleBoldFont()` and `toggleItalicFont()` methods check if the font suppor
 We replace or remove text using range-based operations. The `replaceText()` method substitutes text at specific positions while preserving surrounding formatting.
 
 ```typescript highlight-modify-text
-    // Create a text block to demonstrate text modification
-    const modifyBlock = engine.block.create('text');
-    engine.block.appendChild(page, modifyBlock);
-    engine.block.replaceText(modifyBlock, 'Hello World');
+// Create a text block to demonstrate text modification
+const modifyBlock = engine.block.create('text')
+engine.block.appendChild(page, modifyBlock)
+engine.block.replaceText(modifyBlock, 'Hello World')
 
-    // Position below toggle block
-    engine.block.setPositionX(modifyBlock, margin);
-    engine.block.setPositionY(modifyBlock, margin + lineSpacing * 5);
-    engine.block.setWidthMode(modifyBlock, 'Auto');
-    engine.block.setHeightMode(modifyBlock, 'Auto');
-    engine.block.setTextFontSize(modifyBlock, fontSize);
+// Position below toggle block
+engine.block.setPositionX(modifyBlock, margin)
+engine.block.setPositionY(modifyBlock, margin + lineSpacing * 5)
+engine.block.setWidthMode(modifyBlock, 'Auto')
+engine.block.setHeightMode(modifyBlock, 'Auto')
+engine.block.setTextFontSize(modifyBlock, fontSize)
 
-    // Replace "World" with "CE.SDK" (range 6-11)
-    engine.block.replaceText(modifyBlock, 'CE.SDK', 6, 11);
-    // Result: "Hello CE.SDK"
+// Replace "World" with "CE.SDK" (range 6-11)
+engine.block.replaceText(modifyBlock, 'CE.SDK', 6, 11)
+// Result: "Hello CE.SDK"
 ```
 
 When range parameters are omitted, `replaceText()` replaces the entire text content. The `removeText()` method deletes text within a specified range.

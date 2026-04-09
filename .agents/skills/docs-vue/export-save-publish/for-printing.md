@@ -25,7 +25,7 @@ resolution.
 CE.SDK exports designs as PDFs, but professional print workflows require specific configurations beyond standard export. This guide covers PDF export options for print, including high compatibility mode for complex designs, underlayers for printing on special media, and output resolution settings.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-for-printing-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Export for Printing Guide
@@ -54,21 +54,21 @@ import packageJson from './package.json';
  * - Setting scene DPI for print resolution
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -79,46 +79,46 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load a template scene - this will be our print design
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
+    )
 
     // Get the scene and page
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (!scene) {
-      throw new Error('No scene found');
+      throw new Error('No scene found')
     }
-    const page = engine.scene.getCurrentPage();
+    const page = engine.scene.getCurrentPage()
     if (!page) {
-      throw new Error('No page found');
+      throw new Error('No page found')
     }
 
     // Set print resolution (DPI) on the scene
     // 300 DPI is standard for high-quality print output
-    engine.block.setFloat(scene, 'scene/dpi', 300);
+    engine.block.setFloat(scene, 'scene/dpi', 300)
 
     // Helper function to download blob
     const downloadBlob = (blob: Blob, filename: string) => {
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
-      URL.revokeObjectURL(url);
-    };
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = filename
+      anchor.click()
+      URL.revokeObjectURL(url)
+    }
 
     // Export PDF with high compatibility mode
     const exportWithHighCompatibility = async () => {
@@ -127,14 +127,14 @@ class Example implements EditorPlugin {
       const pdfBlob = await engine.block.export(page, {
         mimeType: 'application/pdf',
         exportPdfWithHighCompatibility: true
-      });
+      })
 
-      downloadBlob(pdfBlob, 'print-high-compatibility.pdf');
+      downloadBlob(pdfBlob, 'print-high-compatibility.pdf')
       cesdk.ui.showNotification({
         message: `PDF exported with high compatibility (${(pdfBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export PDF without high compatibility (faster, smaller files)
     const exportStandardPdf = async () => {
@@ -143,21 +143,21 @@ class Example implements EditorPlugin {
       const pdfBlob = await engine.block.export(page, {
         mimeType: 'application/pdf',
         exportPdfWithHighCompatibility: false
-      });
+      })
 
-      downloadBlob(pdfBlob, 'print-standard.pdf');
+      downloadBlob(pdfBlob, 'print-standard.pdf')
       cesdk.ui.showNotification({
         message: `Standard PDF exported (${(pdfBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Define underlayer spot color and export with underlayer
     const exportWithUnderlayer = async () => {
       // Define the underlayer spot color before export
       // This creates a named spot color that will be used for the underlayer ink
       // The RGB values (0.8, 0.8, 0.8) provide a preview representation
-      engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8);
+      engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8)
 
       // Export with underlayer enabled for DTF or special media printing
       // The underlayer generates a shape behind design elements filled with the spot color
@@ -168,14 +168,14 @@ class Example implements EditorPlugin {
         underlayerSpotColorName: 'RDG_WHITE',
         // Negative offset shrinks the underlayer inward to prevent visible edges
         underlayerOffset: -2.0
-      });
+      })
 
-      downloadBlob(pdfBlob, 'print-with-underlayer.pdf');
+      downloadBlob(pdfBlob, 'print-with-underlayer.pdf')
       cesdk.ui.showNotification({
         message: `PDF exported with underlayer (${(pdfBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Export with custom target size
     const exportWithTargetSize = async () => {
@@ -186,14 +186,14 @@ class Example implements EditorPlugin {
         exportPdfWithHighCompatibility: true,
         targetWidth: 2480, // A4 at 300 DPI (210mm)
         targetHeight: 3508 // A4 at 300 DPI (297mm)
-      });
+      })
 
-      downloadBlob(pdfBlob, 'print-a4-300dpi.pdf');
+      downloadBlob(pdfBlob, 'print-a4-300dpi.pdf')
       cesdk.ui.showNotification({
         message: `A4 PDF exported (${(pdfBlob.size / 1024).toFixed(1)} KB)`,
         type: 'success'
-      });
-    };
+      })
+    }
 
     // Configure navigation bar with export buttons
     cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
@@ -232,18 +232,18 @@ class Example implements EditorPlugin {
         icon: '@imgly/Save',
         variant: 'plain'
       }
-    ]);
+    ])
 
     cesdk.ui.showNotification({
       message:
         'Use the export buttons to export print-ready PDFs with different options',
       type: 'info',
       duration: 'infinite'
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 ## Default PDF Color Behavior
@@ -257,24 +257,24 @@ The base `engine.block.export()` method provides print compatibility options, bu
 Before exporting, configure your scene with appropriate print settings. Set the scene's DPI to control print resolution—300 DPI is standard for high-quality print output.
 
 ```typescript highlight-setup
-    // Load a template scene - this will be our print design
-    await engine.scene.loadFromURL(
-      'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
+// Load a template scene - this will be our print design
+await engine.scene.loadFromURL(
+  'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
+)
 
-    // Get the scene and page
-    const scene = engine.scene.get();
-    if (!scene) {
-      throw new Error('No scene found');
-    }
-    const page = engine.scene.getCurrentPage();
-    if (!page) {
-      throw new Error('No page found');
-    }
+// Get the scene and page
+const scene = engine.scene.get()
+if (!scene) {
+  throw new Error('No scene found')
+}
+const page = engine.scene.getCurrentPage()
+if (!page) {
+  throw new Error('No page found')
+}
 
-    // Set print resolution (DPI) on the scene
-    // 300 DPI is standard for high-quality print output
-    engine.block.setFloat(scene, 'scene/dpi', 300);
+// Set print resolution (DPI) on the scene
+// 300 DPI is standard for high-quality print output
+engine.block.setFloat(scene, 'scene/dpi', 300)
 ```
 
 ## PDF Export Options for Print
@@ -295,7 +295,7 @@ The `exportPdfWithHighCompatibility` option rasterizes complex elements like gra
 const pdfBlob = await engine.block.export(page, {
   mimeType: 'application/pdf',
   exportPdfWithHighCompatibility: true
-});
+})
 ```
 
 Disabling high compatibility produces faster exports with smaller file sizes but may cause rendering inconsistencies in some PDF viewers.
@@ -310,7 +310,7 @@ When targeting modern PDF viewers where file size and export speed matter more t
 const pdfBlob = await engine.block.export(page, {
   mimeType: 'application/pdf',
   exportPdfWithHighCompatibility: false
-});
+})
 ```
 
 ## Underlayers for Special Media
@@ -329,7 +329,7 @@ Before exporting with an underlayer, define the spot color that represents the u
 // Define the underlayer spot color before export
 // This creates a named spot color that will be used for the underlayer ink
 // The RGB values (0.8, 0.8, 0.8) provide a preview representation
-engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8);
+engine.editor.setSpotColorRGB('RDG_WHITE', 0.8, 0.8, 0.8)
 ```
 
 ### Export with Underlayer
@@ -346,7 +346,7 @@ const pdfBlob = await engine.block.export(page, {
   underlayerSpotColorName: 'RDG_WHITE',
   // Negative offset shrinks the underlayer inward to prevent visible edges
   underlayerOffset: -2.0
-});
+})
 ```
 
 ### Underlayer Offset
@@ -365,7 +365,7 @@ const pdfBlob = await engine.block.export(page, {
   exportPdfWithHighCompatibility: true,
   targetWidth: 2480, // A4 at 300 DPI (210mm)
   targetHeight: 3508 // A4 at 300 DPI (297mm)
-});
+})
 ```
 
 ## CMYK PDFs with ICC Profiles

@@ -23,7 +23,7 @@ Understand the three color spaces in CE.SDK and when to use each for screen or p
 CE.SDK supports three color spaces: **sRGB** for screen display, **CMYK** for print workflows, and **Spot Color** for specialized printing. Each color space serves different output types and has its own object format for the `setColor()` API.
 
 ```typescript file=@cesdk_web_examples/guides-colors-basics-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,28 +39,28 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
     // Enable spot color feature for the UI
-    cesdk.feature.enable('ly.img.spotColor');
-    await cesdk.addPlugin(new DesignEditorConfig());
+    cesdk.feature.enable('ly.img.spotColor')
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -71,64 +71,64 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Calculate block sizes for three columns
-    const margin = 40;
-    const spacing = 30;
-    const availableWidth = pageWidth - 2 * margin - 2 * spacing;
-    const blockWidth = availableWidth / 3;
-    const blockHeight = pageHeight - 2 * margin - 80; // Leave space for labels
+    const margin = 40
+    const spacing = 30
+    const availableWidth = pageWidth - 2 * margin - 2 * spacing
+    const blockWidth = availableWidth / 3
+    const blockHeight = pageHeight - 2 * margin - 80 // Leave space for labels
 
     // Define a spot color with RGB approximation for screen preview
-    engine.editor.setSpotColorRGB('MyBrand Red', 0.95, 0.25, 0.21);
+    engine.editor.setSpotColorRGB('MyBrand Red', 0.95, 0.25, 0.21)
 
     // Create three blocks to demonstrate each color space
 
     // Block 1: sRGB color (for screen display)
-    const srgbBlock = engine.block.create('//ly.img.ubq/graphic');
+    const srgbBlock = engine.block.create('//ly.img.ubq/graphic')
     engine.block.setShape(
       srgbBlock,
       engine.block.createShape('//ly.img.ubq/shape/rect')
-    );
-    const srgbFill = engine.block.createFill('//ly.img.ubq/fill/color');
+    )
+    const srgbFill = engine.block.createFill('//ly.img.ubq/fill/color')
     // Set fill color using RGBAColor object (values 0.0-1.0)
     engine.block.setColor(srgbFill, 'fill/color/value', {
       r: 0.2,
       g: 0.4,
       b: 0.9,
       a: 1.0
-    });
-    engine.block.setFill(srgbBlock, srgbFill);
-    engine.block.setWidth(srgbBlock, blockWidth);
-    engine.block.setHeight(srgbBlock, blockHeight);
-    engine.block.appendChild(page, srgbBlock);
+    })
+    engine.block.setFill(srgbBlock, srgbFill)
+    engine.block.setWidth(srgbBlock, blockWidth)
+    engine.block.setHeight(srgbBlock, blockHeight)
+    engine.block.appendChild(page, srgbBlock)
 
     // Block 2: CMYK color (for print workflows)
-    const cmykBlock = engine.block.create('//ly.img.ubq/graphic');
+    const cmykBlock = engine.block.create('//ly.img.ubq/graphic')
     engine.block.setShape(
       cmykBlock,
       engine.block.createShape('//ly.img.ubq/shape/rect')
-    );
-    const cmykFill = engine.block.createFill('//ly.img.ubq/fill/color');
+    )
+    const cmykFill = engine.block.createFill('//ly.img.ubq/fill/color')
     // Set fill color using CMYKColor object (values 0.0-1.0, tint controls opacity)
     engine.block.setColor(cmykFill, 'fill/color/value', {
       c: 0.0,
@@ -136,61 +136,61 @@ class Example implements EditorPlugin {
       y: 0.95,
       k: 0.0,
       tint: 1.0
-    });
-    engine.block.setFill(cmykBlock, cmykFill);
-    engine.block.setWidth(cmykBlock, blockWidth);
-    engine.block.setHeight(cmykBlock, blockHeight);
-    engine.block.appendChild(page, cmykBlock);
+    })
+    engine.block.setFill(cmykBlock, cmykFill)
+    engine.block.setWidth(cmykBlock, blockWidth)
+    engine.block.setHeight(cmykBlock, blockHeight)
+    engine.block.appendChild(page, cmykBlock)
 
     // Block 3: Spot color (for specialized printing)
-    const spotBlock = engine.block.create('//ly.img.ubq/graphic');
+    const spotBlock = engine.block.create('//ly.img.ubq/graphic')
     engine.block.setShape(
       spotBlock,
       engine.block.createShape('//ly.img.ubq/shape/rect')
-    );
-    const spotFill = engine.block.createFill('//ly.img.ubq/fill/color');
+    )
+    const spotFill = engine.block.createFill('//ly.img.ubq/fill/color')
     // Set fill color using SpotColor object (references the defined spot color)
     engine.block.setColor(spotFill, 'fill/color/value', {
       name: 'MyBrand Red',
       tint: 1.0,
       externalReference: ''
-    });
-    engine.block.setFill(spotBlock, spotFill);
-    engine.block.setWidth(spotBlock, blockWidth);
-    engine.block.setHeight(spotBlock, blockHeight);
-    engine.block.appendChild(page, spotBlock);
+    })
+    engine.block.setFill(spotBlock, spotFill)
+    engine.block.setWidth(spotBlock, blockWidth)
+    engine.block.setHeight(spotBlock, blockHeight)
+    engine.block.appendChild(page, spotBlock)
 
     // Add strokes to demonstrate stroke color property
-    engine.block.setStrokeEnabled(srgbBlock, true);
-    engine.block.setStrokeWidth(srgbBlock, 4);
+    engine.block.setStrokeEnabled(srgbBlock, true)
+    engine.block.setStrokeWidth(srgbBlock, 4)
     engine.block.setColor(srgbBlock, 'stroke/color', {
       r: 0.1,
       g: 0.2,
       b: 0.5,
       a: 1.0
-    });
+    })
 
-    engine.block.setStrokeEnabled(cmykBlock, true);
-    engine.block.setStrokeWidth(cmykBlock, 4);
+    engine.block.setStrokeEnabled(cmykBlock, true)
+    engine.block.setStrokeWidth(cmykBlock, 4)
     engine.block.setColor(cmykBlock, 'stroke/color', {
       c: 0.0,
       m: 0.5,
       y: 0.6,
       k: 0.2,
       tint: 1.0
-    });
+    })
 
-    engine.block.setStrokeEnabled(spotBlock, true);
-    engine.block.setStrokeWidth(spotBlock, 4);
+    engine.block.setStrokeEnabled(spotBlock, true)
+    engine.block.setStrokeWidth(spotBlock, 4)
     engine.block.setColor(spotBlock, 'stroke/color', {
       name: 'MyBrand Red',
       tint: 0.7,
       externalReference: ''
-    });
+    })
 
     // Create labels for each color space
-    const labelY = margin + blockHeight + 20;
-    const fontSize = 24;
+    const labelY = margin + blockHeight + 20
+    const fontSize = 24
 
     const labels = [
       { text: 'sRGB', x: margin + blockWidth / 2 },
@@ -199,46 +199,46 @@ class Example implements EditorPlugin {
         text: 'Spot Color',
         x: margin + 2 * (blockWidth + spacing) + blockWidth / 2
       }
-    ];
+    ]
 
     for (const label of labels) {
-      const textBlock = engine.block.create('//ly.img.ubq/text');
-      engine.block.replaceText(textBlock, label.text);
-      engine.block.setTextFontSize(textBlock, fontSize);
-      engine.block.setWidthMode(textBlock, 'Auto');
-      engine.block.setHeightMode(textBlock, 'Auto');
-      engine.block.appendChild(page, textBlock);
+      const textBlock = engine.block.create('//ly.img.ubq/text')
+      engine.block.replaceText(textBlock, label.text)
+      engine.block.setTextFontSize(textBlock, fontSize)
+      engine.block.setWidthMode(textBlock, 'Auto')
+      engine.block.setHeightMode(textBlock, 'Auto')
+      engine.block.appendChild(page, textBlock)
 
       // Center the label below each block
-      const textWidth = engine.block.getWidth(textBlock);
-      engine.block.setPositionX(textBlock, label.x - textWidth / 2);
-      engine.block.setPositionY(textBlock, labelY);
+      const textWidth = engine.block.getWidth(textBlock)
+      engine.block.setPositionX(textBlock, label.x - textWidth / 2)
+      engine.block.setPositionY(textBlock, labelY)
     }
 
     // Position all color blocks
-    engine.block.setPositionX(srgbBlock, margin);
-    engine.block.setPositionY(srgbBlock, margin);
+    engine.block.setPositionX(srgbBlock, margin)
+    engine.block.setPositionY(srgbBlock, margin)
 
-    engine.block.setPositionX(cmykBlock, margin + blockWidth + spacing);
-    engine.block.setPositionY(cmykBlock, margin);
+    engine.block.setPositionX(cmykBlock, margin + blockWidth + spacing)
+    engine.block.setPositionY(cmykBlock, margin)
 
-    engine.block.setPositionX(spotBlock, margin + 2 * (blockWidth + spacing));
-    engine.block.setPositionY(spotBlock, margin);
+    engine.block.setPositionX(spotBlock, margin + 2 * (blockWidth + spacing))
+    engine.block.setPositionY(spotBlock, margin)
 
     // Retrieve and log color values to demonstrate getColor()
-    const srgbColor = engine.block.getColor(srgbFill, 'fill/color/value');
-    const cmykColor = engine.block.getColor(cmykFill, 'fill/color/value');
-    const spotColor = engine.block.getColor(spotFill, 'fill/color/value');
+    const srgbColor = engine.block.getColor(srgbFill, 'fill/color/value')
+    const cmykColor = engine.block.getColor(cmykFill, 'fill/color/value')
+    const spotColor = engine.block.getColor(spotFill, 'fill/color/value')
 
-    console.log('sRGB Color:', srgbColor);
-    console.log('CMYK Color:', cmykColor);
-    console.log('Spot Color:', spotColor);
+    console.log('sRGB Color:', srgbColor)
+    console.log('CMYK Color:', cmykColor)
+    console.log('Spot Color:', spotColor)
 
-    console.log('Color Basics example loaded successfully');
+    console.log('Color Basics example loaded successfully')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to choose the correct color space, define and apply colors using the unified `setColor()` API, and configure spot colors with screen preview approximations.
@@ -261,23 +261,23 @@ sRGB is the default color space for screen display. Pass an `RGBAColor` object w
 
 ```typescript highlight=highlight-srgb-color
 // Block 1: sRGB color (for screen display)
-const srgbBlock = engine.block.create('//ly.img.ubq/graphic');
+const srgbBlock = engine.block.create('//ly.img.ubq/graphic')
 engine.block.setShape(
   srgbBlock,
   engine.block.createShape('//ly.img.ubq/shape/rect')
-);
-const srgbFill = engine.block.createFill('//ly.img.ubq/fill/color');
+)
+const srgbFill = engine.block.createFill('//ly.img.ubq/fill/color')
 // Set fill color using RGBAColor object (values 0.0-1.0)
 engine.block.setColor(srgbFill, 'fill/color/value', {
   r: 0.2,
   g: 0.4,
   b: 0.9,
   a: 1.0
-});
-engine.block.setFill(srgbBlock, srgbFill);
-engine.block.setWidth(srgbBlock, blockWidth);
-engine.block.setHeight(srgbBlock, blockHeight);
-engine.block.appendChild(page, srgbBlock);
+})
+engine.block.setFill(srgbBlock, srgbFill)
+engine.block.setWidth(srgbBlock, blockWidth)
+engine.block.setHeight(srgbBlock, blockHeight)
+engine.block.appendChild(page, srgbBlock)
 ```
 
 sRGB colors are ideal for web and digital content where the output is displayed on screens.
@@ -288,12 +288,12 @@ CMYK is the color space for print workflows. Pass a `CMYKColor` object with `c`,
 
 ```typescript highlight=highlight-cmyk-color
 // Block 2: CMYK color (for print workflows)
-const cmykBlock = engine.block.create('//ly.img.ubq/graphic');
+const cmykBlock = engine.block.create('//ly.img.ubq/graphic')
 engine.block.setShape(
   cmykBlock,
   engine.block.createShape('//ly.img.ubq/shape/rect')
-);
-const cmykFill = engine.block.createFill('//ly.img.ubq/fill/color');
+)
+const cmykFill = engine.block.createFill('//ly.img.ubq/fill/color')
 // Set fill color using CMYKColor object (values 0.0-1.0, tint controls opacity)
 engine.block.setColor(cmykFill, 'fill/color/value', {
   c: 0.0,
@@ -301,11 +301,11 @@ engine.block.setColor(cmykFill, 'fill/color/value', {
   y: 0.95,
   k: 0.0,
   tint: 1.0
-});
-engine.block.setFill(cmykBlock, cmykFill);
-engine.block.setWidth(cmykBlock, blockWidth);
-engine.block.setHeight(cmykBlock, blockHeight);
-engine.block.appendChild(page, cmykBlock);
+})
+engine.block.setFill(cmykBlock, cmykFill)
+engine.block.setWidth(cmykBlock, blockWidth)
+engine.block.setHeight(cmykBlock, blockHeight)
+engine.block.appendChild(page, cmykBlock)
 ```
 
 When rendered on screen, CMYK colors are converted to RGB using standard conversion formulas. The `tint` value (0.0 to 1.0) is rendered as transparency.
@@ -322,7 +322,7 @@ Use `engine.editor.setSpotColorRGB()` or `engine.editor.setSpotColorCMYK()` to r
 
 ```typescript highlight=highlight-define-spot-color
 // Define a spot color with RGB approximation for screen preview
-engine.editor.setSpotColorRGB('MyBrand Red', 0.95, 0.25, 0.21);
+engine.editor.setSpotColorRGB('MyBrand Red', 0.95, 0.25, 0.21)
 ```
 
 ### Applying Spot Colors
@@ -331,22 +331,22 @@ Reference a defined spot color using a `SpotColor` object with the `name`, `tint
 
 ```typescript highlight=highlight-spot-color
 // Block 3: Spot color (for specialized printing)
-const spotBlock = engine.block.create('//ly.img.ubq/graphic');
+const spotBlock = engine.block.create('//ly.img.ubq/graphic')
 engine.block.setShape(
   spotBlock,
   engine.block.createShape('//ly.img.ubq/shape/rect')
-);
-const spotFill = engine.block.createFill('//ly.img.ubq/fill/color');
+)
+const spotFill = engine.block.createFill('//ly.img.ubq/fill/color')
 // Set fill color using SpotColor object (references the defined spot color)
 engine.block.setColor(spotFill, 'fill/color/value', {
   name: 'MyBrand Red',
   tint: 1.0,
   externalReference: ''
-});
-engine.block.setFill(spotBlock, spotFill);
-engine.block.setWidth(spotBlock, blockWidth);
-engine.block.setHeight(spotBlock, blockHeight);
-engine.block.appendChild(page, spotBlock);
+})
+engine.block.setFill(spotBlock, spotFill)
+engine.block.setWidth(spotBlock, blockWidth)
+engine.block.setHeight(spotBlock, blockHeight)
+engine.block.appendChild(page, spotBlock)
 ```
 
 When rendered on screen, the spot color uses its RGB or CMYK approximation. During PDF export, spot colors are saved as a [Separation Color Space](https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/pdfreference1.6.pdf#G9.1850648) that preserves print information.
@@ -358,33 +358,33 @@ When rendered on screen, the spot color uses its RGB or CMYK approximation. Duri
 Strokes support all three color spaces. Enable the stroke, set its width, then apply a color using the `'stroke/color'` property.
 
 ```typescript highlight=highlight-stroke-color
-    // Add strokes to demonstrate stroke color property
-    engine.block.setStrokeEnabled(srgbBlock, true);
-    engine.block.setStrokeWidth(srgbBlock, 4);
-    engine.block.setColor(srgbBlock, 'stroke/color', {
-      r: 0.1,
-      g: 0.2,
-      b: 0.5,
-      a: 1.0
-    });
+// Add strokes to demonstrate stroke color property
+engine.block.setStrokeEnabled(srgbBlock, true)
+engine.block.setStrokeWidth(srgbBlock, 4)
+engine.block.setColor(srgbBlock, 'stroke/color', {
+  r: 0.1,
+  g: 0.2,
+  b: 0.5,
+  a: 1.0
+})
 
-    engine.block.setStrokeEnabled(cmykBlock, true);
-    engine.block.setStrokeWidth(cmykBlock, 4);
-    engine.block.setColor(cmykBlock, 'stroke/color', {
-      c: 0.0,
-      m: 0.5,
-      y: 0.6,
-      k: 0.2,
-      tint: 1.0
-    });
+engine.block.setStrokeEnabled(cmykBlock, true)
+engine.block.setStrokeWidth(cmykBlock, 4)
+engine.block.setColor(cmykBlock, 'stroke/color', {
+  c: 0.0,
+  m: 0.5,
+  y: 0.6,
+  k: 0.2,
+  tint: 1.0
+})
 
-    engine.block.setStrokeEnabled(spotBlock, true);
-    engine.block.setStrokeWidth(spotBlock, 4);
-    engine.block.setColor(spotBlock, 'stroke/color', {
-      name: 'MyBrand Red',
-      tint: 0.7,
-      externalReference: ''
-    });
+engine.block.setStrokeEnabled(spotBlock, true)
+engine.block.setStrokeWidth(spotBlock, 4)
+engine.block.setColor(spotBlock, 'stroke/color', {
+  name: 'MyBrand Red',
+  tint: 0.7,
+  externalReference: ''
+})
 ```
 
 ## Reading Color Values
@@ -392,14 +392,14 @@ Strokes support all three color spaces. Enable the stroke, set its width, then a
 Use `engine.block.getColor()` to retrieve the current color value from a property. The returned object's shape indicates the color space (RGBAColor, CMYKColor, or SpotColor).
 
 ```typescript highlight=highlight-get-color
-    // Retrieve and log color values to demonstrate getColor()
-    const srgbColor = engine.block.getColor(srgbFill, 'fill/color/value');
-    const cmykColor = engine.block.getColor(cmykFill, 'fill/color/value');
-    const spotColor = engine.block.getColor(spotFill, 'fill/color/value');
+// Retrieve and log color values to demonstrate getColor()
+const srgbColor = engine.block.getColor(srgbFill, 'fill/color/value')
+const cmykColor = engine.block.getColor(cmykFill, 'fill/color/value')
+const spotColor = engine.block.getColor(spotFill, 'fill/color/value')
 
-    console.log('sRGB Color:', srgbColor);
-    console.log('CMYK Color:', cmykColor);
-    console.log('Spot Color:', spotColor);
+console.log('sRGB Color:', srgbColor)
+console.log('CMYK Color:', cmykColor)
+console.log('Spot Color:', spotColor)
 ```
 
 ## Choosing the Right Color Space

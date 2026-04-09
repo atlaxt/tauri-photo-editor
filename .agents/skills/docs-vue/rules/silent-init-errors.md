@@ -7,7 +7,6 @@ The `init` callback passed to `<CreativeEditor>` swallows thrown errors. If any 
 During development, wrap sections of the `init` callback in `try/catch` with `console.error` logging. For production, wrap the entire `init` body in a `try/catch` to surface failures.
 
 ```tsx
-import { DesignEditorConfig } from './config/plugin';
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -22,31 +21,32 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './config/plugin'
 
 <CreativeEditor
   init={async (cesdk) => {
     try {
       // Add configuration plugin
-      await cesdk.addPlugin(new DesignEditorConfig());
+      await cesdk.addPlugin(new DesignEditorConfig())
 
       // Add default asset source plugins
-      await cesdk.addPlugin(new BlurAssetSource());
-      await cesdk.addPlugin(new ColorPaletteAssetSource());
-      await cesdk.addPlugin(new CropPresetsAssetSource());
-      await cesdk.addPlugin(new EffectsAssetSource());
-      await cesdk.addPlugin(new FiltersAssetSource());
-      await cesdk.addPlugin(new PagePresetsAssetSource());
-      await cesdk.addPlugin(new StickerAssetSource());
-      await cesdk.addPlugin(new TextAssetSource());
-      await cesdk.addPlugin(new TextComponentAssetSource());
-      await cesdk.addPlugin(new TypefaceAssetSource());
-      await cesdk.addPlugin(new VectorShapeAssetSource());
+      await cesdk.addPlugin(new BlurAssetSource())
+      await cesdk.addPlugin(new ColorPaletteAssetSource())
+      await cesdk.addPlugin(new CropPresetsAssetSource())
+      await cesdk.addPlugin(new EffectsAssetSource())
+      await cesdk.addPlugin(new FiltersAssetSource())
+      await cesdk.addPlugin(new PagePresetsAssetSource())
+      await cesdk.addPlugin(new StickerAssetSource())
+      await cesdk.addPlugin(new TextAssetSource())
+      await cesdk.addPlugin(new TextComponentAssetSource())
+      await cesdk.addPlugin(new TypefaceAssetSource())
+      await cesdk.addPlugin(new VectorShapeAssetSource())
 
       // Add demo and upload asset sources
       await cesdk.addPlugin(
         new UploadAssetSources({ include: ['ly.img.image.upload'] })
-      );
+      )
       await cesdk.addPlugin(
         new DemoAssetSources({
           include: [
@@ -55,7 +55,7 @@ import {
             'ly.img.templates.social.*'
           ]
         })
-      );
+      )
 
       // Create scene
       await cesdk.actions.run('scene.create', {
@@ -63,14 +63,15 @@ import {
           sourceId: 'ly.img.page.presets',
           assetId: 'ly.img.page.presets.print.iso.a6.landscape'
         }
-      });
+      })
 
-      const engine = cesdk.engine;
-      const page = engine.block.findByType('page')[0];
+      const engine = cesdk.engine
+      const page = engine.block.findByType('page')[0]
 
       // ... scene setup ...
-    } catch (error) {
-      console.error('[CE.SDK init] Failed:', error);
+    }
+    catch (error) {
+      console.error('[CE.SDK init] Failed:', error)
     }
   }}
 />

@@ -71,9 +71,10 @@ Grant permission in a capability (e.g. **default.json**). Use **shell:allow-exec
 Then in JS:
 
 ```javascript
-import { Command } from '@tauri-apps/plugin-shell';
-const command = Command.sidecar('binaries/my-sidecar', ['arg1', '-a', '--arg2', 'value']);
-const output = await command.execute();
+import { Command } from '@tauri-apps/plugin-shell'
+
+const command = Command.sidecar('binaries/my-sidecar', ['arg1', '-a', '--arg2', 'value'])
+const output = await command.execute()
 ```
 
 The string passed to `Command.sidecar` must match one of the entries in **externalBin** (e.g. `binaries/my-sidecar`). Args must match the capability (static args as-is; dynamic with regex validator).

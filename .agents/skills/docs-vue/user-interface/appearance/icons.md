@@ -23,7 +23,7 @@ Customize the editor's icons by registering custom SVG icon sets and using them 
 CE.SDK uses SVG sprites for icons throughout the editor interface. Each icon is referenced by a symbol ID that starts with `@`. You can register custom icon sets to replace built-in icons or add new ones for your own custom UI components.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-appearance-icons-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,24 +39,24 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 class Example implements EditorPlugin {
-  name = 'guides-user-interface-appearance-icons-browser';
-  version = '1.0.0';
+  name = 'guides-user-interface-appearance-icons-browser'
+  version = '1.0.0'
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -67,24 +67,24 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Register a custom SVG icon set with multiple symbols
     cesdk.ui.addIconSet(
@@ -102,19 +102,19 @@ class Example implements EditorPlugin {
         </symbol>
       </svg>
     `
-    );
+    )
 
     // Get the current dock order and replace the Images dock icon
-    const dockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' });
+    const dockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
     cesdk.ui.setComponentOrder(
       { in: 'ly.img.dock' },
       dockOrder.map((entry) => {
         if (entry.key === 'ly.img.image') {
-          return { ...entry, icon: '@custom/icon/star' };
+          return { ...entry, icon: '@custom/icon/star' }
         }
-        return entry;
+        return entry
       })
-    );
+    )
 
     // Register a custom component that uses a custom icon
     cesdk.ui.registerComponent(
@@ -124,27 +124,27 @@ class Example implements EditorPlugin {
           label: 'Heart',
           icon: '@custom/icon/heart',
           onClick: () => {
-            console.log('Heart icon button clicked');
+            console.log('Heart icon button clicked')
           }
-        });
+        })
         Button('diamondButton', {
           label: 'Diamond',
           icon: '@custom/icon/diamond',
           onClick: () => {
-            console.log('Diamond icon button clicked');
+            console.log('Diamond icon button clicked')
           }
-        });
+        })
       }
-    );
+    )
 
     // Add the custom component to the canvas menu
     cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.menu' }),
       'CustomIconButton'
-    ]);
+    ])
 
     // Add an image block to the scene so the canvas menu is visible when selected
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
     if (page !== undefined) {
       const imageBlock = await engine.block.addImage(
         'https://img.ly/static/ubq_samples/sample_1.jpg',
@@ -153,14 +153,14 @@ class Example implements EditorPlugin {
           y: 50,
           size: { width: 400, height: 300 }
         }
-      );
-      engine.block.appendChild(page, imageBlock);
-      engine.block.select(imageBlock);
+      )
+      engine.block.appendChild(page, imageBlock)
+      engine.block.select(imageBlock)
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to register custom SVG icon sets, replace dock entry icons with custom icons, and use custom icons in custom UI components.
@@ -186,7 +186,7 @@ cesdk.ui.addIconSet(
     </symbol>
   </svg>
 `
-);
+)
 ```
 
 Each symbol in the SVG sprite must have an `id` attribute that starts with `@`. This ID is how you reference the icon throughout CE.SDK. In this example, we register three custom icons: `@custom/icon/star`, `@custom/icon/heart`, and `@custom/icon/diamond`.
@@ -211,16 +211,16 @@ Once you've registered a custom icon set, you can replace the icons of existing 
 
 ```typescript highlight=highlight-replace-dock-icon
 // Get the current dock order and replace the Images dock icon
-const dockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' });
+const dockOrder = cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
 cesdk.ui.setComponentOrder(
   { in: 'ly.img.dock' },
   dockOrder.map((entry) => {
     if (entry.key === 'ly.img.image') {
-      return { ...entry, icon: '@custom/icon/star' };
+      return { ...entry, icon: '@custom/icon/star' }
     }
-    return entry;
+    return entry
   })
-);
+)
 ```
 
 This example replaces the Images dock entry icon with our custom star icon. The `key` property identifies the dock entry, and we update the `icon` property to reference our custom icon by its symbol ID.
@@ -230,32 +230,32 @@ This example replaces the Images dock entry icon with our custom star icon. The 
 You can use custom icons in your own UI components by referencing the icon's symbol ID in the component builder. When registering a custom component with `cesdk.ui.registerComponent()`, buttons and other elements accept an `icon` property.
 
 ```typescript highlight=highlight-custom-component
-    // Register a custom component that uses a custom icon
-    cesdk.ui.registerComponent(
-      'CustomIconButton',
-      ({ builder: { Button } }) => {
-        Button('heartButton', {
-          label: 'Heart',
-          icon: '@custom/icon/heart',
-          onClick: () => {
-            console.log('Heart icon button clicked');
-          }
-        });
-        Button('diamondButton', {
-          label: 'Diamond',
-          icon: '@custom/icon/diamond',
-          onClick: () => {
-            console.log('Diamond icon button clicked');
-          }
-        });
+// Register a custom component that uses a custom icon
+cesdk.ui.registerComponent(
+  'CustomIconButton',
+  ({ builder: { Button } }) => {
+    Button('heartButton', {
+      label: 'Heart',
+      icon: '@custom/icon/heart',
+      onClick: () => {
+        console.log('Heart icon button clicked')
       }
-    );
+    })
+    Button('diamondButton', {
+      label: 'Diamond',
+      icon: '@custom/icon/diamond',
+      onClick: () => {
+        console.log('Diamond icon button clicked')
+      }
+    })
+  }
+)
 
-    // Add the custom component to the canvas menu
-    cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
-      ...cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.menu' }),
-      'CustomIconButton'
-    ]);
+// Add the custom component to the canvas menu
+cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
+  ...cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.menu' }),
+  'CustomIconButton'
+])
 ```
 
 We register a custom component containing two buttons, each using a different custom icon. We then add this component to the canvas menu so the buttons appear when users select elements on the canvas.

@@ -21,8 +21,8 @@ Use dynamic `import()` with bundlers like Webpack, Rollup, or Vite to create sep
 
 ```ts
 async function loadCreativeEditorSDK(): Promise<typeof CreativeEditorSDK> {
-  const { default: CreativeEditorSDK } = await import('@cesdk/cesdk-js');
-  return CreativeEditorSDK;
+  const { default: CreativeEditorSDK } = await import('@cesdk/cesdk-js')
+  return CreativeEditorSDK
 }
 ```
 
@@ -36,8 +36,8 @@ Load CE.SDK directly from CDN using dynamic imports. This works in modern browse
 async function loadCreativeEditorSDK(): Promise<typeof CreativeEditorSDK> {
   const { default: CreativeEditorSDK } = await import(
     'https://cdn.img.ly/packages/imgly/cesdk-js/$UBQ_VERSION$/index.js'
-  );
-  return CreativeEditorSDK;
+  )
+  return CreativeEditorSDK
 }
 ```
 
@@ -52,7 +52,7 @@ High-resolution images and videos consume significant memory. Optimize asset loa
 Source sets allow you to provide multiple resolution variants of the same image. The engine automatically selects the most appropriate resolution based on the current display size, loading smaller images for previews and higher resolution assets only when needed for exports.
 
 ```ts
-const imageFill = engine.block.createFill('image');
+const imageFill = engine.block.createFill('image')
 
 engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', [
   {
@@ -70,9 +70,9 @@ engine.block.setSourceSet(imageFill, 'fill/image/sourceSet', [
     width: 2048,
     height: 1366
   }
-]);
+])
 
-engine.block.setFill(block, imageFill);
+engine.block.setFill(block, imageFill)
 ```
 
 This approach reduces initial load times and memory usage during editing while ensuring high-quality exports. See [Source Sets](./import-media/source-sets.md) for more details.
@@ -99,9 +99,9 @@ const config = {
   callbacks: {
     exportWorker: true // Enabled by default
   }
-};
+}
 
-const cesdk = await CreativeEditorSDK.create('#cesdk_container', config);
+const cesdk = await CreativeEditorSDK.create('#cesdk_container', config)
 ```
 
 ### Optimize Export Settings
@@ -118,7 +118,7 @@ const blob = await engine.block.export(page, 'image/jpeg', {
   targetWidth: 1920,
   targetHeight: 1080,
   jpegQuality: 0.8
-});
+})
 ```
 
 ### Export Size Limits
@@ -126,14 +126,14 @@ const blob = await engine.block.export(page, 'image/jpeg', {
 Check device export capabilities before attempting large exports using `engine.editor.getMaxExportSize()`.
 
 ```ts
-const maxExportSize = engine.editor.getMaxExportSize();
+const maxExportSize = engine.editor.getMaxExportSize()
 
 // Verify design fits within limits
-const pageWidth = engine.block.getWidth(page);
-const pageHeight = engine.block.getHeight(page);
+const pageWidth = engine.block.getWidth(page)
+const pageHeight = engine.block.getHeight(page)
 
 if (pageWidth > maxExportSize || pageHeight > maxExportSize) {
-  console.warn('Design exceeds maximum export size - consider reducing dimensions');
+  console.warn('Design exceeds maximum export size - consider reducing dimensions')
 }
 ```
 
@@ -148,15 +148,15 @@ Follow proper patterns for initializing and disposing the engine to prevent memo
 Initialize the engine once and reuse the instance. Pass essential configuration including license key and baseURL.
 
 ```ts
-import CreativeEditorSDK from '@cesdk/cesdk-js';
+import CreativeEditorSDK from '@cesdk/cesdk-js'
 
 const config = {
   license: 'YOUR_CESDK_LICENSE_KEY',
   baseURL: 'https://cdn.img.ly/packages/imgly/cesdk-engine/$UBQ_VERSION$/assets'
-};
+}
 
-const cesdk = await CreativeEditorSDK.create('#cesdk_container', config);
-const engine = cesdk.engine;
+const cesdk = await CreativeEditorSDK.create('#cesdk_container', config)
+const engine = cesdk.engine
 ```
 
 When using the full CE.SDK (not just the engine), the editor creates a managed canvas element accessible via `cesdk.engine`. Avoid creating multiple engine instances simultaneously.
@@ -166,7 +166,7 @@ When using the full CE.SDK (not just the engine), the editor creates a managed c
 Call `dispose()` when the editing session ends to free all resources including GPU memory, textures, and native allocations.
 
 ```ts
-cesdk.dispose();
+cesdk.dispose()
 ```
 
 After disposal, the engine instance becomes unusable. Create a new instance if the user returns to the editor.

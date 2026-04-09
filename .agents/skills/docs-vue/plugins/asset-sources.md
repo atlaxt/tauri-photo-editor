@@ -11,9 +11,9 @@ Asset source plugins provide pre-built asset libraries for CE.SDK. They register
 Provides blur effect presets for image editing.
 
 ```typescript
-import { BlurAssetSource } from '@cesdk/cesdk-js/plugins';
+import { BlurAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new BlurAssetSource());
+await cesdk.addPlugin(new BlurAssetSource())
 ```
 
 **Options:**
@@ -37,9 +37,9 @@ await cesdk.addPlugin(new BlurAssetSource());
 Provides caption text presets for video editing with custom application logic for applying captions.
 
 ```typescript
-import { CaptionPresetsAssetSource } from '@cesdk/cesdk-js/plugins';
+import { CaptionPresetsAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new CaptionPresetsAssetSource());
+await cesdk.addPlugin(new CaptionPresetsAssetSource())
 ```
 
 **Options:**
@@ -63,9 +63,9 @@ await cesdk.addPlugin(new CaptionPresetsAssetSource());
 Provides default color palette presets for the color picker.
 
 ```typescript
-import { ColorPaletteAssetSource } from '@cesdk/cesdk-js/plugins';
+import { ColorPaletteAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new ColorPaletteAssetSource());
+await cesdk.addPlugin(new ColorPaletteAssetSource())
 ```
 
 **Options:**
@@ -89,9 +89,9 @@ await cesdk.addPlugin(new ColorPaletteAssetSource());
 Provides crop aspect ratio presets (16:9, 4:3, 1:1, etc.).
 
 ```typescript
-import { CropPresetsAssetSource } from '@cesdk/cesdk-js/plugins';
+import { CropPresetsAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new CropPresetsAssetSource());
+await cesdk.addPlugin(new CropPresetsAssetSource())
 ```
 
 **Options:**
@@ -116,10 +116,10 @@ await cesdk.addPlugin(new CropPresetsAssetSource());
 Provides demo assets for testing and prototyping: images, videos, audio, stickers, and templates. Useful during development before integrating your own asset sources.
 
 ```typescript
-import { DemoAssetSources } from '@cesdk/cesdk-js/plugins';
+import { DemoAssetSources } from '@cesdk/cesdk-js/plugins'
 
 // Load all demo assets
-await cesdk.addPlugin(new DemoAssetSources());
+await cesdk.addPlugin(new DemoAssetSources())
 
 // Load specific categories using GLOB patterns
 await cesdk.addPlugin(new DemoAssetSources({
@@ -127,7 +127,7 @@ await cesdk.addPlugin(new DemoAssetSources({
     'ly.img.templates.social.*',
     'ly.img.image.*'
   ]
-}));
+}))
 ```
 
 **Options:**
@@ -172,9 +172,9 @@ await cesdk.addPlugin(new DemoAssetSources({
 Provides visual effect presets including adjustments, vignette, and other image effects.
 
 ```typescript
-import { EffectsAssetSource } from '@cesdk/cesdk-js/plugins';
+import { EffectsAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new EffectsAssetSource());
+await cesdk.addPlugin(new EffectsAssetSource())
 ```
 
 **Options:**
@@ -198,10 +198,10 @@ await cesdk.addPlugin(new EffectsAssetSource());
 Provides photo filter presets including LUT-based color grading filters and duotone effects.
 
 ```typescript
-import { FiltersAssetSource } from '@cesdk/cesdk-js/plugins';
+import { FiltersAssetSource } from '@cesdk/cesdk-js/plugins'
 
 // Load all filters
-await cesdk.addPlugin(new FiltersAssetSource());
+await cesdk.addPlugin(new FiltersAssetSource())
 
 // Load specific filter categories
 await cesdk.addPlugin(new FiltersAssetSource({
@@ -209,7 +209,7 @@ await cesdk.addPlugin(new FiltersAssetSource({
     'ly.img.filter.lut.bw.*',
     'ly.img.filter.duotone.*'
   ]
-}));
+}))
 ```
 
 **Options:**
@@ -241,14 +241,14 @@ await cesdk.addPlugin(new FiltersAssetSource({
 Provides page size presets for social media platforms and print formats.
 
 ```typescript
-import { PagePresetsAssetSource } from '@cesdk/cesdk-js/plugins';
+import { PagePresetsAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new PagePresetsAssetSource());
+await cesdk.addPlugin(new PagePresetsAssetSource())
 
 // Load only social media presets
 await cesdk.addPlugin(new PagePresetsAssetSource({
   include: ['ly.img.page.presets.instagram.*']
-}));
+}))
 ```
 
 **Options:**
@@ -291,14 +291,14 @@ await cesdk.addPlugin(new PagePresetsAssetSource({
 Provides sticker graphics organized by category.
 
 ```typescript
-import { StickerAssetSource } from '@cesdk/cesdk-js/plugins';
+import { StickerAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new StickerAssetSource());
+await cesdk.addPlugin(new StickerAssetSource())
 
 // Load only emoji stickers
 await cesdk.addPlugin(new StickerAssetSource({
   include: ['ly.img.sticker.emoji.*']
-}));
+}))
 ```
 
 **Options:**
@@ -328,9 +328,9 @@ await cesdk.addPlugin(new StickerAssetSource({
 Provides text style presets for headlines, body text, and other typography styles.
 
 ```typescript
-import { TextAssetSource } from '@cesdk/cesdk-js/plugins';
+import { TextAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new TextAssetSource());
+await cesdk.addPlugin(new TextAssetSource())
 ```
 
 **Options:**
@@ -354,9 +354,9 @@ await cesdk.addPlugin(new TextAssetSource());
 Provides pre-designed text component layouts combining multiple text elements.
 
 ```typescript
-import { TextComponentAssetSource } from '@cesdk/cesdk-js/plugins';
+import { TextComponentAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new TextComponentAssetSource());
+await cesdk.addPlugin(new TextComponentAssetSource())
 ```
 
 **Options:**
@@ -380,9 +380,9 @@ await cesdk.addPlugin(new TextComponentAssetSource());
 Provides font and typeface assets for text styling.
 
 ```typescript
-import { TypefaceAssetSource } from '@cesdk/cesdk-js/plugins';
+import { TypefaceAssetSource } from '@cesdk/cesdk-js/plugins'
 
-await cesdk.addPlugin(new TypefaceAssetSource());
+await cesdk.addPlugin(new TypefaceAssetSource())
 ```
 
 **Options:**
@@ -411,15 +411,15 @@ The `include` option supports two modes:
 - **Explicit mode**: When any string is present, only listed sources are included
 
 ```typescript
-import { UploadAssetSources } from '@cesdk/cesdk-js/plugins';
+import { UploadAssetSources } from '@cesdk/cesdk-js/plugins'
 
 // Enable all upload types with defaults
-await cesdk.addPlugin(new UploadAssetSources());
+await cesdk.addPlugin(new UploadAssetSources())
 
 // Explicit mode: enable only specific upload types
 await cesdk.addPlugin(new UploadAssetSources({
   include: ['ly.img.image.upload']
-}));
+}))
 
 // Additive mode: customize MIME types while keeping all sources
 await cesdk.addPlugin(new UploadAssetSources({
@@ -429,7 +429,7 @@ await cesdk.addPlugin(new UploadAssetSources({
       mimeTypes: ['image/png', 'image/jpeg', 'image/webp']
     }
   ]
-}));
+}))
 
 // Explicit mode with custom MIME types
 await cesdk.addPlugin(new UploadAssetSources({
@@ -440,7 +440,7 @@ await cesdk.addPlugin(new UploadAssetSources({
       mimeTypes: ['video/mp4', 'video/webm']
     }
   ]
-}));
+}))
 ```
 
 **Options:**
@@ -472,10 +472,10 @@ await cesdk.addPlugin(new UploadAssetSources({
 Provides vector shape assets including basic shapes, arrows, and decorative elements.
 
 ```typescript
-import { VectorShapeAssetSource } from '@cesdk/cesdk-js/plugins';
+import { VectorShapeAssetSource } from '@cesdk/cesdk-js/plugins'
 
 // Load all shape types
-await cesdk.addPlugin(new VectorShapeAssetSource());
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
 // Load specific shape categories
 await cesdk.addPlugin(new VectorShapeAssetSource({
@@ -483,7 +483,7 @@ await cesdk.addPlugin(new VectorShapeAssetSource({
     'ly.img.vector.shape.filled.*',
     'ly.img.vector.shape.outline.*'
   ]
-}));
+}))
 ```
 
 **Options:**

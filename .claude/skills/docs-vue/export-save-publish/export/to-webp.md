@@ -23,7 +23,7 @@ Export designs to WebP format for optimized web delivery with smaller file sizes
 WebP delivers smaller file sizes than PNG and JPEG while preserving image quality and transparency support.
 
 ```typescript file=@cesdk_web_examples/guides-export-save-publish-export-to-webp-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,9 +38,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Export to WebP Guide
@@ -51,21 +51,21 @@ import packageJson from './package.json';
  * - Lossy, lossless, and social media export options
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required');
+      throw new Error('CE.SDK instance is required')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -76,26 +76,27 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Load template and zoom to fit
     await engine.scene.loadFromURL(
       'https://cdn.img.ly/assets/demo/v3/ly.img.template/templates/cesdk_postcard_1.scene'
-    );
-    const page = engine.scene.getCurrentPage();
-    if (!page) throw new Error('No page found');
+    )
+    const page = engine.scene.getCurrentPage()
+    if (!page)
+      throw new Error('No page found')
 
-    await engine.scene.zoomToBlock(page, { padding: 40 });
+    await engine.scene.zoomToBlock(page, { padding: 40 })
 
     // Three export buttons with different WebP settings
     cesdk.ui.insertOrderComponent({ in: 'ly.img.navigation.bar', position: 'end' }, {
@@ -107,14 +108,14 @@ class Example implements EditorPlugin {
           label: 'Lossy',
           icon: '@imgly/Download',
           onClick: async () => {
-            const p = engine.scene.getCurrentPage()!;
+            const p = engine.scene.getCurrentPage()!
             // Export with lossy compression
             const blob = await engine.block.export(p, {
               mimeType: 'image/webp',
               webpQuality: 0.8
-            });
+            })
             // Download using CE.SDK utils
-            await cesdk.utils.downloadFile(blob, 'image/webp');
+            await cesdk.utils.downloadFile(blob, 'image/webp')
           }
         },
         {
@@ -123,12 +124,12 @@ class Example implements EditorPlugin {
           label: 'Lossless',
           icon: '@imgly/Download',
           onClick: async () => {
-            const p = engine.scene.getCurrentPage()!;
+            const p = engine.scene.getCurrentPage()!
             const blob = await engine.block.export(p, {
               mimeType: 'image/webp',
               webpQuality: 1.0
-            });
-            await cesdk.utils.downloadFile(blob, 'image/webp');
+            })
+            await cesdk.utils.downloadFile(blob, 'image/webp')
           }
         },
         {
@@ -137,15 +138,15 @@ class Example implements EditorPlugin {
           label: 'Social',
           icon: '@imgly/Download',
           onClick: async () => {
-            const p = engine.scene.getCurrentPage()!;
+            const p = engine.scene.getCurrentPage()!
             // Export with target dimensions for social media
             const blob = await engine.block.export(p, {
               mimeType: 'image/webp',
               webpQuality: 0.9,
               targetWidth: 1200,
               targetHeight: 630
-            });
-            await cesdk.utils.downloadFile(blob, 'image/webp');
+            })
+            await cesdk.utils.downloadFile(blob, 'image/webp')
           }
         },
         {
@@ -155,15 +156,15 @@ class Example implements EditorPlugin {
           icon: '@imgly/Download',
           onClick: () => {
             // Run built-in export with WebP format
-            cesdk.actions.run('exportDesign', { mimeType: 'image/webp' });
+            cesdk.actions.run('exportDesign', { mimeType: 'image/webp' })
           }
         }
       ]
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers exporting to WebP, configuring quality settings, and triggering downloads.
@@ -177,7 +178,7 @@ Call `engine.block.export()` with `mimeType: 'image/webp'` and a `webpQuality` v
 const blob = await engine.block.export(p, {
   mimeType: 'image/webp',
   webpQuality: 0.8
-});
+})
 ```
 
 The `webpQuality` parameter controls compression. A value of 0.8 provides a good balance between file size and visual quality for most use cases.
@@ -202,7 +203,7 @@ const blob = await engine.block.export(p, {
   webpQuality: 0.9,
   targetWidth: 1200,
   targetHeight: 630
-});
+})
 ```
 
 Set `webpQuality` to 1.0 for lossless compression when pixel-perfect output is required.
@@ -213,7 +214,7 @@ Run the `exportDesign` action to execute the default export flow programmaticall
 
 ```typescript highlight=highlight-trigger-export
 // Run built-in export with WebP format
-cesdk.actions.run('exportDesign', { mimeType: 'image/webp' });
+cesdk.actions.run('exportDesign', { mimeType: 'image/webp' })
 ```
 
 This executes the registered export action, which handles the complete export process including format selection and file download.
@@ -224,7 +225,7 @@ Use `cesdk.utils.downloadFile()` to trigger the browser's download dialog for th
 
 ```typescript highlight=highlight-download
 // Download using CE.SDK utils
-await cesdk.utils.downloadFile(blob, 'image/webp');
+await cesdk.utils.downloadFile(blob, 'image/webp')
 ```
 
 Pass the blob and MIME type to prompt the user to save the file locally.

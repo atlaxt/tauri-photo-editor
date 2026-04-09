@@ -23,7 +23,7 @@ We add AI-powered text generation to CE.SDK applications for creating headlines,
 The text generation plugin provides quick actions for improving writing, fixing spelling and grammar, shortening or lengthening text, changing tone, and translating to different languages.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ai-integration-text-generation-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,29 +39,29 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import AiApps from '@imgly/plugin-ai-apps-web';
-import Anthropic from '@imgly/plugin-ai-text-generation-web/anthropic';
-import OpenAI from '@imgly/plugin-ai-text-generation-web/open-ai';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import AiApps from '@imgly/plugin-ai-apps-web'
+import Anthropic from '@imgly/plugin-ai-text-generation-web/anthropic'
+import OpenAI from '@imgly/plugin-ai-text-generation-web/open-ai'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -72,57 +72,57 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0]!;
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]!
 
     // Create a text block to demonstrate AI text generation features
-    const textBlock = engine.block.create('text');
+    const textBlock = engine.block.create('text')
     engine.block.setString(
       textBlock,
       'text/text',
       'Use the AI Quick Actions in the canvas menu to rewrite this text'
-    );
-    engine.block.select(textBlock);
+    )
+    engine.block.select(textBlock)
 
     // Set text block size and center it on the page
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const blockHeight = pageHeight / 4;
-    engine.block.setWidth(textBlock, pageWidth);
-    engine.block.setHeight(textBlock, blockHeight);
-    engine.block.setPositionX(textBlock, 0);
-    engine.block.setPositionY(textBlock, (pageHeight - blockHeight) / 2);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const blockHeight = pageHeight / 4
+    engine.block.setWidth(textBlock, pageWidth)
+    engine.block.setHeight(textBlock, blockHeight)
+    engine.block.setPositionX(textBlock, 0)
+    engine.block.setPositionY(textBlock, (pageHeight - blockHeight) / 2)
 
     // Center text horizontally and vertically
-    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setEnum(textBlock, 'text/verticalAlignment', 'Center');
+    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.setEnum(textBlock, 'text/verticalAlignment', 'Center')
 
     // Set larger font size
-    engine.block.setFloat(textBlock, 'text/fontSize', 24);
+    engine.block.setFloat(textBlock, 'text/fontSize', 24)
 
-    engine.block.appendChild(page, textBlock);
+    engine.block.appendChild(page, textBlock)
 
     // Configure the AI text generation plugin
     // NOTE: In production, provide a secure proxy URL that forwards
     // requests to Anthropic API with your API key
-    const proxyUrl = 'https://your-proxy-server.com/api/anthropic';
+    const proxyUrl = 'https://your-proxy-server.com/api/anthropic'
 
     // Configure text generation with both Anthropic and OpenAI using AiApps
     await cesdk.addPlugin(
@@ -151,19 +151,19 @@ class Example implements EditorPlugin {
         // Perfect for testing and development
         dryRun: true
       })
-    );
+    )
 
     // Reorder dock to show AI Apps button prominently
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       'ly.img.ai.apps.dock',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Configure canvas menu to show AI text quick actions
     cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
       'ly.img.ai.text.canvasMenu',
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.menu' })
-    ]);
+    ])
 
     // Customize UI labels for AI text generation features
     // This demonstrates how to customize the i18n system
@@ -174,7 +174,7 @@ class Example implements EditorPlugin {
         'ly.img.plugin-ai-text-generation-web.anthropic.property.prompt':
           'Your Custom Instructions'
       }
-    });
+    })
 
     // Alternative: Configure with single provider
     /*
@@ -198,11 +198,11 @@ class Example implements EditorPlugin {
     */
 
     // Open the AI Apps panel to make the text generation features visible
-    cesdk.ui.openPanel('ly.img.ai.apps.panel');
+    cesdk.ui.openPanel('ly.img.ai.apps.panel')
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers installing the plugin, configuring AI providers, setting up quick actions, customizing parameters, and testing with dry-run mode.
@@ -212,9 +212,9 @@ This guide covers installing the plugin, configuring AI providers, setting up qu
 Import the plugin and provider modules from the text generation package.
 
 ```typescript highlight-install
-import AiApps from '@imgly/plugin-ai-apps-web';
-import Anthropic from '@imgly/plugin-ai-text-generation-web/anthropic';
-import OpenAI from '@imgly/plugin-ai-text-generation-web/open-ai';
+import AiApps from '@imgly/plugin-ai-apps-web'
+import Anthropic from '@imgly/plugin-ai-text-generation-web/anthropic'
+import OpenAI from '@imgly/plugin-ai-text-generation-web/open-ai'
 ```
 
 Install `@imgly/plugin-ai-text-generation-web` to access the TextGeneration plugin, Anthropic provider, and OpenAI provider modules:
@@ -268,7 +268,7 @@ await cesdk.addPlugin(
     },
     dryRun: true
   })
-);
+)
 ```
 
 We configure the Anthropic provider with Claude Sonnet 4.5, set generation parameters like temperature and max tokens, and enable dry-run mode for testing without API calls.
@@ -282,7 +282,7 @@ Add the text generation quick actions to the canvas menu so users can access the
 cesdk.ui.setComponentOrder({ in: 'ly.img.canvas.menu' }, [
   'ly.img.ai.text.canvasMenu',
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.canvas.menu' })
-]);
+])
 ```
 
 We prepend `ly.img.ai.text.canvasMenu` to the existing canvas menu order, making text quick actions appear first when users select text blocks.
@@ -349,13 +349,13 @@ Control which features appear in the UI using the Feature API.
 
 ```typescript
 // Disable provider selection
-cesdk.feature.enable('ly.img.plugin-ai-text-generation-web.providerSelect', false);
+cesdk.feature.enable('ly.img.plugin-ai-text-generation-web.providerSelect', false)
 
 // Disable all quick actions
-cesdk.feature.enable('ly.img.plugin-ai-text-generation-web.quickAction', false);
+cesdk.feature.enable('ly.img.plugin-ai-text-generation-web.quickAction', false)
 
 // Disable specific quick actions
-cesdk.feature.enable('ly.img.plugin-ai-text-generation-web.quickAction.translate', false);
+cesdk.feature.enable('ly.img.plugin-ai-text-generation-web.quickAction.translate', false)
 ```
 
 This restricts user choices when you want to enforce specific models or limit available transformations.
@@ -374,7 +374,7 @@ cesdk.i18n.setTranslations({
     'ly.img.plugin-ai-text-generation-web.anthropic.property.prompt':
       'Your Custom Instructions'
   }
-});
+})
 ```
 
 The example demonstrates customizing the "Improve" quick action label and the prompt input placeholder. Use provider-specific keys for Anthropic or OpenAI, or generic keys to apply across all providers. You can also add translations for multiple languages by including additional language codes like `es`, `de`, or `fr`.
@@ -384,17 +384,17 @@ The example demonstrates customizing the "Improve" quick action label and the pr
 Intercept generation requests and responses with middleware functions. Use middleware for logging, rate limiting, or custom error handling.
 
 ```typescript
-import { loggingMiddleware, rateLimitMiddleware } from '@imgly/plugin-ai-generation-web';
+import { loggingMiddleware, rateLimitMiddleware } from '@imgly/plugin-ai-generation-web'
 
-const logging = loggingMiddleware();
-const rateLimit = rateLimitMiddleware({ maxRequests: 10, windowMs: 60000 });
+const logging = loggingMiddleware()
+const rateLimit = rateLimitMiddleware({ maxRequests: 10, windowMs: 60000 })
 
 await cesdk.addPlugin(
   TextGeneration({
     provider: Anthropic.AnthropicProvider({ proxyUrl: '...' }),
     middleware: [logging, rateLimit],
   })
-);
+)
 ```
 
 Middleware receives input, options, and a next callback. Call next to continue the chain or return early to intercept.
@@ -409,9 +409,9 @@ await cesdk.addPlugin(
     provider: Anthropic.AnthropicProvider({
       proxyUrl: 'https://your-proxy.com/api/anthropic'
     }) as any,
-    dryRun: true  // Simulate generation without API calls
+    dryRun: true // Simulate generation without API calls
   } as any)
-);
+)
 ```
 
 Dry-run mode helps during development and testing by avoiding API costs while verifying integration.
@@ -421,14 +421,14 @@ Dry-run mode helps during development and testing by avoiding API costs while ve
 Generated text appears automatically in text blocks. Access it using the Block API for further manipulation or retrieval.
 
 ```typescript
-const textBlocks = engine.block.findByType('text');
-textBlocks.forEach(block => {
-  const content = engine.block.getString(block, 'text/text');
-  console.log('Text content:', content);
-});
+const textBlocks = engine.block.findByType('text')
+textBlocks.forEach((block) => {
+  const content = engine.block.getString(block, 'text/text')
+  console.log('Text content:', content)
+})
 
 // Modify text programmatically
-engine.block.setString(textBlock, 'text/text', 'New content');
+engine.block.setString(textBlock, 'text/text', 'New content')
 ```
 
 The Block API provides full control over text content after generation.

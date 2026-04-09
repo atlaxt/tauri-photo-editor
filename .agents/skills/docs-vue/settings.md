@@ -39,7 +39,7 @@ These runtime settings are commonly used to adapt the editor UI to different mod
 Use `findAllSettings()` to get a list of all available settings:
 
 ```javascript
-const allSettings = engine.editor.findAllSettings();
+const allSettings = engine.editor.findAllSettings()
 ```
 
 ### Read and Write Settings
@@ -48,24 +48,24 @@ Use `getSetting()` and `setSetting()` to read and write settings. The API automa
 
 ```javascript
 // Boolean settings
-engine.editor.setSetting('doubleClickToCropEnabled', true);
-const cropEnabled = engine.editor.getSetting('doubleClickToCropEnabled');
+engine.editor.setSetting('doubleClickToCropEnabled', true)
+const cropEnabled = engine.editor.getSetting('doubleClickToCropEnabled')
 
 // Number settings
-engine.editor.setSetting('maxImageSize', 4096);
-engine.editor.setSetting('positionSnappingThreshold', 2.0);
+engine.editor.setSetting('maxImageSize', 4096)
+engine.editor.setSetting('positionSnappingThreshold', 2.0)
 
 // String settings
-engine.editor.setSetting('page/title/separator', ' | ');
+engine.editor.setSetting('page/title/separator', ' | ')
 
 // Color settings
-engine.editor.setSetting('highlightColor', { r: 1, g: 0, b: 1, a: 1 });
+engine.editor.setSetting('highlightColor', { r: 1, g: 0, b: 1, a: 1 })
 
 // Enum settings
-engine.editor.setSetting('doubleClickSelectionMode', 'Direct');
+engine.editor.setSetting('doubleClickSelectionMode', 'Direct')
 const enumOptions = engine.editor.getSettingEnumOptions(
   'doubleClickSelectionMode'
-);
+)
 ```
 
 ### Subscribe to Settings Changes
@@ -74,11 +74,11 @@ React to settings changes using `onSettingsChanged()`:
 
 ```javascript
 const unsubscribe = engine.editor.onSettingsChanged(() => {
-  console.log('Editor settings have changed');
-});
+  console.log('Editor settings have changed')
+})
 
 // Later, to stop listening:
-unsubscribe();
+unsubscribe()
 ```
 
 ### Role Management
@@ -87,15 +87,15 @@ Roles apply predefined defaults for scopes and settings:
 
 ```javascript
 // Get current role
-const currentRole = engine.editor.getRole();
+const currentRole = engine.editor.getRole()
 
 // Set role and apply role-dependent defaults
-engine.editor.setRole('Adopter');
+engine.editor.setRole('Adopter')
 
 // React to role changes
 const unsubscribe = engine.editor.onRoleChanged((role) => {
-  console.log('Role changed to:', role);
-});
+  console.log('Role changed to:', role)
+})
 ```
 
 ## Available Settings

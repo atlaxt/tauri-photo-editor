@@ -23,7 +23,7 @@ Create custom sidebar panels that integrate with CE.SDK's user interface using t
 Custom panels extend CE.SDK by adding sidebar interfaces that match the editor's design language. The builder system provides pre-built components for forms, buttons, and media display, allowing you to create rich editing experiences without building UI from scratch.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ui-extensions-create-custom-panel-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -38,24 +38,25 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 export default class CreateCustomPanelExample implements EditorPlugin {
-  name = 'CreateCustomPanelExample';
-  version = '1.0.0';
+  name = 'CreateCustomPanelExample'
+  version = '1.0.0'
 
   async initialize(context: EditorPluginContext) {
-    const { cesdk } = context;
-    if (!cesdk) return;
+    const { cesdk } = context
+    if (!cesdk)
+      return
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -66,70 +67,67 @@ export default class CreateCustomPanelExample implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.print.iso.a6.landscape'
       }
-    });
+    })
 
     cesdk.i18n.setTranslations({
       en: { 'panel.my-settings': 'My Settings Panel' }
-    });
+    })
 
     cesdk.ui.registerPanel('my-settings', ({ builder, engine, state }) => {
-
-      const textState = state('text', 'Hello CE.SDK');
-      const opacityState = state('opacity', 100);
+      const textState = state('text', 'Hello CE.SDK')
+      const opacityState = state('opacity', 100)
 
       builder.Section('settings', {
         title: 'Settings',
         children: () => {
-
           builder.TextInput('name', {
             inputLabel: 'Name',
             ...textState
-          });
+          })
 
           builder.Slider('opacity', {
             inputLabel: 'Opacity',
             min: 0,
             max: 100,
             ...opacityState
-          });
+          })
 
           builder.Checkbox('enabled', {
             inputLabel: 'Enable feature',
             value: true,
             setValue: () => {}
-          });
+          })
 
           builder.Button('apply', {
             label: 'Apply',
             onClick: () => {
-
-              const page = engine.block.findByType('page')[0];
-              engine.block.setOpacity(page, opacityState.value / 100);
+              const page = engine.block.findByType('page')[0]
+              engine.block.setOpacity(page, opacityState.value / 100)
             }
-          });
+          })
 
-          const selected = engine.block.findAllSelected();
+          const selected = engine.block.findAllSelected()
           if (selected.length > 0) {
-            builder.Text('info', { content: `${selected.length} selected` });
+            builder.Text('info', { content: `${selected.length} selected` })
           }
         }
-      });
-    });
+      })
+    })
 
     cesdk.ui.registerComponent('settings-btn', ({ builder }) => {
       builder.Button('toggle', {
@@ -137,15 +135,15 @@ export default class CreateCustomPanelExample implements EditorPlugin {
         icon: '@imgly/Settings',
         isActive: cesdk.ui.isPanelOpen('my-settings'),
         onClick: () => cesdk.ui.openPanel('my-settings')
-      });
-    });
+      })
+    })
 
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
       'settings-btn'
-    ]);
+    ])
 
-    cesdk.ui.openPanel('my-settings');
+    cesdk.ui.openPanel('my-settings')
   }
 }
 ```
@@ -167,8 +165,8 @@ The panel renders whenever the function is called. CE.SDK tracks engine method c
 Use the `state` function to create panel-local state that persists across re-renders. Call `state('key', defaultValue)` to get `value` and `setValue` properties.
 
 ```typescript highlight-local-state
-const textState = state('text', 'Hello CE.SDK');
-const opacityState = state('opacity', 100);
+const textState = state('text', 'Hello CE.SDK')
+const opacityState = state('opacity', 100)
 ```
 
 State objects integrate directly with input components by spreading the object into the component props.
@@ -195,7 +193,7 @@ Capture text with `builder.TextInput()`. Bind to state using the value and setVa
 builder.TextInput('name', {
   inputLabel: 'Name',
   ...textState
-});
+})
 ```
 
 ### Slider
@@ -208,7 +206,7 @@ builder.Slider('opacity', {
   min: 0,
   max: 100,
   ...opacityState
-});
+})
 ```
 
 ### Checkbox
@@ -220,7 +218,7 @@ builder.Checkbox('enabled', {
   inputLabel: 'Enable feature',
   value: true,
   setValue: () => {}
-});
+})
 ```
 
 ## Adding Buttons
@@ -238,9 +236,9 @@ builder.Button('apply', {
 Access engine state within the render function to create reactive panels. The panel re-renders when tracked engine state changes.
 
 ```typescript highlight-engine-reactive
-const selected = engine.block.findAllSelected();
+const selected = engine.block.findAllSelected()
 if (selected.length > 0) {
-  builder.Text('info', { content: `${selected.length} selected` });
+  builder.Text('info', { content: `${selected.length} selected` })
 }
 ```
 
@@ -249,8 +247,8 @@ if (selected.length > 0) {
 Use engine APIs within event handlers to modify the scene based on panel input.
 
 ```typescript highlight-engine-modify
-const page = engine.block.findByType('page')[0];
-engine.block.setOpacity(page, opacityState.value / 100);
+const page = engine.block.findByType('page')[0]
+engine.block.setOpacity(page, opacityState.value / 100)
 ```
 
 ## Setting the Panel Title
@@ -260,7 +258,7 @@ Set panel titles through i18n translations. The translation key follows the patt
 ```typescript highlight-set-title
 cesdk.i18n.setTranslations({
   en: { 'panel.my-settings': 'My Settings Panel' }
-});
+})
 ```
 
 ## Adding a Dock Button
@@ -274,8 +272,8 @@ cesdk.ui.registerComponent('settings-btn', ({ builder }) => {
     icon: '@imgly/Settings',
     isActive: cesdk.ui.isPanelOpen('my-settings'),
     onClick: () => cesdk.ui.openPanel('my-settings')
-  });
-});
+  })
+})
 ```
 
 Add the component to the dock order.
@@ -284,7 +282,7 @@ Add the component to the dock order.
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
   'settings-btn'
-]);
+])
 ```
 
 ## Opening the Panel
@@ -292,7 +290,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
 Open your custom panel programmatically using `cesdk.ui.openPanel()`.
 
 ```typescript highlight-open-panel
-cesdk.ui.openPanel('my-settings');
+cesdk.ui.openPanel('my-settings')
 ```
 
 > **Note:** To learn how to manage panel lifecycle and positioning, see [Panel](./user-interface/customization/panel.md).

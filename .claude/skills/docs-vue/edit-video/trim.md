@@ -24,7 +24,7 @@ durations using CE.SDK's timeline UI and programmatic trim API.
 Understanding the difference between **fill-level trimming** and **block-level timing** is essential. Fill-level trimming (`setTrimOffset`, `setTrimLength`) controls which portion of the source media plays, while block-level timing (`setTimeOffset`, `setDuration`) controls when and how long the block appears in the composition. These two systems work together to give you complete control over video playback.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-trim-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -41,10 +41,10 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Trim Video Guide
@@ -60,27 +60,27 @@ import { calculateGridLayout } from './utils';
  * - Batch trimming multiple videos
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -90,9 +90,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -106,12 +106,12 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
@@ -119,51 +119,51 @@ class Example implements EditorPlugin {
         sourceId: 'ly.img.page.presets',
         assetId: 'ly.img.page.presets.instagram.story'
       }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const scene = engine.scene.get();
-    const pages = engine.block.findByType('page');
-    const page = pages.length > 0 ? pages[0] : scene;
+    const engine = cesdk.engine
+    const scene = engine.scene.get()
+    const pages = engine.block.findByType('page')
+    const page = pages.length > 0 ? pages[0] : scene
 
     // Calculate responsive grid layout based on page dimensions
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const layout = calculateGridLayout(pageWidth, pageHeight, 8);
-    const { blockWidth, blockHeight, getPosition } = layout;
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const layout = calculateGridLayout(pageWidth, pageHeight, 8)
+    const { blockWidth, blockHeight, getPosition } = layout
 
     // Use a sample video URL from demo assets
-    const videoUri = 'https://img.ly/static/ubq_video_samples/bbb.mp4';
+    const videoUri = 'https://img.ly/static/ubq_video_samples/bbb.mp4'
 
     // Create a sample video block to demonstrate trim support checking
     const sampleVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
     // Get the video fill - trim operations are applied to the fill, not the block
-    const videoFill = engine.block.getFill(sampleVideo);
+    const videoFill = engine.block.getFill(sampleVideo)
 
     // Check if the fill supports trim operations
-    const supportsTrim = engine.block.supportsTrim(videoFill);
-    // eslint-disable-next-line no-console
-    console.log('Video fill supports trim:', supportsTrim); // true for video fills
+    const supportsTrim = engine.block.supportsTrim(videoFill)
+
+    console.log('Video fill supports trim:', supportsTrim) // true for video fills
 
     // Select this block so timeline controls are visible
-    engine.block.setSelected(sampleVideo, true);
+    engine.block.setSelected(sampleVideo, true)
 
     // Pattern: Always load video resource before accessing trim properties
     // This ensures metadata (duration, frame rate, etc.) is available
-    await engine.block.forceLoadAVResource(videoFill);
+    await engine.block.forceLoadAVResource(videoFill)
 
     // Now we can safely access video metadata
     const totalDuration = engine.block.getDouble(
       videoFill,
       'fill/video/totalDuration'
-    );
-    // eslint-disable-next-line no-console
-    console.log('Total video duration:', totalDuration, 'seconds');
+    )
+
+    console.log('Total video duration:', totalDuration, 'seconds')
 
     // Pattern #1: Demonstrate Individual Before Combined
     // Create a separate video block for basic trim demonstration
@@ -171,25 +171,25 @@ class Example implements EditorPlugin {
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
     // Get the fill to apply trim operations
-    const basicTrimFill = engine.block.getFill(basicTrimVideo);
+    const basicTrimFill = engine.block.getFill(basicTrimVideo)
 
     // Load resource before trimming
-    await engine.block.forceLoadAVResource(basicTrimFill);
+    await engine.block.forceLoadAVResource(basicTrimFill)
 
     // Trim video to start at 2 seconds and play for 5 seconds
-    engine.block.setTrimOffset(basicTrimFill, 2.0);
-    engine.block.setTrimLength(basicTrimFill, 5.0);
+    engine.block.setTrimOffset(basicTrimFill, 2.0)
+    engine.block.setTrimLength(basicTrimFill, 5.0)
 
     // Get current trim values to verify or modify
-    const currentOffset = engine.block.getTrimOffset(basicTrimFill);
-    const currentLength = engine.block.getTrimLength(basicTrimFill);
-    // eslint-disable-next-line no-console
+    const currentOffset = engine.block.getTrimOffset(basicTrimFill)
+    const currentLength = engine.block.getTrimLength(basicTrimFill)
+
     console.log(
       `Basic trim - Offset: ${currentOffset}s, Length: ${currentLength}s`
-    );
+    )
 
     // Pattern #5: Progressive Complexity - coordinating trim with block duration
     // Create a video block demonstrating trim + duration coordination
@@ -197,53 +197,51 @@ class Example implements EditorPlugin {
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const durationTrimFill = engine.block.getFill(durationTrimVideo);
-    await engine.block.forceLoadAVResource(durationTrimFill);
+    const durationTrimFill = engine.block.getFill(durationTrimVideo)
+    await engine.block.forceLoadAVResource(durationTrimFill)
 
     // Set trim: play portion from 3s to 8s (5 seconds of content)
-    engine.block.setTrimOffset(durationTrimFill, 3.0);
-    engine.block.setTrimLength(durationTrimFill, 5.0);
+    engine.block.setTrimOffset(durationTrimFill, 3.0)
+    engine.block.setTrimLength(durationTrimFill, 5.0)
 
     // Set block duration: how long this block appears in the timeline
     // When duration equals trim length, the entire trimmed portion plays once
-    engine.block.setDuration(durationTrimVideo, 5.0);
+    engine.block.setDuration(durationTrimVideo, 5.0)
 
-    // eslint-disable-next-line no-console
     console.log(
       'Trim+Duration - Block will play trimmed 5s exactly once in timeline'
-    );
+    )
 
     // Create a video block with trim + looping
     const loopingTrimVideo = await engine.block.addVideo(
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const loopingTrimFill = engine.block.getFill(loopingTrimVideo);
-    await engine.block.forceLoadAVResource(loopingTrimFill);
+    const loopingTrimFill = engine.block.getFill(loopingTrimVideo)
+    await engine.block.forceLoadAVResource(loopingTrimFill)
 
     // Trim to a short 3-second segment
-    engine.block.setTrimOffset(loopingTrimFill, 1.0);
-    engine.block.setTrimLength(loopingTrimFill, 3.0);
+    engine.block.setTrimOffset(loopingTrimFill, 1.0)
+    engine.block.setTrimLength(loopingTrimFill, 3.0)
 
     // Enable looping so the 3-second segment repeats
-    engine.block.setLooping(loopingTrimFill, true);
+    engine.block.setLooping(loopingTrimFill, true)
 
     // Verify looping is enabled
-    const isLooping = engine.block.isLooping(loopingTrimFill);
-    // eslint-disable-next-line no-console
-    console.log('Looping enabled:', isLooping);
+    const isLooping = engine.block.isLooping(loopingTrimFill)
+
+    console.log('Looping enabled:', isLooping)
 
     // Set duration longer than trim length - the trim will loop to fill it
-    engine.block.setDuration(loopingTrimVideo, 9.0);
+    engine.block.setDuration(loopingTrimVideo, 9.0)
 
-    // eslint-disable-next-line no-console
     console.log(
       'Looping trim - 3s segment will loop 3 times to fill 9s duration'
-    );
+    )
 
     // Pattern #6: Descriptive naming - frame-accurate trim demonstration
     // Create a video block for frame-accurate trimming
@@ -251,31 +249,30 @@ class Example implements EditorPlugin {
       videoUri,
       blockWidth,
       blockHeight
-    );
+    )
 
-    const frameFill = engine.block.getFill(frameAccurateTrimVideo);
-    await engine.block.forceLoadAVResource(frameFill);
+    const frameFill = engine.block.getFill(frameAccurateTrimVideo)
+    await engine.block.forceLoadAVResource(frameFill)
 
     // Note: Frame rate is not directly accessible via the API
     // For this example, we'll assume a common frame rate of 30fps
-    const frameRate = 30;
+    const frameRate = 30
 
     // Calculate trim offset based on specific frame number
     // Example: Start at frame 60 for a 30fps video = 2.0 seconds
-    const startFrame = 60;
-    const trimOffsetSeconds = startFrame / frameRate;
+    const startFrame = 60
+    const trimOffsetSeconds = startFrame / frameRate
 
     // Trim for exactly 150 frames = 5.0 seconds at 30fps
-    const trimFrames = 150;
-    const trimLengthSeconds = trimFrames / frameRate;
+    const trimFrames = 150
+    const trimLengthSeconds = trimFrames / frameRate
 
-    engine.block.setTrimOffset(frameFill, trimOffsetSeconds);
-    engine.block.setTrimLength(frameFill, trimLengthSeconds);
+    engine.block.setTrimOffset(frameFill, trimOffsetSeconds)
+    engine.block.setTrimLength(frameFill, trimLengthSeconds)
 
-    // eslint-disable-next-line no-console
     console.log(
       `Frame-accurate trim - Frame rate: ${frameRate}fps (assumed), Start frame: ${startFrame}, Duration: ${trimFrames} frames`
-    );
+    )
 
     // Pattern: Batch processing multiple video clips
     // Create multiple video blocks to demonstrate batch trimming
@@ -283,33 +280,32 @@ class Example implements EditorPlugin {
       'https://img.ly/static/ubq_video_samples/bbb.mp4',
       'https://img.ly/static/ubq_video_samples/bbb.mp4',
       'https://img.ly/static/ubq_video_samples/bbb.mp4'
-    ];
+    ]
 
-    const batchVideos = [];
+    const batchVideos = []
     for (let i = 0; i < batchVideoUris.length; i++) {
       const batchVideo = await engine.block.addVideo(
         batchVideoUris[i],
         blockWidth,
         blockHeight
-      );
-      batchVideos.push(batchVideo);
+      )
+      batchVideos.push(batchVideo)
 
       // Get the fill for trim operations
-      const batchFill = engine.block.getFill(batchVideo);
+      const batchFill = engine.block.getFill(batchVideo)
 
       // Load resource before trimming
-      await engine.block.forceLoadAVResource(batchFill);
+      await engine.block.forceLoadAVResource(batchFill)
 
       // Apply consistent trim: first 4 seconds of each video
-      engine.block.setTrimOffset(batchFill, 0.0);
-      engine.block.setTrimLength(batchFill, 4.0);
+      engine.block.setTrimOffset(batchFill, 0.0)
+      engine.block.setTrimLength(batchFill, 4.0)
 
       // Set consistent duration
-      engine.block.setDuration(batchVideo, 4.0);
+      engine.block.setDuration(batchVideo, 4.0)
     }
 
-    // eslint-disable-next-line no-console
-    console.log('Batch trim - Applied consistent 4s trim to 3 video blocks');
+    console.log('Batch trim - Applied consistent 4s trim to 3 video blocks')
 
     // ===== Position all blocks in grid layout =====
     const blocks = [
@@ -319,31 +315,31 @@ class Example implements EditorPlugin {
       loopingTrimVideo, // Position 3
       frameAccurateTrimVideo, // Position 4
       ...batchVideos // Positions 5-7
-    ];
+    ]
 
     blocks.forEach((block, index) => {
-      const pos = getPosition(index);
-      engine.block.setPositionX(block, pos.x);
-      engine.block.setPositionY(block, pos.y);
-    });
+      const pos = getPosition(index)
+      engine.block.setPositionX(block, pos.x)
+      engine.block.setPositionY(block, pos.y)
+    })
 
     // Start playback automatically when the example loads
     try {
-      engine.block.setPlaying(page, true);
-      // eslint-disable-next-line no-console
+      engine.block.setPlaying(page, true)
+
       console.log(
         'Video trim guide initialized. Playback started automatically. Use timeline controls to adjust trim handles.'
-      );
-    } catch (error) {
-      // eslint-disable-next-line no-console
+      )
+    }
+    catch (error) {
       console.log(
         'Video trim guide initialized. Click play button to start playback.'
-      );
+      )
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to use the built-in timeline UI for visual trimming and how to trim videos programmatically using the Engine API.
@@ -416,17 +412,17 @@ When clips extend beyond page duration boundaries, grey visual indicators show w
 Before accessing trim properties or setting trim values, we must load the video resource metadata using `forceLoadAVResource`. This critical step ensures CE.SDK has downloaded information about the video's duration, frame rate, and other properties needed for accurate trimming.
 
 ```typescript highlight-load-video-resource
-    // Pattern: Always load video resource before accessing trim properties
-    // This ensures metadata (duration, frame rate, etc.) is available
-    await engine.block.forceLoadAVResource(videoFill);
+// Pattern: Always load video resource before accessing trim properties
+// This ensures metadata (duration, frame rate, etc.) is available
+await engine.block.forceLoadAVResource(videoFill)
 
-    // Now we can safely access video metadata
-    const totalDuration = engine.block.getDouble(
-      videoFill,
-      'fill/video/totalDuration'
-    );
-    // eslint-disable-next-line no-console
-    console.log('Total video duration:', totalDuration, 'seconds');
+// Now we can safely access video metadata
+const totalDuration = engine.block.getDouble(
+  videoFill,
+  'fill/video/totalDuration'
+)
+
+console.log('Total video duration:', totalDuration, 'seconds')
 ```
 
 Skipping this step is a common source of errors. Without loading the resource first, trim operations may fail silently or produce unexpected results. Always await `forceLoadAVResource` before calling any trim methods.
@@ -438,23 +434,23 @@ Once loaded, we can access metadata like `totalDuration` and `frameRate` from th
 Before applying trim operations, we verify that a block supports trimming. While video blocks typically support trimming, other block types like pages and scenes do not.
 
 ```typescript highlight-check-trim-support
-    // Create a sample video block to demonstrate trim support checking
-    const sampleVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a sample video block to demonstrate trim support checking
+const sampleVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    // Get the video fill - trim operations are applied to the fill, not the block
-    const videoFill = engine.block.getFill(sampleVideo);
+// Get the video fill - trim operations are applied to the fill, not the block
+const videoFill = engine.block.getFill(sampleVideo)
 
-    // Check if the fill supports trim operations
-    const supportsTrim = engine.block.supportsTrim(videoFill);
-    // eslint-disable-next-line no-console
-    console.log('Video fill supports trim:', supportsTrim); // true for video fills
+// Check if the fill supports trim operations
+const supportsTrim = engine.block.supportsTrim(videoFill)
 
-    // Select this block so timeline controls are visible
-    engine.block.setSelected(sampleVideo, true);
+console.log('Video fill supports trim:', supportsTrim) // true for video fills
+
+// Select this block so timeline controls are visible
+engine.block.setSelected(sampleVideo, true)
 ```
 
 Checking support prevents runtime errors and allows you to build robust interfaces that only show trim controls for compatible blocks. Graphic blocks with video fills also support trimming, not just top-level video blocks.
@@ -464,23 +460,23 @@ Checking support prevents runtime errors and allows you to build robust interfac
 Once we've confirmed trim support and loaded the resource, we can apply trimming. Here we create a video block and trim it to start 2 seconds into the source media and play for 5 seconds.
 
 ```typescript highlight-basic-video-trim
-    // Pattern #1: Demonstrate Individual Before Combined
-    // Create a separate video block for basic trim demonstration
-    const basicTrimVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Pattern #1: Demonstrate Individual Before Combined
+// Create a separate video block for basic trim demonstration
+const basicTrimVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    // Get the fill to apply trim operations
-    const basicTrimFill = engine.block.getFill(basicTrimVideo);
+// Get the fill to apply trim operations
+const basicTrimFill = engine.block.getFill(basicTrimVideo)
 
-    // Load resource before trimming
-    await engine.block.forceLoadAVResource(basicTrimFill);
+// Load resource before trimming
+await engine.block.forceLoadAVResource(basicTrimFill)
 
-    // Trim video to start at 2 seconds and play for 5 seconds
-    engine.block.setTrimOffset(basicTrimFill, 2.0);
-    engine.block.setTrimLength(basicTrimFill, 5.0);
+// Trim video to start at 2 seconds and play for 5 seconds
+engine.block.setTrimOffset(basicTrimFill, 2.0)
+engine.block.setTrimLength(basicTrimFill, 5.0)
 ```
 
 The trim offset of 2.0 skips the first 2 seconds of the video. The trim length of 5.0 means exactly 5 seconds of video will play, starting from that offset point. So this video plays from the 2-second mark to the 7-second mark of the original file.
@@ -491,12 +487,12 @@ We can retrieve the current trim settings to verify values, build UI controls, o
 
 ```typescript highlight-get-trim-values
 // Get current trim values to verify or modify
-const currentOffset = engine.block.getTrimOffset(basicTrimFill);
-const currentLength = engine.block.getTrimLength(basicTrimFill);
-// eslint-disable-next-line no-console
+const currentOffset = engine.block.getTrimOffset(basicTrimFill)
+const currentLength = engine.block.getTrimLength(basicTrimFill)
+
 console.log(
   `Basic trim - Offset: ${currentOffset}s, Length: ${currentLength}s`
-);
+)
 ```
 
 These getter methods return the current trim offset and length in seconds. Use them to populate UI inputs, calculate remaining media duration, or create undo/redo functionality in your application.
@@ -508,29 +504,28 @@ These getter methods return the current trim offset and length in seconds. Use t
 Take a look at this example to understand how trim length and block duration interact:
 
 ```typescript highlight-trim-with-duration
-    // Pattern #5: Progressive Complexity - coordinating trim with block duration
-    // Create a video block demonstrating trim + duration coordination
-    const durationTrimVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Pattern #5: Progressive Complexity - coordinating trim with block duration
+// Create a video block demonstrating trim + duration coordination
+const durationTrimVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const durationTrimFill = engine.block.getFill(durationTrimVideo);
-    await engine.block.forceLoadAVResource(durationTrimFill);
+const durationTrimFill = engine.block.getFill(durationTrimVideo)
+await engine.block.forceLoadAVResource(durationTrimFill)
 
-    // Set trim: play portion from 3s to 8s (5 seconds of content)
-    engine.block.setTrimOffset(durationTrimFill, 3.0);
-    engine.block.setTrimLength(durationTrimFill, 5.0);
+// Set trim: play portion from 3s to 8s (5 seconds of content)
+engine.block.setTrimOffset(durationTrimFill, 3.0)
+engine.block.setTrimLength(durationTrimFill, 5.0)
 
-    // Set block duration: how long this block appears in the timeline
-    // When duration equals trim length, the entire trimmed portion plays once
-    engine.block.setDuration(durationTrimVideo, 5.0);
+// Set block duration: how long this block appears in the timeline
+// When duration equals trim length, the entire trimmed portion plays once
+engine.block.setDuration(durationTrimVideo, 5.0)
 
-    // eslint-disable-next-line no-console
-    console.log(
-      'Trim+Duration - Block will play trimmed 5s exactly once in timeline'
-    );
+console.log(
+  'Trim+Duration - Block will play trimmed 5s exactly once in timeline'
+)
 ```
 
 In this example, we trim the video to a 5-second segment (from 3s to 8s of the source) and set the block duration to exactly 5 seconds. This means the entire trimmed portion plays once, then stops. The block duration matches the trim length, so there's no looping or holding on the last frame.
@@ -542,35 +537,34 @@ If the block duration is less than the trim length, only part of the trimmed seg
 Looping allows a trimmed video segment to repeat seamlessly. We enable looping and set a block duration longer than the trim length to create repeating playback.
 
 ```typescript highlight-trim-with-looping
-    // Create a video block with trim + looping
-    const loopingTrimVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Create a video block with trim + looping
+const loopingTrimVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const loopingTrimFill = engine.block.getFill(loopingTrimVideo);
-    await engine.block.forceLoadAVResource(loopingTrimFill);
+const loopingTrimFill = engine.block.getFill(loopingTrimVideo)
+await engine.block.forceLoadAVResource(loopingTrimFill)
 
-    // Trim to a short 3-second segment
-    engine.block.setTrimOffset(loopingTrimFill, 1.0);
-    engine.block.setTrimLength(loopingTrimFill, 3.0);
+// Trim to a short 3-second segment
+engine.block.setTrimOffset(loopingTrimFill, 1.0)
+engine.block.setTrimLength(loopingTrimFill, 3.0)
 
-    // Enable looping so the 3-second segment repeats
-    engine.block.setLooping(loopingTrimFill, true);
+// Enable looping so the 3-second segment repeats
+engine.block.setLooping(loopingTrimFill, true)
 
-    // Verify looping is enabled
-    const isLooping = engine.block.isLooping(loopingTrimFill);
-    // eslint-disable-next-line no-console
-    console.log('Looping enabled:', isLooping);
+// Verify looping is enabled
+const isLooping = engine.block.isLooping(loopingTrimFill)
 
-    // Set duration longer than trim length - the trim will loop to fill it
-    engine.block.setDuration(loopingTrimVideo, 9.0);
+console.log('Looping enabled:', isLooping)
 
-    // eslint-disable-next-line no-console
-    console.log(
-      'Looping trim - 3s segment will loop 3 times to fill 9s duration'
-    );
+// Set duration longer than trim length - the trim will loop to fill it
+engine.block.setDuration(loopingTrimVideo, 9.0)
+
+console.log(
+  'Looping trim - 3s segment will loop 3 times to fill 9s duration'
+)
 ```
 
 Here we trim to a 3-second segment and enable looping. The block duration of 9 seconds means this 3-second segment will loop 3 times to fill the entire duration. This technique is perfect for creating background loops, repeated motion graphics, or extending short clips.
@@ -582,37 +576,36 @@ When looping is enabled, CE.SDK automatically restarts playback from the trim of
 For precise editing, we often need to trim to specific frame boundaries rather than arbitrary time values. Using the video's frame rate metadata, we can calculate exact frame-based trim points.
 
 ```typescript highlight-frame-accurate-trim
-    // Pattern #6: Descriptive naming - frame-accurate trim demonstration
-    // Create a video block for frame-accurate trimming
-    const frameAccurateTrimVideo = await engine.block.addVideo(
-      videoUri,
-      blockWidth,
-      blockHeight
-    );
+// Pattern #6: Descriptive naming - frame-accurate trim demonstration
+// Create a video block for frame-accurate trimming
+const frameAccurateTrimVideo = await engine.block.addVideo(
+  videoUri,
+  blockWidth,
+  blockHeight
+)
 
-    const frameFill = engine.block.getFill(frameAccurateTrimVideo);
-    await engine.block.forceLoadAVResource(frameFill);
+const frameFill = engine.block.getFill(frameAccurateTrimVideo)
+await engine.block.forceLoadAVResource(frameFill)
 
-    // Note: Frame rate is not directly accessible via the API
-    // For this example, we'll assume a common frame rate of 30fps
-    const frameRate = 30;
+// Note: Frame rate is not directly accessible via the API
+// For this example, we'll assume a common frame rate of 30fps
+const frameRate = 30
 
-    // Calculate trim offset based on specific frame number
-    // Example: Start at frame 60 for a 30fps video = 2.0 seconds
-    const startFrame = 60;
-    const trimOffsetSeconds = startFrame / frameRate;
+// Calculate trim offset based on specific frame number
+// Example: Start at frame 60 for a 30fps video = 2.0 seconds
+const startFrame = 60
+const trimOffsetSeconds = startFrame / frameRate
 
-    // Trim for exactly 150 frames = 5.0 seconds at 30fps
-    const trimFrames = 150;
-    const trimLengthSeconds = trimFrames / frameRate;
+// Trim for exactly 150 frames = 5.0 seconds at 30fps
+const trimFrames = 150
+const trimLengthSeconds = trimFrames / frameRate
 
-    engine.block.setTrimOffset(frameFill, trimOffsetSeconds);
-    engine.block.setTrimLength(frameFill, trimLengthSeconds);
+engine.block.setTrimOffset(frameFill, trimOffsetSeconds)
+engine.block.setTrimLength(frameFill, trimLengthSeconds)
 
-    // eslint-disable-next-line no-console
-    console.log(
-      `Frame-accurate trim - Frame rate: ${frameRate}fps (assumed), Start frame: ${startFrame}, Duration: ${trimFrames} frames`
-    );
+console.log(
+  `Frame-accurate trim - Frame rate: ${frameRate}fps (assumed), Start frame: ${startFrame}, Duration: ${trimFrames} frames`
+)
 ```
 
 We first retrieve the frame rate from the video fill metadata. Then we convert frame numbers to time offsets by dividing by the frame rate. Starting at frame 60 with a 30fps video gives us exactly 2.0 seconds. Trimming for 150 frames provides exactly 5.0 seconds of playback.
@@ -624,39 +617,38 @@ This technique ensures frame-accurate edits, which is essential for professional
 When working with multiple video clips that need consistent trimming, we can iterate through collections and apply the same trim settings programmatically.
 
 ```typescript highlight-batch-trim-videos
-    // Pattern: Batch processing multiple video clips
-    // Create multiple video blocks to demonstrate batch trimming
-    const batchVideoUris = [
-      'https://img.ly/static/ubq_video_samples/bbb.mp4',
-      'https://img.ly/static/ubq_video_samples/bbb.mp4',
-      'https://img.ly/static/ubq_video_samples/bbb.mp4'
-    ];
+// Pattern: Batch processing multiple video clips
+// Create multiple video blocks to demonstrate batch trimming
+const batchVideoUris = [
+  'https://img.ly/static/ubq_video_samples/bbb.mp4',
+  'https://img.ly/static/ubq_video_samples/bbb.mp4',
+  'https://img.ly/static/ubq_video_samples/bbb.mp4'
+]
 
-    const batchVideos = [];
-    for (let i = 0; i < batchVideoUris.length; i++) {
-      const batchVideo = await engine.block.addVideo(
-        batchVideoUris[i],
-        blockWidth,
-        blockHeight
-      );
-      batchVideos.push(batchVideo);
+const batchVideos = []
+for (let i = 0; i < batchVideoUris.length; i++) {
+  const batchVideo = await engine.block.addVideo(
+    batchVideoUris[i],
+    blockWidth,
+    blockHeight
+  )
+  batchVideos.push(batchVideo)
 
-      // Get the fill for trim operations
-      const batchFill = engine.block.getFill(batchVideo);
+  // Get the fill for trim operations
+  const batchFill = engine.block.getFill(batchVideo)
 
-      // Load resource before trimming
-      await engine.block.forceLoadAVResource(batchFill);
+  // Load resource before trimming
+  await engine.block.forceLoadAVResource(batchFill)
 
-      // Apply consistent trim: first 4 seconds of each video
-      engine.block.setTrimOffset(batchFill, 0.0);
-      engine.block.setTrimLength(batchFill, 4.0);
+  // Apply consistent trim: first 4 seconds of each video
+  engine.block.setTrimOffset(batchFill, 0.0)
+  engine.block.setTrimLength(batchFill, 4.0)
 
-      // Set consistent duration
-      engine.block.setDuration(batchVideo, 4.0);
-    }
+  // Set consistent duration
+  engine.block.setDuration(batchVideo, 4.0)
+}
 
-    // eslint-disable-next-line no-console
-    console.log('Batch trim - Applied consistent 4s trim to 3 video blocks');
+console.log('Batch trim - Applied consistent 4s trim to 3 video blocks')
 ```
 
 We create multiple video blocks and apply identical trim settings to each one. This ensures consistency across clips—perfect for creating video montages, multi-angle compositions, or any scenario where uniform clip lengths are required.

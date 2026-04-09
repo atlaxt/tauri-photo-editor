@@ -23,7 +23,7 @@ Insert images into your designs programmatically using CE.SDK's engine API.
 Images in CE.SDK are graphic blocks with image fills attached. The engine supports multiple image formats including PNG, JPEG, WebP, GIF, and SVG. You can insert images using either the convenience API for quick setup or manual construction for fine-grained control over the image block components.
 
 ```typescript file=@cesdk_web_examples/guides-insert-media-images-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Insert Images Guide
@@ -54,22 +54,22 @@ import packageJson from './package.json';
  * - Working with multiple images
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -80,25 +80,25 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Sample image URL for demonstrations
-    const imageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUrl = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     // Add an image using the convenience API
     // This automatically creates a graphic block with rect shape and image fill
@@ -106,29 +106,29 @@ class Example implements EditorPlugin {
       size: { width: 200, height: 150 },
       x: 50,
       y: 50
-    });
-    engine.block.appendChild(page, imageBlock);
-    console.log('✓ Added image using convenience API');
+    })
+    engine.block.appendChild(page, imageBlock)
+    console.log('✓ Added image using convenience API')
 
     // Manually construct an image block for more control
-    const manualBlock = engine.block.create('graphic');
+    const manualBlock = engine.block.create('graphic')
 
     // Create and attach a rectangular shape
-    const shape = engine.block.createShape('rect');
-    engine.block.setShape(manualBlock, shape);
+    const shape = engine.block.createShape('rect')
+    engine.block.setShape(manualBlock, shape)
 
     // Create and configure the image fill
-    const fill = engine.block.createFill('image');
-    engine.block.setString(fill, 'fill/image/imageFileURI', imageUrl);
-    engine.block.setFill(manualBlock, fill);
+    const fill = engine.block.createFill('image')
+    engine.block.setString(fill, 'fill/image/imageFileURI', imageUrl)
+    engine.block.setFill(manualBlock, fill)
 
     // Set dimensions and position
-    engine.block.setWidth(manualBlock, 200);
-    engine.block.setHeight(manualBlock, 150);
-    engine.block.setPositionX(manualBlock, 300);
-    engine.block.setPositionY(manualBlock, 50);
-    engine.block.appendChild(page, manualBlock);
-    console.log('✓ Added image using manual construction');
+    engine.block.setWidth(manualBlock, 200)
+    engine.block.setHeight(manualBlock, 150)
+    engine.block.setPositionX(manualBlock, 300)
+    engine.block.setPositionY(manualBlock, 50)
+    engine.block.appendChild(page, manualBlock)
+    console.log('✓ Added image using manual construction')
 
     // Set content fill mode to control how images scale within bounds
     // 'Contain' preserves aspect ratio and fits within bounds
@@ -137,12 +137,12 @@ class Example implements EditorPlugin {
       size: { width: 200, height: 150 },
       x: 550,
       y: 50
-    });
-    engine.block.appendChild(page, containBlock);
+    })
+    engine.block.appendChild(page, containBlock)
 
     if (engine.block.supportsContentFillMode(containBlock)) {
-      engine.block.setContentFillMode(containBlock, 'Contain');
-      console.log('✓ Applied Contain fill mode');
+      engine.block.setContentFillMode(containBlock, 'Contain')
+      console.log('✓ Applied Contain fill mode')
     }
 
     // Apply corner radius to create rounded corners on an image
@@ -151,29 +151,29 @@ class Example implements EditorPlugin {
       x: 50,
       y: 250,
       cornerRadius: 20
-    });
-    engine.block.appendChild(page, roundedBlock);
-    console.log('✓ Added image with rounded corners');
+    })
+    engine.block.appendChild(page, roundedBlock)
+    console.log('✓ Added image with rounded corners')
 
     // Insert multiple images with calculated positioning
     const imageUrls = [
       'https://img.ly/static/ubq_samples/sample_1.jpg',
       'https://img.ly/static/ubq_samples/sample_2.jpg',
       'https://img.ly/static/ubq_samples/sample_3.jpg'
-    ];
+    ]
 
     for (let i = 0; i < imageUrls.length; i++) {
       const block = await engine.block.addImage(imageUrls[i], {
         size: { width: 150, height: 100 },
         x: 300 + i * 160,
         y: 250
-      });
-      engine.block.appendChild(page, block);
+      })
+      engine.block.appendChild(page, block)
     }
-    console.log('✓ Added multiple images');
+    console.log('✓ Added multiple images')
 
     // Select the first image block to show it in the inspector
-    engine.block.setSelected(imageBlock, true);
+    engine.block.setSelected(imageBlock, true)
 
     // Zoom to show all content
     cesdk.engine.scene.zoomToBlock(page, {
@@ -183,11 +183,11 @@ class Example implements EditorPlugin {
         left: 40,
         right: 40
       }
-    });
+    })
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to add images using the convenience API, manually construct image blocks, configure content fill modes, apply corner radius, and work with multiple images.
@@ -197,39 +197,39 @@ This guide covers how to add images using the convenience API, manually construc
 We start by initializing CE.SDK and creating a scene with a page to hold our images.
 
 ```typescript highlight=highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  page: { width: 800, height: 600, unit: 'Pixel' }
+})
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
 ```
 
 ## Using the Convenience API
@@ -243,9 +243,9 @@ const imageBlock = await engine.block.addImage(imageUrl, {
   size: { width: 200, height: 150 },
   x: 50,
   y: 50
-});
-engine.block.appendChild(page, imageBlock);
-console.log('✓ Added image using convenience API');
+})
+engine.block.appendChild(page, imageBlock)
+console.log('✓ Added image using convenience API')
 ```
 
 ## Manual Image Construction
@@ -255,25 +255,25 @@ For control over individual components, we can manually construct a graphic bloc
 We create a graphic block with `create('graphic')`, attach a rectangular shape with `createShape('rect')`, and create an image fill with `createFill('image')`. The image source is set using `setString()` with the `fill/image/imageFileURI` property.
 
 ```typescript highlight=highlight-manual-construction
-    // Manually construct an image block for more control
-    const manualBlock = engine.block.create('graphic');
+// Manually construct an image block for more control
+const manualBlock = engine.block.create('graphic')
 
-    // Create and attach a rectangular shape
-    const shape = engine.block.createShape('rect');
-    engine.block.setShape(manualBlock, shape);
+// Create and attach a rectangular shape
+const shape = engine.block.createShape('rect')
+engine.block.setShape(manualBlock, shape)
 
-    // Create and configure the image fill
-    const fill = engine.block.createFill('image');
-    engine.block.setString(fill, 'fill/image/imageFileURI', imageUrl);
-    engine.block.setFill(manualBlock, fill);
+// Create and configure the image fill
+const fill = engine.block.createFill('image')
+engine.block.setString(fill, 'fill/image/imageFileURI', imageUrl)
+engine.block.setFill(manualBlock, fill)
 
-    // Set dimensions and position
-    engine.block.setWidth(manualBlock, 200);
-    engine.block.setHeight(manualBlock, 150);
-    engine.block.setPositionX(manualBlock, 300);
-    engine.block.setPositionY(manualBlock, 50);
-    engine.block.appendChild(page, manualBlock);
-    console.log('✓ Added image using manual construction');
+// Set dimensions and position
+engine.block.setWidth(manualBlock, 200)
+engine.block.setHeight(manualBlock, 150)
+engine.block.setPositionX(manualBlock, 300)
+engine.block.setPositionY(manualBlock, 50)
+engine.block.appendChild(page, manualBlock)
+console.log('✓ Added image using manual construction')
 ```
 
 ## Set Content Fill Mode
@@ -287,20 +287,20 @@ The content fill mode controls how images scale within their bounds. Use `setCon
 Check `supportsContentFillMode()` before setting to ensure the block supports this feature.
 
 ```typescript highlight=highlight-content-fill-mode
-    // Set content fill mode to control how images scale within bounds
-    // 'Contain' preserves aspect ratio and fits within bounds
-    // 'Cover' preserves aspect ratio and fills bounds
-    const containBlock = await engine.block.addImage(imageUrl, {
-      size: { width: 200, height: 150 },
-      x: 550,
-      y: 50
-    });
-    engine.block.appendChild(page, containBlock);
+// Set content fill mode to control how images scale within bounds
+// 'Contain' preserves aspect ratio and fits within bounds
+// 'Cover' preserves aspect ratio and fills bounds
+const containBlock = await engine.block.addImage(imageUrl, {
+  size: { width: 200, height: 150 },
+  x: 550,
+  y: 50
+})
+engine.block.appendChild(page, containBlock)
 
-    if (engine.block.supportsContentFillMode(containBlock)) {
-      engine.block.setContentFillMode(containBlock, 'Contain');
-      console.log('✓ Applied Contain fill mode');
-    }
+if (engine.block.supportsContentFillMode(containBlock)) {
+  engine.block.setContentFillMode(containBlock, 'Contain')
+  console.log('✓ Applied Contain fill mode')
+}
 ```
 
 ## Apply Corner Radius
@@ -314,9 +314,9 @@ const roundedBlock = await engine.block.addImage(imageUrl, {
   x: 50,
   y: 250,
   cornerRadius: 20
-});
-engine.block.appendChild(page, roundedBlock);
-console.log('✓ Added image with rounded corners');
+})
+engine.block.appendChild(page, roundedBlock)
+console.log('✓ Added image with rounded corners')
 ```
 
 ## Working with Multiple Images
@@ -324,22 +324,22 @@ console.log('✓ Added image with rounded corners');
 Insert multiple images by iterating over an array of image URLs. Each image gets its own graphic block with calculated positioning to arrange them on the page.
 
 ```typescript highlight=highlight-multiple-images
-    // Insert multiple images with calculated positioning
-    const imageUrls = [
-      'https://img.ly/static/ubq_samples/sample_1.jpg',
-      'https://img.ly/static/ubq_samples/sample_2.jpg',
-      'https://img.ly/static/ubq_samples/sample_3.jpg'
-    ];
+// Insert multiple images with calculated positioning
+const imageUrls = [
+  'https://img.ly/static/ubq_samples/sample_1.jpg',
+  'https://img.ly/static/ubq_samples/sample_2.jpg',
+  'https://img.ly/static/ubq_samples/sample_3.jpg'
+]
 
-    for (let i = 0; i < imageUrls.length; i++) {
-      const block = await engine.block.addImage(imageUrls[i], {
-        size: { width: 150, height: 100 },
-        x: 300 + i * 160,
-        y: 250
-      });
-      engine.block.appendChild(page, block);
-    }
-    console.log('✓ Added multiple images');
+for (let i = 0; i < imageUrls.length; i++) {
+  const block = await engine.block.addImage(imageUrls[i], {
+    size: { width: 150, height: 100 },
+    x: 300 + i * 160,
+    y: 250
+  })
+  engine.block.appendChild(page, block)
+}
+console.log('✓ Added multiple images')
 ```
 
 ## Next Steps

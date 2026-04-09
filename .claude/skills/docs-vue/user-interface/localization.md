@@ -23,7 +23,7 @@ Translate and customize the CE.SDK editor interface for different languages usin
 CE.SDK includes a localization system that lets you translate the editor interface, add custom languages, and white-label UI text. The I18n API manages translations programmatically at runtime, enabling you to switch languages dynamically and customize terminology for your brand.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-localization-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,26 +39,26 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 class LocalizationExample implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -69,40 +69,40 @@ class LocalizationExample implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0]!;
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]!
 
     // Get the currently active locale
-    const currentLocale = cesdk.i18n.getLocale();
-    console.log('Current locale:', currentLocale);
+    const currentLocale = cesdk.i18n.getLocale()
+    console.log('Current locale:', currentLocale)
     // Output: "en" (default fallback locale)
 
     // List all available locales
-    const allLocales = cesdk.i18n.listLocales();
-    console.log('Available locales:', allLocales);
+    const allLocales = cesdk.i18n.listLocales()
+    console.log('Available locales:', allLocales)
     // Output: ["en", "de"] (default English and German)
 
     // Find English variants using wildcard
-    const englishLocales = cesdk.i18n.listLocales({ matcher: 'en*' });
-    console.log('English locales:', englishLocales);
+    const englishLocales = cesdk.i18n.listLocales({ matcher: 'en*' })
+    console.log('English locales:', englishLocales)
 
     // Switch to German locale
-    cesdk.i18n.setLocale('de');
-    console.log('Switched to locale:', cesdk.i18n.getLocale());
+    cesdk.i18n.setLocale('de')
+    console.log('Switched to locale:', cesdk.i18n.getLocale())
     // The UI will now display in German
 
     // Add French translations
@@ -113,11 +113,11 @@ class LocalizationExample implements EditorPlugin {
         'common.back': 'Retour',
         'meta.currentLanguage': 'Français'
       }
-    });
+    })
 
     // Switch to French
-    cesdk.i18n.setLocale('fr');
-    console.log('Switched to French locale');
+    cesdk.i18n.setLocale('fr')
+    console.log('Switched to French locale')
 
     // Override specific labels for English while keeping defaults
     cesdk.i18n.setTranslations({
@@ -125,7 +125,7 @@ class LocalizationExample implements EditorPlugin {
         'common.save': 'Save Design',
         'common.export': 'Download'
       }
-    });
+    })
 
     // White-label with custom terminology across multiple locales
     cesdk.i18n.setTranslations({
@@ -139,38 +139,38 @@ class LocalizationExample implements EditorPlugin {
         'action.export': 'Design Herunterladen',
         'panel.adjustments.title': 'Verbessern'
       }
-    });
+    })
 
     // Retrieve translations for specific locales
-    const frenchTranslations = cesdk.i18n.getTranslations(['fr']);
-    console.log('French translations:', frenchTranslations);
+    const frenchTranslations = cesdk.i18n.getTranslations(['fr'])
+    console.log('French translations:', frenchTranslations)
 
     // Get all translations
-    const allTranslations = cesdk.i18n.getTranslations();
-    console.log('All translations loaded:', Object.keys(allTranslations));
+    const allTranslations = cesdk.i18n.getTranslations()
+    console.log('All translations loaded:', Object.keys(allTranslations))
 
     // Translate custom keys programmatically
-    const saveLabel = cesdk.i18n.translate('common.save');
-    console.log('Save label:', saveLabel);
+    const saveLabel = cesdk.i18n.translate('common.save')
+    console.log('Save label:', saveLabel)
 
     // Use fallback keys
-    const actionLabel = cesdk.i18n.translate(['custom.action', 'common.save']);
-    console.log('Action label with fallback:', actionLabel);
+    const actionLabel = cesdk.i18n.translate(['custom.action', 'common.save'])
+    console.log('Action label with fallback:', actionLabel)
 
     // Build language selector data
-    const availableLocales = cesdk.i18n.listLocales();
-    console.log('Building language selector with locales:', availableLocales);
+    const availableLocales = cesdk.i18n.listLocales()
+    console.log('Building language selector with locales:', availableLocales)
 
     // Simulate dynamic language switching
     const switchLanguage = (locale: string) => {
-      cesdk.i18n.setLocale(locale);
-      console.log(`Switched to ${locale}`);
-    };
+      cesdk.i18n.setLocale(locale)
+      console.log(`Switched to ${locale}`)
+    }
 
     // Example: Switch between languages
-    switchLanguage('en');
-    switchLanguage('de');
-    switchLanguage('fr');
+    switchLanguage('en')
+    switchLanguage('de')
+    switchLanguage('fr')
 
     // Simulate loading translations from external source
     const loadExternalTranslations = async () => {
@@ -186,13 +186,13 @@ class LocalizationExample implements EditorPlugin {
           'common.back': 'Volver',
           'meta.currentLanguage': 'Español'
         }
-      };
+      }
 
-      cesdk.i18n.setTranslations(externalTranslations);
-      console.log('Loaded external Spanish translations');
-    };
+      cesdk.i18n.setTranslations(externalTranslations)
+      console.log('Loaded external Spanish translations')
+    }
 
-    await loadExternalTranslations();
+    await loadExternalTranslations()
 
     // Add Italian with comprehensive translations for a fully localized UI
     cesdk.i18n.setTranslations({
@@ -231,7 +231,7 @@ class LocalizationExample implements EditorPlugin {
         'common.close': 'Chiudi',
         'component.settings.toggle': 'Personalizza Editor',
         'component.settings.toggle.description':
-          "Apri impostazioni per personalizzare l'editor",
+          'Apri impostazioni per personalizzare l\'editor',
 
         // === DOCK (Left Sidebar) ===
 
@@ -354,24 +354,24 @@ class LocalizationExample implements EditorPlugin {
         // Metadata
         'meta.currentLanguage': 'Italiano'
       }
-    });
+    })
 
     // Verify the new locale is available
-    console.log('Available after Italian:', cesdk.i18n.listLocales());
+    console.log('Available after Italian:', cesdk.i18n.listLocales())
 
     // Switch to Italian to display the fully translated UI
-    cesdk.i18n.setLocale('it');
-    console.log('UI now displaying in Italian');
+    cesdk.i18n.setLocale('it')
+    console.log('UI now displaying in Italian')
 
     // Add a sample image to the canvas for visual content
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
-    const image = await engine.block.addImage(imageUri, { x: 0, y: 0 });
-    engine.block.setWidth(image, 800);
-    engine.block.setHeight(image, 600);
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
+    const image = await engine.block.addImage(imageUri, { x: 0, y: 0 })
+    engine.block.setWidth(image, 800)
+    engine.block.setHeight(image, 600)
   }
 }
 
-export default LocalizationExample;
+export default LocalizationExample
 ```
 
 This guide covers setting locales, adding translations, discovering available languages, white-labeling with custom terminology, and loading external translation files.
@@ -387,36 +387,36 @@ During development, missing translation keys are logged to the console to help i
 We manage all localization using the `cesdk.i18n` API after initializing CreativeEditorSDK. The I18n API provides methods for setting languages, adding translations, and managing locales at runtime.
 
 ```typescript highlight-setup
-    await cesdk.addPlugin(new DesignEditorConfig());
+await cesdk.addPlugin(new DesignEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.blank.*',
-          'ly.img.templates.presentation.*',
-          'ly.img.templates.print.*',
-          'ly.img.templates.social.*',
-          'ly.img.image.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.blank.*',
+      'ly.img.templates.presentation.*',
+      'ly.img.templates.print.*',
+      'ly.img.templates.social.*',
+      'ly.img.image.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(new PagePresetsAssetSource())
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  page: { width: 800, height: 600, unit: 'Pixel' }
+})
 ```
 
 ### Getting the Current Locale
@@ -425,8 +425,8 @@ We use `cesdk.i18n.getLocale()` to retrieve the currently active locale. The met
 
 ```typescript highlight-get-current-locale
 // Get the currently active locale
-const currentLocale = cesdk.i18n.getLocale();
-console.log('Current locale:', currentLocale);
+const currentLocale = cesdk.i18n.getLocale()
+console.log('Current locale:', currentLocale)
 // Output: "en" (default fallback locale)
 ```
 
@@ -436,8 +436,8 @@ We use `cesdk.i18n.setLocale()` to switch the active language. The UI updates im
 
 ```typescript highlight-set-locale
 // Switch to German locale
-cesdk.i18n.setLocale('de');
-console.log('Switched to locale:', cesdk.i18n.getLocale());
+cesdk.i18n.setLocale('de')
+console.log('Switched to locale:', cesdk.i18n.getLocale())
 // The UI will now display in German
 ```
 
@@ -446,14 +446,14 @@ console.log('Switched to locale:', cesdk.i18n.getLocale());
 We use `cesdk.i18n.listLocales()` to get an array of all loaded locales. The method supports optional wildcard matching using the `matcher` parameter to find locale variants.
 
 ```typescript highlight-list-available-locales
-    // List all available locales
-    const allLocales = cesdk.i18n.listLocales();
-    console.log('Available locales:', allLocales);
-    // Output: ["en", "de"] (default English and German)
+// List all available locales
+const allLocales = cesdk.i18n.listLocales()
+console.log('Available locales:', allLocales)
+// Output: ["en", "de"] (default English and German)
 
-    // Find English variants using wildcard
-    const englishLocales = cesdk.i18n.listLocales({ matcher: 'en*' });
-    console.log('English locales:', englishLocales);
+// Find English variants using wildcard
+const englishLocales = cesdk.i18n.listLocales({ matcher: 'en*' })
+console.log('English locales:', englishLocales)
 ```
 
 ### Adding Custom Translations
@@ -461,19 +461,19 @@ We use `cesdk.i18n.listLocales()` to get an array of all loaded locales. The met
 We use `cesdk.i18n.setTranslations()` to add new languages or override existing translations. The structure requires the locale as the key with a nested translation object. We only need to provide keys we want to change—the rest fall back to defaults.
 
 ```typescript highlight-add-custom-translations
-    // Add French translations
-    cesdk.i18n.setTranslations({
-      fr: {
-        'common.save': 'Enregistrer',
-        'common.cancel': 'Annuler',
-        'common.back': 'Retour',
-        'meta.currentLanguage': 'Français'
-      }
-    });
+// Add French translations
+cesdk.i18n.setTranslations({
+  fr: {
+    'common.save': 'Enregistrer',
+    'common.cancel': 'Annuler',
+    'common.back': 'Retour',
+    'meta.currentLanguage': 'Français'
+  }
+})
 
-    // Switch to French
-    cesdk.i18n.setLocale('fr');
-    console.log('Switched to French locale');
+// Switch to French
+cesdk.i18n.setLocale('fr')
+console.log('Switched to French locale')
 ```
 
 ### Overriding Specific Labels
@@ -487,7 +487,7 @@ cesdk.i18n.setTranslations({
     'common.save': 'Save Design',
     'common.export': 'Download'
   }
-});
+})
 ```
 
 ### Retrieving Translations
@@ -495,13 +495,13 @@ cesdk.i18n.setTranslations({
 We use `cesdk.i18n.getTranslations()` to retrieve loaded translations for specific locales or all available translations. This is useful for debugging or exporting translation data.
 
 ```typescript highlight-get-translations
-    // Retrieve translations for specific locales
-    const frenchTranslations = cesdk.i18n.getTranslations(['fr']);
-    console.log('French translations:', frenchTranslations);
+// Retrieve translations for specific locales
+const frenchTranslations = cesdk.i18n.getTranslations(['fr'])
+console.log('French translations:', frenchTranslations)
 
-    // Get all translations
-    const allTranslations = cesdk.i18n.getTranslations();
-    console.log('All translations loaded:', Object.keys(allTranslations));
+// Get all translations
+const allTranslations = cesdk.i18n.getTranslations()
+console.log('All translations loaded:', Object.keys(allTranslations))
 ```
 
 ### Translating Keys Programmatically
@@ -509,13 +509,13 @@ We use `cesdk.i18n.getTranslations()` to retrieve loaded translations for specif
 We use `cesdk.i18n.translate()` to translate custom keys in our own UI elements. The method accepts a single key string or array of keys for fallback behavior. When an array is provided, the first key with a translation is used.
 
 ```typescript highlight-translate-keys
-    // Translate custom keys programmatically
-    const saveLabel = cesdk.i18n.translate('common.save');
-    console.log('Save label:', saveLabel);
+// Translate custom keys programmatically
+const saveLabel = cesdk.i18n.translate('common.save')
+console.log('Save label:', saveLabel)
 
-    // Use fallback keys
-    const actionLabel = cesdk.i18n.translate(['custom.action', 'common.save']);
-    console.log('Action label with fallback:', actionLabel);
+// Use fallback keys
+const actionLabel = cesdk.i18n.translate(['custom.action', 'common.save'])
+console.log('Action label with fallback:', actionLabel)
 ```
 
 ## Dynamic Language Switching
@@ -523,20 +523,20 @@ We use `cesdk.i18n.translate()` to translate custom keys in our own UI elements.
 We can build user-facing language selectors and switch languages at runtime without reloading the editor. We use `cesdk.i18n.listLocales()` to populate selector options and `cesdk.i18n.setLocale()` to switch languages.
 
 ```typescript highlight-dynamic-switching
-    // Build language selector data
-    const availableLocales = cesdk.i18n.listLocales();
-    console.log('Building language selector with locales:', availableLocales);
+// Build language selector data
+const availableLocales = cesdk.i18n.listLocales()
+console.log('Building language selector with locales:', availableLocales)
 
-    // Simulate dynamic language switching
-    const switchLanguage = (locale: string) => {
-      cesdk.i18n.setLocale(locale);
-      console.log(`Switched to ${locale}`);
-    };
+// Simulate dynamic language switching
+function switchLanguage(locale: string) {
+  cesdk.i18n.setLocale(locale)
+  console.log(`Switched to ${locale}`)
+}
 
-    // Example: Switch between languages
-    switchLanguage('en');
-    switchLanguage('de');
-    switchLanguage('fr');
+// Example: Switch between languages
+switchLanguage('en')
+switchLanguage('de')
+switchLanguage('fr')
 ```
 
 ## White-labeling and Custom Terminology
@@ -556,7 +556,7 @@ cesdk.i18n.setTranslations({
     'action.export': 'Design Herunterladen',
     'panel.adjustments.title': 'Verbessern'
   }
-});
+})
 ```
 
 ## Complete Language Addition
@@ -568,27 +568,27 @@ We add support for new languages by providing translation objects with UI keys. 
 We can load translation JSON files from external sources at runtime using `fetch()` and `cesdk.i18n.setTranslations()`. This is useful for loading translations from CDN or backend services.
 
 ```typescript highlight-external-translations
-    // Simulate loading translations from external source
-    const loadExternalTranslations = async () => {
-      // In a real application, you would fetch from a server:
-      // const response = await fetch('/api/translations/es.json');
-      // const translations = await response.json();
+// Simulate loading translations from external source
+async function loadExternalTranslations() {
+  // In a real application, you would fetch from a server:
+  // const response = await fetch('/api/translations/es.json');
+  // const translations = await response.json();
 
-      // Simulate external Spanish translations
-      const externalTranslations = {
-        es: {
-          'common.save': 'Guardar',
-          'common.cancel': 'Cancelar',
-          'common.back': 'Volver',
-          'meta.currentLanguage': 'Español'
-        }
-      };
+  // Simulate external Spanish translations
+  const externalTranslations = {
+    es: {
+      'common.save': 'Guardar',
+      'common.cancel': 'Cancelar',
+      'common.back': 'Volver',
+      'meta.currentLanguage': 'Español'
+    }
+  }
 
-      cesdk.i18n.setTranslations(externalTranslations);
-      console.log('Loaded external Spanish translations');
-    };
+  cesdk.i18n.setTranslations(externalTranslations)
+  console.log('Loaded external Spanish translations')
+}
 
-    await loadExternalTranslations();
+await loadExternalTranslations()
 ```
 
 ## Troubleshooting

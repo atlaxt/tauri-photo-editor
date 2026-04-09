@@ -13,15 +13,15 @@ This guide covers creating a scene with a pixel stream fill, controlling feed or
 To display a camera feed, create a scene and set up a page with `PixelStreamFill`. The pixel stream fill accepts live pixel data that you provide frame by frame:
 
 ```js
-engine.scene.create();
-const stack = engine.block.findByType('stack')[0];
-const page = engine.block.create('page');
-engine.block.appendChild(stack, page);
+engine.scene.create()
+const stack = engine.block.findByType('stack')[0]
+const page = engine.block.create('page')
+engine.block.appendChild(stack, page)
 
-const pixelStreamFill = engine.block.createFill('pixelStream');
-engine.block.setFill(page, pixelStreamFill);
+const pixelStreamFill = engine.block.createFill('pixelStream')
+engine.block.setFill(page, pixelStreamFill)
 
-engine.block.appendEffect(page, engine.block.createEffect('half_tone'));
+engine.block.appendEffect(page, engine.block.createEffect('half_tone'))
 ```
 
 We create a scene, add a page to the stack, and assign a `PixelStreamFill` to receive camera data. The `PixelStreamFill` acts as a container that displays whatever pixel data you send to it. You can apply any CE.SDK effect to process the camera feed in real-time.
@@ -36,7 +36,7 @@ engine.block.setEnum(
   pixelStreamFill,
   'fill/pixelStream/orientation',
   'UpMirrored'
-);
+)
 ```
 
 Available orientation values:
@@ -61,20 +61,20 @@ Request camera access using the browser's `navigator.mediaDevices.getUserMedia()
 ```js
 navigator.mediaDevices.getUserMedia({ video: true }).then(
   (stream) => {
-    const video = document.createElement('video');
-    video.autoplay = true;
-    video.srcObject = stream;
+    const video = document.createElement('video')
+    video.autoplay = true
+    video.srcObject = stream
     video.addEventListener('loadedmetadata', () => {
-      engine.block.setWidth(page, video.videoWidth);
-      engine.block.setHeight(page, video.videoHeight);
-      engine.scene.zoomToBlock(page, 40, 40, 40, 40);
+      engine.block.setWidth(page, video.videoWidth)
+      engine.block.setHeight(page, video.videoHeight)
+      engine.scene.zoomToBlock(page, 40, 40, 40, 40)
       // Continue with frame updates...
-    });
+    })
   },
   (err) => {
-    console.error(err);
+    console.error(err)
   }
-);
+)
 ```
 
 The `facingMode` option in `getUserMedia()` lets you request the front-facing camera (`'user'`) or rear camera (`'environment'`) on mobile devices.
@@ -84,11 +84,11 @@ The `facingMode` option in `getUserMedia()` lets you request the front-facing ca
 Use `requestVideoFrameCallback()` to efficiently sync frame updates with the video's frame rate. Call `engine.block.setNativePixelBuffer()` in each callback to send the current video frame to CE.SDK:
 
 ```js
-const onVideoFrame = () => {
-  engine.block.setNativePixelBuffer(pixelStreamFill, video);
-  video.requestVideoFrameCallback(onVideoFrame);
-};
-video.requestVideoFrameCallback(onVideoFrame);
+function onVideoFrame() {
+  engine.block.setNativePixelBuffer(pixelStreamFill, video)
+  video.requestVideoFrameCallback(onVideoFrame)
+}
+video.requestVideoFrameCallback(onVideoFrame)
 ```
 
 The `setNativePixelBuffer()` method accepts either an `HTMLVideoElement` or `HTMLCanvasElement`, providing flexibility for different video processing workflows. Using `requestVideoFrameCallback` instead of `requestAnimationFrame` ensures frame updates are synchronized with the video's actual frame rate.

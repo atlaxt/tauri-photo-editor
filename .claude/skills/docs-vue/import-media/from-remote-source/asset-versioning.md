@@ -23,7 +23,7 @@ Manage how CE.SDK stores and resolves asset URLs in saved designs, ensuring desi
 CE.SDK references assets via URIs rather than embedding files directly into designs. When you save a design with `engine.scene.saveToString()`, asset URLs are stored as strings. On load, CE.SDK fetches assets from those URLs. This approach keeps saved designs small but means URL changes can break existing designs. This guide explains how CE.SDK stores asset references and strategies for managing asset URLs over time.
 
 ```typescript file=@cesdk_web_examples/guides-import-media-from-remote-source-asset-versioning-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,9 +39,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Asset Versioning Guide
@@ -53,21 +53,21 @@ import packageJson from './package.json';
  * - Strategies for versioned asset URLs
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -78,89 +78,89 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Set up page dimensions
 
     // Create an image block with a remote URL
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     const imageBlock = await engine.block.addImage(imageUri, {
       x: 50,
       y: 50,
       size: { width: 300, height: 200 }
-    });
+    })
 
     // Get the fill block that contains the image URI
-    const fill = engine.block.getFill(imageBlock);
+    const fill = engine.block.getFill(imageBlock)
 
     // Inspect the stored URI - this is exactly what gets saved in the scene
-    const storedUri = engine.block.getString(fill, 'fill/image/imageFileURI');
-    console.log('Stored image URI:', storedUri);
+    const storedUri = engine.block.getString(fill, 'fill/image/imageFileURI')
+    console.log('Stored image URI:', storedUri)
 
     // Save the scene to a string - URLs are preserved as references
-    const sceneString = await engine.scene.saveToString();
-    console.log('Scene saved to string, length:', sceneString.length);
+    const sceneString = await engine.scene.saveToString()
+    console.log('Scene saved to string, length:', sceneString.length)
 
     // The scene string contains the URL reference, not the image data itself
     // This keeps the saved scene small and loads quickly
 
     // Alternatively, save as an archive with embedded assets
-    const archiveBlob = await engine.scene.saveToArchive();
-    console.log('Archive created, size:', archiveBlob.size, 'bytes');
+    const archiveBlob = await engine.scene.saveToArchive()
+    console.log('Archive created, size:', archiveBlob.size, 'bytes')
 
     // Archives are self-contained - they include all asset data
     // Use archives when designs need to work offline or across environments
 
     // Programmatically update an asset URL (e.g., for CDN migration)
-    const newUri = 'https://img.ly/static/ubq_samples/sample_2.jpg';
-    engine.block.setString(fill, 'fill/image/imageFileURI', newUri);
+    const newUri = 'https://img.ly/static/ubq_samples/sample_2.jpg'
+    engine.block.setString(fill, 'fill/image/imageFileURI', newUri)
 
     // Verify the change
-    const updatedUri = engine.block.getString(fill, 'fill/image/imageFileURI');
-    console.log('Updated image URI:', updatedUri);
+    const updatedUri = engine.block.getString(fill, 'fill/image/imageFileURI')
+    console.log('Updated image URI:', updatedUri)
 
     // Find all graphic blocks to batch update their asset URLs
-    const graphicBlocks = engine.block.findByType('graphic');
-    console.log('Found graphic blocks:', graphicBlocks.length);
+    const graphicBlocks = engine.block.findByType('graphic')
+    console.log('Found graphic blocks:', graphicBlocks.length)
 
     // Iterate through blocks to inspect or update their fills
     for (const blockId of graphicBlocks) {
-      const blockFill = engine.block.getFill(blockId);
-      const fillType = engine.block.getType(blockFill);
+      const blockFill = engine.block.getFill(blockId)
+      const fillType = engine.block.getType(blockFill)
 
       if (fillType === '//ly.img.ubq/fill/image') {
         const uri = engine.block.getString(
           blockFill,
           'fill/image/imageFileURI'
-        );
-        console.log('Image block found with URI:', uri);
+        )
+        console.log('Image block found with URI:', uri)
 
         // Example: migrate from old CDN to new CDN
         if (uri.includes('old-cdn.example.com')) {
           const migratedUri = uri.replace(
             'old-cdn.example.com',
             'new-cdn.example.com'
-          );
+          )
           engine.block.setString(
             blockFill,
             'fill/image/imageFileURI',
             migratedUri
-          );
+          )
         }
       }
     }
@@ -168,35 +168,35 @@ class Example implements EditorPlugin {
     // Demonstrate versioned URL patterns
 
     // Path-based versioning: include version in the URL path
-    const pathVersionedUrl = 'https://cdn.example.com/assets/v2/logo.png';
-    console.log('Path-versioned URL:', pathVersionedUrl);
+    const pathVersionedUrl = 'https://cdn.example.com/assets/v2/logo.png'
+    console.log('Path-versioned URL:', pathVersionedUrl)
 
     // Hash-based versioning: include content hash in filename
-    const hashVersionedUrl = 'https://cdn.example.com/assets/logo-a1b2c3d4.png';
-    console.log('Hash-versioned URL:', hashVersionedUrl);
+    const hashVersionedUrl = 'https://cdn.example.com/assets/logo-a1b2c3d4.png'
+    console.log('Hash-versioned URL:', hashVersionedUrl)
 
     // Query parameter versioning: append version as query string
-    const queryVersionedUrl = 'https://cdn.example.com/assets/logo.png?v=2';
-    console.log('Query-versioned URL:', queryVersionedUrl);
+    const queryVersionedUrl = 'https://cdn.example.com/assets/logo.png?v=2'
+    console.log('Query-versioned URL:', queryVersionedUrl)
 
     // Add a second image to make the scene more visually interesting
-    const secondImageUri = 'https://img.ly/static/ubq_samples/sample_3.jpg';
+    const secondImageUri = 'https://img.ly/static/ubq_samples/sample_3.jpg'
     await engine.block.addImage(secondImageUri, {
       x: 400,
       y: 50,
       size: { width: 300, height: 200 }
-    });
+    })
 
     // Select the first image block to show it in the canvas inspector
-    engine.block.select(imageBlock);
+    engine.block.select(imageBlock)
 
     console.log(
       'Asset versioning guide initialized. Check console for URL inspection results.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to inspect asset URLs stored in designs, the difference between scene serialization and archive export, how to programmatically update asset URLs, and strategies for versioned URL schemes.
@@ -206,21 +206,21 @@ This guide covers how to inspect asset URLs stored in designs, the difference be
 Assets in a scene are blocks with fill properties containing URI strings. When you add an image or video to a design, CE.SDK creates a fill block that stores the source URL. We can use `engine.block.getFill()` to get the fill block and `engine.block.getString()` to inspect the stored URI.
 
 ```typescript highlight=highlight-how-urls-stored
-    // Create an image block with a remote URL
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+// Create an image block with a remote URL
+const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
-    const imageBlock = await engine.block.addImage(imageUri, {
-      x: 50,
-      y: 50,
-      size: { width: 300, height: 200 }
-    });
+const imageBlock = await engine.block.addImage(imageUri, {
+  x: 50,
+  y: 50,
+  size: { width: 300, height: 200 }
+})
 
-    // Get the fill block that contains the image URI
-    const fill = engine.block.getFill(imageBlock);
+// Get the fill block that contains the image URI
+const fill = engine.block.getFill(imageBlock)
 
-    // Inspect the stored URI - this is exactly what gets saved in the scene
-    const storedUri = engine.block.getString(fill, 'fill/image/imageFileURI');
-    console.log('Stored image URI:', storedUri);
+// Inspect the stored URI - this is exactly what gets saved in the scene
+const storedUri = engine.block.getString(fill, 'fill/image/imageFileURI')
+console.log('Stored image URI:', storedUri)
 ```
 
 The `fill/image/imageFileURI` property contains exactly what gets written to the saved scene. CE.SDK doesn't transform or normalize these URLs—they're stored and loaded as-is.
@@ -234,12 +234,12 @@ CE.SDK provides two approaches for saving designs, each with different trade-off
 The `saveToString()` method serializes the scene structure while keeping asset references as URLs. This produces small files that load quickly, but requires the original assets to remain available at their URLs.
 
 ```typescript highlight=highlight-save-scene
-    // Save the scene to a string - URLs are preserved as references
-    const sceneString = await engine.scene.saveToString();
-    console.log('Scene saved to string, length:', sceneString.length);
+// Save the scene to a string - URLs are preserved as references
+const sceneString = await engine.scene.saveToString()
+console.log('Scene saved to string, length:', sceneString.length)
 
-    // The scene string contains the URL reference, not the image data itself
-    // This keeps the saved scene small and loads quickly
+// The scene string contains the URL reference, not the image data itself
+// This keeps the saved scene small and loads quickly
 ```
 
 Use scene strings when:
@@ -254,12 +254,12 @@ Use scene strings when:
 The `saveToArchive()` method bundles the scene with all referenced assets into a ZIP file. This creates a self-contained package that works without network access.
 
 ```typescript highlight=highlight-save-archive
-    // Alternatively, save as an archive with embedded assets
-    const archiveBlob = await engine.scene.saveToArchive();
-    console.log('Archive created, size:', archiveBlob.size, 'bytes');
+// Alternatively, save as an archive with embedded assets
+const archiveBlob = await engine.scene.saveToArchive()
+console.log('Archive created, size:', archiveBlob.size, 'bytes')
 
-    // Archives are self-contained - they include all asset data
-    // Use archives when designs need to work offline or across environments
+// Archives are self-contained - they include all asset data
+// Use archives when designs need to work offline or across environments
 ```
 
 Use archives when:
@@ -285,48 +285,48 @@ CE.SDK doesn't provide automatic fallbacks or retries for failed asset loads. If
 When you need to migrate assets to a new location, you can load existing scenes, update the URLs, and save the modified scene. We use `engine.block.setString()` to update the fill property.
 
 ```typescript highlight=highlight-update-url
-    // Programmatically update an asset URL (e.g., for CDN migration)
-    const newUri = 'https://img.ly/static/ubq_samples/sample_2.jpg';
-    engine.block.setString(fill, 'fill/image/imageFileURI', newUri);
+// Programmatically update an asset URL (e.g., for CDN migration)
+const newUri = 'https://img.ly/static/ubq_samples/sample_2.jpg'
+engine.block.setString(fill, 'fill/image/imageFileURI', newUri)
 
-    // Verify the change
-    const updatedUri = engine.block.getString(fill, 'fill/image/imageFileURI');
-    console.log('Updated image URI:', updatedUri);
+// Verify the change
+const updatedUri = engine.block.getString(fill, 'fill/image/imageFileURI')
+console.log('Updated image URI:', updatedUri)
 ```
 
 For batch updates, iterate through all blocks of a given type and update their fills.
 
 ```typescript highlight=highlight-find-blocks
-    // Find all graphic blocks to batch update their asset URLs
-    const graphicBlocks = engine.block.findByType('graphic');
-    console.log('Found graphic blocks:', graphicBlocks.length);
+// Find all graphic blocks to batch update their asset URLs
+const graphicBlocks = engine.block.findByType('graphic')
+console.log('Found graphic blocks:', graphicBlocks.length)
 
-    // Iterate through blocks to inspect or update their fills
-    for (const blockId of graphicBlocks) {
-      const blockFill = engine.block.getFill(blockId);
-      const fillType = engine.block.getType(blockFill);
+// Iterate through blocks to inspect or update their fills
+for (const blockId of graphicBlocks) {
+  const blockFill = engine.block.getFill(blockId)
+  const fillType = engine.block.getType(blockFill)
 
-      if (fillType === '//ly.img.ubq/fill/image') {
-        const uri = engine.block.getString(
-          blockFill,
-          'fill/image/imageFileURI'
-        );
-        console.log('Image block found with URI:', uri);
+  if (fillType === '//ly.img.ubq/fill/image') {
+    const uri = engine.block.getString(
+      blockFill,
+      'fill/image/imageFileURI'
+    )
+    console.log('Image block found with URI:', uri)
 
-        // Example: migrate from old CDN to new CDN
-        if (uri.includes('old-cdn.example.com')) {
-          const migratedUri = uri.replace(
-            'old-cdn.example.com',
-            'new-cdn.example.com'
-          );
-          engine.block.setString(
-            blockFill,
-            'fill/image/imageFileURI',
-            migratedUri
-          );
-        }
-      }
+    // Example: migrate from old CDN to new CDN
+    if (uri.includes('old-cdn.example.com')) {
+      const migratedUri = uri.replace(
+        'old-cdn.example.com',
+        'new-cdn.example.com'
+      )
+      engine.block.setString(
+        blockFill,
+        'fill/image/imageFileURI',
+        migratedUri
+      )
     }
+  }
+}
 ```
 
 This pattern is useful for CDN migrations or restructuring asset directories.
@@ -336,19 +336,19 @@ This pattern is useful for CDN migrations or restructuring asset directories.
 Designing your URL scheme to support versioning prevents accidental overwrites and makes migrations easier. We recommend three approaches.
 
 ```typescript highlight=highlight-versioned-urls
-    // Demonstrate versioned URL patterns
+// Demonstrate versioned URL patterns
 
-    // Path-based versioning: include version in the URL path
-    const pathVersionedUrl = 'https://cdn.example.com/assets/v2/logo.png';
-    console.log('Path-versioned URL:', pathVersionedUrl);
+// Path-based versioning: include version in the URL path
+const pathVersionedUrl = 'https://cdn.example.com/assets/v2/logo.png'
+console.log('Path-versioned URL:', pathVersionedUrl)
 
-    // Hash-based versioning: include content hash in filename
-    const hashVersionedUrl = 'https://cdn.example.com/assets/logo-a1b2c3d4.png';
-    console.log('Hash-versioned URL:', hashVersionedUrl);
+// Hash-based versioning: include content hash in filename
+const hashVersionedUrl = 'https://cdn.example.com/assets/logo-a1b2c3d4.png'
+console.log('Hash-versioned URL:', hashVersionedUrl)
 
-    // Query parameter versioning: append version as query string
-    const queryVersionedUrl = 'https://cdn.example.com/assets/logo.png?v=2';
-    console.log('Query-versioned URL:', queryVersionedUrl);
+// Query parameter versioning: append version as query string
+const queryVersionedUrl = 'https://cdn.example.com/assets/logo.png?v=2'
+console.log('Query-versioned URL:', queryVersionedUrl)
 ```
 
 ### Path-Based Versioning

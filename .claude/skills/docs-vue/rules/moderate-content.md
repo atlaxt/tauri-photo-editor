@@ -29,9 +29,7 @@ import type {
   CreativeEngine,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -46,42 +44,44 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 // Type definitions for content moderation
 interface ImageBlockData {
-  blockId: number;
-  url: string;
-  blockType: string;
-  blockName: string;
+  blockId: number
+  url: string
+  blockType: string
+  blockName: string
 }
 
 interface TextBlockData {
-  blockId: number;
-  text: string;
-  blockType: string;
-  blockName: string;
+  blockId: number
+  text: string
+  blockType: string
+  blockName: string
 }
 
 interface ContentCategory {
-  name: string;
-  description: string;
-  state: 'success' | 'warning' | 'failed';
+  name: string
+  description: string
+  state: 'success' | 'warning' | 'failed'
 }
 
 interface ValidationResult extends ContentCategory {
-  blockId: number;
-  blockType: string;
-  blockName: string;
-  id: string;
-  url?: string; // For image blocks
-  text?: string; // For text blocks
+  blockId: number
+  blockType: string
+  blockName: string
+  id: string
+  url?: string // For image blocks
+  text?: string // For text blocks
 }
 
 // Mock moderation caches
-const imageCache: Record<string, ContentCategory[]> = {};
-const textCache: Record<string, ContentCategory[]> = {};
+const imageCache: Record<string, ContentCategory[]> = {}
+const textCache: Record<string, ContentCategory[]> = {}
 
 /**
  * CE.SDK Plugin: Content Moderation Guide
@@ -89,20 +89,20 @@ const textCache: Record<string, ContentCategory[]> = {};
  * Demonstrates implementing automated content moderation for both images and text
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -113,60 +113,60 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 1200, height: 800, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
-    const pageHeight = engine.block.getHeight(page);
+    const pageHeight = engine.block.getHeight(page)
 
     // Create a single sample image
-    const imageWidth = 500;
-    const imageHeight = 400;
-    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg';
+    const imageWidth = 500
+    const imageHeight = 400
+    const imageUri = 'https://img.ly/static/ubq_samples/sample_1.jpg'
 
     const imageBlock = await engine.block.addImage(imageUri, {
       size: { width: imageWidth, height: imageHeight }
-    });
+    })
 
     // Position image in center-left
-    engine.block.setPositionX(imageBlock, 100);
-    engine.block.setPositionY(imageBlock, (pageHeight - imageHeight) / 2);
+    engine.block.setPositionX(imageBlock, 100)
+    engine.block.setPositionY(imageBlock, (pageHeight - imageHeight) / 2)
 
-    engine.block.appendChild(page, imageBlock);
+    engine.block.appendChild(page, imageBlock)
 
-    const textBlock = engine.block.create('text');
+    const textBlock = engine.block.create('text')
     engine.block.setString(
       textBlock,
       'text/text',
       'Sample text content for moderation testing'
-    );
+    )
 
     // Position text on the right side of the image
-    engine.block.setPositionX(textBlock, 650);
-    engine.block.setPositionY(textBlock, (pageHeight - 120) / 2);
-    engine.block.setWidth(textBlock, 450);
-    engine.block.setHeight(textBlock, 120);
+    engine.block.setPositionX(textBlock, 650)
+    engine.block.setPositionY(textBlock, (pageHeight - 120) / 2)
+    engine.block.setWidth(textBlock, 450)
+    engine.block.setHeight(textBlock, 120)
 
     // Make text larger and more readable
-    engine.block.setFloat(textBlock, 'text/fontSize', 48);
-    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Left');
+    engine.block.setFloat(textBlock, 'text/fontSize', 48)
+    engine.block.setEnum(textBlock, 'text/horizontalAlignment', 'Left')
 
-    engine.block.appendChild(page, textBlock);
+    engine.block.appendChild(page, textBlock)
 
-    await this.demonstrateContentModeration(engine);
+    await this.demonstrateContentModeration(engine)
 
     // Zoom to fit the entire page in the viewport
     await engine.scene.zoomToBlock(page, {
@@ -176,39 +176,37 @@ class Example implements EditorPlugin {
         right: 40,
         bottom: 40
       }
-    });
+    })
   }
 
   private async demonstrateContentModeration(
     engine: CreativeEngine
   ): Promise<void> {
     // Check both images and text
-    const imageResults = await this.checkImageContent(engine);
-    const textResults = await this.checkTextContent(engine);
-    const allResults = [...imageResults, ...textResults];
+    const imageResults = await this.checkImageContent(engine)
+    const textResults = await this.checkTextContent(engine)
+    const allResults = [...imageResults, ...textResults]
 
-    // eslint-disable-next-line no-console
-    console.log(`Total moderation checks: ${allResults.length}`);
+    console.log(`Total moderation checks: ${allResults.length}`)
 
-    const failed = allResults.filter((r) => r.state === 'failed');
-    const warnings = allResults.filter((r) => r.state === 'warning');
-    const passed = allResults.filter((r) => r.state === 'success');
+    const failed = allResults.filter(r => r.state === 'failed')
+    const warnings = allResults.filter(r => r.state === 'warning')
+    const passed = allResults.filter(r => r.state === 'success')
 
-    // eslint-disable-next-line no-console
-    console.log('Validation Summary:');
-    // eslint-disable-next-line no-console
-    console.log(`  Violations: ${failed.length}`);
-    // eslint-disable-next-line no-console
-    console.log(`  Warnings: ${warnings.length}`);
-    // eslint-disable-next-line no-console
-    console.log(`  Passed: ${passed.length}`);
+    console.log('Validation Summary:')
+
+    console.log(`  Violations: ${failed.length}`)
+
+    console.log(`  Warnings: ${warnings.length}`)
+
+    console.log(`  Passed: ${passed.length}`)
 
     if (failed.length > 0) {
-      const blockToSelect = failed[0].blockId;
+      const blockToSelect = failed[0].blockId
       engine.block
         .findAllSelected()
-        .forEach((id) => engine.block.setSelected(id, false));
-      engine.block.setSelected(blockToSelect, true);
+        .forEach(id => engine.block.setSelected(id, false))
+      engine.block.setSelected(blockToSelect, true)
     }
   }
 
@@ -217,27 +215,28 @@ class Example implements EditorPlugin {
    */
   private getImageUrl(engine: CreativeEngine, blockId: number): string | null {
     try {
-      const imageFill = engine.block.getFill(blockId);
+      const imageFill = engine.block.getFill(blockId)
 
       const fillImageURI = engine.block.getString(
         imageFill,
         'fill/image/imageFileURI'
-      );
+      )
       if (fillImageURI) {
-        return fillImageURI;
+        return fillImageURI
       }
 
       const sourceSet = engine.block.getSourceSet(
         imageFill,
         'fill/image/sourceSet'
-      );
+      )
       if (sourceSet && sourceSet.length > 0) {
-        return sourceSet[0].uri;
+        return sourceSet[0].uri
       }
 
-      return null;
-    } catch (error) {
-      return null;
+      return null
+    }
+    catch (error) {
+      return null
     }
   }
 
@@ -246,9 +245,10 @@ class Example implements EditorPlugin {
    */
   private getTextContent(engine: CreativeEngine, blockId: number): string {
     try {
-      return engine.block.getString(blockId, 'text/text');
-    } catch (error) {
-      return '';
+      return engine.block.getString(blockId, 'text/text')
+    }
+    catch (error) {
+      return ''
     }
   }
 
@@ -258,32 +258,32 @@ class Example implements EditorPlugin {
   private async checkImageContent(
     engine: CreativeEngine
   ): Promise<ValidationResult[]> {
-    const imageBlockIds = engine.block.findByKind('image');
+    const imageBlockIds = engine.block.findByKind('image')
     const imageBlocksData: ImageBlockData[] = imageBlockIds
-      .map((blockId) => ({
+      .map(blockId => ({
         blockId,
         url: this.getImageUrl(engine, blockId),
         blockType: engine.block.getType(blockId),
         blockName: engine.block.getName(blockId)
       }))
-      .filter((data) => data.url !== null) as ImageBlockData[];
+      .filter(data => data.url !== null) as ImageBlockData[]
 
     const imagesWithValidity = await Promise.all(
       imageBlocksData.map(async (imageBlockData) => {
-        const categories = await this.checkImageContentAPI(imageBlockData.url);
+        const categories = await this.checkImageContentAPI(imageBlockData.url)
 
-        return categories.map((checkResult) => ({
+        return categories.map(checkResult => ({
           ...checkResult,
           blockId: imageBlockData.blockId,
           blockType: imageBlockData.blockType,
           blockName: imageBlockData.blockName,
           url: imageBlockData.url,
           id: `${imageBlockData.blockId}-${checkResult.name}`
-        }));
+        }))
       })
-    );
+    )
 
-    return imagesWithValidity.flat();
+    return imagesWithValidity.flat()
   }
 
   /**
@@ -292,32 +292,32 @@ class Example implements EditorPlugin {
   private async checkTextContent(
     engine: CreativeEngine
   ): Promise<ValidationResult[]> {
-    const textBlockIds = engine.block.findByType('//ly.img.ubq/text');
+    const textBlockIds = engine.block.findByType('//ly.img.ubq/text')
     const textBlocksData: TextBlockData[] = textBlockIds
-      .map((blockId) => ({
+      .map(blockId => ({
         blockId,
         text: this.getTextContent(engine, blockId),
         blockType: engine.block.getType(blockId),
         blockName: engine.block.getName(blockId)
       }))
-      .filter((data) => data.text.trim().length > 0);
+      .filter(data => data.text.trim().length > 0)
 
     const textsWithValidity = await Promise.all(
       textBlocksData.map(async (textBlockData) => {
-        const categories = await this.checkTextContentAPI(textBlockData.text);
+        const categories = await this.checkTextContentAPI(textBlockData.text)
 
-        return categories.map((checkResult) => ({
+        return categories.map(checkResult => ({
           ...checkResult,
           blockId: textBlockData.blockId,
           blockType: textBlockData.blockType,
           blockName: textBlockData.blockName,
           text: textBlockData.text,
           id: `${textBlockData.blockId}-${checkResult.name}`
-        }));
+        }))
       })
-    );
+    )
 
-    return textsWithValidity.flat();
+    return textsWithValidity.flat()
   }
 
   /**
@@ -325,10 +325,10 @@ class Example implements EditorPlugin {
    */
   private async checkImageContentAPI(url: string): Promise<ContentCategory[]> {
     if (imageCache[url]) {
-      return imageCache[url];
+      return imageCache[url]
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const results: ContentCategory[] = [
       {
@@ -351,10 +351,10 @@ class Example implements EditorPlugin {
         description: 'Raw or partial nudity',
         state: this.percentageToState(Math.random() * 0.3)
       }
-    ];
+    ]
 
-    imageCache[url] = results;
-    return results;
+    imageCache[url] = results
+    return results
   }
 
   /**
@@ -362,10 +362,10 @@ class Example implements EditorPlugin {
    */
   private async checkTextContentAPI(text: string): Promise<ContentCategory[]> {
     if (textCache[text]) {
-      return textCache[text];
+      return textCache[text]
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const results: ContentCategory[] = [
       {
@@ -383,10 +383,10 @@ class Example implements EditorPlugin {
         description: 'Threatening or violent language',
         state: this.percentageToState(Math.random() * 0.1)
       }
-    ];
+    ]
 
-    textCache[text] = results;
-    return results;
+    textCache[text] = results
+    return results
   }
 
   /**
@@ -396,16 +396,18 @@ class Example implements EditorPlugin {
     percentage: number
   ): 'success' | 'warning' | 'failed' {
     if (percentage > 0.8) {
-      return 'failed';
-    } else if (percentage > 0.4) {
-      return 'warning';
-    } else {
-      return 'success';
+      return 'failed'
+    }
+    else if (percentage > 0.4) {
+      return 'warning'
+    }
+    else {
+      return 'success'
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide demonstrates how to use CE.SDK's engine APIs to find and extract content from designs, send it to moderation APIs, and display validation results.
@@ -651,29 +653,28 @@ Implement caching to avoid redundant API calls for the same content.
 Group results by severity (failed, warning, success) and display them in the UI:
 
 ```typescript highlight-display-results
-    const failed = allResults.filter((r) => r.state === 'failed');
-    const warnings = allResults.filter((r) => r.state === 'warning');
-    const passed = allResults.filter((r) => r.state === 'success');
+const failed = allResults.filter(r => r.state === 'failed')
+const warnings = allResults.filter(r => r.state === 'warning')
+const passed = allResults.filter(r => r.state === 'success')
 
-    // eslint-disable-next-line no-console
-    console.log('Validation Summary:');
-    // eslint-disable-next-line no-console
-    console.log(`  Violations: ${failed.length}`);
-    // eslint-disable-next-line no-console
-    console.log(`  Warnings: ${warnings.length}`);
-    // eslint-disable-next-line no-console
-    console.log(`  Passed: ${passed.length}`);
+console.log('Validation Summary:')
+
+console.log(`  Violations: ${failed.length}`)
+
+console.log(`  Warnings: ${warnings.length}`)
+
+console.log(`  Passed: ${passed.length}`)
 ```
 
 Make results interactive by selecting the corresponding block when users click on a validation result:
 
 ```typescript highlight-interactive-results
 if (failed.length > 0) {
-  const blockToSelect = failed[0].blockId;
+  const blockToSelect = failed[0].blockId
   engine.block
     .findAllSelected()
-    .forEach((id) => engine.block.setSelected(id, false));
-  engine.block.setSelected(blockToSelect, true);
+    .forEach(id => engine.block.setSelected(id, false))
+  engine.block.setSelected(blockToSelect, true)
 }
 ```
 
@@ -685,18 +686,18 @@ Choose when to run validation based on your workflow:
 
 ```typescript
 cesdk.ui.registerAction('ly.img.export', async (engine) => {
-  const imageResults = await checkImageContent(engine);
-  const textResults = await checkTextContent(engine);
-  const violations = [...imageResults, ...textResults].filter((r) => r.state === 'failed');
+  const imageResults = await checkImageContent(engine)
+  const textResults = await checkTextContent(engine)
+  const violations = [...imageResults, ...textResults].filter(r => r.state === 'failed')
 
   if (violations.length > 0) {
-    alert(`Cannot export: ${violations.length} policy violation(s) detected.`);
-    return;
+    alert(`Cannot export: ${violations.length} policy violation(s) detected.`)
+    return
   }
 
-  const blob = await engine.block.export(engine.scene.get(), 'image/png');
-  downloadBlob(blob, 'design.png');
-});
+  const blob = await engine.block.export(engine.scene.get(), 'image/png')
+  downloadBlob(blob, 'design.png')
+})
 ```
 
 **Other Integration Points**:

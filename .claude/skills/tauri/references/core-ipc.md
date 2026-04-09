@@ -14,7 +14,7 @@ Tauri uses **asynchronous message passing**: requests and responses are serializ
 - Good for: lifecycle, state changes, notifications.
 - No return value; payload is JSON.
 
-Frontend: `emit` / `emitTo` from `@tauri-apps/api/event` or `getCurrentWebviewWindow().emit(...)`.  
+Frontend: `emit` / `emitTo` from `@tauri-apps/api/event` or `getCurrentWebviewWindow().emit(...)`.
 Rust: `AppHandle::emit`, `Emitter::emit_to`, `Emitter::emit_filter` on windows.
 
 ## Commands

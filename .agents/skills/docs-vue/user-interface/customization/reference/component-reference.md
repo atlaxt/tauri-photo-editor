@@ -65,7 +65,7 @@ cesdk.ui.insertOrderComponent(
       // Export logic here
     }
   }
-);
+)
 ```
 
 ## Dock Components
@@ -85,7 +85,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
     id: 'ly.img.assetLibrary.dock',
     entries: ['ly.img.image', 'ly.img.text', 'ly.img.shape']
   }
-]);
+])
 ```
 
 ## Inspector Bar Components
@@ -242,13 +242,13 @@ The canvas bar is the most minimal area, typically showing contextual controls b
 const topBar = cesdk.ui.getComponentOrder({
   in: 'ly.img.canvas.bar',
   at: 'top'
-});
+})
 
 // Get bottom canvas bar order
 const bottomBar = cesdk.ui.getComponentOrder({
   in: 'ly.img.canvas.bar',
   at: 'bottom'
-});
+})
 ```
 
 ## Component Configuration Options
@@ -302,7 +302,7 @@ Use the `key` property to distinguish between instances:
 cesdk.ui.setComponentOrder({ in: 'ly.img.navigation.bar' }, [
   { id: 'ly.img.action.navigationBar', key: 'save', label: 'Save' },
   { id: 'ly.img.action.navigationBar', key: 'export', label: 'Export' }
-]);
+])
 ```
 
 ### Component disabled unexpectedly
@@ -311,10 +311,10 @@ Check if a feature flag is disabling it:
 
 ```javascript
 // Check if feature is enabled
-const enabled = cesdk.feature.isEnabled('ly.img.navigation.bar');
+const enabled = cesdk.feature.isEnabled('ly.img.navigation.bar')
 
 // Re-enable if needed
-cesdk.feature.enable('ly.img.navigation.bar');
+cesdk.feature.enable('ly.img.navigation.bar')
 ```
 
 ## Next Steps

@@ -24,7 +24,7 @@ documents with millimeter or inch units and configurable DPI for export quality.
 Design units determine the coordinate system for all layout values in CE.SDK—positions, sizes, and margins. The engine supports three unit types: **Pixel** for screen-based designs, **Millimeter** for metric print dimensions, and **Inch** for imperial print formats.
 
 ```typescript file=@cesdk_web_examples/guides-concepts-design-units-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -40,9 +40,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
 
 /**
  * CE.SDK Plugin: Design Units Guide
@@ -54,22 +54,22 @@ import packageJson from './package.json';
  * - Setting up print-ready dimensions
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new DesignEditorConfig());
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -80,103 +80,102 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 210, height: 297, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
+    const engine = cesdk.engine
 
     // Get the current scene
-    const scene = engine.scene.get();
+    const scene = engine.scene.get()
     if (scene === null) {
-      throw new Error('No scene available');
+      throw new Error('No scene available')
     }
 
     // Get the current design unit
-    const currentUnit = engine.scene.getDesignUnit();
-    // eslint-disable-next-line no-console
-    console.log('Current design unit:', currentUnit); // 'Pixel' by default
+    const currentUnit = engine.scene.getDesignUnit()
+
+    console.log('Current design unit:', currentUnit) // 'Pixel' by default
 
     // Set design unit to Millimeter for print workflow
-    engine.scene.setDesignUnit('Millimeter');
+    engine.scene.setDesignUnit('Millimeter')
 
     // Verify the change
-    const newUnit = engine.scene.getDesignUnit();
-    // eslint-disable-next-line no-console
-    console.log('Design unit changed to:', newUnit); // 'Millimeter'
+    const newUnit = engine.scene.getDesignUnit()
+
+    console.log('Design unit changed to:', newUnit) // 'Millimeter'
 
     // Set DPI to 300 for print-quality exports
     // Higher DPI produces higher resolution output
-    engine.block.setFloat(scene, 'scene/dpi', 300);
+    engine.block.setFloat(scene, 'scene/dpi', 300)
 
     // Verify the DPI setting
-    const dpi = engine.block.getFloat(scene, 'scene/dpi');
-    // eslint-disable-next-line no-console
-    console.log('DPI set to:', dpi); // 300
+    const dpi = engine.block.getFloat(scene, 'scene/dpi')
+
+    console.log('DPI set to:', dpi) // 300
 
     // Get the page and set A4 dimensions (210 x 297 mm)
-    const page = engine.block.findByType('page')[0];
+    const page = engine.block.findByType('page')[0]
 
     // Verify dimensions
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    // eslint-disable-next-line no-console
-    console.log(`Page dimensions: ${pageWidth}mm x ${pageHeight}mm`);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+
+    console.log(`Page dimensions: ${pageWidth}mm x ${pageHeight}mm`)
 
     // Create a text block with millimeter dimensions
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(page, textBlock);
+    const textBlock = engine.block.create('text')
+    engine.block.appendChild(page, textBlock)
 
     // Position text at 20mm from left, 30mm from top
-    engine.block.setPositionX(textBlock, 20);
-    engine.block.setPositionY(textBlock, 30);
+    engine.block.setPositionX(textBlock, 20)
+    engine.block.setPositionY(textBlock, 30)
 
     // Set text block size to 170mm x 50mm
-    engine.block.setWidth(textBlock, 170);
-    engine.block.setHeight(textBlock, 50);
+    engine.block.setWidth(textBlock, 170)
+    engine.block.setHeight(textBlock, 50)
 
     // Add content to the text block
     engine.block.setString(
       textBlock,
       'text/text',
       'This A4 document uses millimeter units with 300 DPI for print-ready output.'
-    );
+    )
 
     // Demonstrate unit comparison
     // At 300 DPI: 1 inch = 300 pixels, 1 mm = ~11.81 pixels
-    // eslint-disable-next-line no-console
-    console.log('Unit comparison at 300 DPI:');
-    // eslint-disable-next-line no-console
+
+    console.log('Unit comparison at 300 DPI:')
+
     console.log(
       '- A4 width (210mm) will export as',
       210 * (300 / 25.4),
       'pixels'
-    );
-    // eslint-disable-next-line no-console
+    )
+
     console.log(
       '- A4 height (297mm) will export as',
       297 * (300 / 25.4),
       'pixels'
-    );
+    )
 
-    // eslint-disable-next-line no-console
     console.log(
       'Design units guide initialized. Scene configured for A4 print output.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to get and set design units, configure DPI for export quality, and set up scenes for specific physical dimensions like A4 paper.
@@ -202,16 +201,16 @@ For pixel-based scenes, DPI primarily affects font size conversions since font s
 Use `engine.scene.getDesignUnit()` to retrieve the current scene's design unit. This returns one of three values: `'Pixel'`, `'Millimeter'`, or `'Inch'`.
 
 ```typescript highlight-get-design-unit
-    // Get the current scene
-    const scene = engine.scene.get();
-    if (scene === null) {
-      throw new Error('No scene available');
-    }
+// Get the current scene
+const scene = engine.scene.get()
+if (scene === null) {
+  throw new Error('No scene available')
+}
 
-    // Get the current design unit
-    const currentUnit = engine.scene.getDesignUnit();
-    // eslint-disable-next-line no-console
-    console.log('Current design unit:', currentUnit); // 'Pixel' by default
+// Get the current design unit
+const currentUnit = engine.scene.getDesignUnit()
+
+console.log('Current design unit:', currentUnit) // 'Pixel' by default
 ```
 
 ## Setting the Design Unit
@@ -219,13 +218,13 @@ Use `engine.scene.getDesignUnit()` to retrieve the current scene's design unit. 
 Use `engine.scene.setDesignUnit()` to change the measurement system. When you change the design unit, CE.SDK automatically converts existing layout values to maintain visual appearance.
 
 ```typescript highlight-set-design-unit
-    // Set design unit to Millimeter for print workflow
-    engine.scene.setDesignUnit('Millimeter');
+// Set design unit to Millimeter for print workflow
+engine.scene.setDesignUnit('Millimeter')
 
-    // Verify the change
-    const newUnit = engine.scene.getDesignUnit();
-    // eslint-disable-next-line no-console
-    console.log('Design unit changed to:', newUnit); // 'Millimeter'
+// Verify the change
+const newUnit = engine.scene.getDesignUnit()
+
+console.log('Design unit changed to:', newUnit) // 'Millimeter'
 ```
 
 ## Configuring DPI
@@ -233,14 +232,14 @@ Use `engine.scene.setDesignUnit()` to change the measurement system. When you ch
 Access DPI through the scene's `scene/dpi` property. For print workflows, 300 DPI is the standard for high-quality output.
 
 ```typescript highlight-configure-dpi
-    // Set DPI to 300 for print-quality exports
-    // Higher DPI produces higher resolution output
-    engine.block.setFloat(scene, 'scene/dpi', 300);
+// Set DPI to 300 for print-quality exports
+// Higher DPI produces higher resolution output
+engine.block.setFloat(scene, 'scene/dpi', 300)
 
-    // Verify the DPI setting
-    const dpi = engine.block.getFloat(scene, 'scene/dpi');
-    // eslint-disable-next-line no-console
-    console.log('DPI set to:', dpi); // 300
+// Verify the DPI setting
+const dpi = engine.block.getFloat(scene, 'scene/dpi')
+
+console.log('DPI set to:', dpi) // 300
 ```
 
 DPI affects different aspects depending on the design unit:
@@ -253,14 +252,14 @@ DPI affects different aspects depending on the design unit:
 For print workflows, combine `setDesignUnit()` with appropriate DPI and page dimensions. Here's how to set up an A4 document ready for print export:
 
 ```typescript highlight-set-page-dimensions
-    // Get the page and set A4 dimensions (210 x 297 mm)
-    const page = engine.block.findByType('page')[0];
+// Get the page and set A4 dimensions (210 x 297 mm)
+const page = engine.block.findByType('page')[0]
 
-    // Verify dimensions
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    // eslint-disable-next-line no-console
-    console.log(`Page dimensions: ${pageWidth}mm x ${pageHeight}mm`);
+// Verify dimensions
+const pageWidth = engine.block.getWidth(page)
+const pageHeight = engine.block.getHeight(page)
+
+console.log(`Page dimensions: ${pageWidth}mm x ${pageHeight}mm`)
 ```
 
 ## Font Sizes and Design Units
@@ -268,24 +267,24 @@ For print workflows, combine `setDesignUnit()` with appropriate DPI and page dim
 Font sizes are always specified in points (`pt`), regardless of the scene's design unit. The DPI setting affects how points convert to pixels for rendering.
 
 ```typescript highlight-create-text-block
-    // Create a text block with millimeter dimensions
-    const textBlock = engine.block.create('text');
-    engine.block.appendChild(page, textBlock);
+// Create a text block with millimeter dimensions
+const textBlock = engine.block.create('text')
+engine.block.appendChild(page, textBlock)
 
-    // Position text at 20mm from left, 30mm from top
-    engine.block.setPositionX(textBlock, 20);
-    engine.block.setPositionY(textBlock, 30);
+// Position text at 20mm from left, 30mm from top
+engine.block.setPositionX(textBlock, 20)
+engine.block.setPositionY(textBlock, 30)
 
-    // Set text block size to 170mm x 50mm
-    engine.block.setWidth(textBlock, 170);
-    engine.block.setHeight(textBlock, 50);
+// Set text block size to 170mm x 50mm
+engine.block.setWidth(textBlock, 170)
+engine.block.setHeight(textBlock, 50)
 
-    // Add content to the text block
-    engine.block.setString(
-      textBlock,
-      'text/text',
-      'This A4 document uses millimeter units with 300 DPI for print-ready output.'
-    );
+// Add content to the text block
+engine.block.setString(
+  textBlock,
+  'text/text',
+  'This A4 document uses millimeter units with 300 DPI for print-ready output.'
+)
 ```
 
 When DPI changes, text blocks automatically adjust their rendered size to maintain visual consistency.
@@ -297,20 +296,20 @@ The relationship between design units and export resolution is important for pri
 ```typescript highlight-compare-units
 // Demonstrate unit comparison
 // At 300 DPI: 1 inch = 300 pixels, 1 mm = ~11.81 pixels
-// eslint-disable-next-line no-console
-console.log('Unit comparison at 300 DPI:');
-// eslint-disable-next-line no-console
+
+console.log('Unit comparison at 300 DPI:')
+
 console.log(
   '- A4 width (210mm) will export as',
   210 * (300 / 25.4),
   'pixels'
-);
-// eslint-disable-next-line no-console
+)
+
 console.log(
   '- A4 height (297mm) will export as',
   297 * (300 / 25.4),
   'pixels'
-);
+)
 ```
 
 At 300 DPI:

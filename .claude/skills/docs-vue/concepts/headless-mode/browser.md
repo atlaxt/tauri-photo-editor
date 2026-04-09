@@ -58,7 +58,7 @@ CE.SDK’s Engine needs a **WebGL-capable environment**. When you ship a headles
      license: '<YOUR_LICENSE_KEY>',
      baseURL: 'https://cdn.img.ly/packages/imgly/cesdk-engine/$UBQ_VERSION$/assets'
    };
-   
+
 ````
 
 3. Start the Engine from client-side code and reuse the instance across interactions.
@@ -70,20 +70,20 @@ CE.SDK’s Engine needs a **WebGL-capable environment**. When you ship a headles
 When you import `@cesdk/engine`, you get the same runtime that powers the full editor. Using the CreativeEngine instead of the CreativeEditor allows you to expose the Engine interface while skipping all UI bootstrapping that comes with the editor.
 
 ```js
-import CreativeEngine from '@cesdk/engine';
+import CreativeEngine from '@cesdk/engine'
 
 const config = {
   license: '<YOUR_LICENSE_KEY>',
   baseURL: 'https://cdn.img.ly/packages/imgly/cesdk-engine/$UBQ_VERSION$/assets'
-};
+}
 
-let engine;
+let engine
 
 export async function getEngine() {
   if (!engine) {
-    engine = await CreativeEngine.init(config);
+    engine = await CreativeEngine.init(config)
   }
-  return engine;
+  return engine
 }
 ```
 
@@ -101,72 +101,72 @@ The workflow below wires the Engine to a button, so the user automatically downl
 
 ```js
 // Grab the button element
-const downloadButton = document.querySelector('#download-headless');
+const downloadButton = document.querySelector('#download-headless')
 
 // Register an async click handler
 downloadButton?.addEventListener('click', async () => {
   // Wait for the Engine
-  const engine = await getEngine();
-  
+  const engine = await getEngine()
+
   // Build a fresh scene
-  const scene = engine.scene.create();
-  const page = engine.block.create('page');
-  engine.block.setWidth(page, 800);
-  engine.block.setHeight(page, 600);
+  const scene = engine.scene.create()
+  const page = engine.block.create('page')
+  engine.block.setWidth(page, 800)
+  engine.block.setHeight(page, 600)
   // Attach the page to the scene
-  engine.block.appendChild(scene, page);
+  engine.block.appendChild(scene, page)
 
   // Add an image layer
-  const imageBlock = engine.block.create('graphic');
-  engine.block.setShape(imageBlock, engine.block.createShape('rect'));
-  const imageFill = engine.block.createFill('image');
+  const imageBlock = engine.block.create('graphic')
+  engine.block.setShape(imageBlock, engine.block.createShape('rect'))
+  const imageFill = engine.block.createFill('image')
   // Load an image fill from the CDN
   engine.block.setString(
     imageFill,
     'fill/image/imageFileURI',
     'https://img.ly/static/ubq_samples/sample_1.jpg'
-  );
-  engine.block.setFill(imageBlock, imageFill);
-  // Set position and dimensions 
-  engine.block.setPosition(imageBlock, 100, 100);
-  engine.block.setWidth(imageBlock, 300);
-  engine.block.setHeight(imageBlock, 300);
-  // Append the image to the page
-  engine.block.appendChild(page, imageBlock);
-  
-  // Add a text layer
-  const textBlock = engine.block.create('text');
-  // Set the text content
-  engine.block.setString(textBlock, 'text/text', 'Hello from Headless Mode!');
+  )
+  engine.block.setFill(imageBlock, imageFill)
   // Set position and dimensions
-  engine.block.setPosition(textBlock, 100, 450);
-  engine.block.setWidth(textBlock, 600);
+  engine.block.setPosition(imageBlock, 100, 100)
+  engine.block.setWidth(imageBlock, 300)
+  engine.block.setHeight(imageBlock, 300)
+  // Append the image to the page
+  engine.block.appendChild(page, imageBlock)
+
+  // Add a text layer
+  const textBlock = engine.block.create('text')
+  // Set the text content
+  engine.block.setString(textBlock, 'text/text', 'Hello from Headless Mode!')
+  // Set position and dimensions
+  engine.block.setPosition(textBlock, 100, 450)
+  engine.block.setWidth(textBlock, 600)
   // Append the text to the page
-  engine.block.appendChild(page, textBlock);
+  engine.block.appendChild(page, textBlock)
 
   // Export the page as a PNG
-  const exportResult = await engine.block.export(page, 'image/png');
+  const exportResult = await engine.block.export(page, 'image/png')
   // Normalize the result to a blob
-  const blob =
-    exportResult instanceof Blob
+  const blob
+    = exportResult instanceof Blob
       ? exportResult
-      : new Blob([exportResult], { type: 'image/png' });
+      : new Blob([exportResult], { type: 'image/png' })
 
-  triggerDownload(blob, 'headless-output.png');
-});
+  triggerDownload(blob, 'headless-output.png')
+})
 
 function triggerDownload(blob, filename) {
   // Build a temporary object URL
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
   // Start the download on click
-  link.click();
+  link.click()
   // Revoke the link and URL to release resources
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
 }
 ```
 
@@ -198,74 +198,106 @@ Once that element is in the DOM, the snippet’s querySelector('#download-headle
   <summary>See full module</summary>
 
   ```js
-  import CreativeEngine from '@cesdk/engine';
+  import CreativeEngine from '@cesdk/engine'
 
-  const config = {
+  constconfig = {
     license: '<YOUR_LICENSE_KEY>',
     baseURL: 'https://cdn.img.ly/packages/imgly/cesdk-engine/$UBQ_VERSION$/assets'
-  };
+  }}
 
-  let engine;
+  letnengine
 
-  export async function getEngine() {
+  exportync function getEngine() {
     if (!engine) {
-      engine = await CreativeEngine.init(config);
-    }
-    return engine;
-  }
+      engine = await CreativeEngine.init(config);)
+    } return engengine
+  }const downloadButton = document.querySelector('#download-headless');
+)
 
-  const downloadButton = document.querySelector('#download-headless');
-
-  downloadButton?.addEventListener('click', async () => {
+  downloadButtonEventListener('click', async () => {
     const engine = await getEngine();
 
-    const scene = engine.scene.create();
-    const page = engine.block.create('page');
-    engine.block.setWidth(page, 800);
-    engine.block.setHeight(page, 600);
-    engine.block.appendChild(scene, page);
+  )
 
-    const imageBlock = engine.block.create('graphic');
-    engine.block.setShape(imageBlock, engine.block.createShape('rect'));
-    const imageFill = engine.block.createFill('image');
-    engine.block.setString(
+    const = engine.scene.create();
+    )
+    const= engine.block.create('page');
+    )
+    engine.setWidth(page, 800);
+    )
+    engine.setHeight(page, 600);
+    )
+    engine.appendChild(scene, page);
+
+   )
+
+    constlock = engine.block.create('graphic');
+    e)
+    enginesetShape(imageBlock, engine.block.createShape('rect'));
+    c)
+    constill = engine.block.createFill('image');
+    e)
+    enginesetString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
     );
-    engine.block.setFill(imageBlock, imageFill);
-    engine.block.setPosition(imageBlock, 100, 100);
-    engine.block.setWidth(imageBlock, 300);
-    engine.block.setHeight(imageBlock, 300);
-    engine.block.appendChild(page, imageBlock);
+    e)
+    enginesetFill(imageBlock, imageFill);
+    e)
+    enginesetPosition(imageBlock, 100, 100);
+    e)
+    enginesetWidth(imageBlock, 300);
+    e)
+    enginesetHeight(imageBlock, 300);
+    e)
+    engineappendChild(page, imageBlock);
 
-    const textBlock = engine.block.create('text');
-    engine.block.setString(textBlock, 'text/text', 'Hello from Headless Mode!');
-    engine.block.setPosition(textBlock, 100, 450);
-    engine.block.setWidth(textBlock, 600);
-    engine.block.appendChild(page, textBlock);
+    )
 
-    const exportResult = await engine.block.export(page, 'image/png');
-    const blob =
-      exportResult instanceof Blob
+    constck = engine.block.create('text');
+    en)
+    engineetString(textBlock, 'text/text', 'Hello from Headless Mode!');
+    en)
+    engineetPosition(textBlock, 100, 450);
+    en)
+    engineetWidth(textBlock, 600);
+    en)
+    engineppendChild(page, textBlock);
+
+    c)
+
+    constsult = await engine.block.export(page, 'image/png');
+    con)
+    const    e
+      = ult instanceof Blob
         ? exportResult
         : new Blob([exportResult], { type: 'image/png' });
 
-    triggerDownload(blob, 'headless-output.png');
+    tr)
+
+    triggerDownloadadless-output.png');
   });
 
-  function triggerDownload(blob, filename) {
+  )
+  }ion triggerDownload(blob, filename) {
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const)
+    constument.createElement('a');
+    link.)
+    link;
+    linurl
+    link filename;
+  filename
+    documentdChild(link);
+    link.)
+    link  docum)
+    documenteChild(link);
+    URL.r)
+    URLctURL(url);
   }
-  ```
-</details>
+  ```)
+  }tails>
 
 After you add the script to your app and run the dev server:
 

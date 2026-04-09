@@ -23,7 +23,7 @@ Extend CE.SDK with one-click editing actions using official plugins for backgrou
 Quick actions are single-click operations that appear in the canvas menu when users select a block. CE.SDK provides official plugins that add image processing capabilities like background removal, vectorization, and QR code generation. These plugins integrate directly with the editor UI and execute their operations immediately when clicked.
 
 ```typescript file=@cesdk_web_examples/guides-user-interface-ui-extensions-quick-actions-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -39,30 +39,30 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import BackgroundRemovalPlugin from '@imgly/plugin-background-removal-web';
-import CutoutLibraryPlugin from '@imgly/plugin-cutout-library-web';
-import QRCodePlugin from '@imgly/plugin-qr-code-web';
-import VectorizerPlugin from '@imgly/plugin-vectorizer-web';
+} from '@cesdk/cesdk-js/plugins'
+import BackgroundRemovalPlugin from '@imgly/plugin-background-removal-web'
+import CutoutLibraryPlugin from '@imgly/plugin-cutout-library-web'
+import QRCodePlugin from '@imgly/plugin-qr-code-web'
+import VectorizerPlugin from '@imgly/plugin-vectorizer-web'
+import { DesignEditorConfig } from './design-editor/plugin'
 
 export default class QuickActionsExample implements EditorPlugin {
-  name = 'QuickActionsExample';
-  version = '1.0.0';
+  name = 'QuickActionsExample'
+  version = '1.0.0'
 
   async initialize({ cesdk }: EditorPluginContext) {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -73,15 +73,15 @@ export default class QuickActionsExample implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     // Add background removal plugin with canvas menu button
     await cesdk.addPlugin(
@@ -90,7 +90,7 @@ export default class QuickActionsExample implements EditorPlugin {
           locations: ['canvasMenu']
         }
       })
-    );
+    )
 
     // Add vectorizer plugin with canvas menu button
     await cesdk.addPlugin(
@@ -99,15 +99,15 @@ export default class QuickActionsExample implements EditorPlugin {
           locations: 'canvasMenu'
         }
       })
-    );
+    )
 
     // Add cutout library plugin for print workflows (dock only, no canvas menu)
-    await cesdk.addPlugin(CutoutLibraryPlugin());
+    await cesdk.addPlugin(CutoutLibraryPlugin())
 
     // Add cutout library to the dock for easy access
     const cutoutAssetEntry = cesdk.ui.getAssetLibraryEntry(
       'ly.img.cutout.entry'
-    );
+    )
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
       {
@@ -117,110 +117,110 @@ export default class QuickActionsExample implements EditorPlugin {
         icon: cutoutAssetEntry?.icon,
         entries: ['ly.img.cutout.entry']
       }
-    ]);
+    ])
 
     // Add QR code plugin (adds canvas menu button automatically)
-    await cesdk.addPlugin(QRCodePlugin());
+    await cesdk.addPlugin(QRCodePlugin())
 
     // Add QR code generator to the dock
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
       'ly.img.spacer',
       'ly.img.generate-qr.dock'
-    ]);
+    ])
 
     // Create scene with gradient background and text
     await cesdk.actions.run('scene.create', {
       page: { width: 800, height: 600, unit: 'Pixel' }
-    });
+    })
 
-    const page = engine.block.findByType('page')[0];
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
+    const page = engine.block.findByType('page')[0]
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
 
     // Add gradient background to the page
-    const pageFill = engine.block.createFill('gradient/linear');
+    const pageFill = engine.block.createFill('gradient/linear')
     engine.block.setGradientColorStops(pageFill, 'fill/gradient/colors', [
       { stop: 0, color: { r: 0.18, g: 0.1, b: 0.4, a: 1 } },
       { stop: 1, color: { r: 0.55, g: 0.25, b: 0.6, a: 1 } }
-    ]);
-    engine.block.setFloat(pageFill, 'fill/gradient/linear/startPointX', 0);
-    engine.block.setFloat(pageFill, 'fill/gradient/linear/startPointY', 0);
-    engine.block.setFloat(pageFill, 'fill/gradient/linear/endPointX', 1);
-    engine.block.setFloat(pageFill, 'fill/gradient/linear/endPointY', 1);
-    engine.block.setFill(page, pageFill);
+    ])
+    engine.block.setFloat(pageFill, 'fill/gradient/linear/startPointX', 0)
+    engine.block.setFloat(pageFill, 'fill/gradient/linear/startPointY', 0)
+    engine.block.setFloat(pageFill, 'fill/gradient/linear/endPointX', 1)
+    engine.block.setFloat(pageFill, 'fill/gradient/linear/endPointY', 1)
+    engine.block.setFill(page, pageFill)
 
     // Add main title text with auto height
-    const titleBlock = engine.block.create('text');
-    engine.block.setString(titleBlock, 'text/text', 'Explore Quick Actions');
-    engine.block.setFloat(titleBlock, 'text/fontSize', 100);
-    engine.block.setEnum(titleBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(titleBlock, pageWidth);
-    engine.block.setHeightMode(titleBlock, 'Auto');
-    engine.block.appendChild(page, titleBlock);
+    const titleBlock = engine.block.create('text')
+    engine.block.setString(titleBlock, 'text/text', 'Explore Quick Actions')
+    engine.block.setFloat(titleBlock, 'text/fontSize', 100)
+    engine.block.setEnum(titleBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(titleBlock, pageWidth)
+    engine.block.setHeightMode(titleBlock, 'Auto')
+    engine.block.appendChild(page, titleBlock)
 
     // Set title text color to white
-    engine.block.setTextColor(titleBlock, { r: 1, g: 1, b: 1, a: 1 });
+    engine.block.setTextColor(titleBlock, { r: 1, g: 1, b: 1, a: 1 })
 
     // Add subtitle text with auto height
-    const subtitleBlock = engine.block.create('text');
-    engine.block.setString(subtitleBlock, 'text/text', 'IMG.LY');
-    engine.block.setFloat(subtitleBlock, 'text/fontSize', 64);
-    engine.block.setEnum(subtitleBlock, 'text/horizontalAlignment', 'Center');
-    engine.block.setWidth(subtitleBlock, pageWidth);
-    engine.block.setHeightMode(subtitleBlock, 'Auto');
-    engine.block.appendChild(page, subtitleBlock);
+    const subtitleBlock = engine.block.create('text')
+    engine.block.setString(subtitleBlock, 'text/text', 'IMG.LY')
+    engine.block.setFloat(subtitleBlock, 'text/fontSize', 64)
+    engine.block.setEnum(subtitleBlock, 'text/horizontalAlignment', 'Center')
+    engine.block.setWidth(subtitleBlock, pageWidth)
+    engine.block.setHeightMode(subtitleBlock, 'Auto')
+    engine.block.appendChild(page, subtitleBlock)
 
     // Set subtitle text color to white
-    engine.block.setTextColor(subtitleBlock, { r: 1, g: 1, b: 1, a: 1 });
+    engine.block.setTextColor(subtitleBlock, { r: 1, g: 1, b: 1, a: 1 })
 
     // Add a sample image to demonstrate quick actions
-    const imageBlock = engine.block.create('graphic');
+    const imageBlock = engine.block.create('graphic')
 
     // Set shape for the graphic block
-    const rectShape = engine.block.createShape('rect');
-    engine.block.setShape(imageBlock, rectShape);
+    const rectShape = engine.block.createShape('rect')
+    engine.block.setShape(imageBlock, rectShape)
 
     // Set image fill
-    const imageFill = engine.block.createFill('image');
+    const imageFill = engine.block.createFill('image')
     engine.block.setString(
       imageFill,
       'fill/image/imageFileURI',
       'https://img.ly/static/ubq_samples/sample_1.jpg'
-    );
-    engine.block.setFill(imageBlock, imageFill);
+    )
+    engine.block.setFill(imageBlock, imageFill)
 
-    const imageSize = 250;
-    engine.block.setWidth(imageBlock, imageSize);
-    engine.block.setHeight(imageBlock, imageSize);
-    engine.block.appendChild(page, imageBlock);
+    const imageSize = 250
+    engine.block.setWidth(imageBlock, imageSize)
+    engine.block.setHeight(imageBlock, imageSize)
+    engine.block.appendChild(page, imageBlock)
 
     // Position all elements - text at top, image below
-    const titleHeight = engine.block.getFrameHeight(titleBlock);
-    const subtitleHeight = engine.block.getFrameHeight(subtitleBlock);
-    const textSpacing = 10;
-    const imageGap = 80;
+    const titleHeight = engine.block.getFrameHeight(titleBlock)
+    const subtitleHeight = engine.block.getFrameHeight(subtitleBlock)
+    const textSpacing = 10
+    const imageGap = 80
 
     // Position content vertically centered with offset
-    const totalHeight =
-      titleHeight + textSpacing + subtitleHeight + imageGap + imageSize;
-    const startY = (pageHeight - totalHeight) / 2 + 40;
+    const totalHeight
+      = titleHeight + textSpacing + subtitleHeight + imageGap + imageSize
+    const startY = (pageHeight - totalHeight) / 2 + 40
 
-    engine.block.setPositionX(titleBlock, 0);
-    engine.block.setPositionY(titleBlock, startY);
-    engine.block.setPositionX(subtitleBlock, 0);
+    engine.block.setPositionX(titleBlock, 0)
+    engine.block.setPositionY(titleBlock, startY)
+    engine.block.setPositionX(subtitleBlock, 0)
     engine.block.setPositionY(
       subtitleBlock,
       startY + titleHeight + textSpacing
-    );
-    engine.block.setPositionX(imageBlock, (pageWidth - imageSize) / 2);
+    )
+    engine.block.setPositionX(imageBlock, (pageWidth - imageSize) / 2)
     engine.block.setPositionY(
       imageBlock,
       startY + titleHeight + textSpacing + subtitleHeight + imageGap
-    );
+    )
 
     // Select the image to show the canvas menu with quick actions
-    engine.block.select(imageBlock);
+    engine.block.select(imageBlock)
 
     // Open the cutout library panel
     cesdk.ui.openPanel('//ly.img.panel/assetLibrary', {
@@ -228,7 +228,7 @@ export default class QuickActionsExample implements EditorPlugin {
         entries: ['ly.img.cutout.entry'],
         title: 'Cutout'
       }
-    });
+    })
   }
 }
 ```
@@ -286,7 +286,7 @@ await cesdk.addPlugin(
       locations: ['canvasMenu']
     }
   })
-);
+)
 ```
 
 > **Note:** See the [Remove Background](./edit-image/remove-bg.md) guide for model selection and performance tuning.
@@ -303,7 +303,7 @@ await cesdk.addPlugin(
       locations: 'canvasMenu'
     }
   })
-);
+)
 ```
 
 > **Note:** See the [Vectorize](./edit-image/vectorize.md) guide for timeout and grouping threshold settings.
@@ -320,7 +320,7 @@ Register the plugin:
 
 ```typescript highlight=highlight-add-qr-code
 // Add QR code plugin (adds canvas menu button automatically)
-await cesdk.addPlugin(QRCodePlugin());
+await cesdk.addPlugin(QRCodePlugin())
 ```
 
 Add the generator panel to the dock for creating new codes:
@@ -331,7 +331,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
   'ly.img.spacer',
   'ly.img.generate-qr.dock'
-]);
+])
 ```
 
 ## Adding Cutout Library to Dock
@@ -346,7 +346,7 @@ Register the plugin to load the cutout asset source:
 
 ```typescript highlight=highlight-add-cutout
 // Add cutout library plugin for print workflows (dock only, no canvas menu)
-await cesdk.addPlugin(CutoutLibraryPlugin());
+await cesdk.addPlugin(CutoutLibraryPlugin())
 ```
 
 Add the library to the dock using `setComponentOrder()` with the entry's icon from `getAssetLibraryEntry()`:
@@ -355,7 +355,7 @@ Add the library to the dock using `setComponentOrder()` with the entry's icon fr
 // Add cutout library to the dock for easy access
 const cutoutAssetEntry = cesdk.ui.getAssetLibraryEntry(
   'ly.img.cutout.entry'
-);
+)
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' }),
   {
@@ -365,7 +365,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
     icon: cutoutAssetEntry?.icon,
     entries: ['ly.img.cutout.entry']
   }
-]);
+])
 ```
 
 Users can add rectangular or elliptical cutouts, or create custom shapes from paths. Cutout boundaries export as die-cut lines in PDF output.

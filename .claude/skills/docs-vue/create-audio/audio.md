@@ -254,11 +254,11 @@ Find in the following list of examples different API calls listed in the precedi
 
     ```ts
     engine.block.generateAudioThumbnailSequence(
-      blockId, 
-      samplesPerChunk: number, 
-      timeBegin: number, 
-      timeEnd: number, 
-      numberOfSamples: number, 
+      blockId,
+      samplesPerChunk: number,
+      timeBegin: number,
+      timeEnd: number,
+      numberOfSamples: number,
       numberOfChannels: number)
 
     ```
@@ -280,7 +280,7 @@ Find in the following list of examples different API calls listed in the precedi
       18,  // timeEnd
       1,   // numberOfSamples
       2,   // numberOfChannels
-      // Return the result 
+      // Return the result
       (chunkIndex, result) => {
         if (result instanceof Error) {
         console.error('Thumbnail chunk failed', result);

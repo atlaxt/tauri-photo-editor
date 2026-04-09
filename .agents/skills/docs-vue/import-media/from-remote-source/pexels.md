@@ -31,9 +31,7 @@ import type {
   AssetsQueryResult,
   EditorPlugin,
   EditorPluginContext
-} from '@cesdk/cesdk-js';
-import packageJson from './package.json';
-
+} from '@cesdk/cesdk-js'
 import {
   BlurAssetSource,
   ColorPaletteAssetSource,
@@ -48,53 +46,52 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { DesignEditorConfig } from './design-editor/plugin';
-import { calculateGridLayout } from './utils';
+} from '@cesdk/cesdk-js/plugins'
+
+import { DesignEditorConfig } from './design-editor/plugin'
+import packageJson from './package.json'
+import { calculateGridLayout } from './utils'
 
 // Pexels API wrapper using native fetch
 interface PexelsPhoto {
-  id: number;
-  width: number;
-  height: number;
-  photographer: string;
-  photographer_url: string;
+  id: number
+  width: number
+  height: number
+  photographer: string
+  photographer_url: string
   src: {
-    original: string;
-    large: string;
-    medium: string;
-    small: string;
-  };
+    original: string
+    large: string
+    medium: string
+    small: string
+  }
 }
 
 interface PexelsResponse {
-  photos: PexelsPhoto[];
-  page: number;
-  per_page: number;
-  total_results: number;
+  photos: PexelsPhoto[]
+  page: number
+  per_page: number
+  total_results: number
 }
 
 interface PexelsApiResponse {
-  data: PexelsResponse;
-  status: number;
+  data: PexelsResponse
+  status: number
 }
 
-const fetchFromPexels = async (
-  url: string,
-  apiKey: string
-): Promise<PexelsApiResponse> => {
+async function fetchFromPexels(url: string, apiKey: string): Promise<PexelsApiResponse> {
   const response = await fetch(`https://api.pexels.com/v1/${url}`, {
     mode: 'cors',
     headers: {
       Authorization: apiKey
     }
-  });
-  const json = await response.json();
-  const status = response.status;
-  return { data: json, status };
-};
+  })
+  const json = await response.json()
+  const status = response.status
+  return { data: json, status }
+}
 
-const createPexelsApi = (apiKey: string) => {
+function createPexelsApi(apiKey: string) {
   return {
     photos: {
       search: async ({
@@ -102,31 +99,35 @@ const createPexelsApi = (apiKey: string) => {
         per_page,
         page
       }: {
-        query: string;
-        per_page?: number;
-        page?: number;
+        query: string
+        per_page?: number
+        page?: number
       }) => {
-        const params = new URLSearchParams();
-        params.append('query', query);
-        if (per_page) params.append('per_page', per_page.toString());
-        if (page) params.append('page', page.toString());
-        return await fetchFromPexels(`search?${params}`, apiKey);
+        const params = new URLSearchParams()
+        params.append('query', query)
+        if (per_page)
+          params.append('per_page', per_page.toString())
+        if (page)
+          params.append('page', page.toString())
+        return await fetchFromPexels(`search?${params}`, apiKey)
       },
       curated: async ({
         per_page,
         page
       }: {
-        per_page?: number;
-        page?: number;
+        per_page?: number
+        page?: number
       }) => {
-        const params = new URLSearchParams();
-        if (per_page) params.append('per_page', per_page.toString());
-        if (page) params.append('page', page.toString());
-        return await fetchFromPexels(`curated?${params}`, apiKey);
+        const params = new URLSearchParams()
+        if (per_page)
+          params.append('per_page', per_page.toString())
+        if (page)
+          params.append('page', page.toString())
+        return await fetchFromPexels(`curated?${params}`, apiKey)
       }
     }
-  };
-};
+  }
+}
 
 /**
  * CE.SDK Plugin: Custom Asset Source with Pexels
@@ -139,22 +140,22 @@ const createPexelsApi = (apiKey: string) => {
  * - Adding credits and licenses
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
-  version = packageJson.version;
+  name = packageJson.name
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    const engine = cesdk.engine;
-    await cesdk.addPlugin(new DesignEditorConfig());
+    const engine = cesdk.engine
+    await cesdk.addPlugin(new DesignEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }));
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
+    await cesdk.addPlugin(new UploadAssetSources({ include: ['ly.img.image.upload'] }))
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -165,49 +166,49 @@ class Example implements EditorPlugin {
           'ly.img.image.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(new PagePresetsAssetSource());
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
+    await cesdk.addPlugin(new PagePresetsAssetSource())
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       page: { width: 1600, height: 1200, unit: 'Pixel' }
-    });
+    })
 
-    const [page] = engine.block.findByType('page');
+    const [page] = engine.block.findByType('page')
 
     // Calculate grid layout for displaying images
-    const pageWidth = engine.block.getWidth(page);
-    const pageHeight = engine.block.getHeight(page);
-    const layout = calculateGridLayout(pageWidth, pageHeight, 3);
+    const pageWidth = engine.block.getWidth(page)
+    const pageHeight = engine.block.getHeight(page)
+    const layout = calculateGridLayout(pageWidth, pageHeight, 3)
 
     // Create Pexels API client
-    const pexelsApiKey = import.meta.env.VITE_PEXELS_API_KEY;
+    const pexelsApiKey = import.meta.env.VITE_PEXELS_API_KEY
 
     if (!pexelsApiKey) {
-      throw new Error('VITE_PEXELS_API_KEY environment variable is required');
+      throw new Error('VITE_PEXELS_API_KEY environment variable is required')
     }
 
-    const PexelsApi = createPexelsApi(pexelsApiKey);
+    const PexelsApi = createPexelsApi(pexelsApiKey)
 
     // Configure localization for the asset library
     cesdk.i18n.setTranslations({
       en: {
         'libraries.pexels.label': 'Pexels'
       }
-    });
+    })
 
     // Main asset query function for Pexels
     const findPexelsAssets = async (
       queryData: AssetQueryData
     ): Promise<AssetsQueryResult<AssetResult>> => {
       // Pexels page indices are 1-based, but only pass if > 0
-      const pexelsPage = queryData.page > 0 ? queryData.page : undefined;
+      const pexelsPage = queryData.page > 0 ? queryData.page : undefined
 
       if (queryData.query) {
         // Search for images with a query string
@@ -215,64 +216,67 @@ class Example implements EditorPlugin {
           query: queryData.query,
           page: pexelsPage,
           per_page: queryData.perPage
-        });
+        })
 
         if (response.status === 200) {
-          const { photos, total_results, page } = response.data;
-          const assets = photos.map((image) => translateToAssetResult(image));
-          const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined;
+          const { photos, total_results, page } = response.data
+          const assets = photos.map(image => translateToAssetResult(image))
+          const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined
 
           return {
             assets,
             total: total_results,
             currentPage: page ?? 0,
             nextPage
-          };
-        } else {
+          }
+        }
+        else {
           const error = new Error(
             `Received a response with code ${response.status} when trying to access Pexels`
-          );
-          console.error(error);
-          throw error;
+          )
+          console.error(error)
+          throw error
         }
-      } else {
+      }
+      else {
         // Show curated images when no query is provided
         const response = await PexelsApi.photos.curated({
           page: pexelsPage,
           per_page: queryData.perPage
-        });
+        })
 
         if (response.status === 200) {
-          const { photos, total_results, page } = response.data;
-          const assets = photos.map((image) => translateToAssetResult(image));
-          const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined;
+          const { photos, total_results, page } = response.data
+          const assets = photos.map(image => translateToAssetResult(image))
+          const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined
 
           return {
             assets,
             total: total_results,
             currentPage: page ?? 0,
             nextPage
-          };
-        } else {
+          }
+        }
+        else {
           const error = new Error(
             `Received a response with code ${response.status} when trying to access Pexels`
-          );
-          console.error(error);
-          throw error;
+          )
+          console.error(error)
+          throw error
         }
       }
-    };
+    }
 
     // Translate Pexels photo to CE.SDK AssetResult format
     const translateToAssetResult = (image: PexelsPhoto): AssetResult => {
-      const artistName = image.photographer;
-      const artistUrl = image.photographer_url;
-      const thumbUri = image.src.medium;
-      const id = image.id.toString();
+      const artistName = image.photographer
+      const artistUrl = image.photographer_url
+      const thumbUri = image.src.medium
+      const id = image.id.toString()
       const credits = {
         name: artistName,
         url: artistUrl
-      };
+      }
 
       return {
         id,
@@ -289,8 +293,8 @@ class Example implements EditorPlugin {
           medium: 'referral'
         },
         credits
-      };
-    };
+      }
+    }
 
     // Define the Pexels asset source
     const pexelsAssetSource: AssetSource = {
@@ -304,10 +308,10 @@ class Example implements EditorPlugin {
         name: 'Pexels license (free)',
         url: 'https://pexels.com/license'
       }
-    };
+    }
 
     // Register the Pexels asset source
-    engine.asset.addSource(pexelsAssetSource);
+    engine.asset.addSource(pexelsAssetSource)
 
     // Configure the asset library UI with a dedicated Pexels dock entry
     cesdk.ui.addAssetLibraryEntry({
@@ -315,12 +319,12 @@ class Example implements EditorPlugin {
       sourceIds: ['pexels'],
       previewLength: 6,
       gridColumns: 3
-    });
+    })
 
     // Add Pexels to the existing Images asset library
     cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
       sourceIds: ({ currentIds }) => [...currentIds, 'pexels']
-    });
+    })
 
     // Add Pexels as the first button in the dock with a separator
     cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -332,29 +336,29 @@ class Example implements EditorPlugin {
       },
       { id: 'ly.img.separator' },
       ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-    ]);
+    ])
 
     // Query for assets and display them (only if scene was created successfully)
     const result = await engine.asset.findAssets(pexelsAssetSource.id, {
       page: 0,
       perPage: 4
-    });
+    })
 
     // Add images from Pexels to the scene in a grid layout
     for (let i = 0; i < Math.min(result.assets.length, 4); i++) {
-      const asset = result.assets[i];
-      const position = layout.getPosition(i);
+      const asset = result.assets[i]
+      const position = layout.getPosition(i)
 
-      const block = await engine.asset.apply(pexelsAssetSource.id, asset);
-      engine.block.setPositionX(block, position.x);
-      engine.block.setPositionY(block, position.y);
-      engine.block.setWidth(block, layout.blockWidth);
-      engine.block.setHeight(block, layout.blockHeight);
+      const block = await engine.asset.apply(pexelsAssetSource.id, asset)
+      engine.block.setPositionX(block, position.x)
+      engine.block.setPositionY(block, position.y)
+      engine.block.setWidth(block, layout.blockWidth)
+      engine.block.setHeight(block, layout.blockHeight)
     }
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers creating a Pexels API wrapper, implementing the asset source, translating API responses to CE.SDK format, handling attribution requirements, and configuring the asset library UI.
@@ -382,20 +386,17 @@ The API key is passed in the `Authorization` header for all Pexels API requests.
 We build a lightweight wrapper around the Pexels REST API using the native `fetch` API. The wrapper provides methods for searching and browsing curated photos.
 
 ```typescript highlight-fetch-wrapper
-const fetchFromPexels = async (
-  url: string,
-  apiKey: string
-): Promise<PexelsApiResponse> => {
+async function fetchFromPexels(url: string, apiKey: string): Promise<PexelsApiResponse> {
   const response = await fetch(`https://api.pexels.com/v1/${url}`, {
     mode: 'cors',
     headers: {
       Authorization: apiKey
     }
-  });
-  const json = await response.json();
-  const status = response.status;
-  return { data: json, status };
-};
+  })
+  const json = await response.json()
+  const status = response.status
+  return { data: json, status }
+}
 ```
 
 The `fetchFromPexels` function sends requests to the Pexels API with proper CORS configuration and authentication headers. We return both the response data and status code for error handling.
@@ -403,7 +404,7 @@ The `fetchFromPexels` function sends requests to the Pexels API with proper CORS
 We create a Pexels API client with two methods:
 
 ```typescript highlight-api-client
-const createPexelsApi = (apiKey: string) => {
+function createPexelsApi(apiKey: string) {
   return {
     photos: {
       search: async ({
@@ -411,31 +412,35 @@ const createPexelsApi = (apiKey: string) => {
         per_page,
         page
       }: {
-        query: string;
-        per_page?: number;
-        page?: number;
+        query: string
+        per_page?: number
+        page?: number
       }) => {
-        const params = new URLSearchParams();
-        params.append('query', query);
-        if (per_page) params.append('per_page', per_page.toString());
-        if (page) params.append('page', page.toString());
-        return await fetchFromPexels(`search?${params}`, apiKey);
+        const params = new URLSearchParams()
+        params.append('query', query)
+        if (per_page)
+          params.append('per_page', per_page.toString())
+        if (page)
+          params.append('page', page.toString())
+        return await fetchFromPexels(`search?${params}`, apiKey)
       },
       curated: async ({
         per_page,
         page
       }: {
-        per_page?: number;
-        page?: number;
+        per_page?: number
+        page?: number
       }) => {
-        const params = new URLSearchParams();
-        if (per_page) params.append('per_page', per_page.toString());
-        if (page) params.append('page', page.toString());
-        return await fetchFromPexels(`curated?${params}`, apiKey);
+        const params = new URLSearchParams()
+        if (per_page)
+          params.append('per_page', per_page.toString())
+        if (page)
+          params.append('page', page.toString())
+        return await fetchFromPexels(`curated?${params}`, apiKey)
       }
     }
-  };
-};
+  }
+}
 ```
 
 The `photos.search()` method queries Pexels with a search term, while `photos.curated()` fetches curated images. Both methods support pagination through `page` and `per_page` parameters.
@@ -445,22 +450,22 @@ The `photos.search()` method queries Pexels with a search term, while `photos.cu
 We define a custom asset source with an `id`, `findAssets` callback, and source-level attribution information:
 
 ```typescript highlight-asset-source
-    // Define the Pexels asset source
-    const pexelsAssetSource: AssetSource = {
-      id: 'pexels',
-      findAssets: findPexelsAssets,
-      credits: {
-        name: 'Pexels',
-        url: 'https://pexels.com/'
-      },
-      license: {
-        name: 'Pexels license (free)',
-        url: 'https://pexels.com/license'
-      }
-    };
+// Define the Pexels asset source
+const pexelsAssetSource: AssetSource = {
+  id: 'pexels',
+  findAssets: findPexelsAssets,
+  credits: {
+    name: 'Pexels',
+    url: 'https://pexels.com/'
+  },
+  license: {
+    name: 'Pexels license (free)',
+    url: 'https://pexels.com/license'
+  }
+}
 
-    // Register the Pexels asset source
-    engine.asset.addSource(pexelsAssetSource);
+// Register the Pexels asset source
+engine.asset.addSource(pexelsAssetSource)
 ```
 
 The `credits` field provides attribution to Pexels, while the `license` field links to their licensing terms. We register the source with `engine.asset.addSource()` to make it available throughout CE.SDK.
@@ -470,66 +475,67 @@ The `credits` field provides attribution to Pexels, while the `license` field li
 The `findAssets` callback receives query parameters and routes to the appropriate Pexels API endpoint:
 
 ```typescript highlight-find-assets
-    // Main asset query function for Pexels
-    const findPexelsAssets = async (
-      queryData: AssetQueryData
-    ): Promise<AssetsQueryResult<AssetResult>> => {
-      // Pexels page indices are 1-based, but only pass if > 0
-      const pexelsPage = queryData.page > 0 ? queryData.page : undefined;
+// Main asset query function for Pexels
+async function findPexelsAssets(queryData: AssetQueryData): Promise<AssetsQueryResult<AssetResult>> {
+  // Pexels page indices are 1-based, but only pass if > 0
+  const pexelsPage = queryData.page > 0 ? queryData.page : undefined
 
-      if (queryData.query) {
-        // Search for images with a query string
-        const response = await PexelsApi.photos.search({
-          query: queryData.query,
-          page: pexelsPage,
-          per_page: queryData.perPage
-        });
+  if (queryData.query) {
+    // Search for images with a query string
+    const response = await PexelsApi.photos.search({
+      query: queryData.query,
+      page: pexelsPage,
+      per_page: queryData.perPage
+    })
 
-        if (response.status === 200) {
-          const { photos, total_results, page } = response.data;
-          const assets = photos.map((image) => translateToAssetResult(image));
-          const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined;
+    if (response.status === 200) {
+      const { photos, total_results, page } = response.data
+      const assets = photos.map(image => translateToAssetResult(image))
+      const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined
 
-          return {
-            assets,
-            total: total_results,
-            currentPage: page ?? 0,
-            nextPage
-          };
-        } else {
-          const error = new Error(
-            `Received a response with code ${response.status} when trying to access Pexels`
-          );
-          console.error(error);
-          throw error;
-        }
-      } else {
-        // Show curated images when no query is provided
-        const response = await PexelsApi.photos.curated({
-          page: pexelsPage,
-          per_page: queryData.perPage
-        });
-
-        if (response.status === 200) {
-          const { photos, total_results, page } = response.data;
-          const assets = photos.map((image) => translateToAssetResult(image));
-          const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined;
-
-          return {
-            assets,
-            total: total_results,
-            currentPage: page ?? 0,
-            nextPage
-          };
-        } else {
-          const error = new Error(
-            `Received a response with code ${response.status} when trying to access Pexels`
-          );
-          console.error(error);
-          throw error;
-        }
+      return {
+        assets,
+        total: total_results,
+        currentPage: page ?? 0,
+        nextPage
       }
-    };
+    }
+    else {
+      const error = new Error(
+        `Received a response with code ${response.status} when trying to access Pexels`
+      )
+      console.error(error)
+      throw error
+    }
+  }
+  else {
+    // Show curated images when no query is provided
+    const response = await PexelsApi.photos.curated({
+      page: pexelsPage,
+      per_page: queryData.perPage
+    })
+
+    if (response.status === 200) {
+      const { photos, total_results, page } = response.data
+      const assets = photos.map(image => translateToAssetResult(image))
+      const nextPage = photos.length > 0 ? (page ?? 0) + 1 : undefined
+
+      return {
+        assets,
+        total: total_results,
+        currentPage: page ?? 0,
+        nextPage
+      }
+    }
+    else {
+      const error = new Error(
+        `Received a response with code ${response.status} when trying to access Pexels`
+      )
+      console.error(error)
+      throw error
+    }
+  }
+}
 ```
 
 When a query exists, we call `PexelsApi.photos.search()`. Without a query, we fetch curated images with `PexelsApi.photos.curated()`. CE.SDK uses 0-based page indexing, which we convert to 1-based indexing for Pexels.
@@ -541,34 +547,34 @@ We check the response status and throw errors for non-200 responses. The API res
 We map each Pexels photo to CE.SDK's `AssetResult` interface:
 
 ```typescript highlight-translate
-    // Translate Pexels photo to CE.SDK AssetResult format
-    const translateToAssetResult = (image: PexelsPhoto): AssetResult => {
-      const artistName = image.photographer;
-      const artistUrl = image.photographer_url;
-      const thumbUri = image.src.medium;
-      const id = image.id.toString();
-      const credits = {
-        name: artistName,
-        url: artistUrl
-      };
+// Translate Pexels photo to CE.SDK AssetResult format
+function translateToAssetResult(image: PexelsPhoto): AssetResult {
+  const artistName = image.photographer
+  const artistUrl = image.photographer_url
+  const thumbUri = image.src.medium
+  const id = image.id.toString()
+  const credits = {
+    name: artistName,
+    url: artistUrl
+  }
 
-      return {
-        id,
-        locale: 'en',
-        meta: {
-          thumbUri,
-          width: image.width,
-          height: image.height,
-          mimeType: 'image/jpeg',
-          uri: image.src.original
-        },
-        utm: {
-          source: 'CE.SDK Demo',
-          medium: 'referral'
-        },
-        credits
-      };
-    };
+  return {
+    id,
+    locale: 'en',
+    meta: {
+      thumbUri,
+      width: image.width,
+      height: image.height,
+      mimeType: 'image/jpeg',
+      uri: image.src.original
+    },
+    utm: {
+      source: 'CE.SDK Demo',
+      medium: 'referral'
+    },
+    credits
+  }
+}
 ```
 
 The `meta` object contains image dimensions, URLs, and MIME type. We use `image.src.medium` for thumbnails and `image.src.original` for the full-resolution image.
@@ -596,12 +602,12 @@ cesdk.ui.addAssetLibraryEntry({
   previewLength: 6,
   gridColumns: 3,
   gridItemHeight: 'square'
-});
+})
 
 // Add Pexels to the existing Images asset library
 cesdk.ui.updateAssetLibraryEntry('ly.img.image', {
   sourceIds: ({ currentIds }) => [...currentIds, 'pexels']
-});
+})
 
 // Add Pexels as the first button in the dock with a separator
 cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
@@ -613,7 +619,7 @@ cesdk.ui.setComponentOrder({ in: 'ly.img.dock' }, [
   },
   { id: 'ly.img.separator' },
   ...cesdk.ui.getComponentOrder({ in: 'ly.img.dock' })
-]);
+])
 ```
 
 The `addAssetLibraryEntry()` call registers the Pexels asset library panel with display settings. The `setComponentOrder()` call creates an explicit dock button component by prepending a new `AssetLibraryDockComponent` to the existing dock order.
@@ -634,23 +640,23 @@ The separator component `{ id: 'ly.img.separator' }` adds a visual divider betwe
 We test the integration by adding Pexels images to the scene programmatically:
 
 ```typescript highlight-test
-    // Query for assets and display them (only if scene was created successfully)
-    const result = await engine.asset.findAssets(pexelsAssetSource.id, {
-      page: 0,
-      perPage: 4
-    });
+// Query for assets and display them (only if scene was created successfully)
+const result = await engine.asset.findAssets(pexelsAssetSource.id, {
+  page: 0,
+  perPage: 4
+})
 
-    // Add images from Pexels to the scene in a grid layout
-    for (let i = 0; i < Math.min(result.assets.length, 4); i++) {
-      const asset = result.assets[i];
-      const position = layout.getPosition(i);
+// Add images from Pexels to the scene in a grid layout
+for (let i = 0; i < Math.min(result.assets.length, 4); i++) {
+  const asset = result.assets[i]
+  const position = layout.getPosition(i)
 
-      const block = await engine.asset.apply(pexelsAssetSource.id, asset);
-      engine.block.setPositionX(block, position.x);
-      engine.block.setPositionY(block, position.y);
-      engine.block.setWidth(block, layout.blockWidth);
-      engine.block.setHeight(block, layout.blockHeight);
-    }
+  const block = await engine.asset.apply(pexelsAssetSource.id, asset)
+  engine.block.setPositionX(block, position.x)
+  engine.block.setPositionY(block, position.y)
+  engine.block.setWidth(block, layout.blockWidth)
+  engine.block.setHeight(block, layout.blockHeight)
+}
 ```
 
 We query the Pexels source, retrieve the first three results, and add them to the scene using `engine.asset.apply()`. Each image is positioned in a grid layout using the `calculateGridLayout` utility.

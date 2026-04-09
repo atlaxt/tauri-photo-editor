@@ -25,7 +25,7 @@ Video compositions in CE.SDK use a hierarchy: **Scene → Page → Track → Cli
 In CE.SDK's block-based architecture, a **clip is a graphic block with a video fill**. This means video clips share the same APIs and capabilities as other blocks—you can position, rotate, scale, and apply effects to video just like images or shapes. The `addVideo()` helper creates this structure automatically and loads the video metadata.
 
 ```typescript file=@cesdk_web_examples/guides-create-video-join-and-arrange-browser/browser.ts reference-only
-import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js';
+import type { EditorPlugin, EditorPluginContext } from '@cesdk/cesdk-js'
 
 import {
   BlurAssetSource,
@@ -42,9 +42,9 @@ import {
   TypefaceAssetSource,
   UploadAssetSources,
   VectorShapeAssetSource
-} from '@cesdk/cesdk-js/plugins';
-import { VideoEditorConfig } from './video-editor/plugin';
-import packageJson from './package.json';
+} from '@cesdk/cesdk-js/plugins'
+import packageJson from './package.json'
+import { VideoEditorConfig } from './video-editor/plugin'
 
 /**
  * CE.SDK Plugin: Join and Arrange Video Clips Guide
@@ -57,27 +57,27 @@ import packageJson from './package.json';
  * - Creating multi-track compositions
  */
 class Example implements EditorPlugin {
-  name = packageJson.name;
+  name = packageJson.name
 
-  version = packageJson.version;
+  version = packageJson.version
 
   async initialize({ cesdk }: EditorPluginContext): Promise<void> {
     if (!cesdk) {
-      throw new Error('CE.SDK instance is required for this plugin');
+      throw new Error('CE.SDK instance is required for this plugin')
     }
 
-    await cesdk.addPlugin(new VideoEditorConfig());
+    await cesdk.addPlugin(new VideoEditorConfig())
 
     // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
+    await cesdk.addPlugin(new BlurAssetSource())
+    await cesdk.addPlugin(new CaptionPresetsAssetSource())
+    await cesdk.addPlugin(new ColorPaletteAssetSource())
+    await cesdk.addPlugin(new CropPresetsAssetSource())
     await cesdk.addPlugin(
       new UploadAssetSources({
         include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
       })
-    );
+    )
     await cesdk.addPlugin(
       new DemoAssetSources({
         include: [
@@ -87,9 +87,9 @@ class Example implements EditorPlugin {
           'ly.img.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
+    )
+    await cesdk.addPlugin(new EffectsAssetSource())
+    await cesdk.addPlugin(new FiltersAssetSource())
     await cesdk.addPlugin(
       new PagePresetsAssetSource({
         include: [
@@ -103,102 +103,100 @@ class Example implements EditorPlugin {
           'ly.img.page.presets.video.*'
         ]
       })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+    )
+    await cesdk.addPlugin(new StickerAssetSource())
+    await cesdk.addPlugin(new TextAssetSource())
+    await cesdk.addPlugin(new TextComponentAssetSource())
+    await cesdk.addPlugin(new TypefaceAssetSource())
+    await cesdk.addPlugin(new VectorShapeAssetSource())
 
     await cesdk.actions.run('scene.create', {
       layout: 'DepthStack',
       page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+    })
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+    const engine = cesdk.engine
+    const page = engine.block.findByType('page')[0]
 
     // Set page duration to accommodate all clips (15 seconds total)
-    engine.block.setDuration(page, 15);
+    engine.block.setDuration(page, 15)
 
     // Sample video URL for the demonstration
-    const videoUrl =
-      'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4';
+    const videoUrl
+      = 'https://cdn.img.ly/assets/demo/v3/ly.img.video/videos/pexels-drone-footage-of-a-surfer-barrelling-a-wave-12715991.mp4'
 
     // Create video clips using the addVideo helper method
     // Each clip is sized to fill the canvas (1920x1080 is standard video resolution)
     const clipA = await engine.block.addVideo(videoUrl, 1920, 1080, {
       timeline: { duration: 5, timeOffset: 0 }
-    });
+    })
 
     const clipB = await engine.block.addVideo(videoUrl, 1920, 1080, {
       timeline: { duration: 5, timeOffset: 5 }
-    });
+    })
 
     const clipC = await engine.block.addVideo(videoUrl, 1920, 1080, {
       timeline: { duration: 5, timeOffset: 10 }
-    });
+    })
 
     // Create a track and add it to the page
     // Tracks organize clips for sequential playback on the timeline
-    const track = engine.block.create('track');
-    engine.block.appendChild(page, track);
+    const track = engine.block.create('track')
+    engine.block.appendChild(page, track)
 
     // Add clips to the track
-    engine.block.appendChild(track, clipA);
-    engine.block.appendChild(track, clipB);
-    engine.block.appendChild(track, clipC);
+    engine.block.appendChild(track, clipA)
+    engine.block.appendChild(track, clipB)
+    engine.block.appendChild(track, clipC)
 
     // Resize all track children to fill the page dimensions
-    engine.block.fillParent(track);
+    engine.block.fillParent(track)
 
     // Query track children to verify order
-    const trackClips = engine.block.getChildren(track);
-    // eslint-disable-next-line no-console
-    console.log('Track clip count:', trackClips.length, 'clips');
+    const trackClips = engine.block.getChildren(track)
+
+    console.log('Track clip count:', trackClips.length, 'clips')
 
     // Set durations for each clip
-    engine.block.setDuration(clipA, 5);
-    engine.block.setDuration(clipB, 5);
-    engine.block.setDuration(clipC, 5);
+    engine.block.setDuration(clipA, 5)
+    engine.block.setDuration(clipB, 5)
+    engine.block.setDuration(clipC, 5)
 
     // Set time offsets to position clips sequentially on the timeline
-    engine.block.setTimeOffset(clipA, 0);
-    engine.block.setTimeOffset(clipB, 5);
-    engine.block.setTimeOffset(clipC, 10);
+    engine.block.setTimeOffset(clipA, 0)
+    engine.block.setTimeOffset(clipB, 5)
+    engine.block.setTimeOffset(clipC, 10)
 
-    // eslint-disable-next-line no-console
-    console.log('Track offsets set: Clip A: 0s, Clip B: 5s, Clip C: 10s');
+    console.log('Track offsets set: Clip A: 0s, Clip B: 5s, Clip C: 10s')
 
     // Reorder clips: move Clip C to the beginning (index 0)
     // This demonstrates using insertChild for precise positioning
-    engine.block.insertChild(track, clipC, 0);
+    engine.block.insertChild(track, clipC, 0)
 
     // After reordering, update time offsets to reflect the new sequence
-    engine.block.setTimeOffset(clipC, 0);
-    engine.block.setTimeOffset(clipA, 5);
-    engine.block.setTimeOffset(clipB, 10);
+    engine.block.setTimeOffset(clipC, 0)
+    engine.block.setTimeOffset(clipA, 5)
+    engine.block.setTimeOffset(clipB, 10)
 
-    // eslint-disable-next-line no-console
-    console.log('After reorder - updated offsets: C=0s, A=5s, B=10s');
+    console.log('After reorder - updated offsets: C=0s, A=5s, B=10s')
 
     // Get all clips in the track to verify arrangement
-    const finalClips = engine.block.getChildren(track);
-    // eslint-disable-next-line no-console
-    console.log('Final track arrangement:');
+    const finalClips = engine.block.getChildren(track)
+
+    console.log('Final track arrangement:')
     finalClips.forEach((clipId, index) => {
-      const offset = engine.block.getTimeOffset(clipId);
-      const duration = engine.block.getDuration(clipId);
-      // eslint-disable-next-line no-console
+      const offset = engine.block.getTimeOffset(clipId)
+      const duration = engine.block.getDuration(clipId)
+
       console.log(
         `  Clip ${index + 1}: offset=${offset}s, duration=${duration}s`
-      );
-    });
+      )
+    })
 
     // Create a second track for layered compositions
     // Track order determines z-index: last track renders on top
-    const overlayTrack = engine.block.create('track');
-    engine.block.appendChild(page, overlayTrack);
+    const overlayTrack = engine.block.create('track')
+    engine.block.appendChild(page, overlayTrack)
 
     // Create an overlay clip for picture-in-picture effect (1/4 size)
     const overlayClip = await engine.block.addVideo(
@@ -208,31 +206,29 @@ class Example implements EditorPlugin {
       {
         timeline: { duration: 5, timeOffset: 2 }
       }
-    );
-    engine.block.appendChild(overlayTrack, overlayClip);
+    )
+    engine.block.appendChild(overlayTrack, overlayClip)
 
     // Position overlay in bottom-right corner with padding
-    engine.block.setPositionX(overlayClip, 1920 - 1920 / 4 - 40);
-    engine.block.setPositionY(overlayClip, 1080 - 1080 / 4 - 40);
+    engine.block.setPositionX(overlayClip, 1920 - 1920 / 4 - 40)
+    engine.block.setPositionY(overlayClip, 1080 - 1080 / 4 - 40)
 
-    // eslint-disable-next-line no-console
-    console.log('Multi-track composition created with overlay starting at 2s');
+    console.log('Multi-track composition created with overlay starting at 2s')
 
     // Select the first clip in the main track to show timeline controls
-    engine.block.select(clipC);
+    engine.block.select(clipC)
 
     // Seek to 2.5s to show both main clip and overlay visible
     // (overlay starts at 2s, so 2.5s shows both elements)
-    engine.block.setPlaybackTime(page, 2.5);
+    engine.block.setPlaybackTime(page, 2.5)
 
-    // eslint-disable-next-line no-console
     console.log(
       'Join and Arrange guide initialized. Use timeline to view clip arrangement.'
-    );
+    )
   }
 }
 
-export default Example;
+export default Example
 ```
 
 This guide covers how to join clips using the built-in timeline UI, how to programmatically add and arrange clips in tracks, and how to create multi-track compositions.
@@ -264,60 +260,60 @@ Add multiple tracks to create layered compositions. Tracks stack vertically in t
 We create a scene and set up a page for the video composition.
 
 ```typescript highlight=highlight-create-video-scene
-    await cesdk.addPlugin(new VideoEditorConfig());
+await cesdk.addPlugin(new VideoEditorConfig())
 
-    // Add asset source plugins
-    await cesdk.addPlugin(new BlurAssetSource());
-    await cesdk.addPlugin(new CaptionPresetsAssetSource());
-    await cesdk.addPlugin(new ColorPaletteAssetSource());
-    await cesdk.addPlugin(new CropPresetsAssetSource());
-    await cesdk.addPlugin(
-      new UploadAssetSources({
-        include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
-      })
-    );
-    await cesdk.addPlugin(
-      new DemoAssetSources({
-        include: [
-          'ly.img.templates.video.*',
-          'ly.img.image.*',
-          'ly.img.audio.*',
-          'ly.img.video.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new EffectsAssetSource());
-    await cesdk.addPlugin(new FiltersAssetSource());
-    await cesdk.addPlugin(
-      new PagePresetsAssetSource({
-        include: [
-          'ly.img.page.presets.instagram.*',
-          'ly.img.page.presets.facebook.*',
-          'ly.img.page.presets.x.*',
-          'ly.img.page.presets.linkedin.*',
-          'ly.img.page.presets.pinterest.*',
-          'ly.img.page.presets.tiktok.*',
-          'ly.img.page.presets.youtube.*',
-          'ly.img.page.presets.video.*'
-        ]
-      })
-    );
-    await cesdk.addPlugin(new StickerAssetSource());
-    await cesdk.addPlugin(new TextAssetSource());
-    await cesdk.addPlugin(new TextComponentAssetSource());
-    await cesdk.addPlugin(new TypefaceAssetSource());
-    await cesdk.addPlugin(new VectorShapeAssetSource());
+// Add asset source plugins
+await cesdk.addPlugin(new BlurAssetSource())
+await cesdk.addPlugin(new CaptionPresetsAssetSource())
+await cesdk.addPlugin(new ColorPaletteAssetSource())
+await cesdk.addPlugin(new CropPresetsAssetSource())
+await cesdk.addPlugin(
+  new UploadAssetSources({
+    include: ['ly.img.image.upload', 'ly.img.video.upload', 'ly.img.audio.upload']
+  })
+)
+await cesdk.addPlugin(
+  new DemoAssetSources({
+    include: [
+      'ly.img.templates.video.*',
+      'ly.img.image.*',
+      'ly.img.audio.*',
+      'ly.img.video.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new EffectsAssetSource())
+await cesdk.addPlugin(new FiltersAssetSource())
+await cesdk.addPlugin(
+  new PagePresetsAssetSource({
+    include: [
+      'ly.img.page.presets.instagram.*',
+      'ly.img.page.presets.facebook.*',
+      'ly.img.page.presets.x.*',
+      'ly.img.page.presets.linkedin.*',
+      'ly.img.page.presets.pinterest.*',
+      'ly.img.page.presets.tiktok.*',
+      'ly.img.page.presets.youtube.*',
+      'ly.img.page.presets.video.*'
+    ]
+  })
+)
+await cesdk.addPlugin(new StickerAssetSource())
+await cesdk.addPlugin(new TextAssetSource())
+await cesdk.addPlugin(new TextComponentAssetSource())
+await cesdk.addPlugin(new TypefaceAssetSource())
+await cesdk.addPlugin(new VectorShapeAssetSource())
 
-    await cesdk.actions.run('scene.create', {
-      layout: 'DepthStack',
-      page: { width: 1920, height: 1080, unit: 'Pixel' }
-    });
+await cesdk.actions.run('scene.create', {
+  layout: 'DepthStack',
+  page: { width: 1920, height: 1080, unit: 'Pixel' }
+})
 
-    const engine = cesdk.engine;
-    const page = engine.block.findByType('page')[0];
+const engine = cesdk.engine
+const page = engine.block.findByType('page')[0]
 
-    // Set page duration to accommodate all clips (15 seconds total)
-    engine.block.setDuration(page, 15);
+// Set page duration to accommodate all clips (15 seconds total)
+engine.block.setDuration(page, 15)
 ```
 
 The page duration determines how long the composition plays. Set it to accommodate all your clips—in this example, 15 seconds for three 5-second clips.
@@ -327,19 +323,19 @@ The page duration determines how long the composition plays. Set it to accommoda
 We create video clips as graphic blocks with video fills. Each clip needs a video fill that references the source media.
 
 ```typescript highlight=highlight-create-clips
-    // Create video clips using the addVideo helper method
-    // Each clip is sized to fill the canvas (1920x1080 is standard video resolution)
-    const clipA = await engine.block.addVideo(videoUrl, 1920, 1080, {
-      timeline: { duration: 5, timeOffset: 0 }
-    });
+// Create video clips using the addVideo helper method
+// Each clip is sized to fill the canvas (1920x1080 is standard video resolution)
+const clipA = await engine.block.addVideo(videoUrl, 1920, 1080, {
+  timeline: { duration: 5, timeOffset: 0 }
+})
 
-    const clipB = await engine.block.addVideo(videoUrl, 1920, 1080, {
-      timeline: { duration: 5, timeOffset: 5 }
-    });
+const clipB = await engine.block.addVideo(videoUrl, 1920, 1080, {
+  timeline: { duration: 5, timeOffset: 5 }
+})
 
-    const clipC = await engine.block.addVideo(videoUrl, 1920, 1080, {
-      timeline: { duration: 5, timeOffset: 10 }
-    });
+const clipC = await engine.block.addVideo(videoUrl, 1920, 1080, {
+  timeline: { duration: 5, timeOffset: 10 }
+})
 ```
 
 The `addVideo` helper method creates a graphic block with an attached video fill and automatically loads the video resource metadata. We set width and height to control how the clip appears in the composition. The `timeline` options let us set duration and time offset in one call.
@@ -351,8 +347,8 @@ Tracks organize clips for sequential playback. We create a track and attach it t
 ```typescript highlight=highlight-create-track
 // Create a track and add it to the page
 // Tracks organize clips for sequential playback on the timeline
-const track = engine.block.create('track');
-engine.block.appendChild(page, track);
+const track = engine.block.create('track')
+engine.block.appendChild(page, track)
 ```
 
 A track acts as a container for clips. When you add clips to a track, they play in the order they were added.
@@ -362,18 +358,18 @@ A track acts as a container for clips. When you add clips to a track, they play 
 We add clips to the track using `appendChild`. Clips join the sequence in the order they're added.
 
 ```typescript highlight=highlight-add-clips-to-track
-    // Add clips to the track
-    engine.block.appendChild(track, clipA);
-    engine.block.appendChild(track, clipB);
-    engine.block.appendChild(track, clipC);
+// Add clips to the track
+engine.block.appendChild(track, clipA)
+engine.block.appendChild(track, clipB)
+engine.block.appendChild(track, clipC)
 
-    // Resize all track children to fill the page dimensions
-    engine.block.fillParent(track);
+// Resize all track children to fill the page dimensions
+engine.block.fillParent(track)
 
-    // Query track children to verify order
-    const trackClips = engine.block.getChildren(track);
-    // eslint-disable-next-line no-console
-    console.log('Track clip count:', trackClips.length, 'clips');
+// Query track children to verify order
+const trackClips = engine.block.getChildren(track)
+
+console.log('Track clip count:', trackClips.length, 'clips')
 ```
 
 After adding clips, you can query the track's children to verify the order. `getChildren` returns an array of clip IDs in playback order.
@@ -384,9 +380,9 @@ Each clip needs a duration that determines how long it plays.
 
 ```typescript highlight=highlight-set-clip-durations
 // Set durations for each clip
-engine.block.setDuration(clipA, 5);
-engine.block.setDuration(clipB, 5);
-engine.block.setDuration(clipC, 5);
+engine.block.setDuration(clipA, 5)
+engine.block.setDuration(clipB, 5)
+engine.block.setDuration(clipC, 5)
 ```
 
 Duration is measured in seconds. A 5-second duration means the clip plays for 5 seconds.
@@ -398,13 +394,12 @@ Duration is measured in seconds. A 5-second duration means the clip plays for 5 
 Time offsets control when each clip starts playing. We set offsets to position clips at specific points in the composition.
 
 ```typescript highlight=highlight-time-offsets
-    // Set time offsets to position clips sequentially on the timeline
-    engine.block.setTimeOffset(clipA, 0);
-    engine.block.setTimeOffset(clipB, 5);
-    engine.block.setTimeOffset(clipC, 10);
+// Set time offsets to position clips sequentially on the timeline
+engine.block.setTimeOffset(clipA, 0)
+engine.block.setTimeOffset(clipB, 5)
+engine.block.setTimeOffset(clipC, 10)
 
-    // eslint-disable-next-line no-console
-    console.log('Track offsets set: Clip A: 0s, Clip B: 5s, Clip C: 10s');
+console.log('Track offsets set: Clip A: 0s, Clip B: 5s, Clip C: 10s')
 ```
 
 Clip A starts at 0 seconds, Clip B at 5 seconds, and Clip C at 10 seconds. Combined with 5-second durations, this creates a continuous 15-second sequence with no gaps.
@@ -414,17 +409,16 @@ Clip A starts at 0 seconds, Clip B at 5 seconds, and Clip C at 10 seconds. Combi
 Use `insertChild` to move clips to specific positions within a track. This moves an existing child to a new index.
 
 ```typescript highlight=highlight-reorder-clips
-    // Reorder clips: move Clip C to the beginning (index 0)
-    // This demonstrates using insertChild for precise positioning
-    engine.block.insertChild(track, clipC, 0);
+// Reorder clips: move Clip C to the beginning (index 0)
+// This demonstrates using insertChild for precise positioning
+engine.block.insertChild(track, clipC, 0)
 
-    // After reordering, update time offsets to reflect the new sequence
-    engine.block.setTimeOffset(clipC, 0);
-    engine.block.setTimeOffset(clipA, 5);
-    engine.block.setTimeOffset(clipB, 10);
+// After reordering, update time offsets to reflect the new sequence
+engine.block.setTimeOffset(clipC, 0)
+engine.block.setTimeOffset(clipA, 5)
+engine.block.setTimeOffset(clipB, 10)
 
-    // eslint-disable-next-line no-console
-    console.log('After reorder - updated offsets: C=0s, A=5s, B=10s');
+console.log('After reorder - updated offsets: C=0s, A=5s, B=10s')
 ```
 
 When we insert Clip C at index 0, it becomes the first clip. The order changes from A-B-C to C-A-B. We update time offsets to match the new sequence.
@@ -435,17 +429,17 @@ Use `getChildren` to inspect the current clip order and verify arrangements.
 
 ```typescript highlight=highlight-get-track-children
 // Get all clips in the track to verify arrangement
-const finalClips = engine.block.getChildren(track);
-// eslint-disable-next-line no-console
-console.log('Final track arrangement:');
+const finalClips = engine.block.getChildren(track)
+
+console.log('Final track arrangement:')
 finalClips.forEach((clipId, index) => {
-  const offset = engine.block.getTimeOffset(clipId);
-  const duration = engine.block.getDuration(clipId);
-  // eslint-disable-next-line no-console
+  const offset = engine.block.getTimeOffset(clipId)
+  const duration = engine.block.getDuration(clipId)
+
   console.log(
     `  Clip ${index + 1}: offset=${offset}s, duration=${duration}s`
-  );
-});
+  )
+})
 ```
 
 This loop outputs each clip's position, time offset, and duration—useful for debugging or building custom timeline UIs.
@@ -457,28 +451,27 @@ This loop outputs each clip's position, time offset, and duration—useful for d
 Create layered compositions by adding multiple tracks to a page. Track order determines rendering order—clips in later tracks appear on top.
 
 ```typescript highlight=highlight-multi-track
-    // Create a second track for layered compositions
-    // Track order determines z-index: last track renders on top
-    const overlayTrack = engine.block.create('track');
-    engine.block.appendChild(page, overlayTrack);
+// Create a second track for layered compositions
+// Track order determines z-index: last track renders on top
+const overlayTrack = engine.block.create('track')
+engine.block.appendChild(page, overlayTrack)
 
-    // Create an overlay clip for picture-in-picture effect (1/4 size)
-    const overlayClip = await engine.block.addVideo(
-      videoUrl,
-      1920 / 4,
-      1080 / 4,
-      {
-        timeline: { duration: 5, timeOffset: 2 }
-      }
-    );
-    engine.block.appendChild(overlayTrack, overlayClip);
+// Create an overlay clip for picture-in-picture effect (1/4 size)
+const overlayClip = await engine.block.addVideo(
+  videoUrl,
+  1920 / 4,
+  1080 / 4,
+  {
+    timeline: { duration: 5, timeOffset: 2 }
+  }
+)
+engine.block.appendChild(overlayTrack, overlayClip)
 
-    // Position overlay in bottom-right corner with padding
-    engine.block.setPositionX(overlayClip, 1920 - 1920 / 4 - 40);
-    engine.block.setPositionY(overlayClip, 1080 - 1080 / 4 - 40);
+// Position overlay in bottom-right corner with padding
+engine.block.setPositionX(overlayClip, 1920 - 1920 / 4 - 40)
+engine.block.setPositionY(overlayClip, 1080 - 1080 / 4 - 40)
 
-    // eslint-disable-next-line no-console
-    console.log('Multi-track composition created with overlay starting at 2s');
+console.log('Multi-track composition created with overlay starting at 2s')
 ```
 
 The overlay track contains a smaller clip positioned in the corner. It starts at 2 seconds and lasts 5 seconds, creating a picture-in-picture effect during that time range.
@@ -498,8 +491,8 @@ CE.SDK renders tracks from first to last. The first track added appears at the b
 If clips don't appear in the composition, verify they're attached to a track that's attached to the page. Use `getParent` and `getChildren` to inspect the hierarchy:
 
 ```typescript
-const parent = engine.block.getParent(clipId);
-const children = engine.block.getChildren(trackId);
+const parent = engine.block.getParent(clipId)
+const children = engine.block.getChildren(trackId)
 ```
 
 ### Wrong Playback Order
