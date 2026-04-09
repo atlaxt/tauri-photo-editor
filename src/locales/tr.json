@@ -18,6 +18,7 @@
     "dropZone": {
       "title": "Buraya sürükleyin",
       "subtitle": "Resim editörde açılacak"
-    }
+    },
+    "imageFilterLabel": "Resimler"
   }
 }

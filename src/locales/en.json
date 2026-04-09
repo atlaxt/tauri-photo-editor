@@ -18,6 +18,7 @@
     "dropZone": {
       "title": "Drop here",
       "subtitle": "Image will open in editor"
-    }
+    },
+    "imageFilterLabel": "Images"
   }
 }

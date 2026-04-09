@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx skills:*)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(pnpm add:*)"
     ]
   }
 }

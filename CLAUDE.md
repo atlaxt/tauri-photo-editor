@@ -49,6 +49,7 @@ useSpace-Studio-Desktop-App/
 
 - Tüm Vue bileşenleri `<script setup lang="ts">` kullanır.
 - UI için yalnızca NuxtUI (`U*`) bileşenleri kullanılır, ham HTML elementlerinden kaçınılır.
+- **Tüm kullanıcıya görünen yazılar `$t('...')` ile i18n üzerinden yazılır.** Hiçbir bileşene hardcoded Türkçe veya İngilizce string eklenmez. Yeni anahtar eklendiğinde hem `src/locales/tr.json` hem `src/locales/en.json` güncellenir.
 - Rust tarafındaki her public fonksiyon `#[tauri::command]` ile işaretlenir ve `lib.rs`'teki `invoke_handler`'a eklenir.
 - Frontend'den Rust'a iletişim yalnızca `@tauri-apps/api/core`'dan `invoke` ile yapılır.
 - Dosya sistemi işlemleri (okuma, yazma, klasör tarama) Tauri plugin'leri üzerinden Rust tarafında gerçekleştirilir; asla doğrudan JS/Node ile yapılmaz.

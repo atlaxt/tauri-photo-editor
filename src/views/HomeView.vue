@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useEditorStore } from '../stores/editor'
 
+const { t } = useI18n()
 const router = useRouter()
+const editorStore = useEditorStore()
 
 // Taslak projeler — store'dan gelecek, şimdilik boş
 const drafts: { id: string, name: string, path: string, updatedAt: string }[] = []
@@ -12,8 +16,6 @@ let unlistenDragDrop: (() => void) | null = null
 
 onMounted(async () => {
   try {
-    // Tauri app: OS dosya sürükleme eventleri DOM'a ulaşmaz,
-    // Tauri'nin kendi webview event API'sini kullanmak gerekir.
     const { getCurrentWebviewWindow } = await import('@tauri-apps/api/webviewWindow')
     const win = getCurrentWebviewWindow()
     unlistenDragDrop = await win.onDragDropEvent((e) => {
@@ -25,12 +27,17 @@ onMounted(async () => {
       }
       else if (e.payload.type === 'drop') {
         isDragging.value = false
-        // Görev #3'te işlenecek: e.payload.paths
+        const paths: string[] = (e.payload as any).paths ?? []
+        const imagePath = paths.find(p => /\.(jpe?g|png|webp|gif|bmp|tiff?)$/i.test(p))
+        if (imagePath) {
+          editorStore.openFile(imagePath)
+          router.push('/editor')
+        }
       }
     })
   }
   catch {
-    // Tarayıcıda çalışıyorsa DOM fallback devreye girer (aşağıdaki handler'lar)
+    // Tarayıcıda DOM fallback
   }
 })
 
@@ -64,8 +71,21 @@ function onDrop(e: DragEvent) {
   isDragging.value = false
 }
 
-function openFile() {
-  router.push('/editor')
+async function openFile() {
+  try {
+    const { open } = await import('@tauri-apps/plugin-dialog')
+    const selected = await open({
+      multiple: false,
+      filters: [{ name: t('home.imageFilterLabel'), extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp', 'tiff'] }],
+    })
+    if (typeof selected === 'string') {
+      editorStore.openFile(selected)
+      router.push('/editor')
+    }
+  }
+  catch {
+    // Tarayıcıda dialog açılmaz, sessizce geç
+  }
 }
 
 function newFile() {
