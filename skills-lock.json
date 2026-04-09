@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "docs-vue": {
+      "source": "imgly/agent-skills",
+      "sourceType": "github",
+      "computedHash": "8627683b929066573b4ed29e2897d439936dc9bb0c638032f3b41ca8edbdb1d9"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
@@ -10,6 +15,11 @@
       "source": "antfu/skills",
       "sourceType": "github",
       "computedHash": "6f5456948b35c0c0005424098eaf28ebbba1bbd92a3f3268466fe7d85e9e3789"
+    },
+    "tauri": {
+      "source": "hairyf/skills",
+      "sourceType": "github",
+      "computedHash": "5d2d4e87a48d0e73b7ef0df0514b363c127af4c45373e1f3fc25f468cfbe2988"
     },
     "tauri-v2": {
       "source": "nodnarbnitram/claude-code-extensions",

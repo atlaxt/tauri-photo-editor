@@ -13,7 +13,7 @@ export default defineConfig(async () => ({
       ui: {
         colors: {
           primary: 'blue',
-          neutral: 'zinc',
+          neutral: 'neutral',
         },
         icons: {
           arrowDown: 'i-ph-arrow-down',
