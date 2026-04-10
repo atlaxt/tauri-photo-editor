@@ -17,8 +17,8 @@
 import { Hono } from 'hono'
 
 // Type-safe environment bindings
-type Bindings = {
-	ASSETS: Fetcher
+interface Bindings {
+  ASSETS: Fetcher
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -30,40 +30,40 @@ const app = new Hono<{ Bindings: Bindings }>()
  * "run_worker_first": ["/api/*"] in wrangler.jsonc
  */
 app.get('/api/hello', (c) => {
-	return c.json({
-		message: 'Hello from Cloudflare Workers!',
-		timestamp: new Date().toISOString(),
-	})
+  return c.json({
+    message: 'Hello from Cloudflare Workers!',
+    timestamp: new Date().toISOString(),
+  })
 })
 
 app.get('/api/data', (c) => {
-	return c.json({
-		items: [
-			{ id: 1, name: 'Item 1', description: 'First item' },
-			{ id: 2, name: 'Item 2', description: 'Second item' },
-			{ id: 3, name: 'Item 3', description: 'Third item' },
-		],
-		count: 3,
-	})
+  return c.json({
+    items: [
+      { id: 1, name: 'Item 1', description: 'First item' },
+      { id: 2, name: 'Item 2', description: 'Second item' },
+      { id: 3, name: 'Item 3', description: 'Third item' },
+    ],
+    count: 3,
+  })
 })
 
 app.post('/api/echo', async (c) => {
-	const body = await c.req.json()
-	return c.json({
-		received: body,
-		method: c.req.method,
-	})
+  const body = await c.req.json()
+  return c.json({
+    received: body,
+    method: c.req.method,
+  })
 })
 
 /**
  * Health check endpoint
  */
 app.get('/api/health', (c) => {
-	return c.json({
-		status: 'ok',
-		version: '1.0.0',
-		environment: c.env ? 'production' : 'development',
-	})
+  return c.json({
+    status: 'ok',
+    version: '1.0.0',
+    environment: c.env ? 'production' : 'development',
+  })
 })
 
 /**
@@ -73,8 +73,8 @@ app.get('/api/health', (c) => {
  * thanks to Workers Static Assets
  */
 app.all('*', (c) => {
-	// Let Cloudflare Workers handle static assets automatically
-	return c.env.ASSETS.fetch(c.req.raw)
+  // Let Cloudflare Workers handle static assets automatically
+  return c.env.ASSETS.fetch(c.req.raw)
 })
 
 /**

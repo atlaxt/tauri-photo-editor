@@ -5,8 +5,8 @@ Complete reference for every Drizzle ORM column type used with Cloudflare D1. Al
 ## Imports
 
 ```typescript
-import { sqliteTable, text, integer, real, blob, index, uniqueIndex } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
+import { blob, index, integer, real, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 ```
 
 ## Primary Keys
@@ -154,7 +154,7 @@ export const posts = sqliteTable('posts', {
   authorId: text('author_id').notNull().references(() => users.id),
   status: text('status', { enum: ['draft', 'published'] }).notNull(),
   publishedAt: integer('published_at', { mode: 'timestamp' }),
-}, (table) => ({
+}, table => ({
   // Single column index
   authorIdx: index('posts_author_idx').on(table.authorId),
 
@@ -193,7 +193,7 @@ export const postsRelations = relations(posts, ({ one }) => ({
 export const postTags = sqliteTable('post_tags', {
   postId: text('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
   tagId: text('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
-}, (table) => ({
+}, table => ({
   pk: uniqueIndex('post_tags_pk').on(table.postId, table.tagId),
 }))
 ```

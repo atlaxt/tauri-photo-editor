@@ -25,11 +25,11 @@ Auth:     POST /api/auth/login, POST /api/auth/logout, GET /api/auth/me
 One file per resource group. Use the template from [assets/route-template.ts](assets/route-template.ts):
 
 ```typescript
+import type { Env } from '../types'
+import { zValidator } from '@hono/zod-validator'
 // src/routes/users.ts
 import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { Env } from '../types'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -44,7 +44,8 @@ app.get('/', async (c) => {
 app.get('/:id', async (c) => {
   const id = c.req.param('id')
   const user = await db.prepare('SELECT * FROM users WHERE id = ?').bind(id).first()
-  if (!user) return c.json({ error: 'Not found' }, 404)
+  if (!user)
+    return c.json({ error: 'Not found' }, 404)
   return c.json({ user })
 })
 
@@ -69,12 +70,13 @@ Based on project needs, add from [assets/middleware-template.ts](assets/middlewa
 
 **Auth middleware** — protect routes requiring authentication:
 ```typescript
-import { createMiddleware } from 'hono/factory'
 import type { Env } from '../types'
+import { createMiddleware } from 'hono/factory'
 
 export const requireAuth = createMiddleware<{ Bindings: Env }>(async (c, next) => {
   const token = c.req.header('Authorization')?.replace('Bearer ', '')
-  if (!token) return c.json({ error: 'Unauthorized' }, 401)
+  if (!token)
+    return c.json({ error: 'Unauthorized' }, 401)
   // Validate token...
   await next()
 })
@@ -83,6 +85,7 @@ export const requireAuth = createMiddleware<{ Bindings: Env }>(async (c, next) =
 **CORS** — use Hono's built-in:
 ```typescript
 import { cors } from 'hono/cors'
+
 app.use('/api/*', cors({ origin: ['https://example.com'] }))
 ```
 
@@ -91,13 +94,13 @@ app.use('/api/*', cors({ origin: ['https://example.com'] }))
 Mount all route groups in the main entry point:
 
 ```typescript
+import type { Env } from './types'
 // src/index.ts
 import { Hono } from 'hono'
-import type { Env } from './types'
-import users from './routes/users'
-import posts from './routes/posts'
-import auth from './routes/auth'
 import { errorHandler } from './middleware/error-handler'
+import auth from './routes/auth'
+import posts from './routes/posts'
+import users from './routes/users'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -110,7 +113,7 @@ app.route('/api/posts', posts)
 app.route('/api/auth', auth)
 
 // Health check
-app.get('/api/health', (c) => c.json({ status: 'ok' }))
+app.get('/api/health', c => c.json({ status: 'ok' }))
 
 export default app
 ```
@@ -121,9 +124,9 @@ export default app
 // src/types.ts
 export interface Env {
   DB: D1Database
-  KV: KVNamespace      // if needed
-  R2: R2Bucket         // if needed
-  API_SECRET: string   // secrets
+  KV: KVNamespace // if needed
+  R2: R2Bucket // if needed
+  API_SECRET: string // secrets
 }
 ```
 
@@ -148,8 +151,9 @@ Always validate request bodies with `@hono/zod-validator`:
 
 ```typescript
 import { zValidator } from '@hono/zod-validator'
+
 app.post('/', zValidator('json', schema), async (c) => {
-  const body = c.req.valid('json')  // fully typed
+  const body = c.req.valid('json') // fully typed
 })
 ```
 
@@ -160,7 +164,7 @@ Install: `pnpm add @hono/zod-validator zod`
 Use the standard error handler from [assets/error-handler.ts](assets/error-handler.ts):
 
 ```typescript
-export const errorHandler = (err: Error, c: Context) => {
+export function errorHandler(err: Error, c: Context) {
   console.error(err)
   return c.json({ error: err.message }, 500)
 }
@@ -173,15 +177,15 @@ export const errorHandler = (err: Error, c: Context) => {
 For end-to-end type safety between Worker and client:
 
 ```typescript
+import type { AppType } from '../worker/src/index'
 // Worker: export the app type
-export type AppType = typeof app
-
 // Client: use hc (Hono Client)
 import { hc } from 'hono/client'
-import type { AppType } from '../worker/src/index'
+
+export type AppType = typeof app
 
 const client = hc<AppType>('https://api.example.com')
-const res = await client.api.users.$get()  // fully typed
+const res = await client.api.users.$get() // fully typed
 ```
 
 ### Route Groups vs Single File

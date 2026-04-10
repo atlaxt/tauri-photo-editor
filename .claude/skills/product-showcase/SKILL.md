@@ -421,11 +421,11 @@ If the showcase is on Workers, add a `/api/enquiry` route:
 
 ```typescript
 app.post('/api/enquiry', async (c) => {
-  const { name, email, message } = await c.req.json();
+  const { name, email, message } = await c.req.json()
   // Send via SMTP2Go, Resend, or store in D1
-  await sendEmail({ to: 'hello@company.com', subject: `Enquiry from ${name}`, body: message });
-  return c.json({ success: true });
-});
+  await sendEmail({ to: 'hello@company.com', subject: `Enquiry from ${name}`, body: message })
+  return c.json({ success: true })
+})
 ```
 
 ### Pattern 3: Turnstile + email (spam protection)

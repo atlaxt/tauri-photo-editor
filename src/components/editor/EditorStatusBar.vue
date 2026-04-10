@@ -10,7 +10,8 @@ const props = defineProps<{
 }>()
 
 const zoomLabel = computed(() => {
-  if (props.zoom === null) return null
+  if (props.zoom === null)
+    return null
   return `${Math.round(props.zoom * 100)}%`
 })
 

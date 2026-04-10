@@ -156,74 +156,77 @@ Generate each component file. Key patterns:
 #### Root.tsx
 
 ```tsx
-import { Composition } from "remotion";
-import { WalkthroughComposition } from "./WalkthroughComposition";
-import { screens, totalDurationInFrames, FPS, WIDTH, HEIGHT } from "./config";
+import { Composition } from 'remotion'
+import { FPS, HEIGHT, screens, totalDurationInFrames, WIDTH } from './config'
+import { WalkthroughComposition } from './WalkthroughComposition'
 
-export const RemotionRoot = () => (
-  <Composition
-    id="Walkthrough"
-    component={WalkthroughComposition}
-    durationInFrames={totalDurationInFrames}
-    fps={FPS}
-    width={WIDTH}
-    height={HEIGHT}
-    defaultProps={{ screens }}
-  />
-);
+export function RemotionRoot() {
+  return (
+    <Composition
+      id="Walkthrough"
+      component={WalkthroughComposition}
+      durationInFrames={totalDurationInFrames}
+      fps={FPS}
+      width={WIDTH}
+      height={HEIGHT}
+      defaultProps={{ screens }}
+    />
+  )
+}
 ```
 
 #### ScreenSlide.tsx Pattern
 
 ```tsx
-import { AbsoluteFill, Img, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, spring, useCurrentFrame, useVideoConfig } from 'remotion'
 
 interface ScreenSlideProps {
-  imageSrc: string;
-  title: string;
-  description: string;
+  imageSrc: string
+  title: string
+  description: string
 }
 
 export const ScreenSlide: React.FC<ScreenSlideProps> = ({ imageSrc, title, description }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
 
   // Fade in
-  const opacity = spring({ frame, fps, config: { damping: 20 } });
+  const opacity = spring({ frame, fps, config: { damping: 20 } })
 
   // Subtle zoom (Ken Burns effect)
-  const scale = 1 + frame * 0.0002;
+  const scale = 1 + frame * 0.0002
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#000" }}>
+    <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <Img
         src={imageSrc}
         style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
           opacity,
           transform: `scale(${scale})`,
         }}
       />
       {/* Text overlay at bottom */}
       <div style={{
-        position: "absolute",
+        position: 'absolute',
         bottom: 40,
         left: 40,
         right: 40,
         opacity: spring({ frame: frame - 15, fps, config: { damping: 20 } }),
-      }}>
-        <h2 style={{ color: "#fff", fontSize: 32, fontWeight: 700, textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
+      }}
+      >
+        <h2 style={{ color: '#fff', fontSize: 32, fontWeight: 700, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
           {title}
         </h2>
-        <p style={{ color: "#ccc", fontSize: 18, textShadow: "0 1px 4px rgba(0,0,0,0.8)" }}>
+        <p style={{ color: '#ccc', fontSize: 18, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
           {description}
         </p>
       </div>
     </AbsoluteFill>
-  );
-};
+  )
+}
 ```
 
 #### Transitions Between Screens
@@ -295,11 +298,11 @@ Zoom into a specific area of the screen to highlight a feature:
 ```tsx
 // In ZoomEffect.tsx — interpolate scale and translate
 const zoomScale = interpolate(frame, [delayFrames, delayFrames + 30], [1, 2.5], {
-  extrapolateRight: "clamp",
-});
+  extrapolateRight: 'clamp',
+})
 const translateX = interpolate(frame, [delayFrames, delayFrames + 30], [0, -targetX], {
-  extrapolateRight: "clamp",
-});
+  extrapolateRight: 'clamp',
+})
 ```
 
 ### Animated Callout Circles
@@ -308,16 +311,19 @@ Draw attention to UI elements:
 
 ```tsx
 // Pulsing circle that appears at a specific point
-const scale = spring({ frame: frame - delay, fps, config: { damping: 8, stiffness: 80 } });
+const scale = spring({ frame: frame - delay, fps, config: { damping: 8, stiffness: 80 } })
 <div style={{
-  position: "absolute",
-  left: x - 20, top: y - 20,
-  width: 40, height: 40,
-  borderRadius: "50%",
-  border: "3px solid #3B82F6",
+  position: 'absolute',
+  left: x - 20,
+top: y - 20,
+  width: 40,
+height: 40,
+  borderRadius: '50%',
+  border: '3px solid #3B82F6',
   transform: `scale(${scale})`,
   opacity: Math.min(1, scale),
-}} />
+}}
+/>
 ```
 
 ### Background Music
@@ -325,9 +331,9 @@ const scale = spring({ frame: frame - delay, fps, config: { damping: 8, stiffnes
 Add a subtle background track:
 
 ```tsx
-import { Audio } from "remotion";
+import { Audio } from 'remotion'
 
-<Audio src={staticFile("music/background.mp3")} volume={0.15} />
+<Audio src={staticFile('music/background.mp3')} volume={0.15} />
 ```
 
 ### Intro and Outro Slides

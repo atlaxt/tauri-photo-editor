@@ -56,13 +56,13 @@ STRIPE_PUBLISHABLE_KEY=pk_test_...
 ### Server-Side Client
 
 ```typescript
-import Stripe from 'stripe';
+import Stripe from 'stripe'
 
 // Cloudflare Workers
-const stripe = new Stripe(c.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(c.env.STRIPE_SECRET_KEY)
 
 // Node.js
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 ```
 
 ## One-Time Payment (Checkout Sessions)
@@ -73,17 +73,17 @@ The fastest way to accept payment. Stripe hosts the entire checkout page.
 
 ```typescript
 app.post('/api/checkout', async (c) => {
-  const { priceId, successUrl, cancelUrl } = await c.req.json();
+  const { priceId, successUrl, cancelUrl } = await c.req.json()
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: successUrl || `${new URL(c.req.url).origin}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: cancelUrl || `${new URL(c.req.url).origin}/pricing`,
-  });
+  })
 
-  return c.json({ url: session.url });
-});
+  return c.json({ url: session.url })
+})
 ```
 
 ### Redirect to Checkout (Client)
@@ -94,9 +94,9 @@ async function handleCheckout(priceId: string) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ priceId }),
-  });
-  const { url } = await res.json();
-  window.location.href = url;
+  })
+  const { url } = await res.json()
+  window.location.href = url
 }
 ```
 
@@ -115,7 +115,7 @@ stripe prices create --product=prod_XXX --unit-amount=2900 --currency=aud --recu
 const PRICES = {
   pro_monthly: 'price_1234567890',
   pro_yearly: 'price_0987654321',
-} as const;
+} as const
 ```
 
 ## Subscriptions
@@ -130,7 +130,7 @@ const session = await stripe.checkout.sessions.create({
   cancel_url: `${origin}/pricing`,
   // Link to existing customer if known:
   customer: customerId, // or customer_email: 'user@example.com'
-});
+})
 ```
 
 ### Check Subscription Status
@@ -141,8 +141,8 @@ async function hasActiveSubscription(customerId: string): Promise<boolean> {
     customer: customerId,
     status: 'active',
     limit: 1,
-  });
-  return subs.data.length > 0;
+  })
+  return subs.data.length > 0
 }
 ```
 
@@ -154,48 +154,49 @@ Stripe sends events to your server when things happen (payment succeeded, subscr
 
 ```typescript
 app.post('/api/webhooks/stripe', async (c) => {
-  const body = await c.req.text();
-  const sig = c.req.header('stripe-signature')!;
+  const body = await c.req.text()
+  const sig = c.req.header('stripe-signature')!
 
-  let event: Stripe.Event;
+  let event: Stripe.Event
   try {
     // Use constructEventAsync for Workers (no Node crypto)
     event = await stripe.webhooks.constructEventAsync(
       body,
       sig,
       c.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err);
-    return c.json({ error: 'Invalid signature' }, 400);
+    )
+  }
+  catch (err) {
+    console.error('Webhook signature verification failed:', err)
+    return c.json({ error: 'Invalid signature' }, 400)
   }
 
   switch (event.type) {
     case 'checkout.session.completed': {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object as Stripe.Checkout.Session
       // Fulfill the order — update database, send email, grant access
-      await handleCheckoutComplete(session);
-      break;
+      await handleCheckoutComplete(session)
+      break
     }
     case 'customer.subscription.updated': {
-      const sub = event.data.object as Stripe.Subscription;
-      await handleSubscriptionChange(sub);
-      break;
+      const sub = event.data.object as Stripe.Subscription
+      await handleSubscriptionChange(sub)
+      break
     }
     case 'customer.subscription.deleted': {
-      const sub = event.data.object as Stripe.Subscription;
-      await handleSubscriptionCancelled(sub);
-      break;
+      const sub = event.data.object as Stripe.Subscription
+      await handleSubscriptionCancelled(sub)
+      break
     }
     case 'invoice.payment_failed': {
-      const invoice = event.data.object as Stripe.Invoice;
-      await handlePaymentFailed(invoice);
-      break;
+      const invoice = event.data.object as Stripe.Invoice
+      await handlePaymentFailed(invoice)
+      break
     }
   }
 
-  return c.json({ received: true });
-});
+  return c.json({ received: true })
+})
 ```
 
 ### Register Webhook
@@ -221,15 +222,15 @@ Let customers manage their own subscriptions (upgrade, downgrade, cancel, update
 
 ```typescript
 app.post('/api/billing/portal', async (c) => {
-  const { customerId } = await c.req.json();
+  const { customerId } = await c.req.json()
 
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
     return_url: `${new URL(c.req.url).origin}/dashboard`,
-  });
+  })
 
-  return c.json({ url: session.url });
-});
+  return c.json({ url: session.url })
+})
 ```
 
 Configure the portal in Dashboard: https://dashboard.stripe.com/settings/billing/portal
@@ -245,7 +246,7 @@ app.get('/api/pricing', async (c) => {
     active: true,
     expand: ['data.product'],
     type: 'recurring',
-  });
+  })
 
   return c.json(prices.data.map(price => ({
     id: price.id,
@@ -254,8 +255,8 @@ app.get('/api/pricing', async (c) => {
     amount: price.unit_amount,
     currency: price.currency,
     interval: price.recurring?.interval,
-  })));
-});
+  })))
+})
 ```
 
 Or hardcode if you only have 2-3 plans — simpler and no API call on every page load.
@@ -311,7 +312,7 @@ const session = await stripe.checkout.sessions.create({
     trial_period_days: 14,
   },
   // ...
-});
+})
 ```
 
 ### Australian Dollars
@@ -320,10 +321,10 @@ const session = await stripe.checkout.sessions.create({
 // Set currency when creating prices
 const price = await stripe.prices.create({
   product: 'prod_XXX',
-  unit_amount: 2900,  // $29.00 in cents
+  unit_amount: 2900, // $29.00 in cents
   currency: 'aud',
   recurring: { interval: 'month' },
-});
+})
 ```
 
 ## Gotchas

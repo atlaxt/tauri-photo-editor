@@ -115,7 +115,10 @@ Static table. For sortable/filterable data tables, also install `@tanstack/react
 ```tsx
 <Table>
   <TableHeader>
-    <TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead></TableRow>
+    <TableRow>
+      <TableHead>Name</TableHead>
+      <TableHead>Email</TableHead>
+    </TableRow>
   </TableHeader>
   <TableBody>
     {users.map(u => (

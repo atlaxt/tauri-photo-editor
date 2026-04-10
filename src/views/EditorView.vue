@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import type { ToolId } from '../components/editor/EditorToolIconBar.vue'
+import type { Operation } from '../stores/editor'
+import { invoke } from '@tauri-apps/api/core'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { invoke } from '@tauri-apps/api/core'
 import EditorCanvas from '../components/editor/EditorCanvas.vue'
 import EditorRightPanel from '../components/editor/EditorRightPanel.vue'
 import EditorStatusBar from '../components/editor/EditorStatusBar.vue'
+import EditorToolbar from '../components/editor/EditorToolbar.vue'
 import EditorToolIconBar from '../components/editor/EditorToolIconBar.vue'
 import EditorToolParams from '../components/editor/EditorToolParams.vue'
-import EditorToolbar from '../components/editor/EditorToolbar.vue'
-import type { Operation } from '../stores/editor'
 import { useEditorStore } from '../stores/editor'
-import type { ToolId } from '../components/editor/EditorToolIconBar.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -26,7 +26,10 @@ const zoomLevel = ref<number | null>(null)
 const canvasImageUrl = ref<string | null>(null)
 
 watch(() => editor.filePath, async (path) => {
-  if (!path) { canvasImageUrl.value = null; return }
+  if (!path) {
+    canvasImageUrl.value = null
+    return
+  }
   try {
     const { convertFileSrc } = await import('@tauri-apps/api/core')
     canvasImageUrl.value = convertFileSrc(path)
@@ -44,14 +47,16 @@ function handleApply(op: Operation) {
 function handleBack() {
   if (editor.history.length > 1) {
     const confirmed = window.confirm(t('editor.unsavedWarning'))
-    if (!confirmed) return
+    if (!confirmed)
+      return
   }
   editor.reset()
   router.push('/')
 }
 
 async function handleSave() {
-  if (!editor.filePath || saving.value) return
+  if (!editor.filePath || saving.value)
+    return
   saving.value = true
   try {
     await invoke('save_image', {
@@ -66,7 +71,8 @@ async function handleSave() {
 }
 
 async function handleSaveAs() {
-  if (!editor.filePath || saving.value) return
+  if (!editor.filePath || saving.value)
+    return
   const { save } = await import('@tauri-apps/plugin-dialog')
   const dest = await save({
     defaultPath: editor.fileName ?? undefined,
@@ -76,7 +82,8 @@ async function handleSaveAs() {
       { name: 'WebP', extensions: ['webp'] },
     ],
   })
-  if (!dest) return
+  if (!dest)
+    return
   saving.value = true
   try {
     await invoke('save_image', {
@@ -113,8 +120,8 @@ async function handleSaveAs() {
       >
         <EditorToolParams
           v-if="activeTool"
-          :tool="activeTool"
           v-model:pending-op="pendingOp"
+          :tool="activeTool"
           @apply="handleApply"
         />
       </Transition>

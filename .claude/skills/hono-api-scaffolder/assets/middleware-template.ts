@@ -1,3 +1,4 @@
+import type { Env } from '../types'
 /**
  * Auth Middleware Template
  *
@@ -5,9 +6,8 @@
  * Customise the token validation logic for your auth system.
  */
 import { createMiddleware } from 'hono/factory'
-import type { Env } from '../types'
 
-type AuthVariables = {
+interface AuthVariables {
   userId: string
   role: string
 }

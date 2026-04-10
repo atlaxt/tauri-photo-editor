@@ -83,7 +83,7 @@ All errors return JSON:
 ```json
 {
   "error": "Human-readable error message",
-  "details": {}  // optional, present for validation errors
+  "details": {} // optional, present for validation errors
 }
 ```
 

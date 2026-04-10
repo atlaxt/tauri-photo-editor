@@ -382,15 +382,15 @@ X-Per-Page: 50
 
 **Verification** (HMAC SHA-256):
 ```typescript
-import crypto from 'crypto';
+import crypto from 'node:crypto'
 
-const signature = request.headers['elevenlabs-signature'];
-const payload = JSON.stringify(request.body);
+const signature = request.headers['elevenlabs-signature']
+const payload = JSON.stringify(request.body)
 
 const hmac = crypto
   .createHmac('sha256', process.env.WEBHOOK_SECRET)
   .update(payload)
-  .digest('hex');
+  .digest('hex')
 
 if (signature !== hmac) {
   // Invalid signature

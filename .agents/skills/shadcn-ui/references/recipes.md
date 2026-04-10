@@ -7,16 +7,21 @@ Complete working examples combining shadcn/ui components into common UI patterns
 Components: Form + Input + Textarea + Button + Toast
 
 ```tsx
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Form, FormField, FormItem, FormLabel, FormControl, FormMessage,
-} from '@/components/ui/form'
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -39,7 +44,8 @@ export function ContactForm() {
       })
       toast.success('Message sent!')
       form.reset()
-    } catch {
+    }
+    catch {
       toast.error('Failed to send message')
     }
   }
@@ -47,27 +53,39 @@ export function ContactForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField control={form.control} name="name" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Name</FormLabel>
-            <FormControl><Input value={field.value ?? ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <FormField control={form.control} name="email" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl><Input type="email" value={field.value ?? ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <FormField control={form.control} name="message" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Message</FormLabel>
-            <FormControl><Textarea value={field.value ?? ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl><Input value={field.value ?? ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl><Input type="email" value={field.value ?? ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Message</FormLabel>
+              <FormControl><Textarea value={field.value ?? ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? 'Sending...' : 'Send'}
         </Button>
@@ -82,13 +100,17 @@ export function ContactForm() {
 Components: Table + @tanstack/react-table + Input (search) + Button (pagination)
 
 ```tsx
-import { useState } from 'react'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import {
-  useReactTable, getCoreRowModel, getSortedRowModel,
-  getFilteredRowModel, getPaginationRowModel,
-  flexRender, type ColumnDef, type SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
 } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -103,7 +125,8 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
 
   const table = useReactTable({
-    data, columns,
+    data,
+    columns,
     state: { sorting, globalFilter },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
@@ -115,19 +138,21 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
 
   return (
     <div className="space-y-4">
-      <Input placeholder="Search..." value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)} className="max-w-sm" />
+      <Input placeholder="Search..." value={globalFilter} onChange={e => setGlobalFilter(e.target.value)} className="max-w-sm" />
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map(hg => (
             <TableRow key={hg.id}>
               {hg.headers.map(h => (
                 <TableHead key={h.id}>
-                  {h.isPlaceholder ? null : (
-                    <Button variant="ghost" onClick={h.column.getToggleSortingHandler()}>
-                      {flexRender(h.column.columnDef.header, h.getContext())}
-                      <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  )}
+                  {h.isPlaceholder
+                    ? null
+                    : (
+                        <Button variant="ghost" onClick={h.column.getToggleSortingHandler()}>
+                          {flexRender(h.column.columnDef.header, h.getContext())}
+                          <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                      )}
                 </TableHead>
               ))}
             </TableRow>
@@ -145,7 +170,9 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
       </Table>
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
-          {table.getFilteredRowModel().rows.length} result(s)
+          {table.getFilteredRowModel().rows.length}
+          {' '}
+          result(s)
         </span>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>Previous</Button>
@@ -165,14 +192,14 @@ Components: Dialog + Form + Button (create/edit in a modal)
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-interface Item { id: string; name: string; email: string }
+interface Item { id: string, name: string, email: string }
 
 export function CrudModal({ item, open, onOpenChange, onSave }: {
-  item?: Item       // undefined = create, defined = edit
+  item?: Item // undefined = create, defined = edit
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (data: Omit<Item, 'id'>) => Promise<void>
@@ -187,9 +214,11 @@ export function CrudModal({ item, open, onOpenChange, onSave }: {
       await onSave({ name, email })
       toast.success(item ? 'Updated!' : 'Created!')
       onOpenChange(false)
-    } catch {
+    }
+    catch {
       toast.error('Failed to save')
-    } finally {
+    }
+    finally {
       setSaving(false)
     }
   }
@@ -198,16 +227,20 @@ export function CrudModal({ item, open, onOpenChange, onSave }: {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{item ? 'Edit' : 'Create'} Item</DialogTitle>
+          <DialogTitle>
+            {item ? 'Edit' : 'Create'}
+            {' '}
+            Item
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
           </div>
         </div>
         <DialogFooter>
@@ -225,11 +258,11 @@ export function CrudModal({ item, open, onOpenChange, onSave }: {
 Components: NavigationMenu (desktop) + Sheet (mobile) + ModeToggle
 
 ```tsx
-import { useState } from 'react'
 import { Menu } from 'lucide-react'
+import { useState } from 'react'
+import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { ModeToggle } from '@/components/mode-toggle'
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -285,10 +318,10 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function SettingsPage() {
   return (

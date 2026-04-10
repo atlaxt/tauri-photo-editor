@@ -65,17 +65,17 @@ Every script should follow this pattern:
  */
 
 // --- CONFIGURATION ---
-const SOME_SETTING = 'value';
+const SOME_SETTING = 'value'
 
 // --- MENU SETUP ---
 function onOpen() {
-  const ui = SpreadsheetApp.getUi();
+  const ui = SpreadsheetApp.getUi()
   ui.createMenu('My Menu')
     .addItem('Do Something', 'myFunction')
     .addSeparator()
     .addSubMenu(ui.createMenu('More Options')
       .addItem('Option A', 'optionA'))
-    .addToUi();
+    .addToUi()
 }
 
 // --- FUNCTIONS ---
@@ -94,10 +94,10 @@ Functions ending with `_` (underscore) are **private** and CANNOT be called from
 
 ```javascript
 // WRONG - dialog can't call this, fails silently
-function doWork_() { return 'done'; }
+function doWork_() { return 'done' }
 
 // RIGHT - dialog can call this
-function doWork() { return 'done'; }
+function doWork() { return 'done' }
 ```
 
 **Also applies to**: Menu item function references must be public function names as strings.
@@ -109,13 +109,13 @@ Read/write data in bulk, never cell-by-cell. The difference is 70x.
 ```javascript
 // SLOW (70 seconds on 100x100) - reads one cell at a time
 for (let i = 1; i <= 100; i++) {
-  const val = sheet.getRange(i, 1).getValue();
+  const val = sheet.getRange(i, 1).getValue()
 }
 
 // FAST (1 second) - reads all at once
-const allData = sheet.getRange(1, 1, 100, 1).getValues();
+const allData = sheet.getRange(1, 1, 100, 1).getValues()
 for (const row of allData) {
-  const val = row[0];
+  const val = row[0]
 }
 ```
 
@@ -166,7 +166,7 @@ Functions used as `=MY_FUNCTION()` in cells have strict limitations:
 function MY_FUNCTION(input) {
   // Can use: basic JS, Utilities, CacheService
   // CANNOT use: MailApp, UrlFetchApp, SpreadsheetApp.getUi(), triggers
-  return input.toUpperCase();
+  return input.toUpperCase()
 }
 ```
 
@@ -233,20 +233,20 @@ function showProgress(message, serverFn) {
         })
         .${serverFn}();
     </script>
-  `).setWidth(320).setHeight(140);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Working...');
+  `).setWidth(320).setHeight(140)
+  SpreadsheetApp.getUi().showModalDialog(html, 'Working...')
 }
 
 // Menu calls this wrapper
 function menuDoWork() {
-  showProgress('Processing data...', 'doTheWork');
+  showProgress('Processing data...', 'doTheWork')
 }
 
 // MUST be public (no underscore) for the dialog to call it
 function doTheWork() {
   // ... do the work ...
-  SpreadsheetApp.flush();
-  return 'Processed 50 rows';  // shown in success message
+  SpreadsheetApp.flush()
+  return 'Processed 50 rows' // shown in success message
 }
 ```
 
@@ -257,24 +257,23 @@ function doTheWork() {
 ### Toast Notifications
 
 ```javascript
-SpreadsheetApp.getActiveSpreadsheet().toast('Operation complete!', 'Title', 5);
+SpreadsheetApp.getActiveSpreadsheet().toast('Operation complete!', 'Title', 5)
 // Arguments: message, title, duration in seconds (-1 = until dismissed)
 ```
 
 ### Alert and Prompt Dialogs
 
 ```javascript
-const ui = SpreadsheetApp.getUi();
+const ui = SpreadsheetApp.getUi()
 
 // Yes/No confirmation
-const response = ui.alert('Delete this data?', 'This cannot be undone.',
-  ui.ButtonSet.YES_NO);
+const response = ui.alert('Delete this data?', 'This cannot be undone.', ui.ButtonSet.YES_NO)
 if (response === ui.Button.YES) { /* proceed */ }
 
 // Prompt for input
-const result = ui.prompt('Enter your name:', ui.ButtonSet.OK_CANCEL);
+const result = ui.prompt('Enter your name:', ui.ButtonSet.OK_CANCEL)
 if (result.getSelectedButton() === ui.Button.OK) {
-  const name = result.getResponseText();
+  const name = result.getResponseText()
 }
 ```
 
@@ -296,12 +295,12 @@ function showSidebar() {
                   document.getElementById('suburb').value);
       }
     </script>
-  `).setTitle('Job Entry').setWidth(300);
-  SpreadsheetApp.getUi().showSidebar(html);
+  `).setTitle('Job Entry').setWidth(300)
+  SpreadsheetApp.getUi().showSidebar(html)
 }
 
 function addJob(worker, suburb) { // MUST be public (no underscore)
-  SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().appendRow([new Date(), worker, suburb]);
+  SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().appendRow([new Date(), worker, suburb])
 }
 ```
 
@@ -311,11 +310,13 @@ function addJob(worker, suburb) { // MUST be public (no underscore)
 
 ```javascript
 function onEdit(e) {
-  const sheet = e.source.getActiveSheet();
-  if (sheet.getName() !== 'Data') return;
-  if (e.range.getColumn() !== 3) return;
+  const sheet = e.source.getActiveSheet()
+  if (sheet.getName() !== 'Data')
+    return
+  if (e.range.getColumn() !== 3)
+    return
   // Auto-timestamp when column C is edited
-  sheet.getRange(e.range.getRow(), 4).setValue(new Date());
+  sheet.getRange(e.range.getRow(), 4).setValue(new Date())
 }
 ```
 
@@ -325,15 +326,22 @@ function onEdit(e) {
 function createTriggers() {
   // Time-driven: run every day at 8am
   ScriptApp.newTrigger('dailyReport')
-    .timeBased().atHour(8).everyDays(1).create();
+    .timeBased()
+    .atHour(8)
+    .everyDays(1)
+    .create()
 
   // On edit with full permissions (can send email, fetch URLs)
   ScriptApp.newTrigger('onEditFull')
-    .forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
+    .forSpreadsheet(SpreadsheetApp.getActive())
+    .onEdit()
+    .create()
 
   // On form submit
   ScriptApp.newTrigger('onFormSubmit')
-    .forSpreadsheet(SpreadsheetApp.getActive()).onFormSubmit().create();
+    .forSpreadsheet(SpreadsheetApp.getActive())
+    .onFormSubmit()
+    .create()
 }
 ```
 
@@ -341,16 +349,16 @@ function createTriggers() {
 
 ```javascript
 function emailWeeklySchedule() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const data = sheet.getRange('A2:E10').getDisplayValues();
-  let body = '<h2>Weekly Schedule</h2><table border="1" cellpadding="8">';
-  body += '<tr><th>Job</th><th>Suburb</th><th>Time</th><th>Price</th></tr>';
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
+  const data = sheet.getRange('A2:E10').getDisplayValues()
+  let body = '<h2>Weekly Schedule</h2><table border="1" cellpadding="8">'
+  body += '<tr><th>Job</th><th>Suburb</th><th>Time</th><th>Price</th></tr>'
   for (const row of data) {
-    if (row[0]) body += '<tr>' + row.map(c => '<td>' + c + '</td>').join('') + '</tr>';
+    if (row[0])
+      body += `<tr>${row.map(c => `<td>${c}</td>`).join('')}</tr>`
   }
-  body += '</table>';
-  MailApp.sendEmail({ to: 'worker@example.com',
-    subject: 'Schedule - Week ' + sheet.getName(), htmlBody: body });
+  body += '</table>'
+  MailApp.sendEmail({ to: 'worker@example.com', subject: `Schedule - Week ${sheet.getName()}`, htmlBody: body })
 }
 ```
 
@@ -360,16 +368,15 @@ Non-obvious URL construction -- export parameters are undocumented:
 
 ```javascript
 function exportSheetAsPdf() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const url = ss.getUrl().replace(/\/edit.*$/, '')
-    + '/export?exportFormat=pdf&format=pdf&size=A4&portrait=true'
-    + '&fitw=true&sheetnames=false&printtitle=false&gridlines=false'
-    + '&gid=' + ss.getActiveSheet().getSheetId();
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const url = `${ss.getUrl().replace(/\/edit.*$/, '')
+  }/export?exportFormat=pdf&format=pdf&size=A4&portrait=true`
+  + `&fitw=true&sheetnames=false&printtitle=false&gridlines=false`
+  + `&gid=${ss.getActiveSheet().getSheetId()}`
   const blob = UrlFetchApp.fetch(url, {
-    headers: { 'Authorization': 'Bearer ' + ScriptApp.getOAuthToken() }
-  }).getBlob().setName('report.pdf');
-  MailApp.sendEmail({ to: 'boss@example.com', subject: 'Weekly Report PDF',
-    body: 'Attached.', attachments: [blob] });
+    headers: { Authorization: `Bearer ${ScriptApp.getOAuthToken()}` }
+  }).getBlob().setName('report.pdf')
+  MailApp.sendEmail({ to: 'boss@example.com', subject: 'Weekly Report PDF', body: 'Attached.', attachments: [blob] })
 }
 ```
 
@@ -379,17 +386,22 @@ function exportSheetAsPdf() {
 // GET
 function fetchData() {
   const r = UrlFetchApp.fetch('https://api.example.com/data', {
-    headers: { 'Authorization': 'Bearer ' + getApiKey() } });
-  return JSON.parse(r.getContentText());
+    headers: { Authorization: `Bearer ${getApiKey()}` }
+  })
+  return JSON.parse(r.getContentText())
 }
 
 // POST (muteHttpExceptions to handle errors yourself)
 function postData(payload) {
   const r = UrlFetchApp.fetch('https://api.example.com/submit', {
-    method: 'post', contentType: 'application/json',
-    payload: JSON.stringify(payload), muteHttpExceptions: true });
-  if (r.getResponseCode() !== 200) throw new Error('API error: ' + r.getContentText());
-  return JSON.parse(r.getContentText());
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  })
+  if (r.getResponseCode() !== 200)
+    throw new Error(`API error: ${r.getContentText()}`)
+  return JSON.parse(r.getContentText())
 }
 ```
 
@@ -399,13 +411,16 @@ function postData(payload) {
 // Dropdown from list
 const rule = SpreadsheetApp.newDataValidation()
   .requireValueInList(['Option A', 'Option B', 'Option C'], true)
-  .setAllowInvalid(false).setHelpText('Select an option').build();
-sheet.getRange('C3:C50').setDataValidation(rule);
+  .setAllowInvalid(false)
+  .setHelpText('Select an option')
+  .build()
+sheet.getRange('C3:C50').setDataValidation(rule)
 
 // Dropdown from range (e.g. a Lookups sheet)
 const rule2 = SpreadsheetApp.newDataValidation()
-  .requireValueInRange(ss.getSheetByName('Lookups').getRange('A1:A100')).build();
-sheet.getRange('B3:B50').setDataValidation(rule2);
+  .requireValueInRange(ss.getSheetByName('Lookups').getRange('A1:A100'))
+  .build()
+sheet.getRange('B3:B50').setDataValidation(rule2)
 ```
 
 ### Properties Service (Persistent Storage)
@@ -422,19 +437,19 @@ Move rows with "Complete" status to an Archive sheet. Processes bottom-up to avo
 
 ```javascript
 function archiveCompleted() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const source = ss.getSheetByName('Active');
-  const archive = ss.getSheetByName('Archive');
-  const data = source.getDataRange().getValues();
-  const statusCol = 4; // column E (0-indexed)
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const source = ss.getSheetByName('Active')
+  const archive = ss.getSheetByName('Archive')
+  const data = source.getDataRange().getValues()
+  const statusCol = 4 // column E (0-indexed)
 
   for (let i = data.length - 1; i >= 1; i--) {
     if (data[i][statusCol] === 'Complete') {
-      archive.appendRow(data[i]);
-      source.deleteRow(i + 1); // +1 for 1-indexed rows
+      archive.appendRow(data[i])
+      source.deleteRow(i + 1) // +1 for 1-indexed rows
     }
   }
-  SpreadsheetApp.flush();
+  SpreadsheetApp.flush()
 }
 ```
 
@@ -448,24 +463,25 @@ Key pattern: check `MailApp.getRemainingDailyQuota()` before sending, mark statu
 
 ```javascript
 function sendBatchEmails() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Recipients');
-  const data = sheet.getRange('A2:C' + sheet.getLastRow()).getValues(); // Email, Name, Status
-  const remaining = MailApp.getRemainingDailyQuota();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Recipients')
+  const data = sheet.getRange(`A2:C${sheet.getLastRow()}`).getValues() // Email, Name, Status
+  const remaining = MailApp.getRemainingDailyQuota()
   if (remaining < data.length) {
-    SpreadsheetApp.getUi().alert('Only ' + remaining + ' emails left. Need ' + data.length);
-    return;
+    SpreadsheetApp.getUi().alert(`Only ${remaining} emails left. Need ${data.length}`)
+    return
   }
-  let sent = 0;
+  let sent = 0
   for (let i = 0; i < data.length; i++) {
-    const [email, name, status] = data[i];
-    if (!email || status === 'Sent') continue;
+    const [email, name, status] = data[i]
+    if (!email || status === 'Sent')
+      continue
     try {
-      MailApp.sendEmail({ to: email, subject: 'Your Weekly Update',
-        htmlBody: '<p>Hi ' + name + ',</p><p>Here is your update...</p>' });
-      sheet.getRange(i + 2, 3).setValue('Sent'); sent++;
-    } catch (e) { sheet.getRange(i + 2, 3).setValue('Error: ' + e.message); }
+      MailApp.sendEmail({ to: email, subject: 'Your Weekly Update', htmlBody: `<p>Hi ${name},</p><p>Here is your update...</p>` })
+      sheet.getRange(i + 2, 3).setValue('Sent'); sent++
+    }
+    catch (e) { sheet.getRange(i + 2, 3).setValue(`Error: ${e.message}`) }
   }
-  SpreadsheetApp.flush();
+  SpreadsheetApp.flush()
 }
 ```
 
@@ -483,13 +499,14 @@ Always wrap external calls in try/catch. Use `muteHttpExceptions: true` to handl
 function fetchExternalData() {
   try {
     const response = UrlFetchApp.fetch('https://api.example.com/data', {
-      headers: { 'Authorization': 'Bearer ' + getApiKey() },
+      headers: { Authorization: `Bearer ${getApiKey()}` },
       muteHttpExceptions: true
-    });
+    })
     if (response.getResponseCode() !== 200)
-      throw new Error('API returned ' + response.getResponseCode());
-    return JSON.parse(response.getContentText());
-  } catch (e) { Logger.log('Error: ' + e.message); throw e; }
+      throw new Error(`API returned ${response.getResponseCode()}`)
+    return JSON.parse(response.getContentText())
+  }
+  catch (e) { Logger.log(`Error: ${e.message}`); throw e }
 }
 ```
 

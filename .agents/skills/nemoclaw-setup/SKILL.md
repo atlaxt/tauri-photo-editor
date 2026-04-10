@@ -210,10 +210,10 @@ cloudflared tunnel route dns <tunnel-name> nemoclaw.<domain>
 
 **Update tunnel config** (`/etc/cloudflared/config.yml`):
 ```yaml
-  - hostname: nemoclaw.<domain>
-    service: http://localhost:18789
-    originRequest:
-      httpHostHeader: "127.0.0.1:18789"
+- hostname: nemoclaw.<domain>
+  service: http://localhost:18789
+  originRequest:
+    httpHostHeader: '127.0.0.1:18789'
 ```
 
 **Restart tunnel:**

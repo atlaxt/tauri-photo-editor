@@ -71,19 +71,19 @@ Analyse the image visually. Note: colour extraction will be approximate without 
 If `@google/stitch-sdk` is installed and `STITCH_API_KEY` is set:
 
 ```typescript
-import { stitch } from "@google/stitch-sdk";
+import { stitch } from '@google/stitch-sdk'
 
 // List projects to find the target
-const projects = await stitch.projects();
+const projects = await stitch.projects()
 
 // Get project details (includes designTheme)
-const project = stitch.project(projectId);
-const screens = await project.screens();
+const project = stitch.project(projectId)
+const screens = await project.screens()
 
 // Get HTML from the main screen
-const screen = screens[0]; // or find by title
-const htmlUrl = await screen.getHtml();
-const imageUrl = await screen.getImage();
+const screen = screens[0] // or find by title
+const htmlUrl = await screen.getHtml()
+const imageUrl = await screen.getImage()
 ```
 
 The Stitch `designTheme` object provides structured tokens directly:

@@ -21,14 +21,14 @@
 ### Right to Be Forgotten
 Enable data deletion requests:
 ```typescript
-await client.conversations.delete(conversation_id);
+await client.conversations.delete(conversation_id)
 ```
 
 ### Data Residency
 ```typescript
 const { startConversation } = useConversation({
   serverLocation: 'eu-residency' // GDPR-compliant EU data centers
-});
+})
 ```
 
 ### User Consent
@@ -202,7 +202,7 @@ const logs = await client.conversations.list({
   agent_id: 'agent_123',
   from_date: '2025-01-01',
   to_date: '2025-12-31'
-});
+})
 ```
 
 ### Compliance Reports

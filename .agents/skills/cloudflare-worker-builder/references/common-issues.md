@@ -140,7 +140,7 @@ Add `run_worker_first` to `wrangler.jsonc`:
     "directory": "./public/",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]  // ← CRITICAL
+    "run_worker_first": ["/api/*"] // ← CRITICAL
   }
 }
 ```
@@ -206,7 +206,7 @@ The `@hono/vite-build/cloudflare-workers` plugin **only supports the `fetch` han
 
 If you use:
 ```typescript
-export default app  // Only exports fetch handler
+export default app // Only exports fetch handler
 ```
 
 ...then scheduled/tail handlers are not exported.
@@ -247,8 +247,8 @@ npm install -D @cloudflare/vite-plugin
 
 Update `vite.config.ts`:
 ```typescript
-import { defineConfig } from 'vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [cloudflare()],
@@ -262,7 +262,7 @@ This plugin supports all handler types.
 ```jsonc
 {
   "triggers": {
-    "crons": ["0 0 * * *"]  // Daily at midnight UTC
+    "crons": ["0 0 * * *"] // Daily at midnight UTC
   }
 }
 ```
@@ -322,14 +322,14 @@ npm install -D @cloudflare/vite-plugin@1.17.1
 If updating doesn't fix it, try:
 
 ```typescript
+import { cloudflare } from '@cloudflare/vite-plugin'
 // vite.config.ts
 import { defineConfig } from 'vite'
-import { cloudflare } from '@cloudflare/vite-plugin'
 
 export default defineConfig({
   plugins: [
     cloudflare({
-      persist: true,  // Persist state between HMR updates
+      persist: true, // Persist state between HMR updates
     }),
   ],
 })
@@ -494,7 +494,7 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.get('/', (c) => c.text('Hello World'))
+app.get('/', c => c.text('Hello World'))
 
 export default app
 ```
@@ -540,7 +540,7 @@ export default app
    ```
 3. TypeScript types work:
    ```typescript
-   type Bindings = {
+   interface Bindings {
      MY_KV: KVNamespace
    }
    ```

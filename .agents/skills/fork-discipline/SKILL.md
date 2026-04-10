@@ -125,7 +125,7 @@ export default {
 // GOOD — client config is a delta merged over defaults
 // clients/acme/config.ts
 export default {
-  theme: { primary: '#1E40AF' },  // Only overrides what's different
+  theme: { primary: '#1E40AF' }, // Only overrides what's different
 }
 // config/defaults.ts has everything else
 ```
@@ -180,12 +180,12 @@ ls migrations/ | sort | head -20
 ```typescript
 // BAD — client name check
 if (clientName === 'acme') {
-  showEmailOutbox = true;
+  showEmailOutbox = true
 }
 
 // GOOD — feature flag in config
 if (config.features.emailOutbox) {
-  showEmailOutbox = true;
+  showEmailOutbox = true
 }
 ```
 
@@ -316,12 +316,12 @@ For each `if (client === ...)` in core:
 ```typescript
 // Before (in src/)
 if (clientName === 'acme') {
-  app.route('/email-outbox', emailRoutes);
+  app.route('/email-outbox', emailRoutes)
 }
 
 // After (in src/) — feature flag
 if (config.features.emailOutbox) {
-  app.route('/email-outbox', emailRoutes);
+  app.route('/email-outbox', emailRoutes)
 }
 
 // After (in clients/acme/config.ts) — client enables it
@@ -336,7 +336,7 @@ If the project replaces configs instead of merging:
 
 ```typescript
 // config/resolve.ts
-import defaults from './defaults';
+import defaults from './defaults'
 
 export function resolveConfig(clientConfig: Partial<Config>): Config {
   return {
@@ -344,7 +344,7 @@ export function resolveConfig(clientConfig: Partial<Config>): Config {
     ...clientConfig,
     features: { ...defaults.features, ...clientConfig.features },
     theme: { ...defaults.theme, ...clientConfig.theme },
-  };
+  }
 }
 ```
 
@@ -355,9 +355,9 @@ If clients need custom routes but currently modify core:
 ```typescript
 // src/server/index.ts — auto-discover client routes
 const clientRoutes = await import(`../../clients/${clientName}/custom/routes`)
-  .catch(() => null);
+  .catch(() => null)
 if (clientRoutes?.default) {
-  app.route('/custom', clientRoutes.default);
+  app.route('/custom', clientRoutes.default)
 }
 ```
 

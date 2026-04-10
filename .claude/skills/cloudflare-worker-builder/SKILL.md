@@ -103,8 +103,8 @@ Source: [workers-sdk #8879](https://github.com/cloudflare/workers-sdk/issues/887
 ### Vite Config
 
 ```typescript
-import { defineConfig } from 'vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
+import { defineConfig } from 'vite'
 
 export default defineConfig({ plugins: [cloudflare()] })
 ```

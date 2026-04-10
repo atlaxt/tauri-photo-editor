@@ -98,24 +98,24 @@ Always explain what you're doing before calling a tool.
 ```typescript
 const clientTools = {
   updateCart: {
-    description: "Add or remove items from the shopping cart",
+    description: 'Add or remove items from the shopping cart',
     parameters: z.object({
       action: z.enum(['add', 'remove']),
       item: z.string(),
       quantity: z.number().min(1)
     }),
     handler: async ({ action, item, quantity }) => {
-      const cart = getCart();
-      action === 'add' ? cart.add(item, quantity) : cart.remove(item, quantity);
-      return { success: true, total: cart.total, items: cart.items.length };
+      const cart = getCart()
+      action === 'add' ? cart.add(item, quantity) : cart.remove(item, quantity)
+      return { success: true, total: cart.total, items: cart.items.length }
     }
   },
   navigate: {
-    description: "Navigate user to a different page",
+    description: 'Navigate user to a different page',
     parameters: z.object({ url: z.string().url() }),
-    handler: async ({ url }) => { window.location.href = url; return { success: true }; }
+    handler: async ({ url }) => { window.location.href = url; return { success: true } }
   }
-};
+}
 ```
 
 **Server-side tools (webhooks):**
@@ -157,48 +157,49 @@ What does NOT work:
 Working MCP server pattern for ElevenLabs:
 
 ```typescript
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 
 const tools = [{
-  name: "my_tool",
-  description: "Tool description",
+  name: 'my_tool',
+  description: 'Tool description',
   inputSchema: {
-    type: "object",
-    properties: { param1: { type: "string", description: "Description" } },
-    required: ["param1"]
+    type: 'object',
+    properties: { param1: { type: 'string', description: 'Description' } },
+    required: ['param1']
   }
-}];
+}]
 
 async function handleMCPRequest(request, env) {
-  const { id, method, params } = request;
+  const { id, method, params } = request
   switch (method) {
     case 'initialize':
       return {
-        jsonrpc: '2.0', id,
+        jsonrpc: '2.0',
+        id,
         result: {
-          protocolVersion: '2024-11-05',  // MUST be 2024-11-05
+          protocolVersion: '2024-11-05', // MUST be 2024-11-05
           serverInfo: { name: 'my-mcp', version: '1.0.0' },
           capabilities: { tools: {} }
         }
-      };
+      }
     case 'tools/list':
-      return { jsonrpc: '2.0', id, result: { tools } };
+      return { jsonrpc: '2.0', id, result: { tools } }
     case 'tools/call':
-      const result = await handleTool(params.name, params.arguments, env);
-      return { jsonrpc: '2.0', id, result };
+      const result = await handleTool(params.name, params.arguments, env)
+      return { jsonrpc: '2.0', id, result }
     default:
-      return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown: ${method}` } };
+      return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown: ${method}` } }
   }
 }
 
-const app = new Hono();
-app.use('/*', cors({ origin: '*', allowMethods: ['GET', 'POST', 'OPTIONS'] }));
+const app = new Hono()
+app.use('/*', cors({ origin: '*', allowMethods: ['GET', 'POST', 'OPTIONS'] }))
 app.post('/mcp', async (c) => {
-  const body = await c.req.json();
-  return c.json(await handleMCPRequest(body, c.env));  // Plain JSON, NOT SSE
-});
-export default app;
+  const body = await c.req.json()
+  return c.json(await handleMCPRequest(body, c.env)) // Plain JSON, NOT SSE
+})
+export default app
 ```
 
 ### Step 4: Add Knowledge Base (RAG)
@@ -214,7 +215,7 @@ Upload documents for the agent to reference:
 **React** -- copy and customise `assets/react-sdk-boilerplate.tsx`:
 
 ```typescript
-import { useConversation } from '@elevenlabs/react';
+import { useConversation } from '@elevenlabs/react'
 
 const { startConversation, stopConversation, status } = useConversation({
   agentId: 'your-agent-id',
@@ -225,7 +226,7 @@ const { startConversation, stopConversation, status } = useConversation({
     account_type: 'premium',
   },
   onEvent: (event) => { /* transcript, agent_response, tool_call */ },
-});
+})
 ```
 
 System prompt references dynamic variables as `{{user_name}}`.
@@ -284,17 +285,17 @@ const simulation = await client.agents.simulate({
   agent_id: 'agent_123',
   scenario: 'Customer requests refund',
   user_messages: [
-    "I want a refund for order #12345",
-    "It arrived broken",
-    "Yes, process the refund"
+    'I want a refund for order #12345',
+    'It arrived broken',
+    'Yes, process the refund'
   ],
   success_criteria: [
-    "Agent shows empathy",
-    "Agent verifies order",
-    "Agent provides timeline"
+    'Agent shows empathy',
+    'Agent verifies order',
+    'Agent provides timeline'
   ]
-});
-console.log('Passed:', simulation.passed);
+})
+console.log('Passed:', simulation.passed)
 ```
 
 **CI/CD integration:**
@@ -351,10 +352,10 @@ app.get('/api/elevenlabs/auth', async (req, res) => {
       body: JSON.stringify({ agent_id: 'your-agent-id' }),
       method: 'POST'
     }
-  );
-  const { signed_url } = await response.json();
-  res.json({ signed_url });
-});
+  )
+  const { signed_url } = await response.json()
+  res.json({ signed_url })
+})
 ```
 
 ### Agent Versioning (A/B Testing)
@@ -378,7 +379,8 @@ Dashboard: Agent -> Versions -> Create Branch. Compare metrics, promote winner.
 Verify with HMAC SHA-256:
 ```typescript
 const hmac = crypto.createHmac('sha256', process.env.WEBHOOK_SECRET)
-  .update(JSON.stringify(request.body)).digest('hex');
+  .update(JSON.stringify(request.body))
+  .digest('hex')
 if (signature !== hmac) { /* reject */ }
 ```
 

@@ -53,30 +53,30 @@ If all three are present, use Stitch. Otherwise, fall back to Claude generation.
 Install: `npm install @google/stitch-sdk`. Set `STITCH_API_KEY` in environment or `.dev.vars`.
 
 ```typescript
-import { stitch } from "@google/stitch-sdk";
+import { stitch } from '@google/stitch-sdk'
 
 // Create a project
-const result = await stitch.callTool("create_project", { title: "My Site" });
+const result = await stitch.callTool('create_project', { title: 'My Site' })
 
 // Reference an existing project
-const project = stitch.project("4044680601076201931");
+const project = stitch.project('4044680601076201931')
 
 // Generate a screen
-const screen = await project.generate("A modern landing page with hero section", "DESKTOP");
+const screen = await project.generate('A modern landing page with hero section', 'DESKTOP')
 
 // Get assets
-const htmlUrl = await screen.getHtml();    // Download URL for HTML
-const imageUrl = await screen.getImage();  // Download URL for screenshot
+const htmlUrl = await screen.getHtml() // Download URL for HTML
+const imageUrl = await screen.getImage() // Download URL for screenshot
 
 // Edit an existing screen (prefer this for refinements)
-const edited = await screen.edit("Make the background dark and enlarge the CTA button");
+const edited = await screen.edit('Make the background dark and enlarge the CTA button')
 
 // Generate variants
-const variants = await screen.variants("Try different colour schemes", {
+const variants = await screen.variants('Try different colour schemes', {
   variantCount: 3,
-  creativeRange: "EXPLORE",     // "REFINE" | "EXPLORE" | "REIMAGINE"
-  aspects: ["COLOR_SCHEME"],    // "LAYOUT" | "COLOR_SCHEME" | "IMAGES" | "TEXT_FONT" | "TEXT_CONTENT"
-});
+  creativeRange: 'EXPLORE', // "REFINE" | "EXPLORE" | "REIMAGINE"
+  aspects: ['COLOR_SCHEME'], // "LAYOUT" | "COLOR_SCHEME" | "IMAGES" | "TEXT_FONT" | "TEXT_CONTENT"
+})
 ```
 
 Device types: `"MOBILE"` | `"DESKTOP"` | `"TABLET"` | `"AGNOSTIC"`. Model selection: pass `"GEMINI_3_PRO"` | `"GEMINI_3_FLASH"` as third arg to `generate()`.

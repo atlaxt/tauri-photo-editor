@@ -60,10 +60,10 @@ rm -f tailwind.config.ts
 Copy `assets/vite.config.ts` or add the Tailwind plugin:
 
 ```typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -298,15 +298,16 @@ CORRECT:
 WRONG:
 ```typescript
 export default defineConfig({
-  css: { postcss: './postcss.config.js' }  // Old v3 way
+  css: { postcss: './postcss.config.js' } // Old v3 way
 })
 ```
 
 CORRECT:
 ```typescript
 import tailwindcss from '@tailwindcss/vite'
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()]  // v4 way
+  plugins: [react(), tailwindcss()] // v4 way
 })
 ```
 

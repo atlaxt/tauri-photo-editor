@@ -87,12 +87,14 @@ const actual = value === "__any__" ? "" : value
 ### Lucide Icons — Tree-Shaking
 
 ```tsx
-// Don't use dynamic import — icons get tree-shaken in production
-import * as LucideIcons from 'lucide-react'
-const Icon = LucideIcons[iconName]  // BREAKS in prod
+import type { LucideIcon } from 'lucide-react'
 
+// Don't use dynamic import — icons get tree-shaken in production
+import * as LucideIcons from 'lucide-react' // BREAKS in prod
 // Use explicit map
-import { Home, Users, Settings, type LucideIcon } from 'lucide-react'
+import { Home, Settings, Users } from 'lucide-react'
+
+const Icon = LucideIcons[iconName]
 const ICON_MAP: Record<string, LucideIcon> = { Home, Users, Settings }
 const Icon = ICON_MAP[iconName]
 ```
@@ -117,11 +119,11 @@ Add custom variants by editing the component file in `src/components/ui/`:
 
 ```tsx
 // button.tsx — add a "brand" variant
-const buttonVariants = cva("...", {
+const buttonVariants = cva('...', {
   variants: {
     variant: {
-      default: "bg-primary text-primary-foreground",
-      brand: "bg-brand text-brand-foreground hover:bg-brand/90",
+      default: 'bg-primary text-primary-foreground',
+      brand: 'bg-brand text-brand-foreground hover:bg-brand/90',
       // ... existing variants
     },
   },

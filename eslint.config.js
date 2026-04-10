@@ -7,6 +7,7 @@ export default antfu({
     'regexp/no-unused-capturing-group': 'off',
     'unicorn/no-new-array': 'off',
     'unused-imports/no-unused-vars': 'off',
+    'no-alert': 'off',
   },
   vue: true,
   typescript: true,

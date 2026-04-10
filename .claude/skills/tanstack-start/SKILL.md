@@ -134,20 +134,20 @@ Create the project directory and all config files from scratch.
 **`vite.config.ts`** — Plugin order matters. Cloudflare MUST be first:
 
 ```typescript
-import { defineConfig } from "vite";
-import { cloudflare } from "@cloudflare/vite-plugin";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import tailwindcss from "@tailwindcss/vite";
-import viteReact from "@vitejs/plugin-react";
+import { cloudflare } from '@cloudflare/vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import viteReact from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
   ],
-});
+})
 ```
 
 **`wrangler.jsonc`**:
@@ -228,12 +228,12 @@ D1-specific rules:
 **`src/db/index.ts`** — Drizzle client factory:
 
 ```typescript
-import { drizzle } from "drizzle-orm/d1";
-import { env } from "cloudflare:workers";
-import * as schema from "./schema";
+import { env } from 'cloudflare:workers'
+import { drizzle } from 'drizzle-orm/d1'
+import * as schema from './schema'
 
 export function getDb() {
-  return drizzle(env.DB, { schema });
+  return drizzle(env.DB, { schema })
 }
 ```
 
@@ -242,13 +242,13 @@ export function getDb() {
 **`drizzle.config.ts`**:
 
 ```typescript
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from 'drizzle-kit'
 
 export default defineConfig({
-  schema: "./src/db/schema.ts",
-  out: "./drizzle",
-  dialect: "sqlite",
-});
+  schema: './src/db/schema.ts',
+  out: './drizzle',
+  dialect: 'sqlite',
+})
 ```
 
 Generate and apply the initial migration:
@@ -263,24 +263,24 @@ pnpm db:migrate:local
 **`src/lib/auth.server.ts`** — Server-side better-auth:
 
 ```typescript
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/d1";
-import { env } from "cloudflare:workers";
-import * as schema from "../db/schema";
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { env } from 'cloudflare:workers'
+import { drizzle } from 'drizzle-orm/d1'
+import * as schema from '../db/schema'
 
 export function getAuth() {
-  const db = drizzle(env.DB, { schema });
+  const db = drizzle(env.DB, { schema })
   return betterAuth({
-    database: drizzleAdapter(db, { provider: "sqlite" }),
+    database: drizzleAdapter(db, { provider: 'sqlite' }),
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
-    trustedOrigins: env.TRUSTED_ORIGINS?.split(",") ?? [],
+    trustedOrigins: env.TRUSTED_ORIGINS?.split(',') ?? [],
     emailAndPassword: { enabled: true },
     socialProviders: {
       // Add Google OAuth if credentials provided
     },
-  });
+  })
 }
 ```
 
@@ -289,21 +289,21 @@ export function getAuth() {
 **`src/lib/auth.client.ts`** — Client-side auth hooks:
 
 ```typescript
-import { createAuthClient } from "better-auth/react";
+import { createAuthClient } from 'better-auth/react'
 
-export const { useSession, signIn, signOut, signUp } = createAuthClient();
+export const { useSession, signIn, signOut, signUp } = createAuthClient()
 ```
 
 **`src/routes/api/auth/$.ts`** — API catch-all for better-auth:
 
 ```typescript
-import { createAPIFileRoute } from "@tanstack/react-start/api";
-import { getAuth } from "../../../lib/auth.server";
+import { createAPIFileRoute } from '@tanstack/react-start/api'
+import { getAuth } from '../../../lib/auth.server'
 
-export const APIRoute = createAPIFileRoute("/api/auth/$")({
+export const APIRoute = createAPIFileRoute('/api/auth/$')({
   GET: ({ request }) => getAuth().handler(request),
   POST: ({ request }) => getAuth().handler(request),
-});
+})
 ```
 
 **CRITICAL**: Auth MUST use an API route (`createAPIFileRoute`), NOT a server function (`createServerFn`). better-auth needs direct request/response access.
@@ -313,19 +313,19 @@ export const APIRoute = createAPIFileRoute("/api/auth/$")({
 **Core pattern** — always create DB client inside the handler:
 
 ```typescript
-import { createServerFn } from "@tanstack/react-start";
-import { getDb } from "../db";
+import { createServerFn } from '@tanstack/react-start'
+import { getDb } from '../db'
 
-export const getItems = createServerFn({ method: "GET" }).handler(async () => {
-  const db = getDb();
-  return db.select().from(items).all();
-});
+export const getItems = createServerFn({ method: 'GET' }).handler(async () => {
+  const db = getDb()
+  return db.select().from(items).all()
+})
 ```
 
 **Input validation** with Zod:
 
 ```typescript
-export const createItem = createServerFn({ method: "POST" })
+export const createItem = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({
       name: z.string().min(1),
@@ -333,44 +333,44 @@ export const createItem = createServerFn({ method: "POST" })
     })
   )
   .handler(async ({ data }) => {
-    const db = getDb();
-    const id = crypto.randomUUID();
-    await db.insert(items).values({ id, ...data, createdAt: Date.now() });
-    return { id };
-  });
+    const db = getDb()
+    const id = crypto.randomUUID()
+    await db.insert(items).values({ id, ...data, createdAt: Date.now() })
+    return { id }
+  })
 ```
 
 **Protected server functions** — check auth, throw redirect if unauthenticated:
 
 ```typescript
-import { redirect } from "@tanstack/react-router";
-import { getAuth } from "../lib/auth.server";
+import { redirect } from '@tanstack/react-router'
+import { getAuth } from '../lib/auth.server'
 
 async function requireSession(request?: Request) {
-  const auth = getAuth();
+  const auth = getAuth()
   const session = await auth.api.getSession({
     headers: request?.headers ?? new Headers(),
-  });
+  })
   if (!session) {
-    throw redirect({ to: "/login" });
+    throw redirect({ to: '/login' })
   }
-  return session;
+  return session
 }
 
-export const getSessionFn = createServerFn({ method: "GET" }).handler(
+export const getSessionFn = createServerFn({ method: 'GET' }).handler(
   async ({ request }) => {
-    const auth = getAuth();
-    return auth.api.getSession({ headers: request.headers });
+    const auth = getAuth()
+    return auth.api.getSession({ headers: request.headers })
   }
-);
+)
 
-export const getItems = createServerFn({ method: "GET" }).handler(
+export const getItems = createServerFn({ method: 'GET' }).handler(
   async ({ request }) => {
-    const session = await requireSession(request);
-    const db = getDb();
-    return db.select().from(items).where(eq(items.userId, session.user.id)).all();
+    const session = await requireSession(request)
+    const db = getDb()
+    return db.select().from(items).where(eq(items.userId, session.user.id)).all()
   }
-);
+)
 ```
 
 **Route loader pattern** — server functions in route `loader`:
@@ -390,15 +390,15 @@ function ItemsPage() {
 **Auth guard** (`_authed.tsx`) — use `beforeLoad`:
 
 ```typescript
-export const Route = createFileRoute("/_authed")({
+export const Route = createFileRoute('/_authed')({
   beforeLoad: async () => {
-    const session = await getSessionFn();
+    const session = await getSessionFn()
     if (!session) {
-      throw redirect({ to: "/login" });
+      throw redirect({ to: '/login' })
     }
-    return { session };
+    return { session }
   },
-});
+})
 ```
 
 Child routes access session via `Route.useRouteContext()`.
@@ -428,16 +428,16 @@ function CreateItemForm() {
 **`src/router.tsx`**:
 
 ```typescript
-import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { createRouter as createTanStackRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
 
 export function createRouter() {
-  return createTanStackRouter({ routeTree });
+  return createTanStackRouter({ routeTree })
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof createRouter>;
+    router: ReturnType<typeof createRouter>
   }
 }
 ```

@@ -69,51 +69,51 @@ Use the project's package manager (check for pnpm-lock.yaml, yarn.lock, bun.lock
 ### Cloudflare Workers
 
 ```typescript
-import { defineWorkersConfig } from "@cloudflare/vitest-pool-workers/config";
+import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config'
 
 export default defineWorkersConfig({
   test: {
     globals: true,
     poolOptions: {
       workers: {
-        wrangler: { configPath: "./wrangler.toml" },
+        wrangler: { configPath: './wrangler.toml' },
       },
     },
   },
-});
+})
 ```
 
 If the project uses the Cloudflare Vite plugin (`@cloudflare/vite-plugin`), integrate into the existing vite.config.ts instead:
 
 ```typescript
+import { cloudflare } from '@cloudflare/vite-plugin'
 /// <reference types="vitest/config" />
-import { defineConfig } from "vite";
-import { cloudflare } from "@cloudflare/vite-plugin";
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [cloudflare()],
   test: {
     globals: true,
   },
-});
+})
 ```
 
 ### React (Vite)
 
 ```typescript
+import react from '@vitejs/plugin-react'
 /// <reference types="vitest/config" />
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: "jsdom",
-    setupFiles: ["./src/test/setup.ts"],
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
     css: true,
   },
-});
+})
 ```
 
 If a vite.config.ts already exists, add the `test` block to it rather than creating a new file.
@@ -121,14 +121,14 @@ If a vite.config.ts already exists, add the `test` block to it rather than creat
 ### Node / Hono API
 
 ```typescript
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: "node",
+    environment: 'node',
   },
-});
+})
 ```
 
 ### With Coverage (add to any config)
@@ -154,7 +154,7 @@ export default defineConfig({
 Create `src/test/setup.ts` (React projects only):
 
 ```typescript
-import "@testing-library/jest-dom/vitest";
+import '@testing-library/jest-dom/vitest'
 ```
 
 That single import adds all the custom matchers (toBeInTheDocument, toHaveTextContent, etc.) and registers the Vitest `expect.extend` automatically.
@@ -195,18 +195,18 @@ Write one test file that demonstrates the right patterns for this specific proje
 ### For a Hono API route (e.g. `src/routes/health.ts`):
 
 ```typescript
-import { describe, it, expect } from "vitest";
-import { app } from "../index";
+import { describe, expect, it } from 'vitest'
+import { app } from '../index'
 
-describe("GET /health", () => {
-  it("returns 200 with status ok", async () => {
-    const res = await app.request("/health");
-    expect(res.status).toBe(200);
+describe('GET /health', () => {
+  it('returns 200 with status ok', async () => {
+    const res = await app.request('/health')
+    expect(res.status).toBe(200)
 
-    const body = await res.json();
-    expect(body).toEqual({ status: "ok" });
-  });
-});
+    const body = await res.json()
+    expect(body).toEqual({ status: 'ok' })
+  })
+})
 ```
 
 ### For a React component (e.g. `src/components/Button.tsx`):
@@ -237,22 +237,22 @@ describe("Button", () => {
 ### For a utility function (e.g. `src/utils/format.ts`):
 
 ```typescript
-import { describe, it, expect } from "vitest";
-import { formatCurrency } from "./format";
+import { describe, expect, it } from 'vitest'
+import { formatCurrency } from './format'
 
-describe("formatCurrency", () => {
-  it("formats whole numbers", () => {
-    expect(formatCurrency(1000)).toBe("$1,000.00");
-  });
+describe('formatCurrency', () => {
+  it('formats whole numbers', () => {
+    expect(formatCurrency(1000)).toBe('$1,000.00')
+  })
 
-  it("formats decimals", () => {
-    expect(formatCurrency(49.9)).toBe("$49.90");
-  });
+  it('formats decimals', () => {
+    expect(formatCurrency(49.9)).toBe('$49.90')
+  })
 
-  it("handles zero", () => {
-    expect(formatCurrency(0)).toBe("$0.00");
-  });
-});
+  it('handles zero', () => {
+    expect(formatCurrency(0)).toBe('$0.00')
+  })
+})
 ```
 
 Pick a real file from the project to test. Don't invent a fake module — the sample test should run immediately after setup.
@@ -284,98 +284,98 @@ These patterns are for writing tests after setup is complete. Include them in th
 ### Module mocking (vi.mock)
 
 ```typescript
-import { vi, describe, it, expect } from "vitest";
-import { getUser } from "./api";
+import { describe, expect, it, vi } from 'vitest'
+import { getUser } from './api'
 
-vi.mock("./api", () => ({
+vi.mock('./api', () => ({
   getUser: vi.fn(),
-}));
+}))
 
-it("mocks a module function", async () => {
-  vi.mocked(getUser).mockResolvedValue({ id: 1, name: "Test" });
-  const user = await getUser(1);
-  expect(user.name).toBe("Test");
-  expect(getUser).toHaveBeenCalledWith(1);
-});
+it('mocks a module function', async () => {
+  vi.mocked(getUser).mockResolvedValue({ id: 1, name: 'Test' })
+  const user = await getUser(1)
+  expect(user.name).toBe('Test')
+  expect(getUser).toHaveBeenCalledWith(1)
+})
 ```
 
 ### Spy on methods (vi.spyOn)
 
 ```typescript
-it("spies on console.warn", () => {
-  const spy = vi.spyOn(console, "warn").mockImplementation(() => {});
-  doSomethingThatWarns();
-  expect(spy).toHaveBeenCalledOnce();
-  spy.mockRestore();
-});
+it('spies on console.warn', () => {
+  const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  doSomethingThatWarns()
+  expect(spy).toHaveBeenCalledOnce()
+  spy.mockRestore()
+})
 ```
 
 ### Fake timers
 
 ```typescript
-import { vi, beforeEach, afterEach, it, expect } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 
 beforeEach(() => {
-  vi.useFakeTimers();
-  vi.setSystemTime(new Date("2026-01-15T10:00:00Z"));
-});
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-01-15T10:00:00Z'))
+})
 
 afterEach(() => {
-  vi.useRealTimers();
-});
+  vi.useRealTimers()
+})
 
-it("uses controlled time", () => {
-  expect(new Date().toISOString()).toBe("2026-01-15T10:00:00.000Z");
-});
+it('uses controlled time', () => {
+  expect(new Date().toISOString()).toBe('2026-01-15T10:00:00.000Z')
+})
 ```
 
 ### Global stubs
 
 ```typescript
-it("stubs fetch", async () => {
+it('stubs fetch', async () => {
   const mockFetch = vi.fn().mockResolvedValue({
     ok: true,
-    json: () => Promise.resolve({ data: "test" }),
-  });
-  vi.stubGlobal("fetch", mockFetch);
+    json: () => Promise.resolve({ data: 'test' }),
+  })
+  vi.stubGlobal('fetch', mockFetch)
 
-  const res = await fetch("/api/data");
-  expect(mockFetch).toHaveBeenCalledWith("/api/data");
+  const res = await fetch('/api/data')
+  expect(mockFetch).toHaveBeenCalledWith('/api/data')
 
-  vi.unstubAllGlobals();
-});
+  vi.unstubAllGlobals()
+})
 ```
 
 ### Snapshot testing
 
 ```typescript
-it("matches snapshot", () => {
-  const result = generateConfig({ debug: true });
-  expect(result).toMatchSnapshot();
-});
+it('matches snapshot', () => {
+  const result = generateConfig({ debug: true })
+  expect(result).toMatchSnapshot()
+})
 
-it("matches inline snapshot", () => {
-  expect({ status: "ok", count: 3 }).toMatchInlineSnapshot(`
+it('matches inline snapshot', () => {
+  expect({ status: 'ok', count: 3 }).toMatchInlineSnapshot(`
     {
       "count": 3,
       "status": "ok",
     }
-  `);
-});
+  `)
+})
 ```
 
 ### Parameterized tests
 
 ```typescript
 describe.each([
-  { input: "hello", expected: "HELLO" },
-  { input: "world", expected: "WORLD" },
-  { input: "", expected: "" },
-])("toUpperCase($input)", ({ input, expected }) => {
+  { input: 'hello', expected: 'HELLO' },
+  { input: 'world', expected: 'WORLD' },
+  { input: '', expected: '' },
+])('toUpperCase($input)', ({ input, expected }) => {
   it(`returns ${expected}`, () => {
-    expect(input.toUpperCase()).toBe(expected);
-  });
-});
+    expect(input.toUpperCase()).toBe(expected)
+  })
+})
 ```
 
 ---
@@ -389,16 +389,17 @@ When the detected project has Jest (`jest.config.*`, `@types/jest`, `ts-jest` in
 
 ```typescript
 // Before
-import { jest } from "@jest/globals";
-jest.mock("./api");
-jest.fn();
-jest.spyOn(obj, "method");
+import { jest } from '@jest/globals'
 
 // After
-import { vi } from "vitest";
-vi.mock("./api");
-vi.fn();
-vi.spyOn(obj, "method");
+import { vi } from 'vitest'
+
+jest.mock('./api')
+jest.fn()
+jest.spyOn(obj, 'method')
+vi.mock('./api')
+vi.fn()
+vi.spyOn(obj, 'method')
 ```
 
 3. **Remove Jest packages:**
@@ -431,11 +432,11 @@ For monorepo projects with multiple packages:
 
 ```typescript
 // vitest.workspace.ts
-import { defineWorkspace } from "vitest/config";
+import { defineWorkspace } from 'vitest/config'
 
 export default defineWorkspace([
-  "packages/*/vitest.config.ts",
-]);
+  'packages/*/vitest.config.ts',
+])
 ```
 
 Each package gets its own config. The workspace file just points to them.

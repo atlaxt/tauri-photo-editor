@@ -1,12 +1,12 @@
-import type { CardWithId, CardHeader, CardSection, WebhookMessage, Thread } from './types';
+import type { CardHeader, CardSection, CardWithId, WebhookMessage } from './types'
 
 interface BuildCardOptions {
-  cardId: string;
-  title: string;
-  subtitle?: string;
-  imageUrl?: string;
-  imageType?: 'SQUARE' | 'CIRCLE';
-  sections: CardSection[];
+  cardId: string
+  title: string
+  subtitle?: string
+  imageUrl?: string
+  imageType?: 'SQUARE' | 'CIRCLE'
+  sections: CardSection[]
 }
 
 /**
@@ -18,14 +18,14 @@ interface BuildCardOptions {
  */
 export function buildCard(
   options: BuildCardOptions,
-  thread?: { threadKey: string }
+  thread?: { threadKey: string },
 ): WebhookMessage {
   const header: CardHeader = {
     title: options.title,
     ...(options.subtitle && { subtitle: options.subtitle }),
     ...(options.imageUrl && { imageUrl: options.imageUrl }),
     ...(options.imageType && { imageType: options.imageType }),
-  };
+  }
 
   const card: CardWithId = {
     cardId: options.cardId,
@@ -33,17 +33,17 @@ export function buildCard(
       header,
       sections: options.sections,
     },
-  };
+  }
 
   const message: WebhookMessage = {
     cardsV2: [card],
-  };
-
-  if (thread) {
-    message.thread = { threadKey: thread.threadKey };
   }
 
-  return message;
+  if (thread) {
+    message.thread = { threadKey: thread.threadKey }
+  }
+
+  return message
 }
 
 /**
@@ -54,13 +54,13 @@ export function buildCard(
  */
 export function buildText(
   text: string,
-  thread?: { threadKey: string }
+  thread?: { threadKey: string },
 ): WebhookMessage {
-  const message: WebhookMessage = { text };
+  const message: WebhookMessage = { text }
 
   if (thread) {
-    message.thread = { threadKey: thread.threadKey };
+    message.thread = { threadKey: thread.threadKey }
   }
 
-  return message;
+  return message
 }

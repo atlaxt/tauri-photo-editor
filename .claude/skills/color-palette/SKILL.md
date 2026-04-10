@@ -27,29 +27,31 @@ Convert hex to HSL, then generate shades by varying lightness while keeping hue 
 
 ```javascript
 function hexToHSL(hex) {
-  hex = hex.replace(/^#/, '');
-  const r = parseInt(hex.substring(0, 2), 16) / 255;
-  const g = parseInt(hex.substring(2, 4), 16) / 255;
-  const b = parseInt(hex.substring(4, 6), 16) / 255;
+  hex = hex.replace(/^#/, '')
+  const r = Number.parseInt(hex.substring(0, 2), 16) / 255
+  const g = Number.parseInt(hex.substring(2, 4), 16) / 255
+  const b = Number.parseInt(hex.substring(4, 6), 16) / 255
 
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const diff = max - min;
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const diff = max - min
 
-  let l = (max + min) / 2;
-  let s = 0;
+  const l = (max + min) / 2
+  let s = 0
   if (diff !== 0) {
-    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min);
+    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min)
   }
 
-  let h = 0;
+  let h = 0
   if (diff !== 0) {
-    if (max === r) h = ((g - b) / diff + (g < b ? 6 : 0)) / 6;
-    else if (max === g) h = ((b - r) / diff + 2) / 6;
-    else h = ((r - g) / diff + 4) / 6;
+    if (max === r)
+      h = ((g - b) / diff + (g < b ? 6 : 0)) / 6
+    else if (max === g)
+      h = ((b - r) / diff + 2) / 6
+    else h = ((r - g) / diff + 4) / 6
   }
 
-  return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+  return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) }
 }
 ```
 
@@ -75,20 +77,25 @@ Reduce saturation for lighter shades (50-200 by 15-20%, 300-400 by 5-10%) to pre
 
 ```javascript
 function generateShadeScale(brandHex) {
-  const { h, s } = hexToHSL(brandHex);
+  const { h, s } = hexToHSL(brandHex)
   const shades = {
-    50:  { l: 97, sMul: 0.8 },  100: { l: 94, sMul: 0.8 },
-    200: { l: 87, sMul: 0.85 }, 300: { l: 75, sMul: 0.9 },
-    400: { l: 62, sMul: 0.95 }, 500: { l: 48, sMul: 1.0 },
-    600: { l: 40, sMul: 1.0 },  700: { l: 33, sMul: 1.0 },
-    800: { l: 27, sMul: 1.0 },  900: { l: 20, sMul: 1.0 },
+    50: { l: 97, sMul: 0.8 },
+    100: { l: 94, sMul: 0.8 },
+    200: { l: 87, sMul: 0.85 },
+    300: { l: 75, sMul: 0.9 },
+    400: { l: 62, sMul: 0.95 },
+    500: { l: 48, sMul: 1.0 },
+    600: { l: 40, sMul: 1.0 },
+    700: { l: 33, sMul: 1.0 },
+    800: { l: 27, sMul: 1.0 },
+    900: { l: 20, sMul: 1.0 },
     950: { l: 10, sMul: 1.0 }
-  };
-  const result = {};
-  for (const [shade, { l, sMul }] of Object.entries(shades)) {
-    result[shade] = `hsl(${h}, ${Math.round(s * sMul)}%, ${l}%)`;
   }
-  return result;
+  const result = {}
+  for (const [shade, { l, sMul }] of Object.entries(shades)) {
+    result[shade] = `hsl(${h}, ${Math.round(s * sMul)}%, ${l}%)`
+  }
+  return result
 }
 ```
 
@@ -96,21 +103,21 @@ function generateShadeScale(brandHex) {
 
 ```javascript
 function hslToHex(h, s, l) {
-  s = s / 100; l = l / 100;
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-  const m = l - c / 2;
-  let r = 0, g = 0, b = 0;
-  if (h < 60) { r = c; g = x; }
-  else if (h < 120) { r = x; g = c; }
-  else if (h < 180) { g = c; b = x; }
-  else if (h < 240) { g = x; b = c; }
-  else if (h < 300) { r = x; b = c; }
-  else { r = c; b = x; }
-  r = Math.round((r + m) * 255);
-  g = Math.round((g + m) * 255);
-  b = Math.round((b + m) * 255);
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`.toUpperCase();
+  s = s / 100; l = l / 100
+  const c = (1 - Math.abs(2 * l - 1)) * s
+  const x = c * (1 - Math.abs((h / 60) % 2 - 1))
+  const m = l - c / 2
+  let r = 0; let g = 0; let b = 0
+  if (h < 60) { r = c; g = x }
+  else if (h < 120) { r = x; g = c }
+  else if (h < 180) { g = c; b = x }
+  else if (h < 240) { g = x; b = c }
+  else if (h < 300) { r = x; b = c }
+  else { r = c; b = x }
+  r = Math.round((r + m) * 255)
+  g = Math.round((g + m) * 255)
+  b = Math.round((b + m) * 255)
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`.toUpperCase()
 }
 ```
 
@@ -211,22 +218,22 @@ Target AA for most projects, AAA for high-accessibility needs (government, healt
 
 ```javascript
 function getLuminance(hex) {
-  hex = hex.replace(/^#/, '');
-  const r = parseInt(hex.substring(0, 2), 16) / 255;
-  const g = parseInt(hex.substring(2, 4), 16) / 255;
-  const b = parseInt(hex.substring(4, 6), 16) / 255;
-  const rsRGB = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
-  const gsRGB = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
-  const bsRGB = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
-  return 0.2126 * rsRGB + 0.7152 * gsRGB + 0.0722 * bsRGB;
+  hex = hex.replace(/^#/, '')
+  const r = Number.parseInt(hex.substring(0, 2), 16) / 255
+  const g = Number.parseInt(hex.substring(2, 4), 16) / 255
+  const b = Number.parseInt(hex.substring(4, 6), 16) / 255
+  const rsRGB = r <= 0.03928 ? r / 12.92 : ((r + 0.055) / 1.055) ** 2.4
+  const gsRGB = g <= 0.03928 ? g / 12.92 : ((g + 0.055) / 1.055) ** 2.4
+  const bsRGB = b <= 0.03928 ? b / 12.92 : ((b + 0.055) / 1.055) ** 2.4
+  return 0.2126 * rsRGB + 0.7152 * gsRGB + 0.0722 * bsRGB
 }
 
 function getContrastRatio(hex1, hex2) {
-  const lum1 = getLuminance(hex1);
-  const lum2 = getLuminance(hex2);
-  const lighter = Math.max(lum1, lum2);
-  const darker = Math.min(lum1, lum2);
-  return (lighter + 0.05) / (darker + 0.05);
+  const lum1 = getLuminance(hex1)
+  const lum2 = getLuminance(hex2)
+  const lighter = Math.max(lum1, lum2)
+  const darker = Math.min(lum1, lum2)
+  return (lighter + 0.05) / (darker + 0.05)
 }
 ```
 

@@ -1,14 +1,15 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 type Theme = 'dark' | 'light' | 'system'
 
-type ThemeProviderProps = {
+interface ThemeProviderProps {
   children: ReactNode
   defaultTheme?: Theme
   storageKey?: string
 }
 
-type ThemeProviderState = {
+interface ThemeProviderState {
   theme: Theme
   setTheme: (theme: Theme) => void
 }
@@ -29,10 +30,11 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(() => {
     // Try localStorage first, fall back to sessionStorage, then default
     try {
-      return (localStorage.getItem(storageKey) as Theme) ||
-             (sessionStorage.getItem(storageKey) as Theme) ||
-             defaultTheme
-    } catch (e) {
+      return (localStorage.getItem(storageKey) as Theme)
+        || (sessionStorage.getItem(storageKey) as Theme)
+        || defaultTheme
+    }
+    catch (e) {
       // Storage unavailable (incognito/privacy mode) - use default
       return defaultTheme
     }
@@ -62,11 +64,13 @@ export function ThemeProvider({
       // Try to persist to localStorage, fall back to sessionStorage
       try {
         localStorage.setItem(storageKey, theme)
-      } catch (e) {
+      }
+      catch (e) {
         // localStorage unavailable (incognito) - use sessionStorage
         try {
           sessionStorage.setItem(storageKey, theme)
-        } catch (err) {
+        }
+        catch (err) {
           // Both unavailable - just update state without persistence
           console.warn('Storage unavailable, theme preference will not persist')
         }
@@ -82,7 +86,7 @@ export function ThemeProvider({
   )
 }
 
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeProviderContext)
 
   if (context === undefined)

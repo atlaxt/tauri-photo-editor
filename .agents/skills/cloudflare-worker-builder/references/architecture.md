@@ -174,7 +174,7 @@ app.get('/api/users/:id/posts/:postId', (c) => {
 // Match numeric IDs only
 app.get('/api/users/:id{[0-9]+}', (c) => {
   const id = c.req.param('id')
-  return c.json({ id: parseInt(id) })
+  return c.json({ id: Number.parseInt(id) })
 })
 ```
 
@@ -183,10 +183,10 @@ app.get('/api/users/:id{[0-9]+}', (c) => {
 ```typescript
 const api = new Hono()
 
-api.get('/users', (c) => c.json({ users: [] }))
-api.get('/posts', (c) => c.json({ posts: [] }))
+api.get('/users', c => c.json({ users: [] }))
+api.get('/posts', c => c.json({ posts: [] }))
 
-app.route('/api', api)  // Mount at /api
+app.route('/api', api) // Mount at /api
 ```
 
 ---
@@ -255,12 +255,12 @@ app.all('*', async (c) => {
 ### Defining Bindings
 
 ```typescript
-type Bindings = {
-  ASSETS: Fetcher               // Static Assets (always present)
-  MY_KV: KVNamespace            // KV namespace
-  DB: D1Database                // D1 database
-  MY_BUCKET: R2Bucket           // R2 bucket
-  MY_VAR: string                // Environment variable
+interface Bindings {
+  ASSETS: Fetcher // Static Assets (always present)
+  MY_KV: KVNamespace // KV namespace
+  DB: D1Database // D1 database
+  MY_BUCKET: R2Bucket // R2 bucket
+  MY_VAR: string // Environment variable
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -323,7 +323,7 @@ npm run dev
 export default defineConfig({
   plugins: [
     cloudflare({
-      persist: true,  // Persist data between restarts
+      persist: true, // Persist data between restarts
     }),
   ],
 })
@@ -431,8 +431,8 @@ Keep your bundle small:
 ### 1. Use Middleware for Common Logic
 
 ```typescript
-import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
 
 app.use('*', logger())
 app.use('/api/*', cors())
@@ -463,13 +463,13 @@ app.onError((err, c) => {
 
 ```typescript
 // Define types for request/response
-type User = {
+interface User {
   id: number
   name: string
 }
 
 app.get('/api/users/:id', async (c) => {
-  const id = parseInt(c.req.param('id'))
+  const id = Number.parseInt(c.req.param('id'))
   const user: User = { id, name: 'Alice' }
   return c.json(user)
 })

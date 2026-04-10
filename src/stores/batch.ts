@@ -1,5 +1,9 @@
+import type { UnlistenFn } from '@tauri-apps/api/event'
+import { invoke } from '@tauri-apps/api/core'
+import { listen } from '@tauri-apps/api/event'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { usePresetStore } from './presets'
 
 export type BatchStatus = 'idle' | 'running' | 'done' | 'error'
 
@@ -24,6 +28,8 @@ export const useBatchStore = defineStore('batch', () => {
   )
   const isRunning = computed(() => status.value === 'running')
 
+  let _unlisten: UnlistenFn | null = null
+
   function reset() {
     status.value = 'idle'
     total.value = 0
@@ -31,27 +37,52 @@ export const useBatchStore = defineStore('batch', () => {
     log.value = []
   }
 
-  // Tauri event'inden çağrılacak (start_batch komutu emit eder)
-  function onProgress(payload: { current: number, total: number, file: string, error?: string }) {
-    current.value = payload.current
-    total.value = payload.total
-    log.value.push({
-      file: payload.file,
-      status: payload.error ? 'error' : 'ok',
-      message: payload.error,
-    })
-    if (payload.current >= payload.total)
-      status.value = 'done'
-  }
-
   async function start() {
     if (!sourceDir.value || !destDir.value || !presetId.value)
       return
+
+    const presetStore = usePresetStore()
+    const preset = presetStore.presets.find(p => p.id === presetId.value)
+    if (!preset)
+      return
+
     reset()
     status.value = 'running'
-    // Görev #7'de Tauri invoke + event listener eklenecek
-    // const { invoke } = await import('@tauri-apps/api/core')
-    // await invoke('start_batch', { sourceDir: sourceDir.value, destDir: destDir.value, presetId: presetId.value })
+
+    _unlisten = await listen<{ current: number, total: number, fileName: string, error?: string }>(
+      'batch://progress',
+      (event) => {
+        const { current: c, total: t, fileName, error } = event.payload
+        current.value = c
+        total.value = t
+        log.value.push({ file: fileName, status: error ? 'error' : 'ok', message: error })
+        if (c >= t)
+          status.value = 'done'
+      },
+    )
+
+    try {
+      await invoke('start_batch', {
+        sourceDir: sourceDir.value,
+        destDir: destDir.value,
+        ops: preset.steps,
+      })
+    }
+    catch (e) {
+      status.value = 'error'
+      log.value.push({ file: '—', status: 'error', message: String(e) })
+    }
+    finally {
+      _unlisten?.()
+      _unlisten = null
+    }
+  }
+
+  function cancel() {
+    _unlisten?.()
+    _unlisten = null
+    if (status.value === 'running')
+      status.value = 'idle'
   }
 
   return {
@@ -65,7 +96,7 @@ export const useBatchStore = defineStore('batch', () => {
     log,
     isRunning,
     reset,
-    onProgress,
     start,
+    cancel,
   }
 })

@@ -318,7 +318,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -504,7 +504,7 @@ Always set a recent `compatibility_date`:
 ```jsonc
 {
   "limits": {
-    "cpu_ms": 50  // Maximum CPU time per request (paid plan)
+    "cpu_ms": 50 // Maximum CPU time per request (paid plan)
   }
 }
 ```
@@ -551,12 +551,12 @@ app.use('/api/*', async (c, next) => {
   const key = `rate-limit:${ip}`
 
   const count = await c.env.MY_KV.get(key)
-  if (count && parseInt(count) > 100) {
+  if (count && Number.parseInt(count) > 100) {
     return c.json({ error: 'Rate limit exceeded' }, 429)
   }
 
-  await c.env.MY_KV.put(key, (parseInt(count || '0') + 1).toString(), {
-    expirationTtl: 60  // 1 minute
+  await c.env.MY_KV.put(key, (Number.parseInt(count || '0') + 1).toString(), {
+    expirationTtl: 60 // 1 minute
   })
 
   await next()

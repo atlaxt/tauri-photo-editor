@@ -1,42 +1,43 @@
-import { useConversation } from '@elevenlabs/react-native';
-import { View, Button, Text, ScrollView } from 'react-native';
-import { z } from 'zod';
-import { useState } from 'react';
+import { useConversation } from '@elevenlabs/react-native'
+import { useState } from 'react'
+import { Button, ScrollView, Text, View } from 'react-native'
+import { z } from 'zod'
 
 export default function VoiceAgent() {
-  const [transcript, setTranscript] = useState<Array<{ role: string; text: string }>>([]);
+  const [transcript, setTranscript] = useState<Array<{ role: string, text: string }>>([])
 
   const { startConversation, stopConversation, status } = useConversation({
     agentId: process.env.EXPO_PUBLIC_ELEVENLABS_AGENT_ID!,
 
     // Use signed URL (most secure)
     signedUrl: async () => {
-      const response = await fetch('https://your-api.com/elevenlabs/auth');
-      const { signedUrl } = await response.json();
-      return signedUrl;
+      const response = await fetch('https://your-api.com/elevenlabs/auth')
+      const { signedUrl } = await response.json()
+      return signedUrl
     },
 
     clientTools: {
       updateProfile: {
-        description: "Update user profile",
+        description: 'Update user profile',
         parameters: z.object({
-          name: z.string()
+          name: z.string(),
         }),
         handler: async ({ name }) => {
-          console.log('Updating profile:', name);
-          return { success: true };
-        }
-      }
+          console.log('Updating profile:', name)
+          return { success: true }
+        },
+      },
     },
 
     onEvent: (event) => {
       if (event.type === 'transcript') {
-        setTranscript(prev => [...prev, { role: 'user', text: event.data.text }]);
-      } else if (event.type === 'agent_response') {
-        setTranscript(prev => [...prev, { role: 'agent', text: event.data.text }]);
+        setTranscript(prev => [...prev, { role: 'user', text: event.data.text }])
       }
-    }
-  });
+      else if (event.type === 'agent_response') {
+        setTranscript(prev => [...prev, { role: 'agent', text: event.data.text }])
+      }
+    },
+  })
 
   return (
     <View style={{ padding: 20 }}>
@@ -47,7 +48,10 @@ export default function VoiceAgent() {
         <Button title="Stop" onPress={stopConversation} disabled={status !== 'connected'} />
       </View>
 
-      <Text>Status: {status}</Text>
+      <Text>
+        Status:
+        {status}
+      </Text>
 
       <ScrollView style={{ marginTop: 20, maxHeight: 400 }}>
         {transcript.map((msg, i) => (
@@ -58,5 +62,5 @@ export default function VoiceAgent() {
         ))}
       </ScrollView>
     </View>
-  );
+  )
 }

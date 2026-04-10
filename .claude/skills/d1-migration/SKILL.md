@@ -110,10 +110,10 @@ pnpm db:migrate
 D1's parameter limit causes silent failures with large multi-row INSERTs. Batch into chunks:
 
 ```typescript
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 10
 for (let i = 0; i < allRows.length; i += BATCH_SIZE) {
-  const batch = allRows.slice(i, i + BATCH_SIZE);
-  await db.insert(myTable).values(batch);
+  const batch = allRows.slice(i, i + BATCH_SIZE)
+  await db.insert(myTable).values(batch)
 }
 ```
 

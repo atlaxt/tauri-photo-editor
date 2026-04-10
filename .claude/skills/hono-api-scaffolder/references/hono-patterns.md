@@ -8,9 +8,9 @@ Hono matches routes in registration order. Place specific routes before generic 
 
 ```typescript
 // Correct order
-app.get('/api/users/me', getMeHandler)       // specific first
-app.get('/api/users/:id', getUserHandler)    // param route second
-app.get('/api/users', listUsersHandler)      // list last
+app.get('/api/users/me', getMeHandler) // specific first
+app.get('/api/users/:id', getUserHandler) // param route second
+app.get('/api/users', listUsersHandler) // list last
 ```
 
 ## Middleware Chains
@@ -18,9 +18,9 @@ app.get('/api/users', listUsersHandler)      // list last
 Middleware runs in order of `app.use()` registration:
 
 ```typescript
-app.use('*', logger())                        // all routes
-app.use('/api/*', cors())                     // all API routes
-app.use('/api/admin/*', requireAuth)          // admin routes only
+app.use('*', logger()) // all routes
+app.use('/api/*', cors()) // all API routes
+app.use('/api/admin/*', requireAuth) // admin routes only
 ```
 
 ### Per-Route Middleware
@@ -37,7 +37,7 @@ app.get('/api/secret', requireAuth, async (c) => {
 // Set in middleware
 export const authMiddleware = createMiddleware<{
   Bindings: Env
-  Variables: { userId: string; role: string }
+  Variables: { userId: string, role: string }
 }>(async (c, next) => {
   c.set('userId', decoded.sub)
   c.set('role', decoded.role)
@@ -46,7 +46,7 @@ export const authMiddleware = createMiddleware<{
 
 // Read in handler
 app.get('/api/me', authMiddleware, (c) => {
-  const userId = c.get('userId')  // typed string
+  const userId = c.get('userId') // typed string
 })
 ```
 
@@ -56,7 +56,7 @@ app.get('/api/me', authMiddleware, (c) => {
 
 ```typescript
 app.get('/api/posts/:id', (c) => {
-  const id = c.req.param('id')  // string
+  const id = c.req.param('id') // string
 })
 
 // Multiple params
@@ -69,8 +69,8 @@ app.get('/api/orgs/:orgId/users/:userId', (c) => {
 
 ```typescript
 app.get('/api/users', (c) => {
-  const page = parseInt(c.req.query('page') || '1')
-  const limit = parseInt(c.req.query('limit') || '20')
+  const page = Number.parseInt(c.req.query('page') || '1')
+  const limit = Number.parseInt(c.req.query('limit') || '20')
   const search = c.req.query('search')
 })
 ```
@@ -89,13 +89,13 @@ const contentType = c.req.header('Content-Type')
 ```typescript
 return c.json({ users }, 200)
 return c.json({ error: 'Not found' }, 404)
-return c.json({ user }, 201)  // created
+return c.json({ user }, 201) // created
 ```
 
 ### Empty responses
 
 ```typescript
-return c.body(null, 204)  // no content (DELETE success)
+return c.body(null, 204) // no content (DELETE success)
 return new Response(null, { status: 204 })
 ```
 
@@ -139,7 +139,7 @@ throw new HTTPException(403, { message: 'Forbidden' })
 ### Not Found handler
 
 ```typescript
-app.notFound((c) => c.json({ error: 'Not found' }, 404))
+app.notFound(c => c.json({ error: 'Not found' }, 404))
 ```
 
 ## Zod Validation Patterns
@@ -175,14 +175,11 @@ app.get('/', zValidator('query', querySchema), async (c) => {
 ### Custom error response
 
 ```typescript
-app.post('/',
-  zValidator('json', schema, (result, c) => {
-    if (!result.success) {
-      return c.json({ error: 'Validation failed', details: result.error.flatten() }, 400)
-    }
-  }),
-  handler,
-)
+app.post('/', zValidator('json', schema, (result, c) => {
+  if (!result.success) {
+    return c.json({ error: 'Validation failed', details: result.error.flatten() }, 400)
+  }
+}), handler,)
 ```
 
 ## RPC (Remote Procedure Call)
@@ -190,20 +187,20 @@ app.post('/',
 End-to-end type safety between Worker and client without code generation:
 
 ```typescript
+import type { AppType } from './worker'
 // Worker: chain routes for type inference
+// Client:
+import { hc } from 'hono/client'
+
 const routes = app
-  .get('/api/users', async (c) => c.json({ users: [] }))
-  .post('/api/users', zValidator('json', schema), async (c) => c.json({ user: {} }, 201))
+  .get('/api/users', async c => c.json({ users: [] }))
+  .post('/api/users', zValidator('json', schema), async c => c.json({ user: {} }, 201))
 
 export type AppType = typeof routes
 
-// Client:
-import { hc } from 'hono/client'
-import type { AppType } from './worker'
-
 const client = hc<AppType>('https://api.example.com')
 const res = await client.api.users.$get()
-const data = await res.json()  // typed: { users: User[] }
+const data = await res.json() // typed: { users: User[] }
 ```
 
 **Key**: The route chain must be assigned to a variable for type inference to work. Don't use `app.route()` for RPC — mount routes directly on the app.

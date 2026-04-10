@@ -74,19 +74,19 @@ Example order for a blog schema:
 
 **Names**: Use a hardcoded list of common names. Mix genders and cultural backgrounds.
 ```typescript
-const firstNames = ['Sarah', 'James', 'Priya', 'Mohammed', 'Emma', 'Wei', 'Carlos', 'Aisha'];
-const lastNames = ['Chen', 'Smith', 'Patel', 'Garcia', 'Kim', 'O\'Brien', 'Nguyen', 'Wilson'];
+const firstNames = ['Sarah', 'James', 'Priya', 'Mohammed', 'Emma', 'Wei', 'Carlos', 'Aisha']
+const lastNames = ['Chen', 'Smith', 'Patel', 'Garcia', 'Kim', 'O\'Brien', 'Nguyen', 'Wilson']
 ```
 
 **Emails**: Derive from names — `sarah.chen@example.com`. Use `example.com` domain (RFC 2606 reserved).
 
 **Dates**: Generate within a realistic range. Use ISO 8601 format for D1/SQLite.
 ```typescript
-const randomDate = (daysBack: number) => {
-  const d = new Date();
-  d.setDate(d.getDate() - Math.floor(Math.random() * daysBack));
-  return d.toISOString();
-};
+function randomDate(daysBack: number) {
+  const d = new Date()
+  d.setDate(d.getDate() - Math.floor(Math.random() * daysBack))
+  return d.toISOString()
+}
 ```
 
 **IDs**: Use `crypto.randomUUID()` for UUIDs, or sequential integers if the schema uses auto-increment.
@@ -95,11 +95,11 @@ const randomDate = (daysBack: number) => {
 ```typescript
 function seededRandom(seed: number) {
   return () => {
-    seed = (seed * 16807) % 2147483647;
-    return (seed - 1) / 2147483646;
-  };
+    seed = (seed * 16807) % 2147483647
+    return (seed - 1) / 2147483646
+  }
 }
-const rand = seededRandom(42); // Same seed = same data every time
+const rand = seededRandom(42) // Same seed = same data every time
 ```
 
 **Prices/amounts**: Use realistic ranges. `(rand() * 900 + 100).toFixed(2)` for $1-$10 range.
@@ -153,10 +153,10 @@ Run with: `npx tsx scripts/seed.ts`
 For Cloudflare Workers, add a seed endpoint (remove before production):
 ```typescript
 app.post('/api/seed', async (c) => {
-  const db = drizzle(c.env.DB);
-  await seed(db);
-  return c.json({ ok: true });
-});
+  const db = drizzle(c.env.DB)
+  await seed(db)
+  return c.json({ ok: true })
+})
 ```
 
 #### Raw SQL (D1)
@@ -186,14 +186,14 @@ Seed scripts must be safe to re-run:
 
 ```typescript
 // Option A: Delete-then-insert (simple, loses data)
-await db.delete(schema.users);
-await db.insert(schema.users).values(seedUsers);
+await db.delete(schema.users)
+await db.insert(schema.users).values(seedUsers)
 
 // Option B: Upsert (preserves non-seed data)
 for (const user of seedUsers) {
   await db.insert(schema.users)
     .values(user)
-    .onConflictDoUpdate({ target: schema.users.id, set: user });
+    .onConflictDoUpdate({ target: schema.users.id, set: user })
 }
 ```
 

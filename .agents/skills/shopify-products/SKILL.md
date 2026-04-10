@@ -84,8 +84,8 @@ Variables:
     "variants": [
       {
         "optionValues": [
-          {"optionName": "Size", "name": "S"},
-          {"optionName": "Colour", "name": "Black"}
+          { "optionName": "Size", "name": "S" },
+          { "optionName": "Colour", "name": "Black" }
         ],
         "price": "29.95",
         "sku": "TSHIRT-S-BLK",
@@ -94,16 +94,16 @@ Variables:
       },
       {
         "optionValues": [
-          {"optionName": "Size", "name": "M"},
-          {"optionName": "Colour", "name": "Black"}
+          { "optionName": "Size", "name": "M" },
+          { "optionName": "Colour", "name": "Black" }
         ],
         "price": "29.95",
         "sku": "TSHIRT-M-BLK"
       },
       {
         "optionValues": [
-          {"optionName": "Size", "name": "L"},
-          {"optionName": "Colour", "name": "Black"}
+          { "optionName": "Size", "name": "L" },
+          { "optionName": "Colour", "name": "Black" }
         ],
         "price": "29.95",
         "sku": "TSHIRT-L-BLK"

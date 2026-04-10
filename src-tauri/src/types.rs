@@ -8,6 +8,7 @@ pub struct Operation {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Preset {
     pub id: String,
     pub name: String,
@@ -18,6 +19,7 @@ pub struct Preset {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ImageMeta {
     pub width: u32,
     pub height: u32,
@@ -26,6 +28,7 @@ pub struct ImageMeta {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BatchProgress {
     pub current: u32,
     pub total: u32,

@@ -1,10 +1,10 @@
-import type { WebhookMessage } from './types';
+import type { WebhookMessage } from './types'
 
 interface SendOptions {
   /** Thread key for threading messages together */
-  threadKey?: string;
+  threadKey?: string
   /** If true, replies to existing thread or falls back to new thread */
-  replyToThread?: boolean;
+  replyToThread?: boolean
 }
 
 /**
@@ -28,32 +28,32 @@ interface SendOptions {
 export async function sendWebhook(
   webhookUrl: string,
   message: WebhookMessage,
-  options?: SendOptions
+  options?: SendOptions,
 ): Promise<void> {
-  let url = webhookUrl;
+  let url = webhookUrl
 
   // Add threading parameters to URL
   if (options?.replyToThread && options?.threadKey) {
-    const separator = url.includes('?') ? '&' : '?';
-    url += `${separator}messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD`;
+    const separator = url.includes('?') ? '&' : '?'
+    url += `${separator}messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD`
   }
 
   // Add thread key to message body
   if (options?.threadKey) {
-    message.thread = { threadKey: options.threadKey };
+    message.thread = { threadKey: options.threadKey }
   }
 
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message),
-  });
+  })
 
   if (!response.ok) {
-    const body = await response.text();
+    const body = await response.text()
     throw new Error(
-      `Google Chat webhook error ${response.status}: ${body}`
-    );
+      `Google Chat webhook error ${response.status}: ${body}`,
+    )
   }
 }
 
@@ -63,7 +63,7 @@ export async function sendWebhook(
 export async function sendText(
   webhookUrl: string,
   text: string,
-  options?: SendOptions
+  options?: SendOptions,
 ): Promise<void> {
-  await sendWebhook(webhookUrl, { text }, options);
+  await sendWebhook(webhookUrl, { text }, options)
 }

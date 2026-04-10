@@ -30,7 +30,7 @@ Gather requirements: what tables, what relationships, what needs indexing. If wo
 Create schema files using D1-correct column patterns:
 
 ```typescript
-import { sqliteTable, text, integer, real, index, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import { index, integer, real, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
   // UUID primary key (preferred for D1)
@@ -55,7 +55,7 @@ export const users = sqliteTable('users', {
 
   // Foreign key (always enforced in D1)
   organisationId: text('organisation_id').references(() => organisations.id, { onDelete: 'cascade' }),
-}, (table) => ({
+}, table => ({
   emailIdx: uniqueIndex('users_email_idx').on(table.email),
   orgIdx: index('users_org_idx').on(table.organisationId),
 }))
@@ -132,8 +132,8 @@ import * as schema from './schema'
 const db = drizzle(env.DB, { schema })
 
 // Query patterns
-const all = await db.select().from(schema.users).all()           // Array<User>
-const one = await db.select().from(schema.users).where(eq(schema.users.id, id)).get()  // User | undefined
+const all = await db.select().from(schema.users).all() // Array<User>
+const one = await db.select().from(schema.users).where(eq(schema.users.id, id)).get() // User | undefined
 const count = await db.select({ count: sql`count(*)` }).from(schema.users).get()
 ```
 

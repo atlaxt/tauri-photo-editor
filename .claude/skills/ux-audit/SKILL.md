@@ -134,37 +134,37 @@ On each page, inject JavaScript via the browser tool to programmatically detect 
 
 ```javascript
 // Detect elements overflowing their parent
-document.querySelectorAll('*').forEach(el => {
-  const r = el.getBoundingClientRect();
-  const p = el.parentElement?.getBoundingClientRect();
+document.querySelectorAll('*').forEach((el) => {
+  const r = el.getBoundingClientRect()
+  const p = el.parentElement?.getBoundingClientRect()
   if (p && (r.left < p.left - 1 || r.right > p.right + 1)) {
-    console.warn('OVERFLOW:', el.tagName, el.className, 'extends beyond parent');
+    console.warn('OVERFLOW:', el.tagName, el.className, 'extends beyond parent')
   }
-});
+})
 
 // Detect text clipped by containers
-document.querySelectorAll('h1,h2,h3,h4,p,span,a,button,label').forEach(el => {
+document.querySelectorAll('h1,h2,h3,h4,p,span,a,button,label').forEach((el) => {
   if (el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2) {
-    console.warn('CLIPPED:', el.tagName, el.textContent?.slice(0,50));
+    console.warn('CLIPPED:', el.tagName, el.textContent?.slice(0, 50))
   }
-});
+})
 
 // Detect elements with zero or negative visibility
-document.querySelectorAll('*').forEach(el => {
-  const s = getComputedStyle(el);
-  const r = el.getBoundingClientRect();
+document.querySelectorAll('*').forEach((el) => {
+  const s = getComputedStyle(el)
+  const r = el.getBoundingClientRect()
   if (r.width > 0 && r.height > 0 && r.left + r.width < 0) {
-    console.warn('OFF-SCREEN LEFT:', el.tagName, el.className);
+    console.warn('OFF-SCREEN LEFT:', el.tagName, el.className)
   }
-});
+})
 
 // Detect low contrast text (rough check)
-document.querySelectorAll('h1,h2,h3,p,span,a,li,td,th,label,button').forEach(el => {
-  const s = getComputedStyle(el);
+document.querySelectorAll('h1,h2,h3,p,span,a,li,td,th,label,button').forEach((el) => {
+  const s = getComputedStyle(el)
   if (s.color === s.backgroundColor || s.opacity === '0') {
-    console.warn('INVISIBLE TEXT:', el.tagName, el.textContent?.slice(0,30));
+    console.warn('INVISIBLE TEXT:', el.tagName, el.textContent?.slice(0, 30))
   }
-});
+})
 ```
 
 Read console output after injection. Each warning is a potential finding to screenshot and investigate.
@@ -200,7 +200,7 @@ Monitor network responses throughout the entire audit session. If using Playwrig
 ```javascript
 // Inject into page or use Playwright's page.on('response')
 // Collect all non-2xx API responses
-const networkErrors = [];
+const networkErrors = []
 // After each page navigation, check for failed fetch/XHR requests
 // by reading the browser's network log or console output
 ```

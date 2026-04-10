@@ -59,7 +59,7 @@ Google Chat does NOT use standard Markdown.
 ### Text Message Example
 
 ```typescript
-await sendText(webhookUrl, '*Build Complete*\n\nBranch: `main`\nStatus: Passed\n<https://ci.example.com/123|View Build>');
+await sendText(webhookUrl, '*Build Complete*\n\nBranch: `main`\nStatus: Passed\n<https://ci.example.com/123|View Build>')
 ```
 
 ## cardsV2 Structure
@@ -75,17 +75,17 @@ const message = {
         title: 'Card Title',
         subtitle: 'Optional subtitle',
         imageUrl: 'https://example.com/icon.png',
-        imageType: 'CIRCLE'  // or 'SQUARE'
+        imageType: 'CIRCLE' // or 'SQUARE'
       },
       sections: [{
-        header: 'Section Title',  // optional
+        header: 'Section Title', // optional
         widgets: [
           // widgets go here
         ]
       }]
     }
   }]
-};
+}
 ```
 
 ## Widget Reference
@@ -313,13 +313,13 @@ Thread messages together using `threadKey`:
 // First message — creates thread
 const response = await sendCard(webhookUrl, card, {
   threadKey: 'deploy-2026-02-16'
-});
+})
 
 // Reply to thread — append &messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD
-const threadUrl = `${webhookUrl}&messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD`;
+const threadUrl = `${webhookUrl}&messageReplyOption=REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD`
 await sendCard(threadUrl, replyCard, {
   threadKey: 'deploy-2026-02-16'
-});
+})
 ```
 
 The `threadKey` is a client-assigned string. Use consistent keys for related messages (e.g., `deploy-{date}`, `alert-{id}`).
@@ -329,8 +329,8 @@ The `threadKey` is a client-assigned string. Use consistent keys for related mes
 ### Notification Card
 
 ```typescript
-import { buildCard, sendCard } from './assets/card-builder';
-import { sendWebhook } from './assets/webhook-sender';
+import { buildCard, sendCard } from './assets/card-builder'
+import { sendWebhook } from './assets/webhook-sender'
 
 const card = buildCard({
   cardId: 'deploy-notification',
@@ -345,7 +345,7 @@ const card = buildCard({
       { buttonList: { buttons: [{ text: 'View Deployment', onClick: { openLink: { url: 'https://dash.example.com' } } }] } }
     ]
   }]
-});
+})
 ```
 
 ### Digest Card (Weekly Summary)
@@ -370,7 +370,7 @@ const digest = buildCard({
       }]
     }
   ]
-});
+})
 ```
 
 ## Error Prevention

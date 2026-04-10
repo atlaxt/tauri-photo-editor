@@ -10,8 +10,7 @@
  *   npx tsx scripts/{tool-name}.ts {example}
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs'
 
 // ============================================================================
 // Configuration
@@ -23,7 +22,7 @@ interface Config {
 
 function loadConfig(): Config {
   // Load from env, config file, etc.
-  return {};
+  return {}
 }
 
 // ============================================================================
@@ -32,43 +31,43 @@ function loadConfig(): Config {
 
 interface Args {
   // Define expected arguments
-  input?: string;
-  output?: string;
-  format: 'json' | 'csv' | 'table';
-  verbose: boolean;
-  help: boolean;
+  input?: string
+  output?: string
+  format: 'json' | 'csv' | 'table'
+  verbose: boolean
+  help: boolean
 }
 
 function parseArgs(): Args {
-  const args = process.argv.slice(2);
+  const args = process.argv.slice(2)
   const parsed: Args = {
     format: 'json',
     verbose: false,
     help: false,
-  };
+  }
 
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--input':
-        parsed.input = args[++i];
-        break;
+        parsed.input = args[++i]
+        break
       case '--output':
-        parsed.output = args[++i];
-        break;
+        parsed.output = args[++i]
+        break
       case '--format':
-        parsed.format = args[++i] as Args['format'];
-        break;
+        parsed.format = args[++i] as Args['format']
+        break
       case '--verbose':
-        parsed.verbose = true;
-        break;
+        parsed.verbose = true
+        break
       case '--help':
       case '-h':
-        parsed.help = true;
-        break;
+        parsed.help = true
+        break
     }
   }
 
-  return parsed;
+  return parsed
 }
 
 function showHelp(): void {
@@ -88,7 +87,7 @@ Options:
 Examples:
   npx tsx scripts/{tool-name}.ts example-arg
   npx tsx scripts/{tool-name}.ts --input data.csv --output results.json
-`);
+`)
 }
 
 // ============================================================================
@@ -96,15 +95,15 @@ Examples:
 // ============================================================================
 
 interface Result {
-  success: boolean;
-  data?: unknown;
-  error?: string;
+  success: boolean
+  data?: unknown
+  error?: string
 }
 
 async function execute(/* params */): Promise<Result> {
   // Implement core logic here
   // This could also import from a shared module
-  return { success: true, data: {} };
+  return { success: true, data: {} }
 }
 
 // ============================================================================
@@ -114,13 +113,13 @@ async function execute(/* params */): Promise<Result> {
 function formatOutput(result: Result, format: Args['format']): string {
   switch (format) {
     case 'json':
-      return JSON.stringify(result, null, 2);
+      return JSON.stringify(result, null, 2)
     case 'csv':
       // Implement CSV formatting
-      return '';
+      return ''
     case 'table':
       // Implement table formatting
-      return '';
+      return ''
   }
 }
 
@@ -129,31 +128,33 @@ function formatOutput(result: Result, format: Args['format']): string {
 // ============================================================================
 
 async function main(): Promise<void> {
-  const args = parseArgs();
+  const args = parseArgs()
 
   if (args.help) {
-    showHelp();
-    process.exit(0);
+    showHelp()
+    process.exit(0)
   }
 
   try {
-    const result = await execute(/* pass args */);
-    const output = formatOutput(result, args.format);
+    const result = await execute(/* pass args */)
+    const output = formatOutput(result, args.format)
 
     if (args.output) {
-      fs.writeFileSync(args.output, output);
+      fs.writeFileSync(args.output, output)
       if (args.verbose) {
-        console.error(`Written to ${args.output}`);
+        console.error(`Written to ${args.output}`)
       }
-    } else {
-      console.log(output);
+    }
+    else {
+      console.log(output)
     }
 
-    process.exit(result.success ? 0 : 1);
-  } catch (error: any) {
-    console.error(JSON.stringify({ success: false, error: error.message }));
-    process.exit(1);
+    process.exit(result.success ? 0 : 1)
+  }
+  catch (error: any) {
+    console.error(JSON.stringify({ success: false, error: error.message }))
+    process.exit(1)
   }
 }
 
-main();
+main()

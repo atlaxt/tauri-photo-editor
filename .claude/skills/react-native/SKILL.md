@@ -45,13 +45,13 @@ Every FlatList should have:
 ```tsx
 <FlatList
   data={items}
-  keyExtractor={(item) => item.id}
-  renderItem={renderItem}           // Memoised component
-  getItemLayout={getItemLayout}     // If items are fixed height
-  initialNumToRender={10}           // Don't render 100 items on mount
-  maxToRenderPerBatch={10}          // Batch size for off-screen rendering
-  windowSize={5}                    // How many screens to keep in memory
-  removeClippedSubviews={true}      // Unmount off-screen items (Android)
+  keyExtractor={item => item.id}
+  renderItem={renderItem} // Memoised component
+  getItemLayout={getItemLayout} // If items are fixed height
+  initialNumToRender={10} // Don't render 100 items on mount
+  maxToRenderPerBatch={10} // Batch size for off-screen rendering
+  windowSize={5} // How many screens to keep in memory
+  removeClippedSubviews={true} // Unmount off-screen items (Android)
 />
 ```
 
@@ -70,19 +70,19 @@ Native animations run on the UI thread. JS animations block the JS thread and ca
 ### Reanimated Basics
 
 ```tsx
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 
 function AnimatedBox() {
-  const offset = useSharedValue(0);
+  const offset = useSharedValue(0)
   const style = useAnimatedStyle(() => ({
     transform: [{ translateX: withSpring(offset.value) }],
-  }));
+  }))
 
   return (
     <GestureDetector gesture={panGesture}>
       <Animated.View style={[styles.box, style]} />
     </GestureDetector>
-  );
+  )
 }
 ```
 

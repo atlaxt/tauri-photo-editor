@@ -19,7 +19,10 @@ const editor = useEditorStore()
 
 const thumbUrl = ref<string | null>(null)
 watch(() => editor.filePath, async (path) => {
-  if (!path) { thumbUrl.value = null; return }
+  if (!path) {
+    thumbUrl.value = null
+    return
+  }
   try {
     const { convertFileSrc } = await import('@tauri-apps/api/core')
     thumbUrl.value = convertFileSrc(path)
@@ -40,23 +43,33 @@ function isCollapsed(key: string) {
   return collapsed.value.has(key) && !pinned.value.has(key)
 }
 function toggleCollapse(key: string) {
-  if (collapsed.value.has(key)) collapsed.value.delete(key)
+  if (collapsed.value.has(key))
+    collapsed.value.delete(key)
   else collapsed.value.add(key)
 }
 function togglePin(key: string) {
-  if (pinned.value.has(key)) pinned.value.delete(key)
-  else { pinned.value.add(key); collapsed.value.delete(key) }
+  if (pinned.value.has(key)) {
+    pinned.value.delete(key)
+  }
+  else {
+    pinned.value.add(key)
+    collapsed.value.delete(key)
+  }
 }
 
 // ─── Histogram tab ──────────────────────────────────────────────────────────
 
-interface HistogramData { r: number[]; g: number[]; b: number[]; lum: number[] }
+interface HistogramData { r: number[], g: number[], b: number[], lum: number[] }
 const histogramData = ref<HistogramData | null>(null)
 const histogramLoading = ref(false)
 
 watch(() => props.imageUrl, async (url) => {
-  if (!url) { histogramData.value = null; return }
-  if (props.tabId === 'histogram') computeHistogram(url)
+  if (!url) {
+    histogramData.value = null
+    return
+  }
+  if (props.tabId === 'histogram')
+    computeHistogram(url)
 })
 
 watch(() => props.tabId, (tab) => {
@@ -85,7 +98,9 @@ async function computeHistogram(url: string) {
         const b = new Array(bins).fill(0)
         const lum = new Array(bins).fill(0)
         for (let i = 0; i < data.length; i += 4) {
-          const rv = data[i], gv = data[i + 1], bv = data[i + 2]
+          const rv = data[i]
+          const gv = data[i + 1]
+          const bv = data[i + 2]
           r[Math.floor(rv / 256 * bins)]++
           g[Math.floor(gv / 256 * bins)]++
           b[Math.floor(bv / 256 * bins)]++
@@ -108,10 +123,14 @@ async function computeHistogram(url: string) {
 // ─── History ────────────────────────────────────────────────────────────────
 
 const opLabels: Record<string, string> = {
-  brightness: 'editor.tools.adjust', contrast: 'editor.tools.adjust',
-  saturation: 'editor.tools.adjust', sharpen: 'editor.tools.sharpen',
-  rotate: 'editor.tools.rotate', flip_horizontal: 'editor.params.flipH',
-  flip_vertical: 'editor.params.flipV', grayscale: 'editor.tools.grayscale',
+  brightness: 'editor.tools.adjust',
+  contrast: 'editor.tools.adjust',
+  saturation: 'editor.tools.adjust',
+  sharpen: 'editor.tools.sharpen',
+  rotate: 'editor.tools.rotate',
+  flip_horizontal: 'editor.params.flipH',
+  flip_vertical: 'editor.params.flipV',
+  grayscale: 'editor.tools.grayscale',
   resize: 'editor.tools.resize',
 }
 </script>
@@ -120,7 +139,9 @@ const opLabels: Record<string, string> = {
   <!-- ── KATMANLAR ── -->
   <template v-if="tabId === 'layers'">
     <div v-if="editor.layers.length === 0" class="flex items-center justify-center h-full">
-      <p class="text-xs text-muted opacity-30">—</p>
+      <p class="text-xs text-muted opacity-30">
+        —
+      </p>
     </div>
     <div
       v-for="layer in editor.layers"
@@ -154,29 +175,39 @@ const opLabels: Record<string, string> = {
         </button>
         <template #content>
           <div class="p-3 space-y-4">
-            <p class="text-xs font-semibold">{{ t('editor.layers.settings') }}</p>
+            <p class="text-xs font-semibold">
+              {{ t('editor.layers.settings') }}
+            </p>
             <div class="space-y-1.5">
-              <p class="text-xs text-muted">{{ t('editor.layers.name') }}</p>
-              <UInput :model-value="layer.name" size="xs"
-                @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })" />
+              <p class="text-xs text-muted">
+                {{ t('editor.layers.name') }}
+              </p>
+              <UInput
+                :model-value="layer.name" size="xs"
+                @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
+              />
             </div>
             <div class="space-y-1.5">
               <div class="flex justify-between">
                 <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
                 <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
               </div>
-              <input :value="layer.opacity" type="range" min="0" max="100"
+              <input
+                :value="layer.opacity" type="range" min="0" max="100"
                 class="w-full h-1 accent-primary cursor-pointer"
-                @input="editor.updateLayer(layer.id, { opacity: Number(($event.target as HTMLInputElement).value) })">
+                @input="editor.updateLayer(layer.id, { opacity: Number(($event.target as HTMLInputElement).value) })"
+              >
             </div>
             <div class="space-y-1.5">
               <div class="flex justify-between">
                 <span class="text-xs text-muted">{{ t('editor.layers.rotation') }}</span>
                 <span class="text-xs tabular-nums text-muted">{{ layer.rotation }}°</span>
               </div>
-              <input :value="layer.rotation" type="range" min="-180" max="180"
+              <input
+                :value="layer.rotation" type="range" min="-180" max="180"
                 class="w-full h-1 accent-primary cursor-pointer"
-                @input="editor.updateLayer(layer.id, { rotation: Number(($event.target as HTMLInputElement).value) })">
+                @input="editor.updateLayer(layer.id, { rotation: Number(($event.target as HTMLInputElement).value) })"
+              >
             </div>
           </div>
         </template>
@@ -187,7 +218,9 @@ const opLabels: Record<string, string> = {
   <!-- ── GEÇMİŞ ── -->
   <template v-else-if="tabId === 'history'">
     <div v-if="editor.history.length === 0" class="flex items-center justify-center h-full">
-      <p class="text-xs text-muted opacity-30">—</p>
+      <p class="text-xs text-muted opacity-30">
+        —
+      </p>
     </div>
     <button
       v-for="(entry, i) in editor.history"
@@ -212,7 +245,9 @@ const opLabels: Record<string, string> = {
   <!-- ── BİLGİ ── -->
   <template v-else-if="tabId === 'info'">
     <div v-if="editor.layers.length === 0" class="flex items-center justify-center h-full">
-      <p class="text-xs text-muted opacity-30">{{ t('editor.panel.noFile') }}</p>
+      <p class="text-xs text-muted opacity-30">
+        {{ t('editor.panel.noFile') }}
+      </p>
     </div>
     <div v-for="(layer, idx) in editor.layers" :key="layer.id" class="border-b border-default last:border-b-0">
       <button
@@ -253,7 +288,9 @@ const opLabels: Record<string, string> = {
   <!-- ── HİSTOGRAM ── -->
   <template v-else-if="tabId === 'histogram'">
     <div v-if="!editor.filePath" class="flex items-center justify-center h-full">
-      <p class="text-xs text-muted opacity-30">{{ t('editor.panel.noFile') }}</p>
+      <p class="text-xs text-muted opacity-30">
+        {{ t('editor.panel.noFile') }}
+      </p>
     </div>
     <div v-else-if="histogramLoading" class="flex items-center justify-center h-full">
       <UIcon name="i-ph-spinner" class="size-5 text-muted animate-spin opacity-40" />
@@ -262,13 +299,15 @@ const opLabels: Record<string, string> = {
       <div
         v-for="{ key, color, labelKey } in [
           { key: 'lum', color: 'bg-muted/50', labelKey: 'editor.panel.histogramLum' },
-          { key: 'r',   color: 'bg-red-500/70', labelKey: 'editor.panel.histogramR' },
-          { key: 'g',   color: 'bg-green-500/70', labelKey: 'editor.panel.histogramG' },
-          { key: 'b',   color: 'bg-blue-500/70', labelKey: 'editor.panel.histogramB' },
+          { key: 'r', color: 'bg-red-500/70', labelKey: 'editor.panel.histogramR' },
+          { key: 'g', color: 'bg-green-500/70', labelKey: 'editor.panel.histogramG' },
+          { key: 'b', color: 'bg-blue-500/70', labelKey: 'editor.panel.histogramB' },
         ]"
         :key="key"
       >
-        <p class="text-[10px] text-muted mb-1">{{ t(labelKey) }}</p>
+        <p class="text-[10px] text-muted mb-1">
+          {{ t(labelKey) }}
+        </p>
         <div class="flex items-end gap-px h-8">
           <div
             v-for="(val, i) in (histogramData as any)[key]"

@@ -1,3 +1,5 @@
+import type { Env } from '../types'
+import { zValidator } from '@hono/zod-validator'
 /**
  * Route Template — [Resource Name]
  *
@@ -5,9 +7,7 @@
  * Includes: list, get, create, update, delete with Zod validation.
  */
 import { Hono } from 'hono'
-import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { Env } from '../types'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -29,7 +29,8 @@ app.get('/', async (c) => {
 app.get('/:id', async (c) => {
   const id = c.req.param('id')
   const item = await c.env.DB.prepare('SELECT * FROM [table] WHERE id = ?').bind(id).first()
-  if (!item) return c.json({ error: 'Not found' }, 404)
+  if (!item)
+    return c.json({ error: 'Not found' }, 404)
   return c.json({ item })
 })
 

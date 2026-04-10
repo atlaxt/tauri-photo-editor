@@ -126,7 +126,7 @@ function EmptyState({ icon, title, description, actionLabel, onAction }) {
       <p className="text-muted-foreground mb-6 max-w-md">{description}</p>
       <Button onClick={onAction}>{actionLabel}</Button>
     </div>
-  );
+  )
 }
 ```
 
@@ -156,7 +156,7 @@ function WelcomeBanner({ onDismiss }) {
       </ol>
       <Button variant="outline" size="sm" onClick={onDismiss}>Got it</Button>
     </div>
-  );
+  )
 }
 ```
 
@@ -169,7 +169,12 @@ function OnboardingChecklist({ steps, completedSteps }) {
       <CardHeader>
         <CardTitle>Getting Started</CardTitle>
         <p className="text-sm text-muted-foreground">
-          {completedSteps.length} of {steps.length} complete
+          {completedSteps.length}
+          {' '}
+          of
+          {steps.length}
+          {' '}
+          complete
         </p>
       </CardHeader>
       <CardContent>
@@ -181,7 +186,7 @@ function OnboardingChecklist({ steps, completedSteps }) {
         ))}
       </CardContent>
     </Card>
-  );
+  )
 }
 ```
 
@@ -206,7 +211,7 @@ const tourSteps = [
     content: 'Use search to find anything fast. Try Cmd+K for the quick switcher.',
     placement: 'bottom',
   },
-];
+]
 ```
 
 Also generate the `data-tour` attributes that need to be added to existing components.
@@ -223,8 +228,10 @@ For each complex UI element, generate tooltip copy:
       <InfoIcon className="h-4 w-4 text-muted-foreground" />
     </TooltipTrigger>
     <TooltipContent>
-      <p>Significance shows how important this client is to your business.
-      5 = critical (your biggest client), 1 = minimal (one-off interaction).</p>
+      <p>
+        Significance shows how important this client is to your business.
+        5 = critical (your biggest client), 1 = minimal (one-off interaction).
+      </p>
     </TooltipContent>
   </Tooltip>
 </TooltipProvider>
@@ -241,16 +248,17 @@ Generate inline hints for features users might not discover:
 function ContextualHint({ id, children }) {
   const [dismissed, setDismissed] = useState(
     () => localStorage.getItem(`hint-${id}`) === 'dismissed'
-  );
-  if (dismissed) return null;
+  )
+  if (dismissed)
+    return null
   return (
     <div className="text-sm text-muted-foreground bg-muted/50 rounded-md px-3 py-2 mb-3 flex items-center justify-between">
       <span>{children}</span>
-      <button onClick={() => { localStorage.setItem(`hint-${id}`, 'dismissed'); setDismissed(true); }}>
+      <button onClick={() => { localStorage.setItem(`hint-${id}`, 'dismissed'); setDismissed(true) }}>
         <XIcon className="h-3 w-3" />
       </button>
     </div>
-  );
+  )
 }
 
 // Usage

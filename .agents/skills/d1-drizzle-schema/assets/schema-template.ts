@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 /**
  * D1 Drizzle Schema Template
  *
@@ -5,8 +6,7 @@
  * - UUID primary key, text with enums, boolean as integer,
  *   timestamp as integer, typed JSON, foreign keys, indexes
  */
-import { sqliteTable, text, integer, real, index, uniqueIndex } from 'drizzle-orm/sqlite-core'
-import { relations } from 'drizzle-orm'
+import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 // --- Users ---
 
@@ -19,7 +19,7 @@ export const users = sqliteTable('users', {
   preferences: text('preferences', { mode: 'json' }).$type<Record<string, unknown>>(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-}, (table) => ({
+}, table => ({
   emailIdx: uniqueIndex('users_email_idx').on(table.email),
 }))
 
@@ -38,7 +38,7 @@ export const posts = sqliteTable('posts', {
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
   publishedAt: integer('published_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-}, (table) => ({
+}, table => ({
   authorIdx: index('posts_author_idx').on(table.authorId),
   statusIdx: index('posts_status_idx').on(table.status),
 }))
