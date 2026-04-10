@@ -60,7 +60,9 @@
     },
     "canvas": {
       "noFile": "Dosya açılmadı",
-      "noFileHint": "Ana ekrandan bir resim açın"
+      "noFileHint": "Ana ekrandan bir resim açın",
+      "emptyProject": "Boş tuval hazır",
+      "resizeHint": "Bu araç proje tuval boyutunu değiştirir."
     },
     "unsavedWarning": "Kaydedilmemiş değişiklikler var. Çıkmak istiyor musunuz?",
     "statusBar": {
@@ -86,6 +88,13 @@
     "dropZone": {
       "title": "Buraya sürükleyin",
       "subtitle": "Resim editörde açılacak"
+    },
+    "newProject": {
+      "title": "Yeni Proje",
+      "description": "Tuval boyutunu belirleyin",
+      "create": "Oluştur",
+      "cancel": "İptal",
+      "invalid": "Genişlik ve yükseklik 1 veya daha büyük olmalı"
     },
     "imageFilterLabel": "Resimler"
   }

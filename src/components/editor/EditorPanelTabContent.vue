@@ -146,12 +146,15 @@ const opLabels: Record<string, string> = {
     <div
       v-for="layer in editor.layers"
       :key="layer.id"
-      class="group relative flex items-center gap-2 px-2 hover:bg-elevated transition-colors"
+      class="group relative flex items-center gap-2 px-2 transition-colors cursor-pointer"
+      :class="editor.selectedLayerId === layer.id ? 'bg-primary/10' : 'hover:bg-elevated'"
       style="height: 44px;"
+      @click="editor.selectLayer(layer.id)"
     >
       <button
         class="shrink-0 flex items-center justify-center w-5 h-5 rounded transition-colors"
         :class="layer.visible ? 'text-muted/40 hover:text-muted' : 'text-primary'"
+        @click.stop
         @click="editor.updateLayer(layer.id, { visible: !layer.visible })"
       >
         <UIcon :name="layer.visible ? 'i-ph-eye' : 'i-ph-eye-slash'" class="size-3" />
@@ -184,6 +187,7 @@ const opLabels: Record<string, string> = {
               </p>
               <UInput
                 :model-value="layer.name" size="xs"
+                @click.stop
                 @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
               />
             </div>
@@ -195,6 +199,7 @@ const opLabels: Record<string, string> = {
               <input
                 :value="layer.opacity" type="range" min="0" max="100"
                 class="w-full h-1 accent-primary cursor-pointer"
+                @click.stop
                 @input="editor.updateLayer(layer.id, { opacity: Number(($event.target as HTMLInputElement).value) })"
               >
             </div>
@@ -206,6 +211,7 @@ const opLabels: Record<string, string> = {
               <input
                 :value="layer.rotation" type="range" min="-180" max="180"
                 class="w-full h-1 accent-primary cursor-pointer"
+                @click.stop
                 @input="editor.updateLayer(layer.id, { rotation: Number(($event.target as HTMLInputElement).value) })"
               >
             </div>
@@ -272,7 +278,7 @@ const opLabels: Record<string, string> = {
         <div class="grid grid-cols-2 gap-x-2 gap-y-1.5">
           <span class="text-[11px] text-muted">{{ t('editor.panel.infoDimensions') }}</span>
           <span class="text-[11px] tabular-nums text-right">
-            {{ (idx === 0 && imageWidth && imageHeight) ? `${imageWidth} × ${imageHeight}` : t('editor.panel.infoUnknown') }}
+            {{ `${layer.width} × ${layer.height}` }}
           </span>
           <span class="text-[11px] text-muted">{{ t('editor.panel.infoFormat') }}</span>
           <span class="text-[11px] text-right">{{ (idx === 0 && fileFormat) ? fileFormat : t('editor.panel.infoUnknown') }}</span>

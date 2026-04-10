@@ -25,6 +25,11 @@ const imageHeight = ref<number | null>(null)
 const zoomLevel = ref<number | null>(null)
 const canvasImageUrl = ref<string | null>(null)
 
+watch(() => [editor.canvasWidth, editor.canvasHeight], ([w, h]) => {
+  imageWidth.value = w
+  imageHeight.value = h
+}, { immediate: true })
+
 watch(() => editor.filePath, async (path) => {
   if (!path) {
     canvasImageUrl.value = null
@@ -42,6 +47,10 @@ watch(() => editor.filePath, async (path) => {
 function handleApply(op: Operation) {
   editor.addOperation(op, op.op)
   pendingOp.value = null
+}
+
+function handleCanvasResize(width: number, height: number) {
+  editor.setCanvasSize(width, height)
 }
 
 function handleBack() {
@@ -123,6 +132,7 @@ async function handleSaveAs() {
           v-model:pending-op="pendingOp"
           :tool="activeTool"
           @apply="handleApply"
+          @canvas-resize="handleCanvasResize"
         />
       </Transition>
 

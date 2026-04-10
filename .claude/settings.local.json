@@ -5,7 +5,8 @@
       "Bash(echo \"exit: $?\")",
       "Bash(pnpm add:*)",
       "Bash(grep -v \"^$\")",
-      "Bash(cargo check:*)"
+      "Bash(cargo check:*)",
+      "Bash(npx vue-tsc:*)"
     ]
   }
 }

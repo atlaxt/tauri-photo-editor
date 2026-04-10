@@ -30,11 +30,18 @@ export interface Layer {
   opacity: number // 0–100
   visible: boolean
   rotation: number // derece
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 export const useEditorStore = defineStore('editor', () => {
   const filePath = ref<string | null>(null)
   const objectUrl = ref<string | null>(null)
+  const canvasWidth = ref<number | null>(null)
+  const canvasHeight = ref<number | null>(null)
+  const selectedLayerId = ref<string | null>(null)
   const fileName = computed(() =>
     filePath.value ? filePath.value.split(/[\\/]/).pop() ?? null : null,
   )
@@ -49,6 +56,26 @@ export const useEditorStore = defineStore('editor', () => {
 
   // Katmanlar — Faz 1: tek temel katman
   const layers = ref<Layer[]>([])
+  const selectedLayer = computed(() =>
+    layers.value.find(l => l.id === selectedLayerId.value) ?? null,
+  )
+  const hasProject = computed(() =>
+    !!(canvasWidth.value && canvasHeight.value),
+  )
+
+  function createBaseLayer(name: string): Layer {
+    return {
+      id: 'base',
+      name,
+      opacity: 100,
+      visible: true,
+      rotation: 0,
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    }
+  }
 
   function revokeObjectUrl() {
     if (objectUrl.value) {
@@ -70,13 +97,45 @@ export const useEditorStore = defineStore('editor', () => {
     historyIndex.value = 0
     const rawName = baseName ?? (path.split(/[\\/]/).pop() ?? 'Katman 1')
     const nameWithoutExt = rawName.replace(/\.[^.]+$/, '')
-    layers.value = [{
-      id: 'base',
-      name: nameWithoutExt,
-      opacity: 100,
-      visible: true,
-      rotation: 0,
-    }]
+    layers.value = [createBaseLayer(nameWithoutExt)]
+    selectedLayerId.value = 'base'
+    canvasWidth.value = null
+    canvasHeight.value = null
+  }
+
+  function createBlankProject(width: number, height: number) {
+    revokeObjectUrl()
+    filePath.value = null
+    operations.value = []
+    history.value = [{ operations: [], label: 'opened' }]
+    historyIndex.value = 0
+    canvasWidth.value = Math.max(1, Math.round(width))
+    canvasHeight.value = Math.max(1, Math.round(height))
+    layers.value = []
+    selectedLayerId.value = null
+  }
+
+  function initBaseLayerFromImage(width: number, height: number) {
+    const layer = layers.value.find(l => l.id === 'base')
+    if (!layer)
+      return
+    layer.width = Math.max(1, Math.round(width))
+    layer.height = Math.max(1, Math.round(height))
+    layer.x = 0
+    layer.y = 0
+    if (!canvasWidth.value || !canvasHeight.value) {
+      canvasWidth.value = layer.width
+      canvasHeight.value = layer.height
+    }
+  }
+
+  function setCanvasSize(width: number, height: number) {
+    canvasWidth.value = Math.max(1, Math.round(width))
+    canvasHeight.value = Math.max(1, Math.round(height))
+  }
+
+  function selectLayer(id: string | null) {
+    selectedLayerId.value = id
   }
 
   function updateLayer(id: string, patch: Partial<Omit<Layer, 'id'>>) {
@@ -116,22 +175,34 @@ export const useEditorStore = defineStore('editor', () => {
   function reset() {
     revokeObjectUrl()
     filePath.value = null
+    canvasWidth.value = null
+    canvasHeight.value = null
     operations.value = []
     history.value = []
     historyIndex.value = -1
     layers.value = []
+    selectedLayerId.value = null
   }
 
   return {
     filePath,
     fileName,
+    canvasWidth,
+    canvasHeight,
     operations,
     history,
     historyIndex,
     canUndo,
     canRedo,
     layers,
+    selectedLayer,
+    selectedLayerId,
+    hasProject,
     openFile,
+    createBlankProject,
+    initBaseLayerFromImage,
+    setCanvasSize,
+    selectLayer,
     updateLayer,
     addOperation,
     undo,

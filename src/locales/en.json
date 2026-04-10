@@ -60,7 +60,9 @@
     },
     "canvas": {
       "noFile": "No file open",
-      "noFileHint": "Open an image from the home screen"
+      "noFileHint": "Open an image from the home screen",
+      "emptyProject": "Blank canvas is ready",
+      "resizeHint": "This tool changes the project canvas size."
     },
     "unsavedWarning": "You have unsaved changes. Are you sure you want to leave?",
     "statusBar": {
@@ -86,6 +88,13 @@
     "dropZone": {
       "title": "Drop here",
       "subtitle": "Image will open in editor"
+    },
+    "newProject": {
+      "title": "New Project",
+      "description": "Set the canvas dimensions",
+      "create": "Create",
+      "cancel": "Cancel",
+      "invalid": "Width and height must be 1 or greater"
     },
     "imageFilterLabel": "Images"
   }

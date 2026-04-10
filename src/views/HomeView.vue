@@ -13,6 +13,10 @@ const isTauriRuntime = '__TAURI_INTERNALS__' in window
 const drafts: { id: string, name: string, path: string, updatedAt: string }[] = []
 
 const isDragging = ref(false)
+const showNewProjectModal = ref(false)
+const newProjectWidth = ref(1920)
+const newProjectHeight = ref(1080)
+const newProjectError = ref<string | null>(null)
 let unlistenDragDrop: (() => void) | null = null
 
 onMounted(async () => {
@@ -117,6 +121,19 @@ async function openFile() {
 }
 
 function newFile() {
+  newProjectError.value = null
+  newProjectWidth.value = 1920
+  newProjectHeight.value = 1080
+  showNewProjectModal.value = true
+}
+
+function confirmNewProject() {
+  if (newProjectWidth.value < 1 || newProjectHeight.value < 1) {
+    newProjectError.value = t('home.newProject.invalid')
+    return
+  }
+  editorStore.createBlankProject(newProjectWidth.value, newProjectHeight.value)
+  showNewProjectModal.value = false
   router.push('/editor')
 }
 
@@ -133,6 +150,38 @@ function usePreset() {
     @dragover="onDragOver"
     @drop="onDrop"
   >
+    <UModal v-model:open="showNewProjectModal" :title="$t('home.newProject.title')" :description="$t('home.newProject.description')">
+      <template #body>
+        <div class="space-y-3">
+          <div>
+            <p class="text-xs text-muted mb-1.5">
+              {{ $t('editor.params.width') }}
+            </p>
+            <UInput v-model.number="newProjectWidth" type="number" min="1" size="sm" />
+          </div>
+          <div>
+            <p class="text-xs text-muted mb-1.5">
+              {{ $t('editor.params.height') }}
+            </p>
+            <UInput v-model.number="newProjectHeight" type="number" min="1" size="sm" />
+          </div>
+          <p v-if="newProjectError" class="text-xs text-error">
+            {{ newProjectError }}
+          </p>
+        </div>
+      </template>
+      <template #footer>
+        <div class="w-full flex items-center justify-end gap-2">
+          <UButton color="neutral" variant="soft" @click="showNewProjectModal = false">
+            {{ $t('home.newProject.cancel') }}
+          </UButton>
+          <UButton color="primary" @click="confirmNewProject">
+            {{ $t('home.newProject.create') }}
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+
     <!-- Sürükle overlay -->
     <Transition
       enter-active-class="transition-opacity duration-200"

@@ -3,12 +3,17 @@ import type { Operation, OperationType } from '../../stores/editor'
 import type { ToolId } from './EditorToolIconBar.vue'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useEditorStore } from '../../stores/editor'
 
 const props = defineProps<{ tool: ToolId }>()
 
-const emit = defineEmits<{ apply: [op: Operation] }>()
+const emit = defineEmits<{
+  apply: [op: Operation]
+  canvasResize: [width: number, height: number]
+}>()
 
 const { t } = useI18n()
+const editor = useEditorStore()
 
 const pendingOp = defineModel<Operation | null>('pendingOp', { default: null })
 
@@ -22,8 +27,20 @@ watch(() => props.tool, () => {
   adjust.value = { brightness: 0, contrast: 0, saturation: 0 }
   sharpen.value = { amount: 0 }
   rotate.value = { angle: 0 }
+  resize.value = {
+    width: editor.canvasWidth ?? 0,
+    height: editor.canvasHeight ?? 0,
+    keepAspect: true,
+  }
   pendingOp.value = null
 })
+
+watch(() => [editor.canvasWidth, editor.canvasHeight], ([w, h]) => {
+  if (w && h && props.tool === 'resize') {
+    resize.value.width = w
+    resize.value.height = h
+  }
+}, { immediate: true })
 
 // Canlı önizleme için pendingOp hesapla
 watch([adjust, sharpen, rotate], () => {
@@ -68,9 +85,8 @@ function applyGrayscale() {
 }
 
 function applyResize() {
-  if (resize.value.width > 0 || resize.value.height > 0)
-    emit('apply', { op: 'resize', params: { ...resize.value } })
-  resize.value = { width: 0, height: 0, keepAspect: true }
+  if (resize.value.width > 0 && resize.value.height > 0)
+    emit('canvasResize', resize.value.width, resize.value.height)
 }
 </script>
 
@@ -165,6 +181,9 @@ function applyResize() {
       <!-- Boyutlandır -->
       <template v-else-if="tool === 'resize'">
         <div class="space-y-3">
+          <p class="text-xs text-muted leading-relaxed">
+            {{ t('editor.canvas.resizeHint') }}
+          </p>
           <div>
             <p class="text-xs text-muted mb-1.5">
               {{ t('editor.params.width') }}
