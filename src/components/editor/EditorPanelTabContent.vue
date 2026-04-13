@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Layer } from '../../stores/editor'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { VueDraggableNext } from 'vue-draggable-next'
 import { useI18n } from 'vue-i18n'
 import { useEditorStore } from '../../stores/editor'
 
@@ -16,61 +17,33 @@ const props = defineProps<{
 const { t } = useI18n()
 const editor = useEditorStore()
 
-// ─── Layers (reversed for panel display) ────────────────────────────────────
-const reversedLayers = computed(() => [...editor.layers].reverse())
+// ─── Layers ──────────────────────────────────────────────────────────────────
+// Full list reversed for panel (topmost first, base last).
+// VueDraggableNext gets the full list; :move prevents base from moving.
+const draggableLayers = ref<Layer[]>([])
+let _syncing = false
 
-// ─── Mouse drag-to-reorder ───────────────────────────────────────────────────
-const ITEM_H = 44
-const dragState = ref<{ id: string, startY: number, currentY: number } | null>(null)
-const dropIndex = ref<number | null>(null) // index in reversedLayers where indicator shows
+watch(
+  () => editor.layers,
+  () => {
+    if (!_syncing)
+      draggableLayers.value = [...editor.layers].reverse()
+  },
+  { immediate: true, deep: true },
+)
 
-function onHandleMouseDown(layer: Layer, e: MouseEvent) {
-  if (layer.type === 'base')
-    return
-  e.preventDefault()
-  e.stopPropagation()
-  dragState.value = { id: layer.id, startY: e.clientY, currentY: e.clientY }
-  window.addEventListener('mousemove', onDragMove)
-  window.addEventListener('mouseup', onDragUp)
+function onDragEnd() {
+  _syncing = true
+  // panel order (top=highest z, base=last) → reverse → store order
+  const reversed = draggableLayers.value.slice().reverse()
+  editor.layers.splice(0, editor.layers.length, ...reversed)
+  nextTick(() => {
+    _syncing = false
+  })
 }
 
-const listEl = ref<HTMLElement | null>(null)
-function onDragMove(e: MouseEvent) {
-  if (!dragState.value)
-    return
-  dragState.value.currentY = e.clientY
-  // Find which slot the cursor is over in the list container
-  if (listEl.value) {
-    const rect = listEl.value.getBoundingClientRect()
-    const relY = e.clientY - rect.top
-    const idx = Math.max(0, Math.min(reversedLayers.value.length, Math.round(relY / ITEM_H)))
-    dropIndex.value = idx
-  }
-}
-
-function onDragUp() {
-  window.removeEventListener('mousemove', onDragMove)
-  window.removeEventListener('mouseup', onDragUp)
-  if (dragState.value !== null && dropIndex.value !== null) {
-    const fromIdx = reversedLayers.value.findIndex(l => l.id === dragState.value!.id)
-    if (fromIdx !== -1) {
-      const list = [...reversedLayers.value]
-      const [item] = list.splice(fromIdx, 1)
-      let to = dropIndex.value
-      if (to > fromIdx)
-        to--
-      // Don't allow placing after base (last item)
-      to = Math.min(to, list.length - 1)
-      list.splice(to, 0, item)
-      // Sync back to store: panel order (top=highest z) → reverse for store
-      const withoutBase = list.filter(l => l.type !== 'base')
-      const base = editor.layers.find(l => l.type === 'base')
-      if (base)
-        editor.layers.splice(0, editor.layers.length, base, ...withoutBase.slice().reverse())
-    }
-  }
-  dragState.value = null
-  dropIndex.value = null
+function checkLayerMove(evt: any): boolean {
+  return evt.draggedContext.element.type !== 'base'
 }
 
 function addLayerFromSrc(src: string, name: string) {
@@ -239,37 +212,24 @@ const opLabels: Record<string, string> = {
       </p>
     </div>
 
-    <!-- Layer list with mouse drag-to-reorder -->
-    <div ref="listEl" class="relative">
-      <!-- Drop indicator line -->
+    <!-- Layers — image layers draggable, base layer locked at bottom -->
+    <VueDraggableNext
+      v-model="draggableLayers"
+      :animation="200"
+      :move="checkLayerMove"
+      @end="onDragEnd"
+    >
       <div
-        v-if="dragState && dropIndex !== null"
-        class="absolute inset-x-0 h-0.5 bg-primary pointer-events-none z-20"
-        :style="{ top: `${dropIndex * ITEM_H}px` }"
-      />
-
-      <div
-        v-for="layer in reversedLayers"
+        v-for="layer in draggableLayers"
         :key="layer.id"
-        class="group relative flex items-center gap-2 px-2 transition-colors cursor-pointer select-none"
+        class="group flex items-center gap-2 px-2 transition-colors select-none"
         :class="[
           editor.selectedLayerId === layer.id ? 'bg-primary/10' : 'hover:bg-elevated',
-          dragState?.id === layer.id ? 'opacity-40' : '',
+          layer.type !== 'base' ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
         ]"
         style="height:44px;"
         @click="editor.selectLayer(layer.id)"
       >
-        <!-- Drag handle -->
-        <span
-          v-if="layer.type !== 'base'"
-          class="flex items-center justify-center size-4 shrink-0 text-muted opacity-0 group-hover:opacity-40 transition-opacity"
-          style="cursor:grab;"
-          @mousedown.stop.prevent="onHandleMouseDown(layer, $event)"
-        >
-          <UIcon name="i-ph-dots-six-vertical" class="size-3 pointer-events-none" />
-        </span>
-        <span v-else class="size-4 shrink-0" />
-
         <!-- Visibility toggle -->
         <UButton
           size="xs"
@@ -282,7 +242,7 @@ const opLabels: Record<string, string> = {
 
         <!-- Thumbnail -->
         <div
-          class="size-8 rounded shrink-0 overflow-hidden ring-1 ring-inset ring-black/10 dark:ring-white/10 transition-opacity"
+          class="size-8 rounded shrink-0 overflow-hidden ring-1 ring-inset ring-black/10 dark:ring-white/10"
           :class="layer.visible ? '' : 'opacity-30'"
         >
           <img
@@ -300,14 +260,10 @@ const opLabels: Record<string, string> = {
           </div>
         </div>
 
-        <!-- Layer info -->
+        <!-- Name + opacity -->
         <div class="flex-1 min-w-0 flex flex-col justify-center gap-px" :class="layer.visible ? '' : 'opacity-40'">
           <div class="flex items-center gap-1">
-            <UIcon
-              v-if="layer.type === 'base'"
-              name="i-ph-lock"
-              class="size-2.5 text-muted opacity-50 shrink-0"
-            />
+            <UIcon v-if="layer.type === 'base'" name="i-ph-lock" class="size-2.5 text-muted opacity-50 shrink-0" />
             <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
           </div>
           <span class="text-[10px] text-muted tabular-nums leading-none">{{ layer.opacity }}%</span>
@@ -316,10 +272,7 @@ const opLabels: Record<string, string> = {
         <!-- Settings popover -->
         <UPopover :ui="{ content: 'w-52' }">
           <UButton
-            icon="i-ph-dots-three"
-            size="xs"
-            variant="ghost"
-            color="neutral"
+            icon="i-ph-dots-three" size="xs" variant="ghost" color="neutral"
             class="opacity-0 group-hover:opacity-100 transition-opacity"
             @click.stop
           />
@@ -333,8 +286,7 @@ const opLabels: Record<string, string> = {
                   {{ t('editor.layers.name') }}
                 </p>
                 <UInput
-                  :model-value="layer.name"
-                  size="xs"
+                  :model-value="layer.name" size="xs"
                   @click.stop
                   @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
                 />
@@ -344,34 +296,19 @@ const opLabels: Record<string, string> = {
                   <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
                   <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
                 </div>
-                <USlider
-                  :model-value="layer.opacity"
-                  :min="0"
-                  :max="100"
-                  size="xs"
-                  @click.stop
-                  @update:model-value="editor.updateLayer(layer.id, { opacity: $event })"
-                />
+                <USlider :model-value="layer.opacity" :min="0" :max="100" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { opacity: $event })" />
               </div>
               <div v-if="layer.type !== 'base'" class="space-y-1.5">
                 <div class="flex justify-between">
                   <span class="text-xs text-muted">{{ t('editor.layers.rotation') }}</span>
                   <span class="text-xs tabular-nums text-muted">{{ layer.rotation }}°</span>
                 </div>
-                <USlider
-                  :model-value="layer.rotation"
-                  :min="-180"
-                  :max="180"
-                  size="xs"
-                  @click.stop
-                  @update:model-value="editor.updateLayer(layer.id, { rotation: $event })"
-                />
+                <USlider :model-value="layer.rotation" :min="-180" :max="180" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { rotation: $event })" />
               </div>
               <div class="space-y-1.5">
                 <span class="text-xs text-muted">{{ t('editor.layers.blendMode') }}</span>
                 <USelect
-                  :model-value="layer.blendMode"
-                  size="xs"
+                  :model-value="layer.blendMode" size="xs"
                   :items="[{ label: t('editor.layers.blendNormal'), value: 'normal' }]"
                   @click.stop
                   @update:model-value="(v: string) => editor.updateLayer(layer.id, { blendMode: v as 'normal' })"
@@ -379,11 +316,7 @@ const opLabels: Record<string, string> = {
               </div>
               <template v-if="layer.type !== 'base'">
                 <USeparator />
-                <UButton
-                  block size="xs" variant="ghost" color="error"
-                  icon="i-ph-trash" class="justify-start"
-                  @click.stop="editor.removeLayer(layer.id)"
-                >
+                <UButton block size="xs" variant="ghost" color="error" icon="i-ph-trash" class="justify-start" @click.stop="editor.removeLayer(layer.id)">
                   {{ t('editor.layers.deleteLayer') }}
                 </UButton>
               </template>
@@ -398,7 +331,7 @@ const opLabels: Record<string, string> = {
           </template>
         </UPopover>
       </div>
-    </div>
+    </VueDraggableNext>
   </template>
 
   <!-- ── GEÇMİŞ ── -->
