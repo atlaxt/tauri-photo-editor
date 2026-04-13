@@ -6,7 +6,10 @@
       "Bash(pnpm add:*)",
       "Bash(grep -v \"^$\")",
       "Bash(cargo check:*)",
-      "Bash(npx vue-tsc:*)"
+      "Bash(npx vue-tsc:*)",
+      "Bash(pnpm vue-tsc:*)",
+      "Bash(node_modules/.bin/vue-tsc --noEmit)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

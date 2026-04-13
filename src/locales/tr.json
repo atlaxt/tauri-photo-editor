@@ -36,7 +36,16 @@
       "name": "İsim",
       "opacity": "Opaklık",
       "rotation": "Döndürme",
-      "visible": "Görünür"
+      "visible": "Görünür",
+      "addLayer": "Katman Ekle",
+      "deleteLayer": "Katmanı Sil",
+      "blendMode": "Karışım Modu",
+      "blendNormal": "Normal",
+      "baseLocked": "Temel katman (kilitli)",
+      "moveUp": "Yukarı Taşı",
+      "moveDown": "Aşağı Taşı",
+      "duplicate": "Çoğalt",
+      "background": "Arkaplan Rengi"
     },
     "history": {
       "title": "Geçmiş",

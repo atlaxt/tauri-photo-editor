@@ -30,19 +30,11 @@ watch(() => [editor.canvasWidth, editor.canvasHeight], ([w, h]) => {
   imageHeight.value = h
 }, { immediate: true })
 
-watch(() => editor.filePath, async (path) => {
-  if (!path) {
-    canvasImageUrl.value = null
-    return
-  }
-  try {
-    const { convertFileSrc } = await import('@tauri-apps/api/core')
-    canvasImageUrl.value = convertFileSrc(path)
-  }
-  catch {
-    canvasImageUrl.value = path
-  }
-}, { immediate: true })
+watch(
+  () => editor.layers[0]?.imageSrc ?? null,
+  (src) => { canvasImageUrl.value = src },
+  { immediate: true },
+)
 
 function handleApply(op: Operation) {
   editor.addOperation(op, op.op)

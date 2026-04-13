@@ -36,7 +36,16 @@
       "name": "Name",
       "opacity": "Opacity",
       "rotation": "Rotation",
-      "visible": "Visible"
+      "visible": "Visible",
+      "addLayer": "Add Layer",
+      "deleteLayer": "Delete Layer",
+      "blendMode": "Blend Mode",
+      "blendNormal": "Normal",
+      "baseLocked": "Base layer (locked)",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "duplicate": "Duplicate",
+      "background": "Background Color"
     },
     "history": {
       "title": "History",

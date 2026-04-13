@@ -15,20 +15,31 @@ const props = defineProps<{
 const { t } = useI18n()
 const editor = useEditorStore()
 
-// ─── Thumbnail ──────────────────────────────────────────────────────────────
+// ─── Layers (reversed — topmost layer shown first in panel) ─────────────────
+const reversedLayers = computed(() => [...editor.layers].reverse())
 
-const thumbUrl = ref<string | null>(null)
-watch(() => editor.filePath, async (path) => {
-  if (!path) {
-    thumbUrl.value = null
-    return
-  }
+async function handleAddLayer() {
   try {
+    const { open } = await import('@tauri-apps/plugin-dialog')
+    const selected = await open({
+      multiple: false,
+      filters: [{ name: t('home.imageFilterLabel'), extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp'] }],
+    })
+    if (!selected || typeof selected !== 'string')
+      return
     const { convertFileSrc } = await import('@tauri-apps/api/core')
-    thumbUrl.value = convertFileSrc(path)
+    const src = convertFileSrc(selected)
+    const img = new Image()
+    img.onload = () => {
+      const name = selected.split(/[\\/]/).pop()?.replace(/\.[^.]+$/, '') ?? t('editor.layers.title')
+      editor.addImageLayer(src, name, img.naturalWidth, img.naturalHeight)
+    }
+    img.src = src
   }
-  catch { thumbUrl.value = path }
-}, { immediate: true })
+  catch (e) {
+    console.error('[EditorPanelTabContent] Add layer failed', e)
+  }
+}
 
 // ─── Info tab ──────────────────────────────────────────────────────────────
 
@@ -138,83 +149,190 @@ const opLabels: Record<string, string> = {
 <template>
   <!-- ── KATMANLAR ── -->
   <template v-if="tabId === 'layers'">
+    <!-- Add Layer button -->
+    <div class="flex items-center justify-between px-3 py-1.5 border-b border-default">
+      <span class="text-[10px] text-muted uppercase tracking-wide font-medium">
+        {{ t('editor.layers.title') }}
+      </span>
+      <UTooltip :text="t('editor.layers.addLayer')">
+        <button
+          class="flex items-center justify-center w-5 h-5 rounded text-muted hover:text-default hover:bg-elevated transition-colors"
+          :disabled="!editor.hasProject"
+          @click="handleAddLayer"
+        >
+          <UIcon name="i-ph-plus" class="size-3.5" />
+        </button>
+      </UTooltip>
+    </div>
+
     <div v-if="editor.layers.length === 0" class="flex items-center justify-center h-full">
       <p class="text-xs text-muted opacity-30">
         —
       </p>
     </div>
+
+    <!-- Layers shown in reverse order (topmost first) -->
     <div
-      v-for="layer in editor.layers"
+      v-for="layer in reversedLayers"
       :key="layer.id"
       class="group relative flex items-center gap-2 px-2 transition-colors cursor-pointer"
       :class="editor.selectedLayerId === layer.id ? 'bg-primary/10' : 'hover:bg-elevated'"
       style="height: 44px;"
       @click="editor.selectLayer(layer.id)"
     >
+      <!-- Visibility toggle -->
       <button
         class="shrink-0 flex items-center justify-center w-5 h-5 rounded transition-colors"
         :class="layer.visible ? 'text-muted/40 hover:text-muted' : 'text-primary'"
-        @click.stop
-        @click="editor.updateLayer(layer.id, { visible: !layer.visible })"
+        @click.stop="editor.updateLayer(layer.id, { visible: !layer.visible })"
       >
         <UIcon :name="layer.visible ? 'i-ph-eye' : 'i-ph-eye-slash'" class="size-3" />
       </button>
+
+      <!-- Thumbnail -->
       <div
         class="size-8 rounded shrink-0 overflow-hidden ring-1 ring-inset ring-black/10 dark:ring-white/10 transition-opacity"
         :class="layer.visible ? '' : 'opacity-30'"
       >
-        <img v-if="thumbUrl" :src="thumbUrl" class="w-full h-full object-cover select-none" draggable="false">
-        <div v-else class="w-full h-full bg-elevated flex items-center justify-center">
-          <UIcon name="i-ph-image" class="size-3 text-muted opacity-30" />
+        <img
+          v-if="layer.imageSrc"
+          :src="layer.imageSrc"
+          class="w-full h-full object-cover select-none"
+          draggable="false"
+        >
+        <div
+          v-else
+          class="w-full h-full flex items-center justify-center"
+          :style="layer.backgroundColor ? { background: layer.backgroundColor } : {}"
+        >
+          <UIcon v-if="!layer.backgroundColor" name="i-ph-image" class="size-3 text-muted opacity-30" />
         </div>
       </div>
+
+      <!-- Layer info -->
       <div class="flex-1 min-w-0 flex flex-col justify-center gap-px" :class="layer.visible ? '' : 'opacity-40'">
-        <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
+        <div class="flex items-center gap-1">
+          <UIcon
+            v-if="layer.type === 'base'"
+            name="i-ph-lock"
+            class="size-2.5 text-muted opacity-50 shrink-0"
+          />
+          <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
+        </div>
         <span class="text-[10px] text-muted tabular-nums leading-none">{{ layer.opacity }}%</span>
       </div>
+
+      <!-- Reorder buttons (only for non-base layers) -->
+      <template v-if="layer.type !== 'base'">
+        <div class="shrink-0 flex flex-col gap-px opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            class="flex items-center justify-center w-4 h-3 rounded text-muted hover:text-default transition-colors"
+            @click.stop="editor.moveLayerUp(layer.id)"
+          >
+            <UIcon name="i-ph-caret-up" class="size-2.5" />
+          </button>
+          <button
+            class="flex items-center justify-center w-4 h-3 rounded text-muted hover:text-default transition-colors"
+            @click.stop="editor.moveLayerDown(layer.id)"
+          >
+            <UIcon name="i-ph-caret-down" class="size-2.5" />
+          </button>
+        </div>
+      </template>
+
+      <!-- Settings popover -->
       <UPopover :ui="{ content: 'w-52' }">
-        <button class="shrink-0 flex items-center justify-center w-5 h-5 rounded text-muted opacity-0 group-hover:opacity-100 hover:text-default transition-all">
+        <button
+          class="shrink-0 flex items-center justify-center w-5 h-5 rounded text-muted opacity-0 group-hover:opacity-100 hover:text-default transition-all"
+          @click.stop
+        >
           <UIcon name="i-ph-dots-three" class="size-3.5" />
         </button>
         <template #content>
-          <div class="p-3 space-y-4">
+          <div class="p-3 space-y-3">
             <p class="text-xs font-semibold">
               {{ t('editor.layers.settings') }}
             </p>
+
+            <!-- Name -->
             <div class="space-y-1.5">
               <p class="text-xs text-muted">
                 {{ t('editor.layers.name') }}
               </p>
               <UInput
-                :model-value="layer.name" size="xs"
+                :model-value="layer.name"
+                size="xs"
                 @click.stop
                 @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
               />
             </div>
+
+            <!-- Opacity -->
             <div class="space-y-1.5">
               <div class="flex justify-between">
                 <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
                 <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
               </div>
               <input
-                :value="layer.opacity" type="range" min="0" max="100"
+                :value="layer.opacity"
+                type="range"
+                min="0"
+                max="100"
                 class="w-full h-1 accent-primary cursor-pointer"
                 @click.stop
                 @input="editor.updateLayer(layer.id, { opacity: Number(($event.target as HTMLInputElement).value) })"
               >
             </div>
-            <div class="space-y-1.5">
+
+            <!-- Rotation (image layers only) -->
+            <div v-if="layer.type !== 'base'" class="space-y-1.5">
               <div class="flex justify-between">
                 <span class="text-xs text-muted">{{ t('editor.layers.rotation') }}</span>
                 <span class="text-xs tabular-nums text-muted">{{ layer.rotation }}°</span>
               </div>
               <input
-                :value="layer.rotation" type="range" min="-180" max="180"
+                :value="layer.rotation"
+                type="range"
+                min="-180"
+                max="180"
                 class="w-full h-1 accent-primary cursor-pointer"
                 @click.stop
                 @input="editor.updateLayer(layer.id, { rotation: Number(($event.target as HTMLInputElement).value) })"
               >
             </div>
+
+            <!-- Blend mode -->
+            <div class="space-y-1.5">
+              <span class="text-xs text-muted">{{ t('editor.layers.blendMode') }}</span>
+              <USelect
+                :model-value="layer.blendMode"
+                size="xs"
+                :items="[{ label: t('editor.layers.blendNormal'), value: 'normal' }]"
+                @click.stop
+                @update:model-value="(v: string) => editor.updateLayer(layer.id, { blendMode: v as 'normal' })"
+              />
+            </div>
+
+            <!-- Delete (non-base only) -->
+            <template v-if="layer.type !== 'base'">
+              <UDivider />
+              <button
+                class="w-full flex items-center gap-2 text-xs text-red-500 hover:text-red-400 transition-colors py-0.5"
+                @click.stop="editor.removeLayer(layer.id)"
+              >
+                <UIcon name="i-ph-trash" class="size-3" />
+                {{ t('editor.layers.deleteLayer') }}
+              </button>
+            </template>
+
+            <!-- Base layer locked hint -->
+            <template v-else>
+              <UDivider />
+              <p class="text-[10px] text-muted opacity-50 flex items-center gap-1">
+                <UIcon name="i-ph-lock" class="size-3" />
+                {{ t('editor.layers.baseLocked') }}
+              </p>
+            </template>
           </div>
         </template>
       </UPopover>
@@ -256,8 +374,8 @@ const opLabels: Record<string, string> = {
       </p>
     </div>
     <div v-for="(layer, idx) in editor.layers" :key="layer.id" class="border-b border-default last:border-b-0">
-      <button
-        class="w-full flex items-center gap-2 px-3 hover:bg-elevated transition-colors"
+      <div
+        class="w-full flex items-center gap-2 px-3 hover:bg-elevated transition-colors cursor-pointer"
         style="height: 36px;"
         @click="toggleCollapse(`info-${layer.id}`)"
       >
@@ -273,7 +391,7 @@ const opLabels: Record<string, string> = {
         >
           <UIcon name="i-ph-push-pin" class="size-3" />
         </button>
-      </button>
+      </div>
       <div v-if="!isCollapsed(`info-${layer.id}`)" class="px-3 pb-3">
         <div class="grid grid-cols-2 gap-x-2 gap-y-1.5">
           <span class="text-[11px] text-muted">{{ t('editor.panel.infoDimensions') }}</span>

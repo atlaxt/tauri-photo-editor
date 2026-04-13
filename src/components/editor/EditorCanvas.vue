@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Operation } from '../../stores/editor'
+import type { Layer, Operation } from '../../stores/editor'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useEditorStore } from '../../stores/editor'
@@ -19,24 +19,63 @@ const { t } = useI18n()
 const editor = useEditorStore()
 
 const containerRef = ref<HTMLDivElement | null>(null)
-const imageUrl = ref<string | null>(null)
-const imgNaturalW = ref(0)
-const imgNaturalH = ref(0)
+const canvasEl = ref<HTMLCanvasElement | null>(null)
 
-// Kamera (viewport) transformu
+// ── VIEWPORT ─────────────────────────────────────────────────────
 const zoom = ref(1)
 const viewTx = ref(0)
 const viewTy = ref(0)
-
 const isPanning = ref(false)
 const spaceHeld = ref(false)
 const panStart = ref({ x: 0, y: 0, tx: 0, ty: 0 })
 
-const isSelected = computed(() =>
-  !!(displayLayer.value && editor.selectedLayerId === displayLayer.value.id),
-)
+// ── INTERACTION DRAFT STATE ───────────────────────────────────────
+const draftX = ref<number | null>(null)
+const draftY = ref<number | null>(null)
+const draftW = ref<number | null>(null)
+const draftH = ref<number | null>(null)
+const draftR = ref<number | null>(null)
 
 type ResizeHandle = 'tl' | 'tc' | 'tr' | 'ml' | 'mr' | 'bl' | 'bc' | 'br'
+
+interface LayerDragState {
+  baseX: number
+  baseY: number
+  startX: number
+  startY: number
+}
+interface ResizeDragState {
+  handle: ResizeHandle
+  baseW: number
+  baseH: number
+  baseX: number
+  baseY: number
+  anchorX: number
+  anchorY: number
+}
+interface RotateDragState {
+  startPointerDeg: number
+  baseRotation: number
+}
+
+const layerDrag = ref<LayerDragState | null>(null)
+const resizeDrag = ref<ResizeDragState | null>(null)
+const rotateDrag = ref<RotateDragState | null>(null)
+
+// ── CONSTANTS ────────────────────────────────────────────────────
+const DEG2RAD = Math.PI / 180
+const HANDLE_PX = 8
+const ROTATE_GAP = 28
+const MIN_ZOOM = 0.02
+const MAX_ZOOM = 30
+const MIN_DIM = 10
+
+// ── COMPUTED ─────────────────────────────────────────────────────
+const canvasW = computed(() => editor.canvasWidth ?? 0)
+const canvasH = computed(() => editor.canvasHeight ?? 0)
+const showStage = computed(() =>
+  editor.hasProject || !!(editor.layers.length > 0 && editor.layers[0]?.imageSrc),
+)
 
 const anchorDef: Record<ResizeHandle, { ax: number, ay: number, affectsW: boolean, affectsH: boolean }> = {
   tl: { ax: 1, ay: 1, affectsW: true, affectsH: true },
@@ -49,88 +88,429 @@ const anchorDef: Record<ResizeHandle, { ax: number, ay: number, affectsW: boolea
   br: { ax: 0, ay: 0, affectsW: true, affectsH: true },
 }
 
-interface LayerDragState {
-  baseX: number
-  baseY: number
-  startX: number
-  startY: number
+// ── RAF RENDER LOOP ──────────────────────────────────────────────
+// Declared early so watchers below can reference markDirty safely
+const dpr = window.devicePixelRatio || 1
+let ro: ResizeObserver | null = null
+let rafId = 0
+let dirty = false
+
+function markDirty() {
+  dirty = true
 }
 
-interface ResizeDragState {
-  handle: ResizeHandle
-  baseW: number
-  baseH: number
-  baseX: number
-  baseY: number
-  anchorX: number
-  anchorY: number
+// ── IMAGE CACHE ──────────────────────────────────────────────────
+const imageCache = new Map<string, HTMLImageElement>()
+
+function getOrLoadImage(layer: Layer): HTMLImageElement | null {
+  if (!layer.imageSrc)
+    return null
+  if (imageCache.has(layer.id))
+    return imageCache.get(layer.id)!
+
+  const img = new Image()
+  img.onload = () => {
+    imageCache.set(layer.id, img)
+    if (layer.type === 'base') {
+      editor.initBaseLayerFromImage(img.naturalWidth, img.naturalHeight)
+      emit('imageSizeChange', img.naturalWidth, img.naturalHeight)
+      fitToScreen()
+    }
+    markDirty()
+  }
+  img.onerror = () => console.error(`[EditorCanvas] Image load failed: layer ${layer.id}`)
+  img.src = layer.imageSrc
+  return null
 }
 
-interface RotateDragState {
-  startPointerDeg: number
-  baseRotation: number
+// Cleanup cache when layers are removed and pre-load when imageSrc changes
+watch(
+  () => editor.layers.map(l => `${l.id}:${l.imageSrc ?? ''}`),
+  (newVals, oldVals) => {
+    // Remove stale cache entries for changed/removed layers
+    if (oldVals) {
+      const newIds = new Set(editor.layers.map(l => l.id))
+      for (const entry of oldVals) {
+        const id = entry.split(':')[0]
+        if (!newIds.has(id))
+          imageCache.delete(id)
+      }
+      // Invalidate cache for layers whose src changed
+      for (let i = 0; i < newVals.length; i++) {
+        if (oldVals[i] !== newVals[i]) {
+          const id = editor.layers[i]?.id
+          if (id)
+            imageCache.delete(id)
+        }
+      }
+    }
+    // Pre-load images for all layers (even if canvas not ready to render yet)
+    for (const layer of editor.layers) {
+      if (layer.imageSrc && !imageCache.has(layer.id))
+        getOrLoadImage(layer)
+    }
+    markDirty()
+  },
+  { immediate: true },
+)
+
+function setupCanvas() {
+  if (!containerRef.value || !canvasEl.value)
+    return
+  const { clientWidth, clientHeight } = containerRef.value
+  canvasEl.value.width = Math.round(clientWidth * dpr)
+  canvasEl.value.height = Math.round(clientHeight * dpr)
+  canvasEl.value.style.width = `${clientWidth}px`
+  canvasEl.value.style.height = `${clientHeight}px`
+  markDirty()
 }
 
-const layerDrag = ref<LayerDragState | null>(null)
-const resizeDrag = ref<ResizeDragState | null>(null)
-const rotateDrag = ref<RotateDragState | null>(null)
+function scheduleRender() {
+  rafId = requestAnimationFrame(() => {
+    if (dirty) {
+      render()
+      dirty = false
+    }
+    scheduleRender()
+  })
+}
 
-const draftX = ref<number | null>(null)
-const draftY = ref<number | null>(null)
-const draftW = ref<number | null>(null)
-const draftH = ref<number | null>(null)
-const draftRotationDeg = ref<number | null>(null)
+// ── CSS FILTER BUILDER ───────────────────────────────────────────
+function buildCssFilter(ops: Operation[], pendingOp: Operation | null): string {
+  const all = pendingOp ? [...ops, pendingOp] : ops
+  let brightness = 1
+  let contrast = 1
+  let saturate = 1
+  let grayscale = 0
+  for (const op of all) {
+    if (op.op === 'brightness')
+      brightness = 1 + (op.params.value as number) / 100
+    if (op.op === 'contrast')
+      contrast = 1 + (op.params.value as number) / 100
+    if (op.op === 'saturation')
+      saturate = 1 + (op.params.value as number) / 100
+    if (op.op === 'grayscale')
+      grayscale = 1
+  }
+  const parts: string[] = []
+  if (brightness !== 1)
+    parts.push(`brightness(${brightness})`)
+  if (contrast !== 1)
+    parts.push(`contrast(${contrast})`)
+  if (saturate !== 1)
+    parts.push(`saturate(${saturate})`)
+  if (grayscale)
+    parts.push('grayscale(1)')
+  return parts.length ? parts.join(' ') : 'none'
+}
 
-const displayLayer = computed(() => editor.layers[0] ?? null)
+function getGeometricTransform(ops: Operation[], pendingOp: Operation | null) {
+  const all = pendingOp ? [...ops, pendingOp] : ops
+  let deg = 0
+  let sx = 1
+  let sy = 1
+  for (const op of all) {
+    if (op.op === 'rotate')
+      deg = (deg + (op.params.value as number)) % 360
+    if (op.op === 'flip_horizontal')
+      sx *= -1
+    if (op.op === 'flip_vertical')
+      sy *= -1
+  }
+  return { deg, sx, sy }
+}
 
-const canvasW = computed(() => editor.canvasWidth ?? 0)
-const canvasH = computed(() => editor.canvasHeight ?? 0)
-const stageW = computed(() => canvasW.value || imgNaturalW.value || 1)
-const stageH = computed(() => canvasH.value || imgNaturalH.value || 1)
-const showStage = computed(() => !!(editor.hasProject || imageUrl.value))
+// ── DRAFT HELPERS ────────────────────────────────────────────────
+function effectiveX(layer: Layer): number {
+  return (layer.id === editor.selectedLayerId && draftX.value !== null) ? draftX.value : layer.x
+}
+function effectiveY(layer: Layer): number {
+  return (layer.id === editor.selectedLayerId && draftY.value !== null) ? draftY.value : layer.y
+}
+function effectiveW(layer: Layer): number {
+  return (layer.id === editor.selectedLayerId && draftW.value !== null) ? draftW.value : layer.width
+}
+function effectiveH(layer: Layer): number {
+  return (layer.id === editor.selectedLayerId && draftH.value !== null) ? draftH.value : layer.height
+}
+function effectiveR(layer: Layer): number {
+  return (layer.id === editor.selectedLayerId && draftR.value !== null) ? draftR.value : layer.rotation
+}
 
-const curX = computed(() => draftX.value ?? displayLayer.value?.x ?? 0)
-const curY = computed(() => draftY.value ?? displayLayer.value?.y ?? 0)
-const curW = computed(() => draftW.value ?? displayLayer.value?.width ?? imgNaturalW.value)
-const curH = computed(() => draftH.value ?? displayLayer.value?.height ?? imgNaturalH.value)
-const curRotation = computed(() => draftRotationDeg.value ?? displayLayer.value?.rotation ?? 0)
+// ── RENDER ───────────────────────────────────────────────────────
+function render() {
+  const canvas = canvasEl.value
+  if (!canvas)
+    return
+  const ctx = canvas.getContext('2d')
+  if (!ctx)
+    return
 
-watch(() => props.filePath, async (path) => {
-  if (!path) {
-    imageUrl.value = null
-    imgNaturalW.value = 0
-    imgNaturalH.value = 0
+  const cw = canvasW.value
+  const ch = canvasH.value
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  if (!showStage.value || !cw || !ch)
+    return
+
+  ctx.save()
+  ctx.scale(dpr, dpr)
+
+  // ── 1. Workspace shadow + background ──────────────────────────
+  const wsX = viewTx.value
+  const wsY = viewTy.value
+  const wsW = cw * zoom.value
+  const wsH = ch * zoom.value
+  const baseLayer = editor.layers.find(l => l.type === 'base')
+  const bgColor = baseLayer?.backgroundColor ?? '#ffffff'
+
+  ctx.save()
+  ctx.shadowColor = 'rgba(0,0,0,0.5)'
+  ctx.shadowBlur = 24
+  ctx.shadowOffsetX = 0
+  ctx.shadowOffsetY = 4
+  ctx.fillStyle = bgColor
+  ctx.fillRect(wsX, wsY, wsW, wsH)
+  ctx.restore()
+
+  // ── 2. Clip to canvas bounds and draw layers ───────────────────
+  ctx.save()
+  ctx.translate(viewTx.value, viewTy.value)
+  ctx.scale(zoom.value, zoom.value)
+  ctx.beginPath()
+  ctx.rect(0, 0, cw, ch)
+  ctx.clip()
+
+  for (const layer of editor.layers) {
+    if (!layer.visible)
+      continue
+
+    const lx = effectiveX(layer)
+    const ly = effectiveY(layer)
+    const lw = effectiveW(layer)
+    const lh = effectiveH(layer)
+    const lr = effectiveR(layer)
+
+    ctx.save()
+    ctx.globalAlpha = layer.opacity / 100
+
+    // Center of this layer
+    const cx = lx + lw / 2
+    const cy = ly + lh / 2
+    ctx.translate(cx, cy)
+
+    if (layer.type === 'base') {
+      // Apply CSS filter (brightness, contrast, etc.)
+      const f = buildCssFilter(props.operations, props.pendingOp)
+      ctx.filter = f
+
+      // Apply geometric ops (rotate + flip from operations)
+      const { deg, sx, sy } = getGeometricTransform(props.operations, props.pendingOp)
+      const totalDeg = deg + lr
+      if (totalDeg !== 0)
+        ctx.rotate(totalDeg * DEG2RAD)
+      if (sx !== 1 || sy !== 1)
+        ctx.scale(sx, sy)
+    }
+    else {
+      // Image layer: just apply layer rotation
+      if (lr !== 0)
+        ctx.rotate(lr * DEG2RAD)
+    }
+
+    const img = getOrLoadImage(layer)
+    if (img) {
+      ctx.drawImage(img, -lw / 2, -lh / 2, lw, lh)
+    }
+
+    // Reset filter after use
+    if (layer.type === 'base')
+      ctx.filter = 'none'
+
+    ctx.restore()
+  }
+
+  ctx.restore() // end clip + viewport
+
+  // ── 3. Selection handles (outside canvas clip) ─────────────────
+  const sel = editor.selectedLayer
+  if (sel && !spaceHeld.value) {
+    ctx.save()
+    ctx.translate(viewTx.value, viewTy.value)
+    ctx.scale(zoom.value, zoom.value)
+    drawHandles(ctx, sel)
+    ctx.restore()
+  }
+
+  ctx.restore() // end dpr scale
+}
+
+// ── DRAW HANDLES ─────────────────────────────────────────────────
+function drawHandles(ctx: CanvasRenderingContext2D, layer: Layer) {
+  const lx = effectiveX(layer)
+  const ly = effectiveY(layer)
+  const lw = effectiveW(layer)
+  const lh = effectiveH(layer)
+  const lr = effectiveR(layer)
+
+  // For base layer combine with operation rotation
+  let totalRot = lr
+  if (layer.type === 'base') {
+    const { deg } = getGeometricTransform(props.operations, props.pendingOp)
+    totalRot = deg + lr
+  }
+
+  const hsz = HANDLE_PX / zoom.value
+  const lw1 = 1 / zoom.value
+  const gap = ROTATE_GAP / zoom.value
+
+  ctx.save()
+  ctx.translate(lx + lw / 2, ly + lh / 2)
+  ctx.rotate(totalRot * DEG2RAD)
+  ctx.translate(-lw / 2, -lh / 2)
+
+  // Selection rectangle
+  ctx.save()
+  ctx.strokeStyle = '#38bdf8'
+  ctx.lineWidth = lw1
+  ctx.setLineDash([4 / zoom.value, 3 / zoom.value])
+  ctx.strokeRect(0, 0, lw, lh)
+  ctx.setLineDash([])
+  ctx.restore()
+
+  // Skip resize/rotate handles for locked base layer
+  if (layer.type === 'base') {
+    ctx.restore()
     return
   }
-  try {
-    const { convertFileSrc } = await import('@tauri-apps/api/core')
-    imageUrl.value = convertFileSrc(path)
-  }
-  catch {
-    imageUrl.value = path
-  }
-}, { immediate: true })
 
-watch([() => editor.canvasWidth, () => editor.canvasHeight], ([w, h]) => {
-  if (w && h) {
-    emit('imageSizeChange', w, h)
-    fitToScreen()
-  }
-}, { immediate: true })
+  const handlePositions = [
+    { x: 0, y: 0 },
+    { x: lw / 2, y: 0 },
+    { x: lw, y: 0 },
+    { x: 0, y: lh / 2 },
+    { x: lw, y: lh / 2 },
+    { x: 0, y: lh },
+    { x: lw / 2, y: lh },
+    { x: lw, y: lh },
+  ]
 
-function onImageLoad(e: Event) {
-  const img = e.target as HTMLImageElement
-  imgNaturalW.value = img.naturalWidth
-  imgNaturalH.value = img.naturalHeight
-  editor.initBaseLayerFromImage(img.naturalWidth, img.naturalHeight)
-  if (!editor.selectedLayerId)
-    editor.selectLayer('base')
-  fitToScreen()
+  for (const h of handlePositions) {
+    ctx.fillStyle = '#ffffff'
+    ctx.strokeStyle = '#38bdf8'
+    ctx.lineWidth = lw1
+    ctx.fillRect(h.x - hsz / 2, h.y - hsz / 2, hsz, hsz)
+    ctx.strokeRect(h.x - hsz / 2, h.y - hsz / 2, hsz, hsz)
+  }
+
+  // Rotation line
+  ctx.strokeStyle = '#38bdf8'
+  ctx.lineWidth = lw1
+  ctx.beginPath()
+  ctx.moveTo(lw / 2, 0)
+  ctx.lineTo(lw / 2, -gap)
+  ctx.stroke()
+
+  // Rotation handle circle
+  ctx.beginPath()
+  ctx.arc(lw / 2, -gap, (HANDLE_PX / 2) / zoom.value, 0, Math.PI * 2)
+  ctx.fillStyle = '#ffffff'
+  ctx.fill()
+  ctx.strokeStyle = '#38bdf8'
+  ctx.lineWidth = lw1
+  ctx.stroke()
+
+  ctx.restore()
 }
 
-const MIN_ZOOM = 0.02
-const MAX_ZOOM = 30
+// ── COORDINATE CONVERSION ────────────────────────────────────────
+function screenToCanvas(e: MouseEvent): { x: number, y: number } {
+  if (!containerRef.value)
+    return { x: 0, y: 0 }
+  const rect = containerRef.value.getBoundingClientRect()
+  return {
+    x: (e.clientX - rect.left - viewTx.value) / zoom.value,
+    y: (e.clientY - rect.top - viewTy.value) / zoom.value,
+  }
+}
 
+function getLocalPoint(cx: number, cy: number, layer: Layer): { x: number, y: number } {
+  const lx = effectiveX(layer)
+  const ly = effectiveY(layer)
+  const lw = effectiveW(layer)
+  const lh = effectiveH(layer)
+  const lr = effectiveR(layer)
+  let totalRot = lr
+  if (layer.type === 'base') {
+    const { deg } = getGeometricTransform(props.operations, props.pendingOp)
+    totalRot = deg + lr
+  }
+  const dx = cx - (lx + lw / 2)
+  const dy = cy - (ly + lh / 2)
+  const rad = -totalRot * DEG2RAD
+  return {
+    x: dx * Math.cos(rad) - dy * Math.sin(rad) + lw / 2,
+    y: dx * Math.sin(rad) + dy * Math.cos(rad) + lh / 2,
+  }
+}
+
+// ── HIT TESTING ──────────────────────────────────────────────────
+function hitTestLayers(cx: number, cy: number): Layer | null {
+  for (let i = editor.layers.length - 1; i >= 0; i--) {
+    const layer = editor.layers[i]
+    if (!layer.visible)
+      continue
+    const local = getLocalPoint(cx, cy, layer)
+    const lw = effectiveW(layer)
+    const lh = effectiveH(layer)
+    if (local.x >= 0 && local.x <= lw && local.y >= 0 && local.y <= lh)
+      return layer
+  }
+  return null
+}
+
+type HitHandleResult
+  = | { type: 'resize', handle: ResizeHandle }
+    | { type: 'rotate' }
+    | null
+
+function hitTestHandles(cx: number, cy: number, layer: Layer): HitHandleResult {
+  if (layer.type === 'base')
+    return null
+  const lw = effectiveW(layer)
+  const lh = effectiveH(layer)
+  const local = getLocalPoint(cx, cy, layer)
+  const lx = local.x
+  const ly = local.y
+  const hitR = (HANDLE_PX / 2 + 4) / zoom.value
+
+  const handles: Array<{ id: ResizeHandle, x: number, y: number }> = [
+    { id: 'tl', x: 0, y: 0 },
+    { id: 'tc', x: lw / 2, y: 0 },
+    { id: 'tr', x: lw, y: 0 },
+    { id: 'ml', x: 0, y: lh / 2 },
+    { id: 'mr', x: lw, y: lh / 2 },
+    { id: 'bl', x: 0, y: lh },
+    { id: 'bc', x: lw / 2, y: lh },
+    { id: 'br', x: lw, y: lh },
+  ]
+
+  for (const h of handles) {
+    if (Math.abs(lx - h.x) < hitR && Math.abs(ly - h.y) < hitR)
+      return { type: 'resize', handle: h.id }
+  }
+
+  // Rotation handle: at (lw/2, -ROTATE_GAP/zoom) in local space
+  const rhx = lw / 2
+  const rhy = -ROTATE_GAP / zoom.value
+  if (Math.abs(lx - rhx) < hitR && Math.abs(ly - rhy) < hitR)
+    return { type: 'rotate' }
+
+  return null
+}
+
+// ── VIEWPORT ─────────────────────────────────────────────────────
 function fitToScreen() {
   if (!containerRef.value || !canvasW.value || !canvasH.value)
     return
@@ -140,6 +520,7 @@ function fitToScreen() {
   viewTx.value = (cw - canvasW.value * fit) / 2
   viewTy.value = (ch - canvasH.value * fit) / 2
   emit('zoomChange', fit)
+  markDirty()
 }
 
 function setZoom(newZoom: number, ox?: number, oy?: number) {
@@ -155,6 +536,7 @@ function setZoom(newZoom: number, ox?: number, oy?: number) {
   viewTy.value = pivotY - (pivotY - viewTy.value) * newZoom / zoom.value
   zoom.value = newZoom
   emit('zoomChange', newZoom)
+  markDirty()
 }
 
 function onWheel(e: WheelEvent) {
@@ -162,49 +544,59 @@ function onWheel(e: WheelEvent) {
   if (!containerRef.value)
     return
   const rect = containerRef.value.getBoundingClientRect()
-  setZoom(zoom.value * (e.deltaY < 0 ? 1.12 : 1 / 1.12), e.clientX - rect.left, e.clientY - rect.top)
+  setZoom(
+    zoom.value * (e.deltaY < 0 ? 1.12 : 1 / 1.12),
+    e.clientX - rect.left,
+    e.clientY - rect.top,
+  )
 }
 
+// ── PAN ──────────────────────────────────────────────────────────
 function startPan(e: MouseEvent) {
   e.preventDefault()
   isPanning.value = true
   panStart.value = { x: e.clientX, y: e.clientY, tx: viewTx.value, ty: viewTy.value }
 }
 
-function screenToCanvas(e: MouseEvent) {
-  if (!containerRef.value)
-    return { x: 0, y: 0 }
-  const rect = containerRef.value.getBoundingClientRect()
-  return {
-    x: (e.clientX - rect.left - viewTx.value) / zoom.value,
-    y: (e.clientY - rect.top - viewTy.value) / zoom.value,
-  }
-}
-
-function onContainerMouseDown(e: MouseEvent) {
+// ── MOUSE DISPATCHER ─────────────────────────────────────────────
+function onMouseDown(e: MouseEvent) {
   if (spaceHeld.value || e.button === 1) {
     startPan(e)
     return
   }
-  if (e.button === 0)
-    editor.selectLayer(null)
-}
+  if (e.button !== 0)
+    return
 
-function onLayerMouseDown(e: MouseEvent) {
-  e.stopPropagation()
-  if (spaceHeld.value || e.button === 1) {
-    startPan(e)
-    return
-  }
-  if (!displayLayer.value || e.button !== 0)
-    return
-  editor.selectLayer(displayLayer.value.id)
   const p = screenToCanvas(e)
-  layerDrag.value = {
-    baseX: displayLayer.value.x,
-    baseY: displayLayer.value.y,
-    startX: p.x,
-    startY: p.y,
+
+  // Check handles on selected non-base layer first
+  if (editor.selectedLayer && editor.selectedLayer.type !== 'base') {
+    const hh = hitTestHandles(p.x, p.y, editor.selectedLayer)
+    if (hh?.type === 'resize') {
+      startResize(hh.handle)
+      return
+    }
+    if (hh?.type === 'rotate') {
+      startRotate(e)
+      return
+    }
+  }
+
+  // Layer hit test
+  const hit = hitTestLayers(p.x, p.y)
+  if (hit) {
+    editor.selectLayer(hit.id)
+    if (hit.type !== 'base') {
+      layerDrag.value = {
+        baseX: hit.x,
+        baseY: hit.y,
+        startX: p.x,
+        startY: p.y,
+      }
+    }
+  }
+  else {
+    editor.selectLayer(null)
   }
 }
 
@@ -212,6 +604,7 @@ function onMouseMove(e: MouseEvent) {
   if (isPanning.value) {
     viewTx.value = panStart.value.tx + (e.clientX - panStart.value.x)
     viewTy.value = panStart.value.ty + (e.clientY - panStart.value.y)
+    markDirty()
     return
   }
   if (layerDrag.value) {
@@ -243,17 +636,20 @@ function onMouseUp() {
     commitRotate()
 }
 
+// ── MOVE ─────────────────────────────────────────────────────────
 function doLayerMove(e: MouseEvent) {
   if (!layerDrag.value)
     return
   const p = screenToCanvas(e)
   draftX.value = layerDrag.value.baseX + (p.x - layerDrag.value.startX)
   draftY.value = layerDrag.value.baseY + (p.y - layerDrag.value.startY)
+  markDirty()
 }
 
 function commitLayerMove() {
-  if (displayLayer.value && draftX.value !== null && draftY.value !== null) {
-    editor.updateLayer(displayLayer.value.id, {
+  const layer = editor.selectedLayer
+  if (layer && draftX.value !== null && draftY.value !== null) {
+    editor.updateLayer(layer.id, {
       x: Math.round(draftX.value),
       y: Math.round(draftY.value),
     })
@@ -263,22 +659,26 @@ function commitLayerMove() {
   draftY.value = null
 }
 
-function startResize(handle: ResizeHandle, _e: MouseEvent) {
-  if (!displayLayer.value)
+// ── RESIZE ───────────────────────────────────────────────────────
+function startResize(handle: ResizeHandle) {
+  const layer = editor.selectedLayer
+  if (!layer)
     return
   const def = anchorDef[handle]
+  const lx = effectiveX(layer)
+  const ly = effectiveY(layer)
+  const lw = effectiveW(layer)
+  const lh = effectiveH(layer)
   resizeDrag.value = {
     handle,
-    baseW: curW.value,
-    baseH: curH.value,
-    baseX: curX.value,
-    baseY: curY.value,
-    anchorX: curX.value + def.ax * curW.value,
-    anchorY: curY.value + def.ay * curH.value,
+    baseW: lw,
+    baseH: lh,
+    baseX: lx,
+    baseY: ly,
+    anchorX: lx + def.ax * lw,
+    anchorY: ly + def.ay * lh,
   }
 }
-
-const MIN_DIM = 10
 
 function doResizeMove(e: MouseEvent) {
   if (!resizeDrag.value)
@@ -302,7 +702,6 @@ function doResizeMove(e: MouseEvent) {
       newX = anchorX
     }
   }
-
   if (def.affectsH) {
     if (def.ay === 1) {
       newH = Math.max(MIN_DIM, anchorY - p.y)
@@ -318,11 +717,13 @@ function doResizeMove(e: MouseEvent) {
   draftH.value = newH
   draftX.value = newX
   draftY.value = newY
+  markDirty()
 }
 
 function commitResize() {
-  if (displayLayer.value && draftW.value !== null && draftH.value !== null && draftX.value !== null && draftY.value !== null) {
-    editor.updateLayer(displayLayer.value.id, {
+  const layer = editor.selectedLayer
+  if (layer && draftW.value !== null && draftH.value !== null && draftX.value !== null && draftY.value !== null) {
+    editor.updateLayer(layer.id, {
       width: Math.max(1, Math.round(draftW.value)),
       height: Math.max(1, Math.round(draftH.value)),
       x: Math.round(draftX.value),
@@ -336,47 +737,59 @@ function commitResize() {
   draftY.value = null
 }
 
-function getLayerCenter() {
-  return {
-    x: curX.value + curW.value / 2,
-    y: curY.value + curH.value / 2,
-  }
-}
-
+// ── ROTATE ───────────────────────────────────────────────────────
 function startRotate(e: MouseEvent) {
-  if (!displayLayer.value)
+  const layer = editor.selectedLayer
+  if (!layer)
     return
-  const c = getLayerCenter()
+  const lx = effectiveX(layer)
+  const ly = effectiveY(layer)
+  const lw = effectiveW(layer)
+  const lh = effectiveH(layer)
+  const center = { x: lx + lw / 2, y: ly + lh / 2 }
   const p = screenToCanvas(e)
   rotateDrag.value = {
-    startPointerDeg: Math.atan2(p.y - c.y, p.x - c.x) * 180 / Math.PI,
-    baseRotation: displayLayer.value.rotation,
+    startPointerDeg: Math.atan2(p.y - center.y, p.x - center.x) * 180 / Math.PI,
+    baseRotation: layer.rotation,
   }
 }
 
 function doRotateMove(e: MouseEvent) {
   if (!rotateDrag.value)
     return
-  const c = getLayerCenter()
+  const layer = editor.selectedLayer
+  if (!layer)
+    return
+  const lx = effectiveX(layer)
+  const ly = effectiveY(layer)
+  const lw = effectiveW(layer)
+  const lh = effectiveH(layer)
+  const center = { x: lx + lw / 2, y: ly + lh / 2 }
   const p = screenToCanvas(e)
-  const angle = Math.atan2(p.y - c.y, p.x - c.x) * 180 / Math.PI
-  draftRotationDeg.value = rotateDrag.value.baseRotation + (angle - rotateDrag.value.startPointerDeg)
+  const angle = Math.atan2(p.y - center.y, p.x - center.x) * 180 / Math.PI
+  draftR.value = rotateDrag.value.baseRotation + (angle - rotateDrag.value.startPointerDeg)
+  markDirty()
 }
 
 function commitRotate() {
-  if (displayLayer.value && draftRotationDeg.value !== null)
-    editor.updateLayer(displayLayer.value.id, { rotation: Math.round(draftRotationDeg.value) })
+  const layer = editor.selectedLayer
+  if (layer && draftR.value !== null)
+    editor.updateLayer(layer.id, { rotation: Math.round(draftR.value) })
   rotateDrag.value = null
-  draftRotationDeg.value = null
+  draftR.value = null
 }
 
+// ── KEYBOARD ─────────────────────────────────────────────────────
 function onKeyDown(e: KeyboardEvent) {
   if (e.code === 'Space' && !e.repeat) {
     e.preventDefault()
     spaceHeld.value = true
+    markDirty()
   }
-  if (e.code === 'Escape')
+  if (e.code === 'Escape') {
     editor.selectLayer(null)
+    markDirty()
+  }
   if ((e.metaKey || e.ctrlKey) && e.key === '0') {
     e.preventDefault()
     fitToScreen()
@@ -391,58 +804,11 @@ function onKeyUp(e: KeyboardEvent) {
   if (e.code === 'Space') {
     spaceHeld.value = false
     isPanning.value = false
+    markDirty()
   }
 }
 
-onMounted(() => {
-  window.addEventListener('keydown', onKeyDown)
-  window.addEventListener('keyup', onKeyUp)
-  window.addEventListener('mouseup', onMouseUp)
-  window.addEventListener('mousemove', onMouseMove)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', onKeyDown)
-  window.removeEventListener('keyup', onKeyUp)
-  window.removeEventListener('mouseup', onMouseUp)
-  window.removeEventListener('mousemove', onMouseMove)
-})
-
-const cssFilter = computed(() => {
-  const all = props.pendingOp ? [...props.operations, props.pendingOp] : props.operations
-  let brightness = 1
-  let contrast = 1
-  let saturate = 1
-  let grayscale = 0
-  for (const op of all) {
-    if (op.op === 'brightness')
-      brightness = 1 + (op.params.value as number) / 100
-    if (op.op === 'contrast')
-      contrast = 1 + (op.params.value as number) / 100
-    if (op.op === 'saturation')
-      saturate = 1 + (op.params.value as number) / 100
-    if (op.op === 'grayscale')
-      grayscale = 1
-  }
-  return [`brightness(${brightness})`, `contrast(${contrast})`, `saturate(${saturate})`, grayscale ? 'grayscale(1)' : ''].filter(Boolean).join(' ') || 'none'
-})
-
-const cssImageTransform = computed(() => {
-  const all = props.pendingOp ? [...props.operations, props.pendingOp] : props.operations
-  let deg = 0
-  let sx = 1
-  let sy = 1
-  for (const op of all) {
-    if (op.op === 'rotate')
-      deg = (deg + (op.params.value as number)) % 360
-    if (op.op === 'flip_horizontal')
-      sx *= -1
-    if (op.op === 'flip_vertical')
-      sy *= -1
-  }
-  return `rotate(${deg + curRotation.value}deg) scaleX(${sx}) scaleY(${sy})`
-})
-
+// ── CURSOR ───────────────────────────────────────────────────────
 const cursorStyle = computed(() => {
   if (isPanning.value)
     return 'grabbing'
@@ -452,105 +818,58 @@ const cursorStyle = computed(() => {
     return 'grabbing'
   if (rotateDrag.value)
     return 'crosshair'
-  if (displayLayer.value)
-    return 'default'
   return 'default'
 })
 
-const HANDLE_PX = 8
-const ROTATE_GAP = 28
-
-const resizeHandles = [
-  { id: 'tl' as ResizeHandle, xf: 0, yf: 0, cursor: 'nwse-resize' },
-  { id: 'tc' as ResizeHandle, xf: 0.5, yf: 0, cursor: 'ns-resize' },
-  { id: 'tr' as ResizeHandle, xf: 1, yf: 0, cursor: 'nesw-resize' },
-  { id: 'ml' as ResizeHandle, xf: 0, yf: 0.5, cursor: 'ew-resize' },
-  { id: 'mr' as ResizeHandle, xf: 1, yf: 0.5, cursor: 'ew-resize' },
-  { id: 'bl' as ResizeHandle, xf: 0, yf: 1, cursor: 'nesw-resize' },
-  { id: 'bc' as ResizeHandle, xf: 0.5, yf: 1, cursor: 'ns-resize' },
-  { id: 'br' as ResizeHandle, xf: 1, yf: 1, cursor: 'nwse-resize' },
-]
-
-function getHandleStyle(h: typeof resizeHandles[number]) {
-  const sz = HANDLE_PX / zoom.value
-  return {
-    position: 'absolute' as const,
-    left: `${h.xf * curW.value - sz / 2}px`,
-    top: `${h.yf * curH.value - sz / 2}px`,
-    width: `${sz}px`,
-    height: `${sz}px`,
-    cursor: h.cursor,
-    zIndex: 20,
-    boxSizing: 'border-box' as const,
-  }
-}
-
-const selectionBorderStyle = computed(() => {
-  const bw = 1 / zoom.value
-  return {
-    position: 'absolute' as const,
-    inset: `${-bw}px`,
-    border: `${bw}px solid rgb(56 189 248)`,
-    pointerEvents: 'none' as const,
-    boxSizing: 'border-box' as const,
-    zIndex: 10,
-  }
+// ── WATCHERS FOR DIRTY ───────────────────────────────────────────
+watch([zoom, viewTx, viewTy], markDirty)
+watch(() => editor.layers, markDirty, { deep: true })
+watch(() => editor.selectedLayerId, markDirty)
+watch(() => props.operations, markDirty, { deep: true })
+watch(() => props.pendingOp, markDirty, { deep: true })
+watch([canvasW, canvasH], ([w, h]) => {
+  if (w && h)
+    emit('imageSizeChange', w, h)
+  markDirty()
 })
 
-const rotateLineStyle = computed(() => {
-  const dist = ROTATE_GAP / zoom.value
-  const lw = 1 / zoom.value
-  return {
-    position: 'absolute' as const,
-    left: `${curW.value / 2 - lw / 2}px`,
-    top: `${-dist}px`,
-    width: `${lw}px`,
-    height: `${dist}px`,
-    backgroundColor: 'rgb(56 189 248)',
-    pointerEvents: 'none' as const,
-    zIndex: 15,
-  }
+// ── LIFECYCLE ────────────────────────────────────────────────────
+onMounted(() => {
+  setupCanvas()
+
+  ro = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const { width, height } = entry.contentRect
+      if (!canvasEl.value)
+        continue
+      canvasEl.value.width = Math.round(width * dpr)
+      canvasEl.value.height = Math.round(height * dpr)
+      canvasEl.value.style.width = `${width}px`
+      canvasEl.value.style.height = `${height}px`
+      markDirty()
+    }
+    if (editor.hasProject && zoom.value === 1)
+      fitToScreen()
+  })
+  if (containerRef.value)
+    ro.observe(containerRef.value)
+
+  window.addEventListener('keydown', onKeyDown)
+  window.addEventListener('keyup', onKeyUp)
+  window.addEventListener('mouseup', onMouseUp)
+  window.addEventListener('mousemove', onMouseMove)
+
+  scheduleRender()
 })
 
-const rotateHandleStyle = computed(() => {
-  const sz = HANDLE_PX / zoom.value
-  const dist = ROTATE_GAP / zoom.value
-  return {
-    position: 'absolute' as const,
-    left: `${curW.value / 2 - sz / 2}px`,
-    top: `${-dist - sz / 2}px`,
-    width: `${sz}px`,
-    height: `${sz}px`,
-    cursor: 'crosshair',
-    zIndex: 20,
-    boxSizing: 'border-box' as const,
-    borderRadius: '50%',
-  }
+onUnmounted(() => {
+  cancelAnimationFrame(rafId)
+  ro?.disconnect()
+  window.removeEventListener('keydown', onKeyDown)
+  window.removeEventListener('keyup', onKeyUp)
+  window.removeEventListener('mouseup', onMouseUp)
+  window.removeEventListener('mousemove', onMouseMove)
 })
-
-const stageStyle = computed(() => ({
-  position: 'absolute' as const,
-  top: 0,
-  left: 0,
-  width: `${stageW.value}px`,
-  height: `${stageH.value}px`,
-  transformOrigin: '0 0',
-  transform: `translate(${viewTx.value}px, ${viewTy.value}px) scale(${zoom.value})`,
-  backgroundColor: '#202020',
-  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.45)',
-  overflow: 'hidden',
-}))
-
-const layerStyle = computed(() => ({
-  position: 'absolute' as const,
-  left: `${curX.value}px`,
-  top: `${curY.value}px`,
-  width: `${curW.value}px`,
-  height: `${curH.value}px`,
-  cursor: layerDrag.value ? 'grabbing' : 'move',
-}))
-
-const isDragging = computed(() => !!(layerDrag.value || resizeDrag.value || rotateDrag.value))
 </script>
 
 <template>
@@ -558,8 +877,6 @@ const isDragging = computed(() => !!(layerDrag.value || resizeDrag.value || rota
     ref="containerRef"
     class="flex-1 overflow-hidden relative select-none dark:bg-neutral-950 bg-accented"
     :style="{ cursor: cursorStyle }"
-    @wheel.prevent="onWheel"
-    @mousedown="onContainerMouseDown"
   >
     <div v-if="!showStage" class="absolute inset-0 flex flex-col items-center justify-center gap-2">
       <UIcon name="i-ph-image" class="size-10 opacity-20 text-muted" />
@@ -571,61 +888,18 @@ const isDragging = computed(() => !!(layerDrag.value || resizeDrag.value || rota
       </p>
     </div>
 
-    <div v-else :style="stageStyle">
-      <div
-        v-if="imageUrl && displayLayer && displayLayer.visible"
-        :style="layerStyle"
-        @mousedown.stop="onLayerMouseDown"
-      >
-        <img
-          :src="imageUrl"
-          :style="{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            filter: cssFilter,
-            transform: cssImageTransform,
-            transformOrigin: 'center',
-            opacity: String(displayLayer.opacity / 100),
-            userSelect: 'none',
-          }"
-          draggable="false"
-          @load="onImageLoad"
-        >
+    <!-- Canvas rendering surface (pointer-events disabled — hit div handles events) -->
+    <canvas
+      ref="canvasEl"
+      class="absolute inset-0"
+      style="pointer-events: none;"
+    />
 
-        <template v-if="isSelected && !spaceHeld">
-          <div :style="selectionBorderStyle" />
-
-          <template v-if="!isDragging">
-            <div
-              v-for="h in resizeHandles"
-              :key="h.id"
-              :style="getHandleStyle(h)"
-              class="absolute bg-white border border-sky-400"
-              style="box-shadow: 0 1px 3px rgba(0,0,0,0.3);"
-              @mousedown.stop.prevent="startResize(h.id, $event)"
-            />
-
-            <div :style="rotateLineStyle" />
-
-            <div
-              :style="rotateHandleStyle"
-              class="absolute bg-white border border-sky-400"
-              style="box-shadow: 0 1px 3px rgba(0,0,0,0.3);"
-              @mousedown.stop.prevent="startRotate($event)"
-            />
-          </template>
-        </template>
-      </div>
-
-      <div
-        v-else
-        class="absolute inset-0 flex items-center justify-center"
-      >
-        <p class="text-xs text-white/45">
-          {{ t('editor.canvas.emptyProject') }}
-        </p>
-      </div>
-    </div>
+    <!-- Invisible hit surface for pointer events -->
+    <div
+      class="absolute inset-0"
+      @wheel.prevent="onWheel"
+      @mousedown="onMouseDown"
+    />
   </div>
 </template>
