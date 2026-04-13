@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@nuxt/ui':
         specifier: ^4.6.1
-        version: 4.6.1(@tiptap/extensions@3.22.2(@tiptap/core@3.22.2(@tiptap/pm@3.22.2))(@tiptap/pm@3.22.2))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.8)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(change-case@5.4.4)(embla-carousel@8.6.0)(tailwindcss@4.2.2)(typescript@5.6.3)(vite@6.4.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3))(vue-router@5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@5.6.3)(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3))(yjs@13.6.30)
+        version: 4.6.1(@tiptap/extensions@3.22.2(@tiptap/core@3.22.2(@tiptap/pm@3.22.2))(@tiptap/pm@3.22.2))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.8)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(change-case@5.4.4)(embla-carousel@8.6.0)(sortablejs@1.14.0)(tailwindcss@4.2.2)(typescript@5.6.3)(vite@6.4.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3))(vue-router@5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@5.6.3)(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3))(yjs@13.6.30)
       '@tauri-apps/api':
         specifier: ^2
         version: 2.10.1
@@ -29,6 +29,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.32(typescript@5.6.3)
+      vue-draggable-next:
+        specifier: ^2.3.0
+        version: 2.3.0(sortablejs@1.14.0)(vue@3.5.32(typescript@5.6.3))
       vue-i18n:
         specifier: ^11.3.2
         version: 11.3.2(vue@3.5.32(typescript@5.6.3))
@@ -2924,6 +2927,9 @@ packages:
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
+  sortablejs@1.14.0:
+    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -3249,6 +3255,12 @@ packages:
     peerDependenciesMeta:
       '@vue/composition-api':
         optional: true
+
+  vue-draggable-next@2.3.0:
+    resolution: {integrity: sha512-ymbY0UIwfSdg0iDN/iyNNwUrTqZ/6KbPryzsvTNXBLuDCuOBdNijSK8yynNtmiSj6RapTPQfjLGQdJrZkzBd2w==}
+    peerDependencies:
+      sortablejs: ^1.14.0
+      vue: ^3.5.17
 
   vue-eslint-parser@10.4.0:
     resolution: {integrity: sha512-Vxi9pJdbN3ZnVGLODVtZ7y4Y2kzAAE2Cm0CZ3ZDRvydVYxZ6VrnBhLikBsRS+dpwj4Jv4UCv21PTEwF5rQ9WXg==}
@@ -3900,7 +3912,7 @@ snapshots:
       pkg-types: 2.3.0
       std-env: 4.0.0
 
-  '@nuxt/ui@4.6.1(@tiptap/extensions@3.22.2(@tiptap/core@3.22.2(@tiptap/pm@3.22.2))(@tiptap/pm@3.22.2))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.8)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(change-case@5.4.4)(embla-carousel@8.6.0)(tailwindcss@4.2.2)(typescript@5.6.3)(vite@6.4.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3))(vue-router@5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@5.6.3)(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3))(yjs@13.6.30)':
+  '@nuxt/ui@4.6.1(@tiptap/extensions@3.22.2(@tiptap/core@3.22.2(@tiptap/pm@3.22.2))(@tiptap/pm@3.22.2))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.8)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(change-case@5.4.4)(embla-carousel@8.6.0)(sortablejs@1.14.0)(tailwindcss@4.2.2)(typescript@5.6.3)(vite@6.4.2(@types/node@25.5.2)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3))(vue-router@5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@5.6.3)(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3)))(vue@3.5.32(typescript@5.6.3))(yjs@13.6.30)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@iconify/vue': 5.0.0(vue@3.5.32(typescript@5.6.3))
@@ -3935,7 +3947,7 @@ snapshots:
       '@tiptap/vue-3': 3.22.2(@floating-ui/dom@1.7.6)(@tiptap/core@3.22.2(@tiptap/pm@3.22.2))(@tiptap/pm@3.22.2)(vue@3.5.32(typescript@5.6.3))
       '@unhead/vue': 2.1.13(vue@3.5.32(typescript@5.6.3))
       '@vueuse/core': 14.2.1(vue@3.5.32(typescript@5.6.3))
-      '@vueuse/integrations': 14.2.1(change-case@5.4.4)(fuse.js@7.3.0)(vue@3.5.32(typescript@5.6.3))
+      '@vueuse/integrations': 14.2.1(change-case@5.4.4)(fuse.js@7.3.0)(sortablejs@1.14.0)(vue@3.5.32(typescript@5.6.3))
       '@vueuse/shared': 14.2.1(vue@3.5.32(typescript@5.6.3))
       colortranslator: 5.0.0
       consola: 3.4.2
@@ -4811,7 +4823,7 @@ snapshots:
       '@vueuse/shared': 14.2.1(vue@3.5.32(typescript@5.6.3))
       vue: 3.5.32(typescript@5.6.3)
 
-  '@vueuse/integrations@14.2.1(change-case@5.4.4)(fuse.js@7.3.0)(vue@3.5.32(typescript@5.6.3))':
+  '@vueuse/integrations@14.2.1(change-case@5.4.4)(fuse.js@7.3.0)(sortablejs@1.14.0)(vue@3.5.32(typescript@5.6.3))':
     dependencies:
       '@vueuse/core': 14.2.1(vue@3.5.32(typescript@5.6.3))
       '@vueuse/shared': 14.2.1(vue@3.5.32(typescript@5.6.3))
@@ -4819,6 +4831,7 @@ snapshots:
     optionalDependencies:
       change-case: 5.4.4
       fuse.js: 7.3.0
+      sortablejs: 1.14.0
 
   '@vueuse/metadata@10.11.1': {}
 
@@ -6489,6 +6502,8 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
+  sortablejs@1.14.0: {}
+
   source-map-js@1.2.1: {}
 
   spdx-exceptions@2.5.0: {}
@@ -6744,6 +6759,11 @@ snapshots:
 
   vue-demi@0.14.10(vue@3.5.32(typescript@5.6.3)):
     dependencies:
+      vue: 3.5.32(typescript@5.6.3)
+
+  vue-draggable-next@2.3.0(sortablejs@1.14.0)(vue@3.5.32(typescript@5.6.3)):
+    dependencies:
+      sortablejs: 1.14.0
       vue: 3.5.32(typescript@5.6.3)
 
   vue-eslint-parser@10.4.0(eslint@10.2.0(jiti@2.6.1)):

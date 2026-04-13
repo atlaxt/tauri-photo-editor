@@ -38,7 +38,10 @@ const resize = ref({ width: 0, height: 0, keepAspect: true })
 const pendingOp = defineModel<Operation | null>('pendingOp', { default: null })
 
 watch([activeTool, adjust, sharpen, rotate], () => {
-  if (!activeTool.value) { pendingOp.value = null; return }
+  if (!activeTool.value) {
+    pendingOp.value = null
+    return
+  }
 
   if (activeTool.value === 'adjust') {
     // Birden fazla op; preview için son değerleri yansıt
@@ -107,21 +110,23 @@ function applyResize() {
   <aside class="w-52 flex flex-col border-r border-default shrink-0 overflow-y-auto">
     <!-- Araç listesi -->
     <nav class="p-2 space-y-0.5">
-      <button
+      <UButton
         v-for="tool in tools"
         :key="tool.id"
-        class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-colors"
-        :class="activeTool === tool.id
-          ? 'bg-primary/10 text-primary font-medium'
-          : 'text-default hover:bg-elevated'"
+        block
+        size="sm"
+        variant="soft"
+        :color="activeTool === tool.id ? 'primary' : 'neutral'"
+        :icon="tool.icon"
+        class="justify-start rounded-xl"
+        :class="activeTool === tool.id ? 'bg-primary/10 font-medium' : ''"
         @click="selectTool(tool.id)"
       >
-        <UIcon :name="tool.icon" class="size-4 shrink-0" />
         {{ t(tool.labelKey) }}
-      </button>
+      </UButton>
     </nav>
 
-    <UDivider v-if="activeTool" class="mx-3" />
+    <USeparator v-if="activeTool" class="mx-3" />
 
     <!-- Parametre alanı -->
     <div v-if="activeTool" class="p-3 space-y-4 flex-1">
@@ -133,14 +138,10 @@ function applyResize() {
               <span class="text-xs text-muted">{{ t(`editor.params.${key}`) }}</span>
               <span class="text-xs tabular-nums">{{ adjust[key] }}</span>
             </div>
-            <input
-              v-model.number="adjust[key]"
-              type="range" min="-100" max="100"
-              class="w-full accent-primary h-1 cursor-pointer"
-            >
+            <USlider v-model="adjust[key]" :min="-100" :max="100" size="xs" />
           </div>
         </div>
-        <UButton :label="t('editor.actions.apply')" size="xs" block @click="applyAdjust" />
+        <UButton :label="t('editor.actions.apply')" variant="soft" size="xs" block @click="applyAdjust" />
       </template>
 
       <!-- Keskinlik -->
@@ -150,13 +151,9 @@ function applyResize() {
             <span class="text-xs text-muted">{{ t('editor.params.amount') }}</span>
             <span class="text-xs tabular-nums">{{ sharpen.amount }}</span>
           </div>
-          <input
-            v-model.number="sharpen.amount"
-            type="range" min="0" max="10"
-            class="w-full accent-primary h-1 cursor-pointer"
-          >
+          <USlider v-model="sharpen.amount" :min="0" :max="10" size="xs" />
         </div>
-        <UButton :label="t('editor.actions.apply')" size="xs" block @click="applySharpen" />
+        <UButton :label="t('editor.actions.apply')" variant="soft" size="xs" block @click="applySharpen" />
       </template>
 
       <!-- Döndür -->
@@ -166,13 +163,9 @@ function applyResize() {
             <span class="text-xs text-muted">{{ t('editor.params.angle') }}</span>
             <span class="text-xs tabular-nums">{{ rotate.angle }}°</span>
           </div>
-          <input
-            v-model.number="rotate.angle"
-            type="range" min="-180" max="180"
-            class="w-full accent-primary h-1 cursor-pointer"
-          >
+          <USlider v-model="rotate.angle" :min="-180" :max="180" size="xs" />
         </div>
-        <UButton :label="t('editor.actions.apply')" size="xs" block @click="applyRotate" />
+        <UButton :label="t('editor.actions.apply')" variant="soft" size="xs" block @click="applyRotate" />
       </template>
 
       <!-- Çevir -->
@@ -198,7 +191,7 @@ function applyResize() {
         <p class="text-xs text-muted">
           {{ t('editor.tools.grayscale') }}
         </p>
-        <UButton :label="t('editor.actions.apply')" size="xs" block @click="applyGrayscale" />
+        <UButton :label="t('editor.actions.apply')" variant="soft" size="xs" block @click="applyGrayscale" />
       </template>
 
       <!-- Boyutlandır -->
@@ -221,7 +214,7 @@ function applyResize() {
             <span class="text-xs text-muted">{{ t('editor.params.keepAspect') }}</span>
           </label>
         </div>
-        <UButton :label="t('editor.actions.apply')" size="xs" block @click="applyResize" />
+        <UButton :label="t('editor.actions.apply')" variant="soft" size="xs" block @click="applyResize" />
       </template>
     </div>
   </aside>

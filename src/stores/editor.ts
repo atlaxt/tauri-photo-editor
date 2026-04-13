@@ -222,6 +222,25 @@ export const useEditorStore = defineStore('editor', () => {
     layers.value[idx] = tmp
   }
 
+  function reorderLayer(id: string, targetId: string, insertAfter: boolean) {
+    if (id === targetId)
+      return
+    const fromIdx = layers.value.findIndex(l => l.id === id)
+    if (fromIdx <= 0)
+      return // base cannot be moved
+    const layer = layers.value[fromIdx]
+    layers.value.splice(fromIdx, 1)
+    let toIdx = layers.value.findIndex(l => l.id === targetId)
+    if (toIdx === -1) {
+      layers.value.splice(fromIdx, 0, layer)
+      return
+    }
+    if (insertAfter)
+      toIdx++
+    toIdx = Math.max(1, toIdx) // cannot go below base
+    layers.value.splice(toIdx, 0, layer)
+  }
+
   function duplicateLayer(id: string) {
     const layer = layers.value.find(l => l.id === id)
     if (!layer)
@@ -300,6 +319,7 @@ export const useEditorStore = defineStore('editor', () => {
     removeLayer,
     moveLayerUp,
     moveLayerDown,
+    reorderLayer,
     duplicateLayer,
     addOperation,
     undo,

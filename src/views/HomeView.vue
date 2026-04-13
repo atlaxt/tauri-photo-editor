@@ -234,12 +234,14 @@ function usePreset() {
 
       <!-- Eylem kartları -->
       <div class="grid grid-cols-3 gap-4 w-full max-w-xl">
-        <button
-          class="group flex flex-col items-center gap-3 rounded-2xl border border-default bg-elevated p-6 text-center transition-all duration-150 hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98]"
+        <UButton
+          variant="outline"
+          color="neutral"
+          class="group h-auto flex-col gap-3 rounded-2xl p-6 hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98] transition-all duration-150"
           @click="newFile"
         >
           <UIcon name="i-ph-plus-circle" class="size-7 text-muted group-hover:text-primary transition-colors" />
-          <div>
+          <div class="text-center">
             <p class="text-sm font-medium">
               {{ $t('home.actions.newFile') }}
             </p>
@@ -247,14 +249,16 @@ function usePreset() {
               {{ $t('home.actions.newFileDesc') }}
             </p>
           </div>
-        </button>
+        </UButton>
 
-        <button
-          class="group flex flex-col items-center gap-3 rounded-2xl border border-default bg-elevated p-6 text-center transition-all duration-150 hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98]"
+        <UButton
+          variant="outline"
+          color="neutral"
+          class="group h-auto flex-col gap-3 rounded-2xl p-6 hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98] transition-all duration-150"
           @click="openFile"
         >
           <UIcon name="i-ph-image" class="size-7 text-muted group-hover:text-primary transition-colors" />
-          <div>
+          <div class="text-center">
             <p class="text-sm font-medium">
               {{ $t('home.actions.openFile') }}
             </p>
@@ -262,14 +266,16 @@ function usePreset() {
               {{ $t('home.actions.openFileDesc') }}
             </p>
           </div>
-        </button>
+        </UButton>
 
-        <button
-          class="group flex flex-col items-center gap-3 rounded-2xl border border-default bg-elevated p-6 text-center transition-all duration-150 hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98]"
+        <UButton
+          variant="outline"
+          color="neutral"
+          class="group h-auto flex-col gap-3 rounded-2xl p-6 hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98] transition-all duration-150"
           @click="usePreset"
         >
           <UIcon name="i-ph-stack" class="size-7 text-muted group-hover:text-primary transition-colors" />
-          <div>
+          <div class="text-center">
             <p class="text-sm font-medium">
               {{ $t('home.actions.usePreset') }}
             </p>
@@ -277,7 +283,7 @@ function usePreset() {
               {{ $t('home.actions.usePresetDesc') }}
             </p>
           </div>
-        </button>
+        </UButton>
       </div>
 
       <!-- Taslak projeler -->

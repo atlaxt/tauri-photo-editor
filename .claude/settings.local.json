@@ -9,7 +9,9 @@
       "Bash(npx vue-tsc:*)",
       "Bash(pnpm vue-tsc:*)",
       "Bash(node_modules/.bin/vue-tsc --noEmit)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(pnpm remove:*)"
     ]
   }
 }

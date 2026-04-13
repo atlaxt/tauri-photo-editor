@@ -25,7 +25,7 @@ const editor = useEditorStore()
         size="sm"
         @click="emit('back')"
       />
-      <UDivider orientation="vertical" class="h-4 mx-1" />
+      <USeparator orientation="vertical" class="h-4 mx-1" />
       <span class="text-sm text-muted truncate max-w-48">
         {{ editor.fileName ?? '—' }}
       </span>
@@ -53,7 +53,7 @@ const editor = useEditorStore()
         :aria-label="t('editor.actions.redo')"
         @click="editor.redo()"
       />
-      <UDivider orientation="vertical" class="h-4 mx-1" />
+      <USeparator orientation="vertical" class="h-4 mx-1" />
       <UButton
         :label="t('editor.actions.saveAs')"
         variant="ghost"

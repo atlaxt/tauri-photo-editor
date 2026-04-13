@@ -30,15 +30,14 @@ function toggle(id: ToolId) {
       :delay-duration="0"
       :content="{ side: 'right', position: 'center' }"
     >
-      <button
-        class="flex items-center justify-center size-8 rounded-lg transition-colors"
-        :class="activeTool === tool.id
-          ? 'bg-primary/15 text-primary'
-          : 'text-muted hover:bg-elevated hover:text-default'"
+      <UButton
+        :icon="tool.icon"
+        size="sm"
+        variant="ghost"
+        :color="activeTool === tool.id ? 'primary' : 'neutral'"
+        :class="activeTool === tool.id ? 'bg-primary/15' : ''"
         @click="toggle(tool.id)"
-      >
-        <UIcon :name="tool.icon" class="size-4" />
-      </button>
+      />
     </UTooltip>
   </div>
 </template>

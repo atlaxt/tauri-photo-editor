@@ -241,12 +241,15 @@ onUnmounted(() => {
           :class="dropPaneId === pane.id && dropZone === 'tabbar' ? 'bg-primary/10' : ''"
           :style="{ height: `${TAB_BAR_H}px` }"
         >
-          <button
+          <UButton
             v-for="tab in pane.tabs"
             :key="tab"
+            size="xs"
+            variant="ghost"
+            :color="pane.activeTab === tab ? 'neutral' : 'neutral'"
+            :icon="TAB_DEFS[tab].icon"
             draggable="true"
-            :title="t(TAB_DEFS[tab].labelKey)"
-            class="flex items-center gap-1.5 px-2.5 h-full text-xs transition-colors border-b-2 shrink-0 active:cursor-grabbing"
+            class="h-full rounded-none border-b-2 px-2.5 gap-1.5 shrink-0 active:cursor-grabbing"
             :class="pane.activeTab === tab
               ? 'text-default border-primary'
               : 'text-muted border-transparent hover:text-default hover:border-default'"
@@ -254,11 +257,10 @@ onUnmounted(() => {
             @dragstart="onTabDragStart(tab, pane.id, $event)"
             @dragend="onTabDragEnd"
           >
-            <UIcon :name="TAB_DEFS[tab].icon" class="size-3.5 shrink-0" />
             <span v-if="pane.activeTab === tab" class="text-[11px] font-medium">
               {{ t(TAB_DEFS[tab].labelKey) }}
             </span>
-          </button>
+          </UButton>
         </div>
 
         <!-- Content -->
