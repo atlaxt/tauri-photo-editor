@@ -219,118 +219,173 @@ const opLabels: Record<string, string> = {
       :move="checkLayerMove"
       @end="onDragEnd"
     >
-      <div
-        v-for="layer in draggableLayers"
-        :key="layer.id"
-        class="group flex items-center gap-2 px-2 transition-colors select-none"
-        :class="[
-          editor.selectedLayerId === layer.id ? 'bg-primary/10' : 'hover:bg-elevated',
-          layer.type !== 'base' ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
-        ]"
-        style="height:44px;"
-        @click="editor.selectLayer(layer.id)"
-      >
-        <!-- Visibility toggle -->
-        <UButton
-          size="xs"
-          variant="link"
-          :color="layer.visible ? 'neutral' : 'primary'"
-          :icon="layer.visible ? 'i-ph-eye' : 'i-ph-eye-slash'"
-          :class="layer.visible ? 'opacity-40 hover:opacity-100' : ''"
-          @click.stop="editor.updateLayer(layer.id, { visible: !layer.visible })"
-        />
+      <template v-for="layer in draggableLayers" :key="layer.id">
 
-        <!-- Thumbnail -->
-        <div
-          class="size-8 rounded shrink-0 overflow-hidden ring-1 ring-inset ring-black/10 dark:ring-white/10"
-          :class="layer.visible ? '' : 'opacity-30'"
-        >
-          <img
-            v-if="layer.imageSrc"
-            :src="layer.imageSrc"
-            class="w-full h-full object-cover select-none"
-            draggable="false"
-          >
+        <!-- ── BASE LAYER ─────────────────────────────────────────────────── -->
+        <template v-if="layer.type === 'base'">
+          <USeparator class="my-1" />
           <div
-            v-else
-            class="w-full h-full flex items-center justify-center"
-            :style="layer.backgroundColor ? { background: layer.backgroundColor } : {}"
+            class="group flex items-center gap-2 px-2 mx-1.5 mb-1 rounded-lg border border-default cursor-pointer select-none transition-colors"
+            :class="editor.selectedLayerId === layer.id ? 'bg-primary/8 border-primary/25' : 'bg-elevated hover:bg-elevated/80'"
+            style="height:44px;"
+            @click="editor.selectLayer(layer.id)"
           >
-            <UIcon v-if="!layer.backgroundColor" name="i-ph-image" class="size-3 text-muted opacity-30" />
-          </div>
-        </div>
-
-        <!-- Name + opacity -->
-        <div class="flex-1 min-w-0 flex flex-col justify-center gap-px" :class="layer.visible ? '' : 'opacity-40'">
-          <div class="flex items-center gap-1">
-            <UIcon v-if="layer.type === 'base'" name="i-ph-lock" class="size-2.5 text-muted opacity-50 shrink-0" />
-            <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
-          </div>
-          <span class="text-[10px] text-muted tabular-nums leading-none">{{ layer.opacity }}%</span>
-        </div>
-
-        <!-- Settings popover -->
-        <UPopover :ui="{ content: 'w-52' }">
-          <UButton
-            icon="i-ph-dots-three" size="xs" variant="ghost" color="neutral"
-            class="opacity-0 group-hover:opacity-100 transition-opacity"
-            @click.stop
-          />
-          <template #content>
-            <div class="p-3 space-y-3">
-              <p class="text-xs font-semibold">
-                {{ t('editor.layers.settings') }}
-              </p>
-              <div class="space-y-1.5">
-                <p class="text-xs text-muted">
-                  {{ t('editor.layers.name') }}
-                </p>
-                <UInput
-                  :model-value="layer.name" size="xs"
-                  @click.stop
-                  @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
-                />
-              </div>
-              <div class="space-y-1.5">
-                <div class="flex justify-between">
-                  <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
-                  <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
-                </div>
-                <USlider :model-value="layer.opacity" :min="0" :max="100" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { opacity: $event })" />
-              </div>
-              <div v-if="layer.type !== 'base'" class="space-y-1.5">
-                <div class="flex justify-between">
-                  <span class="text-xs text-muted">{{ t('editor.layers.rotation') }}</span>
-                  <span class="text-xs tabular-nums text-muted">{{ layer.rotation }}°</span>
-                </div>
-                <USlider :model-value="layer.rotation" :min="-180" :max="180" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { rotation: $event })" />
-              </div>
-              <div class="space-y-1.5">
-                <span class="text-xs text-muted">{{ t('editor.layers.blendMode') }}</span>
-                <USelect
-                  :model-value="layer.blendMode" size="xs"
-                  :items="[{ label: t('editor.layers.blendNormal'), value: 'normal' }]"
-                  @click.stop
-                  @update:model-value="(v: string) => editor.updateLayer(layer.id, { blendMode: v as 'normal' })"
-                />
-              </div>
-              <template v-if="layer.type !== 'base'">
-                <USeparator />
-                <UButton block size="xs" variant="ghost" color="error" icon="i-ph-trash" class="justify-start" @click.stop="editor.removeLayer(layer.id)">
-                  {{ t('editor.layers.deleteLayer') }}
-                </UButton>
-              </template>
-              <template v-else>
-                <USeparator />
-                <p class="text-[10px] text-muted opacity-50 flex items-center gap-1">
-                  <UIcon name="i-ph-lock" class="size-3" />
-                  {{ t('editor.layers.baseLocked') }}
-                </p>
-              </template>
+            <!-- Thumbnail -->
+            <div class="size-8 rounded-md shrink-0 overflow-hidden ring-1 ring-inset ring-black/8 dark:ring-white/8">
+              <img
+                v-if="layer.imageSrc"
+                :src="layer.imageSrc"
+                class="w-full h-full object-cover select-none"
+                draggable="false"
+              >
+              <div
+                v-else
+                class="w-full h-full"
+                :style="layer.backgroundColor ? { background: layer.backgroundColor } : { background: '#fff' }"
+              />
             </div>
-          </template>
-        </UPopover>
-      </div>
+
+            <!-- Name + label -->
+            <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
+              <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
+              <div class="flex items-center gap-1">
+                <UIcon name="i-ph-lock-simple" class="size-2.5 text-muted shrink-0" />
+                <span class="text-[9px] text-muted leading-none">{{ t('editor.layers.base') }}</span>
+              </div>
+            </div>
+
+            <!-- Settings popover -->
+            <UPopover :ui="{ content: 'w-52' }">
+              <UButton
+                icon="i-ph-dots-three" size="xs" variant="ghost" color="neutral"
+                class="opacity-0 group-hover:opacity-100 transition-opacity"
+                @click.stop
+              />
+              <template #content>
+                <div class="p-3 space-y-3">
+                  <p class="text-xs font-semibold">{{ t('editor.layers.settings') }}</p>
+                  <div class="space-y-1.5">
+                    <p class="text-xs text-muted">{{ t('editor.layers.name') }}</p>
+                    <UInput
+                      :model-value="layer.name" size="xs"
+                      @click.stop
+                      @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
+                    />
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
+                      <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
+                    </div>
+                    <USlider :model-value="layer.opacity" :min="0" :max="100" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { opacity: $event })" />
+                  </div>
+                  <USeparator />
+                  <p class="text-[10px] text-muted flex items-center gap-1">
+                    <UIcon name="i-ph-lock" class="size-3" />
+                    {{ t('editor.layers.baseLocked') }}
+                  </p>
+                </div>
+              </template>
+            </UPopover>
+          </div>
+        </template>
+
+        <!-- ── IMAGE LAYER ────────────────────────────────────────────────── -->
+        <template v-else>
+          <div
+            class="group flex items-center gap-2 px-2 transition-colors select-none cursor-grab active:cursor-grabbing"
+            :class="editor.selectedLayerId === layer.id ? 'bg-primary/10' : 'hover:bg-elevated'"
+            style="height:44px;"
+            @click="editor.selectLayer(layer.id)"
+          >
+            <!-- Visibility toggle -->
+            <UButton
+              size="xs"
+              variant="link"
+              :color="layer.visible ? 'neutral' : 'primary'"
+              :icon="layer.visible ? 'i-ph-eye' : 'i-ph-eye-slash'"
+              :class="layer.visible ? 'opacity-40 hover:opacity-100' : ''"
+              @click.stop="editor.updateLayer(layer.id, { visible: !layer.visible })"
+            />
+
+            <!-- Thumbnail -->
+            <div
+              class="size-8 rounded shrink-0 overflow-hidden ring-1 ring-inset ring-black/10 dark:ring-white/10"
+              :class="layer.visible ? '' : 'opacity-30'"
+            >
+              <img
+                v-if="layer.imageSrc"
+                :src="layer.imageSrc"
+                class="w-full h-full object-cover select-none"
+                draggable="false"
+              >
+              <div
+                v-else
+                class="w-full h-full flex items-center justify-center"
+                :style="layer.backgroundColor ? { background: layer.backgroundColor } : {}"
+              >
+                <UIcon v-if="!layer.backgroundColor" name="i-ph-image" class="size-3 text-muted opacity-30" />
+              </div>
+            </div>
+
+            <!-- Name + opacity -->
+            <div class="flex-1 min-w-0 flex flex-col justify-center gap-px" :class="layer.visible ? '' : 'opacity-40'">
+              <span class="text-xs font-medium truncate leading-none">{{ layer.name }}</span>
+              <span class="text-[10px] text-muted tabular-nums leading-none">{{ layer.opacity }}%</span>
+            </div>
+
+            <!-- Settings popover -->
+            <UPopover :ui="{ content: 'w-52' }">
+              <UButton
+                icon="i-ph-dots-three" size="xs" variant="ghost" color="neutral"
+                class="opacity-0 group-hover:opacity-100 transition-opacity"
+                @click.stop
+              />
+              <template #content>
+                <div class="p-3 space-y-3">
+                  <p class="text-xs font-semibold">{{ t('editor.layers.settings') }}</p>
+                  <div class="space-y-1.5">
+                    <p class="text-xs text-muted">{{ t('editor.layers.name') }}</p>
+                    <UInput
+                      :model-value="layer.name" size="xs"
+                      @click.stop
+                      @change="editor.updateLayer(layer.id, { name: ($event.target as HTMLInputElement).value })"
+                    />
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <span class="text-xs text-muted">{{ t('editor.layers.opacity') }}</span>
+                      <span class="text-xs tabular-nums text-muted">{{ layer.opacity }}%</span>
+                    </div>
+                    <USlider :model-value="layer.opacity" :min="0" :max="100" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { opacity: $event })" />
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <span class="text-xs text-muted">{{ t('editor.layers.rotation') }}</span>
+                      <span class="text-xs tabular-nums text-muted">{{ layer.rotation }}°</span>
+                    </div>
+                    <USlider :model-value="layer.rotation" :min="-180" :max="180" size="xs" @click.stop @update:model-value="editor.updateLayer(layer.id, { rotation: $event })" />
+                  </div>
+                  <div class="space-y-1.5">
+                    <span class="text-xs text-muted">{{ t('editor.layers.blendMode') }}</span>
+                    <USelect
+                      :model-value="layer.blendMode" size="xs"
+                      :items="[{ label: t('editor.layers.blendNormal'), value: 'normal' }]"
+                      @click.stop
+                      @update:model-value="(v: string) => editor.updateLayer(layer.id, { blendMode: v as 'normal' })"
+                    />
+                  </div>
+                  <USeparator />
+                  <UButton block size="xs" variant="ghost" color="error" icon="i-ph-trash" class="justify-start" @click.stop="editor.removeLayer(layer.id)">
+                    {{ t('editor.layers.deleteLayer') }}
+                  </UButton>
+                </div>
+              </template>
+            </UPopover>
+          </div>
+        </template>
+
+      </template>
     </VueDraggableNext>
   </template>
 
